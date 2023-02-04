@@ -225,20 +225,20 @@ model businesses {
 }
 
 model customers {
-  id              String    @id @db.Char(36)
-  first_name      String?   @db.VarChar(255)
-  last_name       String?   @db.VarChar(255)
-  prefix          String?   @db.VarChar(255)
-  mobile          String    @db.VarChar(255)
-  email           String?   @db.VarChar(255)
-  dob             DateTime? @db.DateTime(0)
-  gender          String?   @db.VarChar(255)
-  display_picture String?   @db.Text
-  address         String?   @db.Text
-  in_app_user     Boolean   @default(false)
-  is_active       Boolean   @default(true)
-  created_at      DateTime  @db.DateTime(0)
-  updated_at      DateTime  @db.DateTime(0)
+  id              String       @id @default(uuid())
+  FirstName       String?   @db.VarChar(255)
+  LastName        String?   @db.VarChar(255)
+  Prefix          String?   @db.VarChar(255)
+  Mobile          String    @db.VarChar(255)
+  Email           String?   @db.VarChar(255)
+  BirthDate       DateTime? @db.DateTime(0)
+  Gender          String?   @db.VarChar(255)
+  DisplayPicture  String?   @db.Text
+  Address         String?   @db.Text
+  InAppUser       Boolean   @default(false)
+  IsActive        Boolean   @default(true)
+  CreatedAt       DateTime  @db.DateTime(0)
+  UpdatedAt       DateTime  @db.DateTime(0)
 }
 
 model notifications {
