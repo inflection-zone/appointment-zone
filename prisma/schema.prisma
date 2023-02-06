@@ -225,7 +225,7 @@ model businesses {
 }
 
 model customers {
-  id              String       @id @default(uuid())
+  id              String    @id @default(uuid())
   FirstName       String?   @db.VarChar(255)
   LastName        String?   @db.VarChar(255)
   Prefix          String?   @db.VarChar(255)

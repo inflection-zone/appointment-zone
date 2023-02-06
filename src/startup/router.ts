@@ -1,6 +1,6 @@
 import express from "express";
 import { Logger } from "../common/logger";
-// import { register as registerCareplanRoutes         } from "../api/careplan/careplan/careplan.routes";
+import { register as registerCustomerRoutes}  from "../api/customer/customer.routes";
 // import { register as registerCareplanCategoryRoutes } from "../api/careplan/careplan.category/careplan.category.routes";
 // import { register as registerCareplanActivityRoutes } from "../api/careplan/careplan.activity/careplan.activity.routes";
 // import { register as registerApiClientRoutes        } from "../api/api.client/api.client.routes";
@@ -63,7 +63,7 @@ export class Router {
                     });
                 });
 
-                // registerCareplanRoutes(this._app);
+                registerCustomerRoutes(this._app);
                 // registerCareplanCategoryRoutes(this._app);
                 // registerApiClientRoutes(this._app);
                 // registerCareplanCategoryRoutes(this._app);
