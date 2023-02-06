@@ -9,219 +9,220 @@ datasource db {
 
 model appointment_statuses {
   id                     String   @id @db.Char(36)
-  business_node_id       String   @db.Char(36)
-  status                 String?  @default("") @db.VarChar(255)
-  status_code            String?  @default("") @db.VarChar(255)
-  status_color           String?  @default("") @db.VarChar(255)
-  sequence               Int      @default(0)
-  send_notification      Boolean  @default(true)
-  notification_text      String?  @db.Text
-  send_sms               Boolean  @default(true)
-  sms_text               String?  @db.Text
-  is_dashboard_status    Boolean  @default(true)
-  is_completed_status    Boolean  @default(false)
-  is_confirmed_status    Boolean  @default(false)
-  is_cancellation_status Boolean  @default(false)
-  is_walkin_entry_status Boolean  @default(false)
-  is_active              Boolean  @default(true)
-  created_at             DateTime @db.DateTime(0)
-  updated_at             DateTime @db.DateTime(0)
+  BusinessNodeId         String   @db.Char(36)
+  Status                 String?  @default("") @db.VarChar(255)
+  StatusCode             String?  @default("") @db.VarChar(255)
+  StatusColor            String?  @default("") @db.VarChar(255)
+  Sequence               Int      @default(0)
+  SendNotification       Boolean  @default(true)
+  NotificationText       String?  @db.Text
+  SendSms                Boolean  @default(true)
+  SmsText                String?  @db.Text
+  IsDashboardStatus      Boolean  @default(true)
+  IsCompletedStatus      Boolean  @default(false)
+  IsConfirmedStatus      Boolean  @default(false)
+  IsCancellationStatus   Boolean  @default(false)
+  IsWalkinEntryStatus    Boolean  @default(false)
+  IsActive               Boolean  @default(true)
+  CreatedAt              DateTime @db.DateTime(0)
+  UpdatedAt              DateTime @db.DateTime(0)
 }
 
 model appointments {
   id                         String    @id @db.Char(36)
-  display_id                 String    @default("") @db.VarChar(255)
-  business_node_id           String    @db.Char(36)
-  customer_id                String    @db.Char(36)
-  business_user_id           String    @db.Char(36)
-  business_service_id        String    @db.Char(36)
-  type                       String    @default("IN-PERSON") @db.VarChar(255)
-  note                       String?   @db.Text
-  start_time                 DateTime? @db.DateTime(0)
-  end_time                   DateTime? @db.DateTime(0)
-  status                     String    @default("") @db.VarChar(255)
-  status_code                String    @default("") @db.VarChar(255)
-  fees                       Float     @default(0) @db.Float
-  tax                        Float     @default(0) @db.Float
-  tip                        Float     @default(0) @db.Float
-  discount                   Float     @default(0) @db.Float
-  coupon_code                String?   @db.VarChar(255)
-  total                      Float     @default(0) @db.Float
-  is_paid                    Boolean   @default(false)
-  transaction_id             String?   @db.Char(36)
-  is_confirmed               Boolean   @default(false)
-  confirmed_on               DateTime? @db.DateTime(0)
-  is_cancelled               Boolean   @default(false)
-  cancelled_on               DateTime? @db.DateTime(0)
-  is_completed               Boolean   @default(false)
-  completed_on               DateTime? @db.DateTime(0)
-  is_rescheduled             Boolean   @default(false)
-  rescheduled_on             DateTime? @db.DateTime(0)
-  rescheduled_appointment_id Int?      @default(1)
-  is_active                  Boolean   @default(true)
-  created_at                 DateTime  @db.DateTime(0)
-  updated_at                 DateTime  @db.DateTime(0)
+  DisplayId                  String    @default("") @db.VarChar(255)
+  BusinessNodeId             String    @db.Char(36)
+  CustomerId                 String    @db.Char(36)
+  BusinessUserId             String    @db.Char(36)
+  BusinessServiceId          String    @db.Char(36)
+  Type                       String    @default("IN-PERSON") @db.VarChar(255)
+  Note                       String?   @db.Text
+  StartTime                  DateTime? @db.DateTime(0)
+  EndTime                    DateTime? @db.DateTime(0)
+  Status                     String    @default("") @db.VarChar(255)
+  StatusCode                 String    @default("") @db.VarChar(255)
+  Fees                       Float     @default(0) @db.Float
+  Tax                        Float     @default(0) @db.Float
+  Tip                        Float     @default(0) @db.Float
+  Discount                   Float     @default(0) @db.Float
+  CouponCode                 String?   @db.VarChar(255)
+  Total                      Float     @default(0) @db.Float
+  IsPaid                     Boolean   @default(false)
+  TransactionId              String?   @db.Char(36)
+  IsConfirmed                Boolean   @default(false)
+  ConfirmedOn                DateTime? @db.DateTime(0)
+  IsCancelled                Boolean   @default(false)
+  CancelledOn                DateTime? @db.DateTime(0)
+  IsCompleted                Boolean   @default(false)
+  CompletedOn                DateTime? @db.DateTime(0)
+  IsRescheduled              Boolean   @default(false)
+  RescheduledOn              DateTime? @db.DateTime(0)
+  RescheduledAppointmentId   Int?      @default(1)
+  IsActive                   Boolean   @default(true)
+  CreatedAt                  DateTime  @db.DateTime(0)
+  UpdatedAt                  DateTime  @db.DateTime(0)
 }
 
 model business_node_customers {
   id               String   @id @db.Char(36)
-  business_node_id String   @db.Char(36)
-  customer_id      String   @db.Char(36)
-  sms_consent      String   @default("NOT_REPLIED") @db.VarChar(255)
-  is_active        Boolean  @default(true)
-  created_at       DateTime @db.DateTime(0)
-  updated_at       DateTime @db.DateTime(0)
+  BusinessNodeId   String   @db.Char(36)
+  CustomerId       String   @db.Char(36)
+  SmsConsent       String   @default("NOT_REPLIED") @db.VarChar(255)
+  IsActive         Boolean  @default(true)
+  CreatedAt        DateTime @db.DateTime(0)
+  UpdatedAt        DateTime @db.DateTime(0)
 }
 
 model business_node_hours {
   id               String    @id @db.Char(36)
-  business_node_id String    @db.Char(36)
-  type             String    @db.VarChar(255)
-  day              Int
-  date             DateTime? @db.DateTime(0)
-  is_open          Boolean   @default(true)
-  message          String?   @db.VarChar(255)
-  start_time       DateTime  @default(dbgenerated("'10:00:00'")) @db.Time(0)
-  end_time         DateTime  @default(dbgenerated("'21:00:00'")) @db.Time(0)
-  is_active        Boolean   @default(true)
-  created_at       DateTime  @db.DateTime(0)
-  updated_at       DateTime  @db.DateTime(0)
+  BusinessNodeId   String    @db.Char(36)
+  Type             String    @db.VarChar(255)
+  Day              Int
+  Date             DateTime? @db.DateTime(0)
+  IsOpen           Boolean   @default(true)
+  Message          String?   @db.VarChar(255)
+  StartTime        DateTime  @default(dbgenerated("'10:00:00'")) @db.Time(0)
+  EndTime          DateTime  @default(dbgenerated("'21:00:00'")) @db.Time(0)
+  IsActive         Boolean   @default(true)
+  CreatedAt        DateTime  @db.DateTime(0)
+  UpdatedAt        DateTime  @db.DateTime(0)
 }
 
 model business_nodes {
   id                        String   @id @db.Char(36)
-  business_id               String   @db.Char(36)
-  name                      String   @db.VarChar(255)
-  mobile                    String   @db.VarChar(255)
-  email                     String   @db.VarChar(255)
-  display_picture           String?  @db.Text
-  address                   String?  @db.Text
-  longitude                 String?  @db.VarChar(255)
-  lattitude                 String?  @db.VarChar(255)
-  overall_rating            Float?   @db.Float
-  time_zone                 String   @default("+05:30") @db.VarChar(255)
-  allow_walkin_appointments Boolean  @default(true)
-  allow_future_booking_for  String   @default("30d") @db.VarChar(255)
-  is_active                 Boolean  @default(true)
-  created_at                DateTime @db.DateTime(0)
-  updated_at                DateTime @db.DateTime(0)
+  BusinessId                String   @db.Char(36)
+  Name                      String   @db.VarChar(255)
+  Mobile                    String   @db.VarChar(255)
+  Email                     String   @db.VarChar(255)
+
+  DisplayPicture            String?  @db.Text
+  Address                   String?  @db.Text
+  Longitude                 String?  @db.VarChar(255)
+  Lattitude                 String?  @db.VarChar(255)
+  OverallRating             Float?   @db.Float
+  TimeZone                  String   @default("+05:30") @db.VarChar(255)
+  AllowWalkinAppointments   Boolean  @default(true)
+  AllowFutureBookingFor     String   @default("30d") @db.VarChar(255)
+  IsActive                  Boolean  @default(true)
+  CreatedAt                 DateTime @db.DateTime(0)
+  UpdatedAt                 DateTime @db.DateTime(0)
 }
 
 model business_services {
   id                      String   @id @db.Char(36)
-  business_node_id        String   @db.Char(36)
-  name                    String   @db.VarChar(255)
-  description             String?  @db.Text
-  service_duration        String   @default("30m") @db.VarChar(255)
-  fees                    Float    @default(0) @db.Float
-  is_taxable              Boolean  @default(false)
-  tax_rate                Float    @default(0) @db.Float
-  payment_required        Boolean  @default(false)
-  payment_percent         Float    @default(0) @db.Float
-  prior_booking_window    String   @default("1h") @db.VarChar(255)
-  send_reminder           Boolean  @default(false)
-  reminder_window         String?  @db.VarChar(255)
-  reminder_type           String?  @db.VarChar(255)
-  allow_cancellation      Boolean  @default(false)
-  cancellation_window     String   @default("1h") @db.VarChar(255)
-  cancellation_charges    Float    @default(0) @db.Float
-  enable_loyalty          Boolean  @default(true)
-  display_service_picture String?  @db.Text
-  is_active               Boolean  @default(true)
-  created_at              DateTime @db.DateTime(0)
-  updated_at              DateTime @db.DateTime(0)
+  BusinessNodeId          String   @db.Char(36)
+  Name                    String   @db.VarChar(255)
+  Description             String?  @db.Text
+  ServiceDuration         String   @default("30m") @db.VarChar(255)
+  Fees                    Float    @default(0) @db.Float
+  IsTaxable               Boolean  @default(false)
+  TaxRate                 Float    @default(0) @db.Float
+  PaymentRequired         Boolean  @default(false)
+  PaymentPercent          Float    @default(0) @db.Float
+  PriorBookingWindow      String   @default("1h") @db.VarChar(255)
+  SendReminder            Boolean  @default(false)
+  ReminderWindow          String?  @db.VarChar(255)
+  ReminderType            String?  @db.VarChar(255)
+  AllowCancellation       Boolean  @default(false)
+  CancellationWindow      String   @default("1h") @db.VarChar(255)
+  CancellationCharges     Float    @default(0) @db.Float
+  EnableLoyalty           Boolean  @default(true)
+  DisplayServicePicture   String?  @db.Text
+  IsActive                Boolean  @default(true)
+  CreatedAt               DateTime @db.DateTime(0)
+  UpdatedAt               DateTime @db.DateTime(0)
 }
 
 model business_skills {
   id               String   @id @db.Char(36)
-  business_node_id String   @db.Char(36)
-  name             String   @db.VarChar(255)
-  description      String?  @db.Text
-  display_picture  String?  @db.Text
-  is_active        Boolean  @default(true)
-  created_at       DateTime @db.DateTime(0)
-  updated_at       DateTime @db.DateTime(0)
+  BusinessNodeId   String   @db.Char(36)
+  Name             String   @db.VarChar(255)
+  Description      String?  @db.Text
+  DisplayPicture   String?  @db.Text
+  IsActive         Boolean  @default(true)
+  CreatedAt        DateTime @db.DateTime(0)
+  UpdatedAt        DateTime @db.DateTime(0)
 }
 
 model business_user_hours {
   id               String    @id @db.Char(36)
-  business_user_id String    @db.Char(36)
-  type             String    @db.VarChar(255)
-  day              Int
-  date             DateTime? @db.DateTime(0)
-  is_open          Boolean   @default(true)
-  message          String?   @db.VarChar(255)
-  start_time       DateTime  @default(dbgenerated("'10:00:00'")) @db.Time(0)
-  end_time         DateTime  @default(dbgenerated("'21:00:00'")) @db.Time(0)
-  is_active        Boolean   @default(true)
-  created_at       DateTime  @db.DateTime(0)
-  updated_at       DateTime  @db.DateTime(0)
+  BusinessUserId   String    @db.Char(36)
+  Type             String    @db.VarChar(255)
+  Day              Int
+  Date             DateTime? @db.DateTime(0)
+  IsOpen           Boolean   @default(true)
+  Message          String?   @db.VarChar(255)
+  StartTime        DateTime  @default(dbgenerated("'10:00:00'")) @db.Time(0)
+  EndTime          DateTime  @default(dbgenerated("'21:00:00'")) @db.Time(0)
+  IsActive         Boolean   @default(true)
+  CreatedAt        DateTime  @db.DateTime(0)
+  UpdatedAt        DateTime  @db.DateTime(0)
 }
 
 model business_user_services {
   id                  String   @id @db.Char(36)
-  business_user_id    String   @db.Char(36)
-  business_service_id String   @db.Char(36)
-  is_active           Boolean  @default(true)
-  created_at          DateTime @db.DateTime(0)
-  updated_at          DateTime @db.DateTime(0)
+  BusinessUserId      String   @db.Char(36)
+  BusinessServiceId   String   @db.Char(36)
+  IsActive            Boolean  @default(true)
+  CreatedAt           DateTime @db.DateTime(0)
+  UpdatedAt           DateTime @db.DateTime(0)
 }
 
 model business_user_skills {
   id                String   @id @db.Char(36)
-  business_user_id  String   @db.Char(36)
-  business_skill_id String   @db.Char(36)
-  is_active         Boolean  @default(true)
-  created_at        DateTime @db.DateTime(0)
-  updated_at        DateTime @db.DateTime(0)
+  BusinessUserId    String   @db.Char(36)
+  BusinessSkillId   String   @db.Char(36)
+  IsActive          Boolean  @default(true)
+  CreatedAt         DateTime @db.DateTime(0)
+  UpdatedAt         DateTime @db.DateTime(0)
 }
 
 model business_users {
   id                         String    @id @db.Char(36)
-  business_node_id           String    @db.Char(36)
-  first_name                 String    @db.VarChar(255)
-  last_name                  String    @db.VarChar(255)
-  prefix                     String    @db.VarChar(255)
-  mobile                     String    @db.VarChar(255)
-  email                      String?   @db.VarChar(255)
-  display_picture            String?   @db.Text
-  about_me                   String?   @db.Text
-  qualification              String?   @db.Text
-  experience                 String?   @db.VarChar(255)
-  overall_rating             Float?    @db.Float
-  dob                        DateTime? @db.DateTime(0)
-  gender                     String?   @db.VarChar(255)
-  is_available_for_emergency Boolean?  @default(true)
-  facebook                   String?   @db.VarChar(255)
-  linkedin                   String?   @db.VarChar(255)
-  twitter                    String?   @db.VarChar(255)
-  instagram                  String?   @db.VarChar(255)
-  yelp                       String?   @db.VarChar(255)
-  is_active                  Boolean   @default(true)
-  created_at                 DateTime  @db.DateTime(0)
-  updated_at                 DateTime  @db.DateTime(0)
+  BusinessNodeId             String    @db.Char(36)
+  FirstName                  String    @db.VarChar(255)
+  LastName                   String    @db.VarChar(255)
+  Prefix                     String    @db.VarChar(255)
+  Mobile                     String    @db.VarChar(255)
+  Email                      String?   @db.VarChar(255)
+  DisplayPicture             String?   @db.Text
+  AboutMe                    String?   @db.Text
+  Qualification              String?   @db.Text
+  Experience                 String?   @db.VarChar(255)
+  OverallRating              Float?    @db.Float
+  Dob                        DateTime? @db.DateTime(0)
+  Gender                     String?   @db.VarChar(255)
+  IsAvailableForEmergency    Boolean?  @default(true)
+  Facebook                   String?   @db.VarChar(255)
+  Linkedin                   String?   @db.VarChar(255)
+  Twitter                    String?   @db.VarChar(255)
+  Instagram                  String?   @db.VarChar(255)
+  Yelp                       String?   @db.VarChar(255)
+  IsActive                   Boolean   @default(true)
+  CreatedAt                  DateTime  @db.DateTime(0)
+  UpdatedAt                  DateTime  @db.DateTime(0)
 }
 
 model businesses {
   id              String   @id @db.Char(36)
-  external_id     String?  @db.VarChar(255)
-  name            String   @db.VarChar(255)
-  mobile          String   @db.VarChar(255)
-  email           String   @db.VarChar(255)
-  about_us        String?  @db.Text
-  logo            String?  @db.Text
-  display_picture String?  @db.Text
-  overall_rating  Float?   @db.Float
-  address         String?  @db.Text
-  api_key         String   @db.VarChar(255)
-  facebook        String?  @db.VarChar(255)
-  linkedin        String?  @db.VarChar(255)
-  twitter         String?  @db.VarChar(255)
-  instagram       String?  @db.VarChar(255)
-  yelp            String?  @db.VarChar(255)
-  is_active       Boolean  @default(true)
-  created_at      DateTime @db.DateTime(0)
-  updated_at      DateTime @db.DateTime(0)
+  ExternalId      String?  @db.VarChar(255)
+  Name            String   @db.VarChar(255)
+  Mobile          String   @db.VarChar(255)
+  Email           String   @db.VarChar(255)
+  AboutUs         String?  @db.Text
+  Logo            String?  @db.Text
+  DisplayPicture  String?  @db.Text
+  OverallRating   Float?   @db.Float
+  Address         String?  @db.Text
+  ApiKey          String   @db.VarChar(255)
+  Facebook        String?  @db.VarChar(255)
+  Linkedin        String?  @db.VarChar(255)
+  Twitter         String?  @db.VarChar(255)
+  Instagram       String?  @db.VarChar(255)
+  Yelp            String?  @db.VarChar(255)
+  IsActive        Boolean  @default(true)
+  CreatedAt       DateTime @db.DateTime(0)
+  UpdatedAt       DateTime @db.DateTime(0)
 }
 
 model customers {
@@ -243,55 +244,55 @@ model customers {
 
 model notifications {
   id               String    @id @db.Char(36)
-  business_node_id String    @db.Char(36)
-  customer_id      String    @db.Char(36)
-  title            String?   @default("") @db.VarChar(255)
-  body             String?   @db.Text
-  type             String?   @default("") @db.VarChar(255)
-  type_id          Int
-  message          String?   @db.Text
-  is_sent          Boolean   @default(true)
-  sent_on          DateTime? @db.DateTime(0)
-  is_read          Boolean   @default(false)
-  read_on          DateTime? @db.DateTime(0)
-  is_deleted       Boolean   @default(false)
-  deleted_on       DateTime? @db.DateTime(0)
-  is_active        Boolean   @default(true)
-  created_at       DateTime  @db.DateTime(0)
-  updated_at       DateTime  @db.DateTime(0)
+  BusinessNodeId   String    @db.Char(36)
+  CustomerId       String    @db.Char(36)
+  Title            String?   @default("") @db.VarChar(255)
+  Body             String?   @db.Text
+  Type             String?   @default("") @db.VarChar(255)
+  TypeId           Int
+  Message          String?   @db.Text
+  IsSent           Boolean   @default(true)
+  SentOn           DateTime? @db.DateTime(0)
+  IsRead           Boolean   @default(false)
+  ReadOn           DateTime? @db.DateTime(0)
+  IsDeleted        Boolean   @default(false)
+  DeletedOn        DateTime? @db.DateTime(0)
+  IsActive         Boolean   @default(true)
+  CreatedAt        DateTime  @db.DateTime(0)
+  UpdatedAt        DateTime  @db.DateTime(0)
 }
 
 model payment_transactions {
   id               String    @id @db.Char(36)
-  appointment_id   String?   @db.Char(36)
-  business_node_id String    @db.Char(36)
-  customer_id      String    @db.Char(36)
-  external_id      String?   @db.VarChar(255)
-  total_amount     Float     @default(0) @db.Float
-  currency         String?   @default("") @db.VarChar(255)
-  status           String?   @default("") @db.VarChar(255)
-  is_complete      Boolean   @default(false)
-  initiated_on     DateTime? @db.DateTime(0)
-  completed_on     DateTime? @db.DateTime(0)
-  is_active        Boolean   @default(true)
-  created_at       DateTime  @db.DateTime(0)
-  updated_at       DateTime  @db.DateTime(0)
+  AppointmentId    String?   @db.Char(36)
+  BusinessNodeId   String    @db.Char(36)
+  CustomerId       String    @db.Char(36)
+  ExternalId       String?   @db.VarChar(255)
+  TotalAmount      Float     @default(0) @db.Float
+  Currency         String?   @default("") @db.VarChar(255)
+  Status           String?   @default("") @db.VarChar(255)
+  IsComplete       Boolean   @default(false)
+  InitiatedOn      DateTime? @db.DateTime(0)
+  CompletedOn      DateTime? @db.DateTime(0)
+  IsActive         Boolean   @default(true)
+  CreatedAt        DateTime  @db.DateTime(0)
+  UpdatedAt        DateTime  @db.DateTime(0)
 }
 
 model user_messages {
   id               String    @id @db.Char(36)
-  business_node_id String    @db.Char(36)
-  customer_id      String    @db.Char(36)
-  body             String?   @db.Text
-  type             String?   @default("") @db.VarChar(255)
-  type_id          Int
-  message_id       String?   @db.VarChar(255)
-  error            String?   @db.Text
-  is_sent          Boolean   @default(true)
-  sent_on          DateTime? @db.DateTime(0)
-  is_deleted       Boolean   @default(false)
-  deleted_on       DateTime? @db.DateTime(0)
-  is_active        Boolean   @default(true)
-  created_at       DateTime  @db.DateTime(0)
-  updated_at       DateTime  @db.DateTime(0)
+  BusinessNodeId   String    @db.Char(36)
+  CustomerId       String    @db.Char(36)
+  Body             String?   @db.Text
+  Type             String?   @default("") @db.VarChar(255)
+  TypeId           Int
+  MessageId        String?   @db.VarChar(255)
+  Error            String?   @db.Text
+  IsSent           Boolean   @default(true)
+  SentOn           DateTime? @db.DateTime(0)
+  IsDeleted        Boolean   @default(false)
+  DeletedOn        DateTime? @db.DateTime(0)
+  IsActive         Boolean   @default(true)
+  CreatedAt        DateTime  @db.DateTime(0)
+  UpdatedAt        DateTime  @db.DateTime(0)
 }
