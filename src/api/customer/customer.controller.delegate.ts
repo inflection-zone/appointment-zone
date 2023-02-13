@@ -5,6 +5,8 @@ import { ApiError } from "../../common/api.error";
 import { CustomerCreateModel, CustomerDto } from "../../domain.types/customer/customer.domain.types";
 import { CustomerValidator as validator } from './customer.validator';
 import { CustomerService } from '../../database/repository.services/customer.service';
+import { uuid } from "../../domain.types/miscellaneous/system.types";
+import { ErrorHandler } from "../../common/error.handler";
 export class CustomerControllerDelegate {
 
     //#region member variables and constructors
@@ -34,6 +36,14 @@ export class CustomerControllerDelegate {
         //     sendOnboardingEmail(dto, password)
         // }
 
+        return this.getEnrichedDto(record);
+    };
+
+    getById = async (id: uuid) => {
+        const record = await this._service.getById(id);
+        if (record === null) {
+            ErrorHandler.throwNotFoundError('Customer with id ' + id.toString() + ' cannot be found!');
+        }
         return this.getEnrichedDto(record);
     };
 
@@ -72,8 +82,11 @@ export class CustomerControllerDelegate {
             Mobile              : record.Mobile,
             Email               : record.Email,
             Gender              : record.Gender,
+            DisplayPicture      : record.DisplayPicture,
             BirthDate           : record.BirthDate,
             Address             : record.Address,
+            IsActive            : record.IsActive,
+            InAppUser           : record.InAppUser,
         };
     };
 
@@ -85,16 +98,14 @@ export class CustomerControllerDelegate {
         }
         return {
             id          : record.id,
-            RoleId      : record.RoleId,
-            CustomerName    : record.CustomerName,
-            Prefix      : record.Prefix,
-            FirstName   : record.FirstName,
-            LastName    : record.LastName,
-            CountryCode : record.CountryCode,
-            Mobile       : record.Mobile,
-            Email       : record.Email,
-            Gender      : record.Gender,
-            BirthDate   : record.BirthDate,
+            Prefix              : record.Prefix,
+            FirstName           : record.FirstName,
+            LastName            : record.LastName,
+            Mobile              : record.Mobile,
+            Email               : record.Email,
+            Gender              : record.Gender,
+            BirthDate           : record.BirthDate,
+            Address             : record.Address,
         };
     };
 

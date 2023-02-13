@@ -23,4 +23,17 @@ export class CustomerService {
         }
     }
 
+    getById = async (id) => {
+      try {
+          var record = await this.prisma.customers.findUnique({where : {id : id}
+          });
+
+          return record;
+      } catch (error) {
+      ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve customers!', error);
+  }
+
+}
+
+
 }

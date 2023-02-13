@@ -21,7 +21,7 @@ export const register = (app: express.Application): void => {
     // router.post('/logout', authenticator.authenticateCustomer, controller.logout);
 
     // router.get('/search', authenticator.authenticateCustomer, controller.search);
-    // router.get('/:id', authenticator.authenticateCustomer, controller.getById);
+     router.get('/:id', /*authenticator.authenticateCustomer,*/ controller.getById);
 
     // router.get('/session/:sessionId', controller.getBySessionId);
 

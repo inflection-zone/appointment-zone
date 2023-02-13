@@ -1,6 +1,8 @@
 import express from "express";
 import { Logger } from "../common/logger";
 import { register as registerCustomerRoutes}  from "../api/customer/customer.routes";
+import { register as registerBusinessRoutes}  from "../api/business/business.routes";
+
 // import { register as registerCareplanCategoryRoutes } from "../api/careplan/careplan.category/careplan.category.routes";
 // import { register as registerCareplanActivityRoutes } from "../api/careplan/careplan.activity/careplan.activity.routes";
 // import { register as registerApiClientRoutes        } from "../api/api.client/api.client.routes";
@@ -59,11 +61,12 @@ export class Router {
                 //Handling the base route
                 this._app.get('/api/v1/', (req, res) => {
                     res.send({
-                        message : `Careplan Service API [Version ${process.env.API_VERSION}]`,
+                        message : `Appointment Service API [Version ${process.env.API_VERSION}]`,
                     });
                 });
 
                 registerCustomerRoutes(this._app);
+                registerBusinessRoutes(this._app);
                 // registerCareplanCategoryRoutes(this._app);
                 // registerApiClientRoutes(this._app);
                 // registerCareplanCategoryRoutes(this._app);

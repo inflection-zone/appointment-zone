@@ -204,7 +204,7 @@ model business_users {
 }
 
 model businesses {
-  id              String   @id @db.Char(36)
+  id              String   @id @default(uuid())
   ExternalId      String?  @db.VarChar(255)
   Name            String   @db.VarChar(255)
   Mobile          String   @db.VarChar(255)
@@ -221,8 +221,8 @@ model businesses {
   Instagram       String?  @db.VarChar(255)
   Yelp            String?  @db.VarChar(255)
   IsActive        Boolean  @default(true)
-  CreatedAt       DateTime @db.DateTime(0)
-  UpdatedAt       DateTime @db.DateTime(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model customers {
@@ -238,8 +238,8 @@ model customers {
   Address         String?   @db.Text
   InAppUser       Boolean   @default(false)
   IsActive        Boolean   @default(true)
-  CreatedAt       DateTime  @db.DateTime(0)
-  UpdatedAt       DateTime  @db.DateTime(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 
 model notifications {

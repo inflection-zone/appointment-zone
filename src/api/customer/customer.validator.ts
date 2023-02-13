@@ -15,9 +15,10 @@ export class CustomerValidator {
                 Email       : joi.string().max(256).required(),
                 Gender      : joi.string().valid("Male", "Female", "Other").required(),
                 BirthDate   : joi.string().optional(),
+                DisplayPicture: joi.string().optional(),
                 Address     : joi.string().max(256).optional(),
-                InAppUser   : joi.boolean().optional(),
-                IsActive    : joi.boolean().optional(),
+                InAppUser   : joi.boolean().required(),
+                IsActive    : joi.boolean().required(),
             });
             return await schema.validateAsync(requestBody);
         } catch (error) {

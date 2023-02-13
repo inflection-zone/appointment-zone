@@ -3,15 +3,16 @@ import { BaseSearchFilters, BaseSearchResults } from "../miscellaneous/base.sear
 import { Gender, uuid } from "../miscellaneous/system.types";
 
 export interface CustomerCreateModel {
-    Prefix          : string;
-    FirstName       : string;
-    LastName        : string;
+    id ?             :string;
+    Prefix ?         : string;
+    FirstName?       : string;
+    LastName?        : string;
     Mobile          : string   
-    Email           : string;
-    BirthDate       : Date;
-    Gender          : string; 
-    DisplayPicture  : string;
-    Address         : string; 
+    Email?           : string;
+    BirthDate?       : Date;
+    Gender?          : string; 
+    DisplayPicture?  : string;
+    Address ?        : string; 
     InAppUser       : Boolean;  
     IsActive        : Boolean;       
 };
@@ -31,7 +32,7 @@ export interface CustomerModel {
 }
 
 export interface CustomerDto {
-    id              : uuid;
+   
     Prefix          : string;
     FirstName       : string;
     LastName        : string;
