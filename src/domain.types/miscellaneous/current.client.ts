@@ -4,5 +4,5 @@ export interface CurrentClient {
     ClientName: string;
     IsPrivileged: boolean;
 
-    // ClientApiKey: string;
+    ClientApiKey: string;
 }
