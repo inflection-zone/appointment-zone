@@ -8,9 +8,9 @@ export interface ResponseDto {
     HttpCode: number;
     Data?: any;
     Trace?: string[];
-    // Client: CurrentClient;
+     Client: CurrentClient;
     // User: CurrentUser;
-    // Context: string;
+     Context: string;
     Request?: RequestDto;
     ClientIps: string[];
     APIVersion: string;
