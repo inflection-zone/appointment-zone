@@ -67,19 +67,19 @@ export class ApiClientControllerDelegate {
     //     return searchResults;
     // }
 
-    update = async (id: uuid, requestBody: any) => {
-        await validator.validateUpdateRequest(requestBody);
-        const record = await this._service.getById(id);
-        if (record === null) {
-            ErrorHandler.throwNotFoundError('Api client with id ' + id.toString() + ' cannot be found!');
-        }
-        const updateModel: ApiClientUpdateModel = this.getUpdateModel(requestBody);
-        const updated = await this._service.update(id, updateModel);
-        if (updated == null) {
-            throw new ApiError('Unable to update api client!', 400);
-        }
-        return this.getEnrichedDto(updated);
-    }
+    // update = async (id: uuid, requestBody: any) => {
+    //     await validator.validateUpdateRequest(requestBody);
+    //     const record = await this._service.getById(id);
+    //     if (record === null) {
+    //         ErrorHandler.throwNotFoundError('Api client with id ' + id.toString() + ' cannot be found!');
+    //     }
+    //     const updateModel: ApiClientUpdateModel = this.getUpdateModel(requestBody);
+    //     const updated = await this._service.update(id, updateModel);
+    //     if (updated == null) {
+    //         throw new ApiError('Unable to update api client!', 400);
+    //     }
+    //     return this.getEnrichedDto(updated);
+    // }
 
     delete = async (id: uuid) => {
         const record = await this._service.getById(id);
@@ -99,25 +99,25 @@ export class ApiClientControllerDelegate {
         return apiKeyDto;
     }
 
-    renewApiKey = async (request) => {
+    // renewApiKey = async (request) => {
 
-        const verificationModel = await validator.getOrRenewApiKey(request);
+    //     const verificationModel = await validator.getOrRenewApiKey(request);
 
-        if (verificationModel.ValidFrom == null) {
-            verificationModel.ValidFrom = new Date();
-        }
-        if (verificationModel.ValidTill == null) {
-            const d = new Date();
-            d.setFullYear(d.getFullYear() + 1);
-            verificationModel.ValidTill = d;
-        }
+    //     if (verificationModel.ValidFrom == null) {
+    //         verificationModel.ValidFrom = new Date();
+    //     }
+    //     if (verificationModel.ValidTill == null) {
+    //         const d = new Date();
+    //         d.setFullYear(d.getFullYear() + 1);
+    //         verificationModel.ValidTill = d;
+    //     }
 
-        const apiKeyDto = await this._service.renewApiKey(verificationModel);
-        if (apiKeyDto == null) {
-            throw new ApiError('Unable to renew client api key.', 400);
-        }
-        return apiKeyDto;
-    }
+    //     const apiKeyDto = await this._service.renewApiKey(verificationModel);
+    //     if (apiKeyDto == null) {
+    //         throw new ApiError('Unable to renew client api key.', 400);
+    //     }
+    //     return apiKeyDto;
+    // }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 

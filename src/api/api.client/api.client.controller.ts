@@ -51,16 +51,16 @@ export class ApiClientController extends BaseController {
     //     }
     // }
 
-    update = async (request: express.Request, response: express.Response): Promise < void > => {
-        try {
-            await this.authorize('ApiClient.Update', request, response);
-            const updatedRecord = await this._delegate.update(request.params.id, request.body);
-            const message = 'Api client updated successfully!';
-            ResponseHandler.success(request, response, message, 200, updatedRecord);
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    }
+    // update = async (request: express.Request, response: express.Response): Promise < void > => {
+    //     try {
+    //         await this.authorize('ApiClient.Update', request, response);
+    //         const updatedRecord = await this._delegate.update(request.params.id, request.body);
+    //         const message = 'Api client updated successfully!';
+    //         ResponseHandler.success(request, response, message, 200, updatedRecord);
+    //     } catch (error) {
+    //         ResponseHandler.handleError(request, response, error);
+    //     }
+    // }
 
     delete = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
@@ -87,19 +87,19 @@ export class ApiClientController extends BaseController {
         }
     };
 
-    renewApiKey = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
+    // renewApiKey = async (request: express.Request, response: express.Response): Promise<void> => {
+    //     try {
 
-            await this.authorize('ApiClient.RenewApiKey',request, response, false);
+    //         await this.authorize('ApiClient.RenewApiKey',request, response, false);
 
-            const apiKeyDto = await this._delegate.renewApiKey(request);
+    //         const apiKeyDto = await this._delegate.renewApiKey(request);
 
-            ResponseHandler.success(request, response, 'Client api keys renewed successfully!', 200, {
-                ApiKeyDetails : apiKeyDto,
-            });
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
+    //         ResponseHandler.success(request, response, 'Client api keys renewed successfully!', 200, {
+    //             ApiKeyDetails : apiKeyDto,
+    //         });
+    //     } catch (error) {
+    //         ResponseHandler.handleError(request, response, error);
+    //     }
+    // };
 
 }

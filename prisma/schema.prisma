@@ -300,7 +300,7 @@ model user_messages {
 model api_clients {
    id              String     @id @default(uuid())
    ClientName      String     @db.VarChar(255) @unique
-   ClientCode      String     @db.Char(36)
+   ClientCode      String     @db.Char(36) @unique
    Phone           String?    @db.VarChar(255)
    Email           String?    @db.VarChar(255)
    Password        String?    @db.VarChar(255)
