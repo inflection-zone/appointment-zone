@@ -209,44 +209,44 @@ export class ApiClientService{
         }
     }
     
-    update = async (id: string, clientDomainModel: ApiClientUpdateModel): Promise<ApiClientDto> => {
-        try {
-            const client = await this.prisma.api_clients.findUnique({where:{id:id}
-            });
+    // update = async (id: string, clientDomainModel: ApiClientUpdateModel): Promise<ApiClientDto> => {
+    //     try {
+    //         const client = await this.prisma.api_clients.findUnique({where:{id:id}
+    //         });
 
-            //Client code is not modifiable
-            //Use renew key to update ApiKey, ValidFrom and ValidTill
+    //         //Client code is not modifiable
+    //         //Use renew key to update ApiKey, ValidFrom and ValidTill
             
-            if (clientDomainModel.ClientName != null) {
-                client.ClientName = clientDomainModel.ClientName;
-            }
-            if (clientDomainModel.Password != null) {
-                client.Password = Helper.hash(clientDomainModel.Password);
-            }
-            if (clientDomainModel.Phone != null) {
-                client.Phone = clientDomainModel.Phone;
-            }
-            if (clientDomainModel.IsPrivileged != null) {
-                client.IsPrivileged = clientDomainModel.IsPrivileged;
-            }
-            if (clientDomainModel.Email != null) {
-                client.Email = clientDomainModel.Email;
-            }
-            if (clientDomainModel.ValidFrom != null) {
-                client.ValidFrom = clientDomainModel.ValidFrom;
-            }
-            if (clientDomainModel.ValidTill != null) {
-                client.ValidTill = clientDomainModel.ValidTill;
-            }
-            await client.save();
+    //         if (clientDomainModel.ClientName != null) {
+    //             client.ClientName = clientDomainModel.ClientName;
+    //         }
+    //         if (clientDomainModel.Password != null) {
+    //             client.Password = Helper.hash(clientDomainModel.Password);
+    //         }
+    //         if (clientDomainModel.Phone != null) {
+    //             client.Phone = clientDomainModel.Phone;
+    //         }
+    //         if (clientDomainModel.IsPrivileged != null) {
+    //             client.IsPrivileged = clientDomainModel.IsPrivileged;
+    //         }
+    //         if (clientDomainModel.Email != null) {
+    //             client.Email = clientDomainModel.Email;
+    //         }
+    //         if (clientDomainModel.ValidFrom != null) {
+    //             client.ValidFrom = clientDomainModel.ValidFrom;
+    //         }
+    //         if (clientDomainModel.ValidTill != null) {
+    //             client.ValidTill = clientDomainModel.ValidTill;
+    //         }
+    //         await client.save();
 
-            const dto = await this.toDto(client);
-            return dto;
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(error.message, 500);
-        }
-    }
+    //         const dto = await this.toDto(client);
+    //         return dto;
+    //     } catch (error) {
+    //         Logger.instance().log(error.message);
+    //         throw new ApiError(error.message, 500);
+    //     }
+    // }
 
     delete = async (id) => {
         try {

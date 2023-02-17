@@ -21,7 +21,7 @@
     public authenticateClient = async (request: express.Request): Promise<AuthenticationResult> => {
         try {
 
-           // request.authorizeRequest = false;
+           request.authorizeRequest = false;
 
             var res: AuthenticationResult = {
                 Result        : true,
