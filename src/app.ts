@@ -11,7 +11,7 @@ import { Scheduler } from './startup/scheduler';
 import { DatabaseModelManager } from './database/database.model.manager';
 import * as db from './database/database.connector';
 import { DbClient } from './database/db.client';
-// import { Seeder } from './startup/seeder';
+import { Seeder } from './startup/seeder';
 import { PrismaClientInit } from './startup/prisma.client.init';
 
 /////////////////////////////////////////////////////////////////////////
@@ -51,8 +51,8 @@ export default class Application {
             await Loader.init();
             await this.setupMiddlewares();
             await this._router.init();
-            // const seeder = new Seeder();
-            // await seeder.seed();
+            const seeder = new Seeder();
+            await seeder.seed();
             // await Scheduler.instance().schedule();
         }
         catch (error) {
