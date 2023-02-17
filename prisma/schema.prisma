@@ -312,3 +312,25 @@ model api_clients {
    UpdatedAt       DateTime   @updatedAt
    DeletedAt       DateTime   @db.DateTime()
 }
+
+model roles {
+  id              String      @id @default(uuid())
+  RoleName      String        @db.Char(36)
+  Description   String?       @db.Text
+  RolePrivilege role_privileges?
+  CreatedAt     DateTime      @default(now())
+  UpdatedAt     DateTime      @updatedAt
+  DeletedAt     DateTime      @db.DateTime()
+}
+
+model role_privileges {
+  id              String      @id @default(uuid())
+  RoleName        String      @db.Char(36)
+  RoleId          String      @unique
+  Privilege       String      @db.Char(36)
+  Role            roles       @relation(fields: [RoleId], references: [id])
+  CreatedAt       DateTime    @default(now())
+  UpdatedAt       DateTime    @updatedAt
+  DeletedAt       DateTime    @db.DateTime()
+}
+

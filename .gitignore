@@ -71,7 +71,7 @@ typings/
 # dotenv environment variables file
 .env
 .env.test
-
+seed.data/internal.clients.seed.json
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 

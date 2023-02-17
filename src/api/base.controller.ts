@@ -27,14 +27,14 @@ export class BaseController {
             throw new ApiError('Invalid request context', 500);
         }
         const resourceType = tokens[0];
-        // request.context = context;
-        // request.resourceType = resourceType;
-        // if (request.params.id !== undefined && request.params.id !== null) {
-        //     request.resourceId = request.params.id;
-        // }
-        // if (authorize) {
-        //     await Loader.Authorizer.authorize(request, response);
-        // }
+        request.context = context;
+        request.resourceType = resourceType;
+        if (request.params.id !== undefined && request.params.id !== null) {
+            request.resourceId = request.params.id;
+        }
+        if (authorize) {
+            await Loader.Authorizer.authorize(request, response);
+        }
     };
 
 }
