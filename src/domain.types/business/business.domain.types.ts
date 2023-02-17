@@ -61,8 +61,8 @@ export interface BusinessDto {
     Instagram       : string;
     Yelp            : string;
     IsActive        : Boolean;
-    createdAt       : Date;
-    updatedAt       : Date;
+    // createdAt       : Date;
+    // updatedAt       : Date;
       
 }
 

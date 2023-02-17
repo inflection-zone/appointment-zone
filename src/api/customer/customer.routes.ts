@@ -11,8 +11,8 @@ export const register = (app: express.Application): void => {
     const controller = new CustomerController();
 
     router.post('', controller.create);
-    // router.put('/:id', authenticator.authenticateCustomer, controller.update);
-    // router.delete('/:id', authenticator.authenticateCustomer, controller.delete);
+    router.put('/:id', /*authenticator.authenticateCustomer,*/ controller.update);
+    router.delete('/:id', /*authenticator.authenticateCustomer,*/ controller.delete);
 
     // router.post('/login-password', controller.loginWithPassword);
     // router.post('/login-otp', controller.loginWithOtp);

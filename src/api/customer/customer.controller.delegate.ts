@@ -2,11 +2,12 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 import { ApiError } from "../../common/api.error";
-import { CustomerCreateModel, CustomerDto } from "../../domain.types/customer/customer.domain.types";
+import { CustomerCreateModel, CustomerDto, CustomerUpdateModel, CustomerSearchFilters, CustomerSearchResults } from "../../domain.types/customer/customer.domain.types";
 import { CustomerValidator as validator } from './customer.validator';
 import { CustomerService } from '../../database/repository.services/customer.service';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { ErrorHandler } from "../../common/error.handler";
+import { Helper } from "../../common/helper";
 export class CustomerControllerDelegate {
 
     //#region member variables and constructors
@@ -47,6 +48,43 @@ export class CustomerControllerDelegate {
         return this.getEnrichedDto(record);
     };
 
+    search = async (query) => {
+        await validator.validateSearchRequest(query);
+        var filters: CustomerSearchFilters = this.getSearchFilters(query);
+        var searchResults: CustomerSearchResults = await this._service.search(filters);
+        var items = searchResults.Items.map(x => this.getPublicDto(x));
+        searchResults.Items = items;
+        return searchResults;
+    }
+
+    update = async (id: uuid ,requestBody: any) =>{
+        await validator.validateUpdateRequest(requestBody);
+        const record: CustomerDto = await this._service.getById(id);
+        if (record === null) {
+          ErrorHandler.throwNotFoundError(" Customer with id " + id.toString() + "cannot be found!");
+        }
+        const updateModel: CustomerUpdateModel = this.getUpdateModel(requestBody);
+        const updated: CustomerDto = await this._service.update(id , updateModel);
+        if (updated == null) {
+            throw new ApiError('Unable to update customer!', 400);
+        }
+        return this.getEnrichedDto(updated);
+    }
+
+    delete = async (id: uuid) => {
+        const record: CustomerDto = await this._service.getById(id);
+        if (record == null) {
+            ErrorHandler.throwNotFoundError('Customer with id ' + id.toString() + ' cannot be found!');
+        }
+        const customerDeleted = await this._service.delete(id);
+        return {
+            Deleted : customerDeleted
+        };
+    }
+
+
+
+
   
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -67,6 +105,55 @@ export class CustomerControllerDelegate {
 
         };
     };
+
+    getSearchFilters = (query) => {
+        var filters = {};
+        var Prefix = query.Prefix ? query.Prefix : null;
+        if (Prefix != null) {
+            filters['Prefix'] = Prefix;
+        }
+        var FirstName = query.FirstName ? query.FirstName : null;
+        if (FirstName != null) {
+            filters['FirstName'] = FirstName;
+        }
+        var LastName = query.LastName ? query.LastName : null;
+        if (LastName != null) {
+            filters['LastName'] = LastName;
+        }
+        var Mobile = query.Mobile ? query.Mobile : null;
+        if (Mobile != null) {
+            filters['Mobile'] = Mobile;
+        }
+        var Email = query.Email ? query.Email : null;
+        if (Email != null) {
+            filters['Email'] = Email;
+        }
+        var BirthDate = query.BirthDate ? query.BirthDate : null;
+        if (BirthDate != null) {
+            filters['BirthDate'] = BirthDate;
+        }
+        var Gender = query.Gender ? query.Gender : null;
+        if (Gender != null) {
+            filters['Gender'] = Gender;
+        }
+        var DisplayPicture = query.DisplayPicture ? query.DisplayPicture : null;
+        if (DisplayPicture != null) {
+            filters['DisplayPicture'] = DisplayPicture;
+        }
+        var Address = query.Address ? query.Address : null;
+        if (Address != null) {
+            filters['Address'] = Address;
+        }
+        var IsActive = query.IsActive ? query.IsActive : null;
+        if (IsActive != null) {
+            filters['IsActive'] = IsActive;
+        }
+        var InAppUser = query.InAppUser ? query.InAppUser : null;
+        if (InAppUser != null) {
+            filters['InAppUser'] = InAppUser;
+        }
+        return filters;
+    }
 
     //This function returns a response DTO which is enriched with available resource data
 
@@ -97,7 +184,7 @@ export class CustomerControllerDelegate {
             return null;
         }
         return {
-            id          : record.id,
+            id                  : record.id,
             Prefix              : record.Prefix,
             FirstName           : record.FirstName,
             LastName            : record.LastName,
@@ -108,6 +195,48 @@ export class CustomerControllerDelegate {
             Address             : record.Address,
         };
     };
+
+    getUpdateModel = (requestBody): CustomerUpdateModel => {
+
+        let updateModel: CustomerUpdateModel = {};
+
+    if (Helper.hasProperty(requestBody, 'Prefix')) {
+        updateModel.Prefix = requestBody.Prefix;
+    }
+    if (Helper.hasProperty(requestBody, ' FirstName')) {
+        updateModel. FirstName = requestBody. FirstName;
+    }
+    if (Helper.hasProperty(requestBody, 'LastName')) {
+        updateModel.LastName = requestBody.LastName;
+    }
+    if (Helper.hasProperty(requestBody, 'Mobile')) {
+        updateModel.Mobile = requestBody.Mobile;
+    }
+    if (Helper.hasProperty(requestBody, 'Email')) {
+        updateModel.Email = requestBody.Email
+    }
+    if (Helper.hasProperty(requestBody, 'Gender')) {
+        updateModel.Gender = requestBody.Gender;
+    }
+    if (Helper.hasProperty(requestBody, 'DisplayPicture')) {
+        updateModel.DisplayPicture = requestBody.DisplayPicture;
+    }
+    if (Helper.hasProperty(requestBody, 'BirthDate')) {
+        updateModel.BirthDate = requestBody.BirthDate;
+    }
+    if (Helper.hasProperty(requestBody, 'Address')) {
+        updateModel.Address = requestBody.Address
+    }
+    if (Helper.hasProperty(requestBody, 'IsActive')) {
+        updateModel.IsActive = requestBody.IsActive;
+    }
+    if (Helper.hasProperty(requestBody, 'InAppUser')) {
+        updateModel.InAppUser = requestBody.InAppUser;
+    }
+   
+    return updateModel;
+}
+
 
 
 }

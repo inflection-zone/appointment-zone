@@ -17,7 +17,7 @@ export interface CustomerCreateModel {
     IsActive        : Boolean;       
 };
 
-export interface CustomerModel {
+export interface CustomerUpdateModel {
     Prefix?          : string;
     FirstName?       : string;
     LastName ?       : string;
