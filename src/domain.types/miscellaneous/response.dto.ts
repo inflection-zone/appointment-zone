@@ -1,6 +1,7 @@
 import { CurrentClient } from "./current.client";
 import { CurrentUser } from "./current.user";
 import { RequestDto } from "./request.dto";
+import {Request} from "express"
 
 export interface ResponseDto {
     Status: string;
@@ -8,9 +9,9 @@ export interface ResponseDto {
     HttpCode: number;
     Data?: any;
     Trace?: string[];
-    // Client: CurrentClient;
+    Client: CurrentClient;
     // User: CurrentUser;
-    // Context: string;
+     Context: string;
     Request?: RequestDto;
     ClientIps: string[];
     APIVersion: string;

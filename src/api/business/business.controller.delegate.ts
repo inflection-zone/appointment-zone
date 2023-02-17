@@ -81,38 +81,8 @@ export class BusinessControllerDelegate {
         };
 
     }
-    // getCurrentApiKey = async (request) => {
-    //     const verificationModel = await validator.getOrRenewApiKey(request);
-    //     const apiKeyDto = await this._service.getApiKey(verificationModel);
-    //     if (apiKeyDto == null) {
-    //         throw new ApiError('Unable to retrieve business api key.', 400);
-    //     }
-    //     return apiKeyDto;
-    // }
+    
 
-    // renewApiKey = async (request) => {
-
-    //     const verificationModel = await validator.getOrRenewApiKey(request);
-
-    //     if (verificationModel.ValidFrom == null) {
-    //         verificationModel.ValidFrom = new Date();
-    //     }
-    //     if (verificationModel.ValidTill == null) {
-    //         const d = new Date();
-    //         d.setFullYear(d.getFullYear() + 1);
-    //         verificationModel.ValidTill = d;
-    //     }
-
-    //     const apiKeyDto = await this._service.renewApiKey(verificationModel);
-    //     if (apiKeyDto == null) {
-    //         throw new ApiError('Unable to renew business api key.', 400);
-    //     }
-    //     return apiKeyDto;
-    // }
-
-
-
-  
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 

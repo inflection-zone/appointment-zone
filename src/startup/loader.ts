@@ -45,8 +45,8 @@ export class Loader {
             //Register injections here...
             Injector.registerInjections(container);
 
-            // Loader._authenticator = container.resolve(Authenticator);
-            // Loader._authorizer = container.resolve(Authorizer);
+            Loader._authenticator = container.resolve(Authenticator);
+            Loader._authorizer = container.resolve(Authorizer);
 
             return true;
 
