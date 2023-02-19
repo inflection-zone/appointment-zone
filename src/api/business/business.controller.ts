@@ -77,9 +77,5 @@ export class BusinessController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     }
- 
-
-
-
 
 }

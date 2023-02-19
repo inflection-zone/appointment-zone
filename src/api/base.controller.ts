@@ -32,9 +32,9 @@ export class BaseController {
         if (request.params.id !== undefined && request.params.id !== null) {
             request.resourceId = request.params.id;
         }
-        if (authorize) {
-            await Loader.Authorizer.authorize(request, response);
-        }
+        // if (authorize) {
+        //     await Loader.Authorizer.authorize(request, response);
+        // }
     };
 
 }

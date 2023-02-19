@@ -223,6 +223,8 @@ model businesses {
   IsActive        Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  IsDeleted        Boolean   @default(false) 
+  DeletedOn        DateTime? @db.DateTime(0)
 }
 
 model customers {
@@ -240,6 +242,8 @@ model customers {
   IsActive        Boolean   @default(true)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  IsDeleted        Boolean   @default(false) 
+  DeletedOn        DateTime? @db.DateTime(0)
 }
 
 model notifications {
@@ -310,5 +314,6 @@ model api_clients {
    ValidTill       DateTime?  @db.DateTime()
    CreatedAt       DateTime   @default(now())
    UpdatedAt       DateTime   @updatedAt
-   DeletedAt       DateTime   @db.DateTime()
+   IsDeleted        Boolean   @default(false)
+   DeletedOn        DateTime? @db.DateTime(0)
 }
