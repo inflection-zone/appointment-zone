@@ -40,16 +40,16 @@ export class UserController extends BaseController {
         }
     }
 
-    getBySessionId = async (request: express.Request, response: express.Response): Promise <void> => {
-        try {
-            await this.authorize('User.GetBySessionId', request, response);
-            const record = await this._delegate.getBySessionId(request.params.sessionId);
-            const message = 'User retrieved successfully!';
-            ResponseHandler.success(request, response, message, 200, record);
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    }
+    // getBySessionId = async (request: express.Request, response: express.Response): Promise <void> => {
+    //     try {
+    //         await this.authorize('User.GetBySessionId', request, response);
+    //         const record = await this._delegate.getBySessionId(request.params.sessionId);
+    //         const message = 'User retrieved successfully!';
+    //         ResponseHandler.success(request, response, message, 200, record);
+    //     } catch (error) {
+    //         ResponseHandler.handleError(request, response, error);
+    //     }
+    // }
 
     // search = async (request: express.Request, response: express.Response): Promise <void> => {
     //     try {
@@ -95,16 +95,16 @@ export class UserController extends BaseController {
         }
     };
 
-    changePassword = async (request: express.Request, response: express.Response): Promise <void> => {
-        try {
-            await this.authorize('User.ResetPassword', request, response);
-            const result = await this._delegate.changePassword(request.body);
-            const message = 'Password reset successfully!';
-            ResponseHandler.success(request, response, message, 200, result);
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
+    // changePassword = async (request: express.Request, response: express.Response): Promise <void> => {
+    //     try {
+    //         await this.authorize('User.ResetPassword', request, response);
+    //         const result = await this._delegate.changePassword(request.body);
+    //         const message = 'Password reset successfully!';
+    //         ResponseHandler.success(request, response, message, 200, result);
+    //     } catch (error) {
+    //         ResponseHandler.handleError(request, response, error);
+    //     }
+    // };
 
     // loginWithOtp = async (request: express.Request, response: express.Response): Promise <void> => {
     //     try {
@@ -128,17 +128,17 @@ export class UserController extends BaseController {
     //     }
     // };
 
-    logout = async (request: express.Request, response: express.Response): Promise <void> => {
-        try {
-            this.authorize('User.Logout', request, response);
-            const userId = request.currentUser.UserId;
-            const sessionId = request.currentUser.SessionId;
-            const result = await this._delegate.logout(userId, sessionId);
-            const message = 'User logged out successfully!';
-            ResponseHandler.success(request, response, message, 200, result);
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
+    // logout = async (request: express.Request, response: express.Response): Promise <void> => {
+    //     try {
+    //         this.authorize('User.Logout', request, response);
+    //         const userId = request.currentUser.UserId;
+    //         const sessionId = request.currentUser.SessionId;
+    //         const result = await this._delegate.logout(userId, sessionId);
+    //         const message = 'User logged out successfully!';
+    //         ResponseHandler.success(request, response, message, 200, result);
+    //     } catch (error) {
+    //         ResponseHandler.handleError(request, response, error);
+    //     }
+    // };
 
 }

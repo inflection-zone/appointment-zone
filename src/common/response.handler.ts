@@ -33,7 +33,7 @@ export class ResponseHandler {
             HttpCode : httpErrorCode ? httpErrorCode : 500,
             Trace    : trace_path,
             Client   : request ? request.currentClient : null,
-            // User     : request ? request.currentUser : null,
+            User     : request ? request.currentUser : null,
             Context  : request ? request.context : null,
             Request  : {
                 Method  : request ? request.method : null,
@@ -80,7 +80,7 @@ export class ResponseHandler {
             Data     : data ?? null,
             Trace    : null,
             Client   : request ? request.currentClient : null,
-            // User     : request ? request.currentUser : null,
+            User     : request ? request.currentUser : null,
             Context  : request ? request.context : null,
             Request  : {
                 Method  : request ? request.method : null,
