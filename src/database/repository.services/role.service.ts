@@ -31,7 +31,7 @@ export class RoleService{
 
     getByName = async (name) => {
         try {
-            return await this.prisma.roles.findUnique({ where: { RoleName: name  }
+            return await this.prisma.roles.findMany({ where: { RoleName: name  }
 	 });
         } catch (error) {
             ErrorHandler.throwDbAccessError('Unable to retrieve role!', error);
@@ -49,7 +49,6 @@ export class RoleService{
     delete = async (id) => {
         try {
             var result = await this.prisma.roles.delete({ where: { id: id } });
-            return result === 1;
         } catch (error) {
             ErrorHandler.throwDbAccessError('Unable to delete role!', error);
         }

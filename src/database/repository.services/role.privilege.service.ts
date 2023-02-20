@@ -46,10 +46,7 @@ export class RolePrivilegeService {
     hasPrivilegeForRole = async (roleId, privilege) => {
         try {
             const rolePrivileges = await this.prisma.role_privileges.findMany({
-                where : {
-                    RoleId    : roleId,
-                    Privilege : { privilege },
-                },
+                where : {RoleId  : roleId, Privilege :  privilege ,},
             });
             return rolePrivileges.length > 0;
         } catch (error) {

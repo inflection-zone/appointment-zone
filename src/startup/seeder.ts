@@ -3,13 +3,15 @@ import path from "path";
 import { Helper } from "../common/helper";
 import { Logger } from "../common/logger";
 import * as RolePrivilegesList from '../../seed.data/role.privileges.json';
-// import { RoleService } from '../database/repository.services/role.service';
-// import { UserRoleService } from '../database/repository.services/user/user.role.service';
-//import { RolePrivilegeService } from '../database/repository.services/role.privilege.service';
-// import { UserService } from '../database/repository.services/user/user.service';
+import { RoleService } from '../database/repository.services/role.service';
+import { UserRoleService } from '../database/repository.services/user/user.role.service';
+import { RolePrivilegeService } from '../database/repository.services/role.privilege.service';
+import { UserService } from '../database/repository.services/user/user.service';
 import { ApiClientService } from '../database/repository.services/api.client.service';
 import { RoleList } from '../domain.types/miscellaneous/role.types';
 import { Gender } from "../domain.types/miscellaneous/system.types";
+import { UserCreateModel } from "../domain.types/user/user.domain.types";
+import { UserRoleCreateModel } from "../domain.types/user/user.role.domain.types";
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -17,19 +19,24 @@ export class Seeder {
 
     _apiClientService: ApiClientService = new ApiClientService();
 
-    // _roleService: RoleService = new RoleService();
+    _userService: UserService = new UserService();
 
-    // _rolePrivilegeService: RolePrivilegeService = new RolePrivilegeService();
+    _roleService: RoleService = new RoleService();
+
+    _rolePrivilegeService: RolePrivilegeService = new RolePrivilegeService();
+
+    _userRoleService: UserRoleService = new UserRoleService();
+
 
     // _fileResourceService: FileResourceService = null;
 
     public seed = async (): Promise<void> => {
         try {
             await this.createTempFolders();
-            //await this.seedDefaultRoles();
-            //await this.seedRolePrivileges();
+            await this.seedDefaultRoles();
+            await this.seedRolePrivileges();
             await this.seedInternalClients();
-            //await this.seedDefaultUsers();
+            await this.seedDefaultUsers();
            // await this.seedDefaultCareplanCategories();
         } catch (error) {
             Logger.instance().log(error.message);
@@ -41,73 +48,73 @@ export class Seeder {
         await Helper.createTempUploadFolder();
     };
 
-    // private seedRolePrivileges = async () => {
-    //     try {
-    //         const arr = RolePrivilegesList['default'];
-    //         for (let i = 0; i < arr.length; i++) {
-    //             const rp = arr[i];
-    //             const roleName = rp['Role'];
-    //             const privileges = rp['Privileges'];
+    private seedRolePrivileges = async () => {
+        try {
+            const arr = RolePrivilegesList['default'];
+            for (let i = 0; i < arr.length; i++) {
+                const rp = arr[i];
+                const roleName = rp['Role'];
+                const privileges = rp['Privileges'];
 
-    //             const role = await this._roleService.getByName(roleName);
-    //             if (role == null) {
-    //                 continue;
-    //             }
-    //             for (const privilege of privileges) {
-    //                 const exists = await this._rolePrivilegeService.hasPrivilegeForRole(role.id, privilege);
-    //                 if (!exists) {
-    //                     await this._rolePrivilegeService.create({
-    //                         RoleId    : role.id,
-    //                         RoleName  : role.RoleName,
-    //                         Privilege : privilege,
-    //                     });
-    //                 }
-    //             }
-    //         }
-    //     } catch (error) {
-    //         Logger.instance().log('Error occurred while seeding role-privileges!');
-    //     }
-    //     Logger.instance().log('Seeded role-privileges successfully!');
-    // };
+                const role = await this._roleService.getByName(roleName);
+                if (role == null) {
+                    continue;
+                }
+                for (const privilege of privileges) {
+                    const exists = await this._rolePrivilegeService.hasPrivilegeForRole(role.id, privilege);
+                    if (!exists) {
+                        await this._rolePrivilegeService.create({
+                            RoleId    : role.id,
+                            RoleName  : role.RoleName,
+                            Privilege : privilege,
+                        });
+                    }
+                }
+            }
+        } catch (error) {
+            Logger.instance().log('Error occurred while seeding role-privileges!');
+        }
+        Logger.instance().log('Seeded role-privileges successfully!');
+    };
 
-    // private seedDefaultUsers = async () => {
+    private seedDefaultUsers = async () => {
 
-    //     const defaultUsers = this.loadJSONSeedFile('default.users.seed.json');
+        const defaultUsers = this.loadJSONSeedFile('default.users.seed.json');
 
-    //     for await (var u of defaultUsers) {
+        for await (var u of defaultUsers) {
 
-    //         const role = await this._roleService.getByName(u.Role);
+            const role = await this._roleService.getByName(u.Role);
 
-    //         const existingUser = await this._userService.getUser(null, null, null, u.UserName);
-    //         if (existingUser) {
-    //             continue;
-    //         }
+            const existingUser = await this._userService.getUser(null, null, null, u.UserName);
+            if (existingUser) {
+                continue;
+            }
        
-    //         const userDomainModel : UserCreateModel = {
-    //             Phone       : u.Phone,
-    //             FirstName   : u.FirstName,
-    //             LastName    : u.LastName,
-    //             UserName    : u.UserName,
-    //             Password    : u.Password,
-    //             RoleId      : role.id,
-    //             CountryCode : u.CountryCode,
-    //             Email       : u.Email,
-    //             Gender      : Gender.Male,
-    //             BirthDate   : null,
-    //             Prefix      : ""
-    //         };
+            const userDomainModel : UserCreateModel = {
+                Phone       : u.Phone,
+                FirstName   : u.FirstName,
+                LastName    : u.LastName,
+                UserName    : u.UserName,
+                Password    : u.Password,
+                RoleId      : role.id,
+                CountryCode : u.CountryCode,
+                Email       : u.Email,
+                Gender      : Gender.Male,
+                BirthDate   : null,
+                Prefix      : ""
+            };
             
-    //         userDomainModel.Password = Helper.generateHashedPassword(u.Password);
-    //         const user = await this._userService.create(userDomainModel);
-    //         const userRole: UserRoleCreateModel = {
-    //             UserId : user.id,
-    //             RoleId : role.id,
-    //         };
-    //         await this._userRoleService.create(userRole);
-    //     }
+            userDomainModel.Password = Helper.generateHashedPassword(u.Password);
+            const user = await this._userService.create(userDomainModel);
+            const userRole: UserRoleCreateModel = {
+                UserId : user.id,
+                RoleId : role.id,
+            };
+            await this._userRoleService.create(userRole);
+        }
 
-    //     Logger.instance().log('Seeded admin and moderator successfully!');
-    // };
+        Logger.instance().log('Seeded admin and moderator successfully!');
+    };
 
     private loadJSONSeedFile(file: string): any {
         var filepath = path.join(process.cwd(), 'seed.data', file);
@@ -144,20 +151,20 @@ export class Seeder {
 
     };
 
-//     private seedDefaultRoles = async () => {
+    private seedDefaultRoles = async () => {
         
-//         for await (var role of RoleList) {
+        for await (var role of RoleList) {
 
-//             var r = await this._roleService.getByName(role);
-//             if (!r) {
-//                 await this._roleService.create({
-//                     RoleName : role
-//                 });
-//             }
-//         }
+            var r = await this._roleService.getByName(role);
+            if (!r) {
+                await this._roleService.create({
+                    RoleName : role
+                });
+            }
+        }
 
-//         Logger.instance().log('Seeded default roles successfully!');
-//     };
+        Logger.instance().log('Seeded default roles successfully!');
+    };
 
 //     private seedDefaultCareplanCategories = async () => {
 
