@@ -1,4 +1,4 @@
-import { any } from "joi";
+import { any, number } from "joi";
 import { where } from "sequelize";
 import instance from "tsyringe/dist/typings/dependency-container";
 import { ErrorHandler } from "../../common/error.handler";
@@ -37,31 +37,65 @@ export class CustomerService {
 
 }
 
+exists = async (id) => {
+    try {
+        const record = await this.prisma.customers.findUnique(id);
+        return record !== null;
+    } catch (error) {
+        ErrorHandler.throwDbAccessError('DB Error: Unable to determine existance of Customer!', error);
+    }
+}
+
 search = async (filters) => {
     try {
+        var search;
+       if(filters.FirstName || filters.LastName || filters.Mobile || filters.Email ){
+         search= await this.prisma.customers.findMany({
+            where   : {OR:[
+                { FirstName: { contains: filters.FirstName } },
+                { LastName: { contains: filters.LastName } },
+                { Mobile: { contains: filters.Mobile } },
+                { Email: { contains: filters.Email } }
+                
+                
+            ]}})}else{
+                search= await this.prisma.customers.findMany()
 
-
+            }
+            
+                // select:{
+                //     FirstName: true,
+                //     LastName: true,
+                    
+                //     Mobile: true,
+                //     Email: true
+                //    }
+            // include : {}
+            // var results = await this.prisma.$transaction([
+            //     count=this.prisma.customers.count({
+            //         where   : {OR:[{ Email: { contains: filters.Email } },
+            //             { Mobile: { contains: filters.Mobile } }]}
+            //     }),
+            //     this.prisma.customers.findMany({
+            //     where   : {OR:[{ Email: { contains: filters.Email } },
+            //         { Mobile: { contains: filters.Mobile } }]}
         
-        var search = await this.prisma.$transaction([
-            this.prisma.customers.count(),
-            this.prisma.customers.findMany({
-            where   : {}
-            // include : []
+   
         
-    })]);
-        if (filters.Email) {
-            search['Email'] = filters.Email;
-        }
-        if (filters.Mobile) {
-            search['Mobile'] = filters.Mobile;
-        }
-        if (filters.LastName) {
-            search['LastName'] = filters.LastName;
+        // if (filters.Email) {
+        //     search['Email'] = filters.Email;
+        // }
+        // if (filters.Mobile) {
+        //     search['Mobile'] = filters.Mobile;
+        // }
+        // if (filters.LastName) 
+        //     search['LastName'] = filters.LastName;
+        
 
         
        
 
-        //Sorting
+        // Sorting
         let orderByColumn = 'CreatedAt';
         if (filters.OrderBy) {
             orderByColumn = filters.OrderBy;
@@ -93,23 +127,26 @@ search = async (filters) => {
         search['limit'] = limit;
         search['offset'] = offset;
 
-        const foundResults = await this.prisma.count(search)
+        const foundResults = search
         const searchResults = {
-            TotalCount     : foundResults.count,
-            RetrievedCount : foundResults.rows.length,
+            TotalCount     : foundResults.length,
+            RetrievedCount : foundResults.length,
             PageIndex      : pageIndex,
             ItemsPerPage   : limit,
             Order          : order === 'DESC' ? 'descending' : 'ascending',
             OrderedBy      : orderByColumn,
-            Items          : foundResults.rows,
+            Items          : foundResults,
         };
 
         return searchResults;
-
+        // return results;
+    
     } catch (error) {
         ErrorHandler.throwDbAccessError('DB Error: Unable to search user records!', error);
     }
 }
+
+
 
 update = async (id, updateModel) => {
   try {
@@ -127,6 +164,7 @@ update = async (id, updateModel) => {
   }
 }
 
+
 delete = async (id) => {
   try {
       const result = await this.prisma.customers.delete({ where: 
@@ -137,7 +175,5 @@ delete = async (id) => {
       ErrorHandler.throwDbAccessError('DB Error: Unable to delete customers!', error);
 
   }
-};
-
-
+}
 }

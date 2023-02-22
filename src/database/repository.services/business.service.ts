@@ -47,36 +47,42 @@ export class BusinessService{
         }
     }
 
-    // search = async (filters: BusinessSearchFilters): Promise <BusinessSearchResults> => {            
-    //     try{
-    //         var search = this.getSearchModel(filters);
-    //         var {
-    //             order,
-    //             orderByColumn
-    //         } = this.addSortingToSearch(search, filters);
-    //         var {
-    //             pageIndex,
-    //             limit
-    //         } = this.addPaginationToSearch(search, filters);
+    search = async (filters: BusinessSearchFilters): Promise <BusinessSearchResults> => {            
+        try{
+            var search = this.getSearchModel(filters);
+            var {
+                order,
+                orderByColumn
+            } = this.addSortingToSearch(search, filters);
+            var {
+                pageIndex,
+                limit
+            } = this.addPaginationToSearch(search, filters);
 
-    //         const foundResults = await this.prisma.businesses.findMany(search)
-    //         const searchResults: BusinessSearchResults = {
-    //             TotalCount     : foundResults.count,
-    //             RetrievedCount : foundResults.rows.length,
-    //             PageIndex      : pageIndex,
-    //             ItemsPerPage   : limit,
-    //             Order          : order === 'DESC' ? 'descending' : 'ascending',
-    //             OrderedBy      : orderByColumn,
-    //             Items          : foundResults.rows,
+            const foundResults = await this.prisma.businesses.findMany({where: {
+               Name : 'Ayurcare private limited'
 
-    //         }
+               
+
                 
-    //          return searchResults;
-    //         }catch (error) {
-    //             ErrorHandler.throwDbAccessError('DB Error: Unable to create business!',error)
-    //     } 
+              },})
+            const searchResults: BusinessSearchResults = {
+                TotalCount     : foundResults.length,
+                RetrievedCount : foundResults.length,
+                PageIndex      : pageIndex,
+                ItemsPerPage   : limit,
+                Order          : order === 'DESC' ? 'descending' : 'ascending',
+                OrderedBy      : orderByColumn,
+                Items          : foundResults,
 
-    //   }
+            }
+                
+             return searchResults;
+            }catch (error) {
+                ErrorHandler.throwDbAccessError('DB Error: Unable to create business!',error)
+        } 
+
+      }
 
     update = async (id, updateModel) => {
         try {
@@ -175,11 +181,12 @@ private getSearchModel = (filters) => {
 
     var search = {
         where   : {},
-        include :[]
+        // include :{}
        
     };
 
     if (filters.ExternalId) {
+        where:{Email: { contains: filters.Email } }
         search.where['ExternalId'] = filters.ExternalId
         }
     

@@ -32,14 +32,14 @@ export class CustomerValidator {
                 Prefix      : joi.string().max(16).optional(),
                 FirstName   : joi.string().max(64).optional(),
                 LastName    : joi.string().max(64).optional(),
-                Mobile      : joi.string().max(16).min(6).required(),
-                Email       : joi.string().max(256).required(),
-                Gender      : joi.string().valid("Male", "Female", "Other").required(),
+                Mobile      : joi.string().max(16).min(6).optional(),
+                Email       : joi.string().max(256).optional(),
+                Gender      : joi.string().valid("Male", "Female", "Other").optional(),
                 BirthDate   : joi.string().optional(),
                 DisplayPicture: joi.string().optional(),
                 Address     : joi.string().max(256).optional(),
-                InAppUser   : joi.boolean().required(),
-                IsActive    : joi.boolean().required(),
+                InAppUser   : joi.boolean().optional(),
+                IsActive    : joi.boolean().optional(),
             });
             return await schema.validateAsync(query);
 
