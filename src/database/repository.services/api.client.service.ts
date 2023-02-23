@@ -30,7 +30,7 @@ export class ApiClientService{
                 ApiKey       : clientDomainModel.ApiKey ?? apikeyGenerator.default.create().apiKey,
                 ValidFrom    : clientDomainModel.ValidFrom ?? null,
                 ValidTill    : clientDomainModel.ValidTill ?? null,
-                DeletedAt    : clientDomainModel.DeletedAt ?? null,
+              //  DeletedAt    : clientDomainModel.DeletedAt ?? null,
             };
             entity.Password = Helper.hash(clientDomainModel.Password);
             const client = await this.prisma.api_clients.create({data:entity});

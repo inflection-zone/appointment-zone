@@ -40,7 +40,7 @@ export class BusinessService{
 
     exists = async (id) => {
         try {
-            const record = await this.prisma.businesses.findUnique(id);
+            const record = await this.prisma.businesses.findUnique({where:{id:id}});
             return record !== null;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to determine existance of business!', error);

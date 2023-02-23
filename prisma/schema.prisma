@@ -24,8 +24,8 @@ model appointment_statuses {
   IsCancellationStatus   Boolean  @default(false)
   IsWalkinEntryStatus    Boolean  @default(false)
   IsActive               Boolean  @default(true)
-  CreatedAt              DateTime @db.DateTime(0)
-  UpdatedAt              DateTime @db.DateTime(0)
+  CreatedAt              DateTime    @default(now())
+  UpdatedAt              DateTime    @updatedAt
 }
 
 model appointments {
@@ -59,8 +59,8 @@ model appointments {
   RescheduledOn              DateTime? @db.DateTime(0)
   RescheduledAppointmentId   Int?      @default(1)
   IsActive                   Boolean   @default(true)
-  CreatedAt                  DateTime  @db.DateTime(0)
-  UpdatedAt                  DateTime  @db.DateTime(0)
+  CreatedAt                  DateTime  @default(now())
+  UpdatedAt                  DateTime  @updatedAt
 }
 
 model business_node_customers {
@@ -69,8 +69,8 @@ model business_node_customers {
   CustomerId       String   @db.Char(36)
   SmsConsent       String   @default("NOT_REPLIED") @db.VarChar(255)
   IsActive         Boolean  @default(true)
-  CreatedAt        DateTime @db.DateTime(0)
-  UpdatedAt        DateTime @db.DateTime(0)
+  CreatedAt        DateTime @default(now())
+  UpdatedAt        DateTime @updatedAt
 }
 
 model business_node_hours {
@@ -84,8 +84,8 @@ model business_node_hours {
   StartTime        DateTime  @default(dbgenerated("'10:00:00'")) @db.Time(0)
   EndTime          DateTime  @default(dbgenerated("'21:00:00'")) @db.Time(0)
   IsActive         Boolean   @default(true)
-  CreatedAt        DateTime  @db.DateTime(0)
-  UpdatedAt        DateTime  @db.DateTime(0)
+  CreatedAt        DateTime  @default(now())
+  UpdatedAt        DateTime  @updatedAt
 }
 
 model business_nodes {
@@ -104,8 +104,8 @@ model business_nodes {
   AllowWalkinAppointments   Boolean  @default(true)
   AllowFutureBookingFor     String   @default("30d") @db.VarChar(255)
   IsActive                  Boolean  @default(true)
-  CreatedAt                 DateTime @db.DateTime(0)
-  UpdatedAt                 DateTime @db.DateTime(0)
+  CreatedAt                 DateTime @default(now())
+  UpdatedAt                 DateTime @updatedAt
 }
 
 model business_services {
@@ -129,8 +129,8 @@ model business_services {
   EnableLoyalty           Boolean  @default(true)
   DisplayServicePicture   String?  @db.Text
   IsActive                Boolean  @default(true)
-  CreatedAt               DateTime @db.DateTime(0)
-  UpdatedAt               DateTime @db.DateTime(0)
+  CreatedAt               DateTime @default(now())
+  UpdatedAt               DateTime @updatedAt
 }
 
 model business_skills {
@@ -140,8 +140,8 @@ model business_skills {
   Description      String?  @db.Text
   DisplayPicture   String?  @db.Text
   IsActive         Boolean  @default(true)
-  CreatedAt        DateTime @db.DateTime(0)
-  UpdatedAt        DateTime @db.DateTime(0)
+  CreatedAt        DateTime @default(now())
+  UpdatedAt        DateTime @updatedAt
 }
 
 model business_user_hours {
@@ -155,8 +155,8 @@ model business_user_hours {
   StartTime        DateTime  @default(dbgenerated("'10:00:00'")) @db.Time(0)
   EndTime          DateTime  @default(dbgenerated("'21:00:00'")) @db.Time(0)
   IsActive         Boolean   @default(true)
-  CreatedAt        DateTime  @db.DateTime(0)
-  UpdatedAt        DateTime  @db.DateTime(0)
+  CreatedAt        DateTime  @default(now())
+  UpdatedAt        DateTime  @updatedAt
 }
 
 model business_user_services {
@@ -164,8 +164,8 @@ model business_user_services {
   BusinessUserId      String   @db.Char(36)
   BusinessServiceId   String   @db.Char(36)
   IsActive            Boolean  @default(true)
-  CreatedAt           DateTime @db.DateTime(0)
-  UpdatedAt           DateTime @db.DateTime(0)
+  CreatedAt           DateTime @default(now())
+  UpdatedAt           DateTime @updatedAt
 }
 
 model business_user_skills {
@@ -173,8 +173,8 @@ model business_user_skills {
   BusinessUserId    String   @db.Char(36)
   BusinessSkillId   String   @db.Char(36)
   IsActive          Boolean  @default(true)
-  CreatedAt         DateTime @db.DateTime(0)
-  UpdatedAt         DateTime @db.DateTime(0)
+  CreatedAt         DateTime @default(now())
+  UpdatedAt         DateTime @updatedAt
 }
 
 model business_users {
@@ -199,8 +199,8 @@ model business_users {
   Instagram                  String?   @db.VarChar(255)
   Yelp                       String?   @db.VarChar(255)
   IsActive                   Boolean   @default(true)
-  CreatedAt                  DateTime  @db.DateTime(0)
-  UpdatedAt                  DateTime  @db.DateTime(0)
+  CreatedAt                  DateTime  @default(now())
+  UpdatedAt                  DateTime  @updatedAt
 }
 
 model businesses {
@@ -285,7 +285,7 @@ model user_messages {
   CustomerId       String    @db.Char(36)
   Body             String?   @db.Text
   Type             String?   @default("") @db.VarChar(255)
-  TypeId           Int
+  TypeId           Int       @db.Int
   MessageId        String?   @db.VarChar(255)
   Error            String?   @db.Text
   IsSent           Boolean   @default(true)
@@ -310,5 +310,112 @@ model api_clients {
    ValidTill       DateTime?  @db.DateTime()
    CreatedAt       DateTime   @default(now())
    UpdatedAt       DateTime   @updatedAt
-   DeletedAt       DateTime   @db.DateTime()
+}
+
+model roles {
+  id            Int           @id @default(autoincrement())
+  RoleName      String        @db.Char(36) @unique
+  Description   String?       @db.Text
+  RolePrivilege role_privileges[]
+  User          users[]
+  UserRole      user_roles[]
+  CreatedAt     DateTime      @default(now())
+  UpdatedAt     DateTime      @updatedAt
+}
+
+model role_privileges {
+  id              Int         @id  @default(autoincrement())
+  RoleName        String?     @db.Char(36) @unique
+  RoleId          Int         @db.Int @unique
+  Privilege       String?     @db.Char(36)
+  Role            roles       @relation(fields: [RoleId], references: [id])
+  CreatedAt       DateTime    @default(now())
+  UpdatedAt       DateTime    @updatedAt
+}
+
+
+model users {
+  id                String      @id @default(uuid())
+  UserName          String      @db.Char(36)
+  Prefix            String      @db.Char(36)
+  FirstName         String      @db.VarChar(255)
+  LastName          String      @db.VarChar(255)
+  CountryCode       String      @db.Char(36)
+  Phone             String?     @db.VarChar(255)
+  Email             String?     @db.VarChar(255)
+  Gender            String?     @db.VarChar(255)
+  BirthDate         DateTime?   @db.Date
+  Password          String?     @db.VarChar(512)
+  RoleId            Int         @db.Int @unique
+  Role              roles       @relation(fields: [RoleId], references: [id])
+  UserRole          user_roles[]
+  UserLoginSession  user_login_session[]
+  UserOtp           user_otp[]
+  FileResource      file_resource[]
+  CreatedAt         DateTime    @default(now())
+  UpdatedAt         DateTime    @updatedAt
+
+}
+
+model user_roles {
+  id              String      @id @default(uuid())           
+  UserId          String      @default(uuid()) @unique
+  User            users       @relation(fields: [UserId], references: [id])
+  RoleId          Int         @db.Int @unique
+  Role            roles       @relation(fields: [RoleId], references: [id])
+  CreatedAt       DateTime    @default(now())
+  UpdatedAt       DateTime    @updatedAt
+
+}
+ 
+model user_login_session {
+  id              String      @id @default(uuid())   
+  UserId          String      @default(uuid()) @unique
+  IsActive        Boolean     @default(true)
+  StartedAt       DateTime    @db.Date
+  ValidTill       DateTime    @db.Date
+  User            users       @relation(fields: [UserId],references: [id])
+  CreatedAt       DateTime    @default(now())
+  UpdatedAt       DateTime    @updatedAt
+}
+
+model user_otp {
+  id              String      @id @default(uuid()) 
+  UserId          String      @default(uuid()) @unique
+  Otp             String      @db.Char(10)
+  Purpose         purpose     @default(Login)
+  Channel         channel     @default(Mobile)
+  Validated       Boolean     @default(false)
+  ValidFrom       DateTime    @db.Date
+  ValidTill       DateTime    @db.Date
+  User            users       @relation(fields: [UserId],references: [id])
+  CreatedAt       DateTime    @default(now())
+  UpdatedAt       DateTime    @updatedAt
+}
+
+enum purpose {
+  Login 
+  Verification
+}
+enum channel {
+  Email
+  Mobile
+}
+
+model file_resource {
+  id                 String      @id @default(uuid()) 
+  StorageKey         String?     @db.Text()
+  OriginalFilename   String      @db.VarChar(512)
+  MimeType           String      @db.VarChar(255)
+  Public             Boolean     @default(false)
+  Size               Int?        @db.Int
+  Tags               String      @db.Text
+  DownloadCount      Int         @default(0)
+  UserId             String      @default(uuid()) @unique
+  User               users       @relation(fields: [UserId],references: [id])
+  CreatedAt          DateTime    @default(now())
+  UpdatedAt          DateTime    @updatedAt
+
+
+
 }

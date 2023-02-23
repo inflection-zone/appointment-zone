@@ -10,8 +10,8 @@ export interface ResponseDto {
     Data?: any;
     Trace?: string[];
     Client: CurrentClient;
-    // User: CurrentUser;
-     Context: string;
+    User: CurrentUser;
+    Context: string;
     Request?: RequestDto;
     ClientIps: string[];
     APIVersion: string;
