@@ -17,6 +17,17 @@ export class BusinessNodesService{
 
     }
 
+    create = async (createModel) => {
+        try{
+            var record=await this.prisma.business_nodes.create({data:createModel});
+            console.log(record);
+            return record;
+        }catch (error) {
+            ErrorHandler.throwDbAccessError('DB Error: Unable to create business node!',error)
+    } 
+
+    }
+
 
 
 

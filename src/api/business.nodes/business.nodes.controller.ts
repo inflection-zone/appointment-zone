@@ -16,16 +16,16 @@ export class BusinessNodesController extends BaseController {
 
      //#endregion
 
-    //  create = async (request: express.Request, response: express.Response): Promise <void> => {
-    //     try {
-    //          await this.authorize('Business.Nodes.Create', request, response, false);
-    //         const record = await this._delegate.create(request.body);
-    //         const message = 'Business node added successfully!';
-    //         ResponseHandler.success(request, response, message, 201, record);
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
+     create = async (request: express.Request, response: express.Response): Promise <void> => {
+        try {
+             await this.authorize('Business.Nodes.Create', request, response, false);
+            const record = await this._delegate.create(request.body);
+            const message = 'Business node added successfully!';
+            ResponseHandler.success(request, response, message, 201, record);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 
 
 

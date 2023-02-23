@@ -24,39 +24,64 @@ export class BusinessNodesControllerDelegate {
 
     //#endregion
 
-    // create = async (requestBody: any) => {
+    create = async (requestBody: any) => {
 
-    //     await validator.validateCreateRequest(requestBody);
+        await validator.validateCreateRequest(requestBody);
 
-    //     // eslint-DisplayPictureable-next-line @typescript-eslint/no-unused-vars
-    //     var createModel: BusinessNodesCreateModel = this.getCreateModel(requestBody);
-    //     const record: BusinessNodesDto = await this._service.create(createModel);
-    //     if (record === null) {
-    //         throw new ApiError('Unable to create Business!', 400);
-    //     }
+        // eslint-DisplayPictureable-next-line @typescript-eslint/no-unused-vars
+        var createModel: BusinessNodesCreateModel = this.getCreateModel(requestBody);
+        const record: BusinessNodesDto = await this._service.create(createModel);
+        if (record === null) {
+            throw new ApiError('Unable to create Business!', 400);
+        }
 
-    //     return this.getEnrichedDto(record);
-    // };
+        return this.getEnrichedDto(record);
+    };
 
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//     getCreateModel = (requestBody): BusinessNodesCreateModel => {
-//         return {
-//             BusinessId          : requestBody.BusinessId? requestBody.
-//             Name                : requestBody.Name? requestBody.Name: null,
-//             Mobile              : requestBody.Mobile? requestBody.Mobile: null,
-//             Email               : requestBody.Email ? requestBody.Email : null,
+    getCreateModel = (requestBody): BusinessNodesCreateModel => {
+        return {
+            BusinessId                : requestBody.BusinessId? requestBody.BusinessId:null,
+            Name                      : requestBody.Name? requestBody.Name: null,
+            Mobile                    : requestBody.Mobile? requestBody.Mobile: null,
+            Email                     : requestBody.Email ? requestBody.Email : null,
+            DisplayPicture            : requestBody.DisplayPicture? requestBody.DisplayPicture: null,
+            Address                   : requestBody.Address ? requestBody.Address : null,
+            Longitude                 : requestBody.Longitude ? requestBody.Longitude : null,
+            Lattitude                 : requestBody.Lattitude ? requestBody.Lattitude : null,
+            OverallRating             : requestBody.OverallRating? requestBody.OverallRating: null,
+            AllowWalkinAppointments   : requestBody.AllowWalkinAppointments ? requestBody.AllowWalkinAppointments :null,
+            AllowFutureBookingFor     : requestBody.AllowFutureBookingFor ? requestBody.AllowFutureBookingFor : null,
+            IsActive                  : requestBody.IsActive ? requestBody.IsActive : true,
            
-//             DisplayPicture      : requestBody.DisplayPicture? requestBody.DisplayPicture: null,
-//             OverallRating       : requestBody.OverallRating? requestBody.OverallRating: null,
-//             Address             : requestBody.Address ? requestBody.Address : null,
-            
-//             IsActive            : requestBody.IsActive ? requestBody.IsActive : true,
+        };
+    };
+
+
+    getEnrichedDto = (record) => {
+        if (record == null) {
+            return null;
+        }
+        return {
+          
+            ExternalId                : record.ExternalId,
+            Name                      : record.Name,
+            Mobile                    : record.Mobile,
+            Email                     : record.Email,
+            DisplayPicture            : record.DisplayPicture,
+            Address                   : record.Address,
+            Longitude                 : record.Longitude,
+            Lattitude                 : record.Lattitude,
+            OverallRating             : record.OverallRating,
+            AllowWalkinAppointments   : record.AllowWalkinAppointments,
+            AllowFutureBookingFor     : record.AllowFutureBookingFor,
+            IsActive                  : record.IsActive,
            
-//         };
-//     };
+        };
+    };
 
 
 }
