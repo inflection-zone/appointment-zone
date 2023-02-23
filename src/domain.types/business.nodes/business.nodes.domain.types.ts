@@ -1,29 +1,28 @@
-
 import { BaseSearchFilters, BaseSearchResults } from "../miscellaneous/base.search.types";
 import { Gender, uuid } from "../miscellaneous/system.types";
 
-export interface BusinessCreateModel {
-    id?              : string;
-    ExternalId?      : string;
-    Name             : string;
-    Mobile           : string;  
-    Email            : string;
-    AboutUs?         : string;
-    Logo?            : string; 
-    DisplayPicture?  : string;
-    OverallRating?   : number;
-    Address?         : string; 
-    ApiKey?          : string;
-    Facebook?        : string;
-    Linkedin?        : string;
-    Twitter?         : string;
-    Instagram?       : string;
-    Yelp?            : string;
-    IsActive         : Boolean;
-          
-};
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export interface BusinessUpdateModel {
+export interface BusinessNodesCreateModel {
+    id?                       : String
+    BusinessId?               : String   
+    Name                     : String  
+    Mobile                   : String   
+    Email                    : String  
+    DisplayPicture?           : String
+    Address                  : String
+    Longitude                : String
+    Lattitude                : String
+    OverallRating?            : number
+    TimeZone?                 : String  
+    AllowWalkinAppointments?  : Boolean  
+    AllowFutureBookingFor?    : String  
+    IsActive                 : Boolean 
+  }
+  
+
+
+export interface BusinessNodesUpdateModel {
     ExternalId?      : string
     Name?            : string;
     Mobile?          : string;   
@@ -43,7 +42,7 @@ export interface BusinessUpdateModel {
            
 }
 
-export interface BusinessDto {
+export interface BusinessNodesDto {
    
     ExternalId      : string;
     Name            : string;
@@ -66,7 +65,7 @@ export interface BusinessDto {
       
 }
 
-export interface BusinessSearchFilters extends BaseSearchFilters {
+export interface BusinessNodesSearchFilters extends BaseSearchFilters {
     
     ExternalId ?     : string;
     Name ?           : string;
@@ -87,6 +86,7 @@ export interface BusinessSearchFilters extends BaseSearchFilters {
     
 }
 
-export interface BusinessSearchResults extends BaseSearchResults {
-    Items: BusinessDto[];
+export interface BusinessNodesSearchResults extends BaseSearchResults {
+    Items: BusinessNodesDto[];
 }
+

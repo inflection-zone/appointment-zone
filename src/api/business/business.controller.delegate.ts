@@ -47,14 +47,14 @@ export class BusinessControllerDelegate {
         return this.getEnrichedDto(record);
     };
 
-    // search = async (query: any) => {
-    //     await validator.validateSearchRequest(query);
-    //     var filters: BusinessSearchFilters = this.getSearchFilters(query);
-    //     var searchResults: BusinessSearchResults = await this._service.search(filters);
-    //     var items = searchResults.Items.map(x => this.getSearchDto(x));
-    //     searchResults.Items = items;
-    //     return searchResults;
-    // };
+    search = async (query: any) => {
+        await validator.validateSearchRequest(query);
+        var filters: BusinessSearchFilters = this.getSearchFilters(query);
+        var searchResults: BusinessSearchResults = await this._service.search(filters);
+        var items = searchResults.Items.map(x => this.getSearchDto(x));
+        searchResults.Items = items;
+        return searchResults;
+    };
 
     update = async (id: uuid, requestBody: any) => {
         await validator.validateUpdateRequest(requestBody);
