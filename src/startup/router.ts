@@ -3,7 +3,15 @@ import { Logger } from "../common/logger";
 import { register as registerCustomerRoutes}  from "../api/customer/customer.routes";
 import { register as registerBusinessRoutes}  from "../api/business/business.routes";
 import { register as registerApiClientRoutes}  from "../api/api.client/api.client.routes";
+<<<<<<< HEAD
 import { register as registerBusinessNodesRoutes } from "../api/business.nodes/business.nodes.routes";
+=======
+import { register as registerUserRoleRoutes } from "../api/user.role/user.role.routes";
+import { register as registerFileREsourceRoutes       } from "../api/file.resource/file.resource.routes";
+import { register as registerTypesRoutes} from "../api/types/types.routes";
+import { register as registerUserRoutes } from "../api/user/user.routes";
+
+>>>>>>> 7f6c0adaf0ed376320f411dc0889c9412feea767
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -29,7 +37,15 @@ export class Router {
                 registerCustomerRoutes(this._app);
                 registerBusinessRoutes(this._app);
                 registerApiClientRoutes(this._app);
+<<<<<<< HEAD
                 registerBusinessNodesRoutes(this._app)
+=======
+                registerUserRoleRoutes(this._app);
+                registerFileREsourceRoutes(this._app);
+                registerTypesRoutes(this._app);
+                registerUserRoutes(this._app);
+
+>>>>>>> 7f6c0adaf0ed376320f411dc0889c9412feea767
                 
 
                 resolve(true);
