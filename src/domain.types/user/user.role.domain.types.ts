@@ -17,7 +17,7 @@ export interface UserRoleUpdateModel {
 }
 
 export interface UserRoleDto {
-    id: uuid;
+    id: number;
     UserId: uuid;
     RoleId: number;
 

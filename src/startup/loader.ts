@@ -5,7 +5,7 @@ import { Authorizer } from '../auth/authorizer';
 import { Logger } from '../common/logger';
 import { Injector } from './injector';
 import { Scheduler } from './scheduler';
-// import { Seeder } from './seeder';
+import { Seeder } from './seeder';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 

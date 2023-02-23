@@ -5,15 +5,17 @@ import {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-export class UserRoleValidator {
+export class FileResourceValidator {
 
     static validateCreateRequest = async (requestBody) => {
         try {
             const schema = joi.object({
-                UserId: joi.string().guid({
-                    version: ['uuidv4']
+                FileName : joi.string().max(256).optional(),
+                UserId   : joi.string().guid({
+                    version : ['uuidv4']
                 }).optional(),
-                RoleId: joi.string().max(16).required()
+                IsPublicResource : joi.boolean().optional(),
+                Tags             : joi.array().items(joi.string()).optional()
             });
             return await schema.validateAsync(requestBody);
         } catch (error) {
@@ -24,10 +26,12 @@ export class UserRoleValidator {
     static validateUpdateRequest = async (requestBody) => {
         try {
             const schema = joi.object({
-                UserId: joi.string().guid({
-                    version: ['uuidv4']
+                FileName : joi.string().max(256).optional(),
+                UserId   : joi.string().guid({
+                    version : ['uuidv4']
                 }).optional(),
-                RoleId: joi.string().max(16).required()
+                IsPublicResource : joi.boolean().optional(),
+                Tags             : joi.array().items(joi.string()).optional()
             });
             return await schema.validateAsync(requestBody);
         } catch (error) {
@@ -38,10 +42,10 @@ export class UserRoleValidator {
     static validateSearchRequest = async (query) => {
         try {
             const schema = joi.object({
-                userId: joi.string().guid({
-                    version: ['uuidv4']
-                }).optional(),
-                roleId: joi.string().max(16).optional()
+                fileName         : joi.string().max(256).optional(),
+                isPublicResource : joi.boolean().optional(),
+                tags             : joi.array().items(joi.string()).optional(),
+                mimeType         : joi.string().max(128).optional()
             });
             return await schema.validateAsync(query);
 

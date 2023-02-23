@@ -42,7 +42,7 @@ export class UserControllerDelegate {
 
         await validator.validateCreateRequest(requestBody);
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+       // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { userCreateModel, password } =
             await UserHelper.getValidUserCreateModel(requestBody);
 
@@ -50,6 +50,7 @@ export class UserControllerDelegate {
         if (record === null) {
             throw new ApiError('Unable to create user!', 400);
         }
+        
 
         // if (requestBody.CurrentUserId && dto.Email) {
         //     sendOnboardingEmail(dto, password)
@@ -58,13 +59,13 @@ export class UserControllerDelegate {
         return this.getEnrichedDto(record);
     }
 
-    getById = async (id: uuid) => {
-        const record = await this._service.getById(id);
-        if (record === null) {
-            ErrorHandler.throwNotFoundError('User with id ' + id.toString() + ' cannot be found!');
-        }
-        return this.getEnrichedDto(record);
-    }
+    // getById = async (id: uuid) => {
+    //     const record = await this._service.getById(id);
+    //     if (record === null) {
+    //         ErrorHandler.throwNotFoundError('User with id ' + id.toString() + ' cannot be found!');
+    //     }
+    //     return this.getEnrichedDto(record);
+    // }
 
     // search = async (query) => {
     //     await validator.validateSearchRequest(query);
@@ -75,52 +76,52 @@ export class UserControllerDelegate {
     //     return searchResults;
     // }
 
-    update = async (id: uuid, requestBody: any) => {
-        await validator.validateUpdateRequest(requestBody);
-        const record = await this._service.getById(id);
-        if (record === null) {
-            ErrorHandler.throwNotFoundError('User with id ' + id.toString() + ' cannot be found!');
-        }
-        const updateModel: UserUpdateModel = await UserHelper.getValidUserUpdateModel(record, requestBody);
-        const updated = await this._service.update(id, updateModel);
-        if (updated == null) {
-            throw new ApiError('Unable to update user!', 400);
-        }
-        return this.getEnrichedDto(updated);
-    }
+    // update = async (id: uuid, requestBody: any) => {
+    //     await validator.validateUpdateRequest(requestBody);
+    //     const record = await this._service.getById(id);
+    //     if (record === null) {
+    //         ErrorHandler.throwNotFoundError('User with id ' + id.toString() + ' cannot be found!');
+    //     }
+    //     const updateModel: UserUpdateModel = await UserHelper.getValidUserUpdateModel(record, requestBody);
+    //     const updated = await this._service.update(id, updateModel);
+    //     if (updated == null) {
+    //         throw new ApiError('Unable to update user!', 400);
+    //     }
+    //     return this.getEnrichedDto(updated);
+    // }
 
-    delete = async (id: uuid) => {
-        const record = await this._service.getById(id);
-        if (record == null) {
-            ErrorHandler.throwNotFoundError('User with id ' + id.toString() + ' cannot be found!');
-        }
-        const userDeleted = await this._service.delete(id);
-        return {
-            Deleted : userDeleted
-        };
-    }
+    // delete = async (id: uuid) => {
+    //     const record = await this._service.getById(id);
+    //     if (record == null) {
+    //         ErrorHandler.throwNotFoundError('User with id ' + id.toString() + ' cannot be found!');
+    //     }
+    //     const userDeleted = await this._service.delete(id);
+    //     return {
+    //         Deleted : userDeleted
+    //     };
+    // }
 
-    loginWithPassword = async (requestBody) => {
-        await validator.validateLoginWithPasswordRequest(requestBody);
-        const loginModel = await this.getLoginModel(requestBody);
-        const sentPassword = loginModel.Password;
-        const hashedPassword = loginModel.User.Password;
-        const validPassword = Helper.compareHashedPassword(sentPassword, hashedPassword);
-        if (!validPassword) {
-            ErrorHandler.throwUnauthorizedUserError('Invalid password.');
-        }
-        const user = await this._service.getById(loginModel.User.id);
-        const loginSession = await this._service.createUserLoginSession(user.id);
-        const currentUser: CurrentUser = this.constructCurrentUser(user, loginSession.id);
-        const accessToken = await Loader.Authorizer.generateUserSessionToken(currentUser);
-        const expiresIn: number = ConfigurationManager.JwtExpiresIn();
-        const validTill = new Date(Date.now() + expiresIn * 1000);
-        return {
-            User             : currentUser,
-            AccessToken      : accessToken,
-            SessionValidTill : validTill
-        };
-    }
+    // loginWithPassword = async (requestBody) => {
+    //     await validator.validateLoginWithPasswordRequest(requestBody);
+    //     const loginModel = await this.getLoginModel(requestBody);
+    //     const sentPassword = loginModel.Password;
+    //     const hashedPassword = loginModel.User.Password;
+    //     const validPassword = Helper.compareHashedPassword(sentPassword, hashedPassword);
+    //     if (!validPassword) {
+    //         ErrorHandler.throwUnauthorizedUserError('Invalid password.');
+    //     }
+    //     const user = await this._service.getById(loginModel.User.id);
+    //     const loginSession = await this._service.createUserLoginSession(user.id);
+    //     const currentUser: CurrentUser = this.constructCurrentUser(user, loginSession.id);
+    //     const accessToken = await Loader.Authorizer.generateUserSessionToken(currentUser);
+    //     const expiresIn: number = ConfigurationManager.JwtExpiresIn();
+    //     const validTill = new Date(Date.now() + expiresIn * 1000);
+    //     return {
+    //         User             : currentUser,
+    //         AccessToken      : accessToken,
+    //         SessionValidTill : validTill
+    //     };
+    // }
 
     // getBySessionId = async (sessionId: uuid) => {
     //     const { user, session } = await this._service.getBySessionId(sessionId);
@@ -204,54 +205,51 @@ export class UserControllerDelegate {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    getSearchFilters = (query) => {
-        var filters = {};
-        var roleId = query.roleId ? query.roleId : null;
-        if (roleId != null) {
-            filters['RoleId'] = roleId;
-        }
-        var prefix = query.prefix ? query.prefix : null;
-        if (prefix != null) {
-            filters['Prefix'] = prefix;
-        }
-        var firstName = query.firstName ? query.firstName : null;
-        if (firstName != null) {
-            filters['FirstName'] = firstName;
-        }
-        var lastName = query.lastName ? query.lastName : null;
-        if (lastName != null) {
-            filters['LastName'] = lastName;
-        }
-        var biocubeId = query.biocubeId ? query.biocubeId : null;
-        if (biocubeId != null) {
-            filters['BiocubeId'] = biocubeId;
-        }
-        var gender = query.gender ? query.gender : null;
-        if (gender != null) {
-            filters['Gender'] = gender;
-        }
-        var state = query.state ? query.state : null;
-        if (state != null) {
-            filters['State'] = state;
-        }
-        var country = query.country ? query.country : null;
-        if (country != null) {
-            filters['Country'] = country;
-        }
-        var address = query.address ? query.address : null;
-        if (address != null) {
-            filters['Address'] = address;
-        }
-        var addedByUserId = query.addedByUserId ? query.addedByUserId : null;
-        if (addedByUserId != null) {
-            filters['AddedByUserId'] = addedByUserId;
-        }
-        var lastUpdatedByUserId = query.lastUpdatedByUserId ? query.lastUpdatedByUserId : null;
-        if (lastUpdatedByUserId != null) {
-            filters['LastUpdatedByUserId'] = lastUpdatedByUserId;
-        }
-        return filters;
-    }
+    // getSearchFilters = (query) => {
+    //     var filters = {};
+    //     var roleId = query.roleId ? query.roleId : null;
+    //     if (roleId != null) {
+    //         filters['RoleId'] = roleId;
+    //     }
+    //     var prefix = query.prefix ? query.prefix : null;
+    //     if (prefix != null) {
+    //         filters['Prefix'] = prefix;
+    //     }
+    //     var firstName = query.firstName ? query.firstName : null;
+    //     if (firstName != null) {
+    //         filters['FirstName'] = firstName;
+    //     }
+    //     var lastName = query.lastName ? query.lastName : null;
+    //     if (lastName != null) {
+    //         filters['LastName'] = lastName;
+    //     }
+    
+    //     var gender = query.gender ? query.gender : null;
+    //     if (gender != null) {
+    //         filters['Gender'] = gender;
+    //     }
+    //     var state = query.state ? query.state : null;
+    //     if (state != null) {
+    //         filters['State'] = state;
+    //     }
+    //     var country = query.country ? query.country : null;
+    //     if (country != null) {
+    //         filters['Country'] = country;
+    //     }
+    //     var address = query.address ? query.address : null;
+    //     if (address != null) {
+    //         filters['Address'] = address;
+    //     }
+    //     var addedByUserId = query.addedByUserId ? query.addedByUserId : null;
+    //     if (addedByUserId != null) {
+    //         filters['AddedByUserId'] = addedByUserId;
+    //     }
+    //     var lastUpdatedByUserId = query.lastUpdatedByUserId ? query.lastUpdatedByUserId : null;
+    //     if (lastUpdatedByUserId != null) {
+    //         filters['LastUpdatedByUserId'] = lastUpdatedByUserId;
+    //     }
+    //     return filters;
+    // }
 
     //This function returns a response DTO which is enriched with available resource data
 
@@ -300,41 +298,41 @@ export class UserControllerDelegate {
         };
     }
 
-    getLoginModel = async (requestBody) => {
+    // getLoginModel = async (requestBody) => {
 
-        const countryCode = (typeof requestBody.CountryCode !== 'undefined') ? requestBody.CountryCode : '+91';
-        const phone = (typeof requestBody.Phone !== 'undefined') ? requestBody.Phone : null;
-        const email = (typeof requestBody.Email !== 'undefined') ? requestBody.Email : null;
-        const userName = (typeof requestBody.UserName !== 'undefined') ? requestBody.UserName : null;
-        const password = (typeof requestBody.Password !== 'undefined') ? requestBody.Password : null;
-        const otp = (typeof requestBody.Otp !== 'undefined') ? requestBody.Otp.toString() : null;
+    //     const countryCode = (typeof requestBody.CountryCode !== 'undefined') ? requestBody.CountryCode : '+91';
+    //     const phone = (typeof requestBody.Phone !== 'undefined') ? requestBody.Phone : null;
+    //     const email = (typeof requestBody.Email !== 'undefined') ? requestBody.Email : null;
+    //     const userName = (typeof requestBody.UserName !== 'undefined') ? requestBody.UserName : null;
+    //     const password = (typeof requestBody.Password !== 'undefined') ? requestBody.Password : null;
+    //     const otp = (typeof requestBody.Otp !== 'undefined') ? requestBody.Otp.toString() : null;
 
-        const user = await this._service.getUser(countryCode, phone, email, userName);
-        if (user === null) {
-            ErrorHandler.throwNotFoundError('User does not exist!');
-        }
+    //     const user = await this._service.getUser(countryCode, phone, email, userName);
+    //     if (user === null) {
+    //         ErrorHandler.throwNotFoundError('User does not exist!');
+    //     }
 
-        return {
-            User      : user,
-            LoginRole : user.Role.RoleName,
-            Password  : password,
-            Otp       : otp
-        };
-    }
+    //     return {
+    //         User      : user,
+    //         LoginRole : user.Role.RoleName,
+    //         Password  : password,
+    //         Otp       : otp
+    //     };
+    // }
 
-    getPasswordChangeModel = async (requestBody) => {
-        const oldPassword = requestBody.OldPassword;
-        const newPassword = requestBody.NewPassword;
-        const user = await this._service.getById(requestBody.CurrentUserId);
-        if (user === null) {
-            ErrorHandler.throwNotFoundError('User does not exist!');
-        }
-        return {
-            User        : user,
-            OldPassword : oldPassword,
-            NewPassword : newPassword,
-        };
-    }
+    // getPasswordChangeModel = async (requestBody) => {
+    //     const oldPassword = requestBody.OldPassword;
+    //     const newPassword = requestBody.NewPassword;
+    //     const user = await this._service.getById(requestBody.CurrentUserId);
+    //     if (user === null) {
+    //         ErrorHandler.throwNotFoundError('User does not exist!');
+    //     }
+    //     return {
+    //         User        : user,
+    //         OldPassword : oldPassword,
+    //         NewPassword : newPassword,
+    //     };
+    // }
 
     constructCurrentUser = (user, sessionId): CurrentUser => {
         return {

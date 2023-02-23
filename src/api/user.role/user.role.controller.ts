@@ -35,16 +35,16 @@ export class UserRoleController extends BaseController {
         }
     }
 
-    getById = async (request: express.Request, response: express.Response): Promise < void > => {
-        try {
-            await this.authorize('UserRole.GetById', request, response);
-            const record = await this._delegate.getById(request.params.id);
-            const message = 'User role retrieved successfully!';
-            ResponseHandler.success(request, response, message, 200, record);
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    }
+    // getById = async (request: express.Request, response: express.Response): Promise < void > => {
+    //     try {
+    //         await this.authorize('UserRole.GetById', request, response);
+    //         const record = await this._delegate.getById(request.params.id);
+    //         const message = 'User role retrieved successfully!';
+    //         ResponseHandler.success(request, response, message, 200, record);
+    //     } catch (error) {
+    //         ResponseHandler.handleError(request, response, error);
+    //     }
+    // }
 
     // search = async (request: express.Request, response: express.Response): Promise < void > => {
     //     try {
@@ -57,26 +57,26 @@ export class UserRoleController extends BaseController {
     //     }
     // }
 
-    update = async (request: express.Request, response: express.Response): Promise < void > => {
-        try {
-            await this.authorize('UserRole.Update', request, response);
-            const updatedRecord = await this._delegate.update(request.params.id, request.body);
-            const message = 'User role updated successfully!';
-            ResponseHandler.success(request, response, message, 200, updatedRecord);
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    }
+    // update = async (request: express.Request, response: express.Response): Promise < void > => {
+    //     try {
+    //         await this.authorize('UserRole.Update', request, response);
+    //         const updatedRecord = await this._delegate.update(request.params.id, request.body);
+    //         const message = 'User role updated successfully!';
+    //         ResponseHandler.success(request, response, message, 200, updatedRecord);
+    //     } catch (error) {
+    //         ResponseHandler.handleError(request, response, error);
+    //     }
+    // }
 
-    delete = async (request: express.Request, response: express.Response): Promise < void > => {
-        try {
-            await this.authorize('UserRole.Delete', request, response);
-            const result = await this._delegate.delete(request.params.id);
-            const message = 'User role deleted successfully!';
-            ResponseHandler.success(request, response, message, 200, result);
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
+    // delete = async (request: express.Request, response: express.Response): Promise < void > => {
+    //     try {
+    //         await this.authorize('UserRole.Delete', request, response);
+    //         const result = await this._delegate.delete(request.params.id);
+    //         const message = 'User role deleted successfully!';
+    //         ResponseHandler.success(request, response, message, 200, result);
+    //     } catch (error) {
+    //         ResponseHandler.handleError(request, response, error);
+    //     }
+    // };
 
 }

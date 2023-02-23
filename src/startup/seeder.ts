@@ -85,10 +85,10 @@ export class Seeder {
 
             const role = await this._roleService.getByName(u.Role);
 
-            const existingUser = await this._userService.getUser(null, null, null, u.UserName);
-            if (existingUser) {
-                continue;
-            }
+            // const existingUser = await this._userService.getUser(null, null, null, u.UserName);
+            // if (existingUser) {
+            //     continue;
+            // }
        
             const userDomainModel : UserCreateModel = {
                 Phone       : u.Phone,
@@ -165,34 +165,5 @@ export class Seeder {
 
         Logger.instance().log('Seeded default roles successfully!');
     };
-
-//     private seedDefaultCareplanCategories = async () => {
-
-//         const defaultCareplanCategories = [
-//             {
-//                 Type        : "Heart",
-//                 Description : "Category representing all heart related careplans"
-//             },
-//             {
-//                 Type        : "Maternity and Neonatal",
-//                 Description : "Category representing all maternity and neonatal related careplans"
-//             },
-//             {
-//                 Type        : "Post Injury Rehab",
-//                 Description : "Category representing all careplans which involve rehabilitation post injury/trauma."
-//             },
-//         ];
-
-//         for await (var cc of defaultCareplanCategories) {
-
-//             var exists = await this._careplanCategoryService.existsByName(cc.Type);
-//             if (exists) {
-//                 continue;
-//             }
-//             await this._careplanCategoryService.create(cc);
-//         }
-
-//         Logger.instance().log('Seeded default careplan categories successfully!');
-//     };
 
  }

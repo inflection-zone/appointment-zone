@@ -18,34 +18,37 @@ export class UserService {
     }
     create = async (createModel) => {
         try {
-            var record = await this.prisma.users.create(createModel);
-            return await this.getById(record.id);
+            var record = await this.prisma.users.create({data:createModel});
+           // return await this.getById(record.id);
+           return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create user!', error);
         }
     }
 
-    getById = async (id) => {
-        try {
-            var record = await this.prisma.users.findUnique({
-                where : {
-                    id : id
-                }
-            });
-            if (record) {
-                const userRole = await this.prisma.user_roles.findMany({
-                    where : {  UserId : record.id}
-                });
-                if (userRole) {
-                    const role = await this.prisma.roles.findUnique(userRole.RoleId);
-                    record['Role'] = role;
-                }
-            }
-            return record;
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve user!', error);
-        }
-    }
+    // getById = async (id) => {
+    //     try {
+    //         var record = await this.prisma.users.findUnique({
+    //             where : {
+    //                 id : id
+    //             }
+    //         });
+    //         if (record) {
+    //             const userRole = await this.prisma.user_roles.findUnique({
+    //                 where : { 
+    //                      UserId : record.id
+    //                     }
+    //             });
+    //             if (userRole) {
+    //                 const role = await this.prisma.roles.findUnique({userRole.RoleId});
+    //                 record['Role'] = role;
+    //             }
+    //         }
+    //         return record;
+    //     } catch (error) {
+    //         ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve user!', error);
+    //     }
+    // }
 
     exists = async (id) => {
         try {
@@ -150,177 +153,177 @@ export class UserService {
     //     }
     // }
 
-    update = async (id, updateModel) => {
-        try {
-            if (Object.keys(updateModel).length > 0) {
-                var res = await this.prisma.users.update({data:updateModel,
-                        where :{
-                        id : id
-                    }
-                 });
+    // update = async (id, updateModel) => {
+    //     try {
+    //         if (Object.keys(updateModel).length > 0) {
+    //             var res = await this.prisma.users.update({data:updateModel,
+    //                     where :{
+    //                     id : id
+    //                 }
+    //              });
                 
-            }
-            return await this.getById(id);
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to update Business!', error);
-        }
-    }
+    //         }
+    //         return await this.getById(id);
+    //     } catch (error) {
+    //         ErrorHandler.throwDbAccessError('DB Error: Unable to update Business!', error);
+    //     }
+    // }
 
-    delete = async (id) => {
-        try {
-            var result = await this.prisma.users.delete({
-                where : {
-                    id : id
-                }
-            });
+    // delete = async (id) => {
+    //     try {
+    //         var result = await this.prisma.users.delete({
+    //             where : {
+    //                 id : id
+    //             }
+    //         });
             
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to delete user!', error);
-        }
-    }
+    //     } catch (error) {
+    //         ErrorHandler.throwDbAccessError('DB Error: Unable to delete user!', error);
+    //     }
+    // }
 
-    getUserWithPhone = async (countryCode, phone) => {
-        try {
-            const record = await this.prisma.users.findMany({
-                where : {
-                    CountryCode : countryCode,
-                    Phone       : phone,
-                }
-            });
-            return record;
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('Unable to check if user exists with phone!', error);
-        }
-    };
+    // getUserWithPhone = async (countryCode, phone) => {
+    //     try {
+    //         const record = await this.prisma.users.findMany({
+    //             where : {
+    //                 CountryCode : countryCode,
+    //                 Phone       : phone,
+    //             }
+    //         });
+    //         return record;
+    //     } catch (error) {
+    //         ErrorHandler.throwDbAccessError('Unable to check if user exists with phone!', error);
+    //     }
+    // };
 
-    getUserWithEmail = async (email) => {
-        try {
-            const record = await this.prisma.users.findMany({
-                where : {
-                    Email : email
-                }
-            });
-            return record;
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('Unable to check if user exists with email!', error);
-        }
-    }
+    // getUserWithEmail = async (email) => {
+    //     try {
+    //         const record = await this.prisma.users.findMany({
+    //             where : {
+    //                 Email : email
+    //             }
+    //         });
+    //         return record;
+    //     } catch (error) {
+    //         ErrorHandler.throwDbAccessError('Unable to check if user exists with email!', error);
+    //     }
+    // }
 
-    getUserWithUserName = async (username) => {
-        try {
-            const record = await this.prisma.users.findMany({
-                where : {
-                    UserName : username
-                }
-            });
-            return record;
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('Unable to check username!', error);
-        }
-    }
+    // getUserWithUserName = async (username) => {
+    //     try {
+    //         const record = await this.prisma.users.findMany({
+    //             where : {
+    //                 UserName : username
+    //             }
+    //         });
+    //         return record;
+    //     } catch (error) {
+    //         ErrorHandler.throwDbAccessError('Unable to check username!', error);
+    //     }
+    // }
 
-    generateUserNameIfDoesNotExist = async (userName) => {
-        var tmpUsername = userName ?? Helper.generateUserName();
-        while (await this.getUserWithUserName(tmpUsername) != null) {
-            tmpUsername = Helper.generateUserName();
-        }
-        return tmpUsername;
-    }
+    // generateUserNameIfDoesNotExist = async (userName) => {
+    //     var tmpUsername = userName ?? Helper.generateUserName();
+    //     while (await this.getUserWithUserName(tmpUsername) != null) {
+    //         tmpUsername = Helper.generateUserName();
+    //     }
+    //     return tmpUsername;
+    // }
 
-    getUser = async (
-        countryCode,
-        phone,
-        email,
-        userName
-    ) => {
+    // getUser = async (
+    //     countryCode,
+    //     phone,
+    //     email,
+    //     userName
+    // ) => {
 
-        var filters = [];
+    //     var filters = [];
 
-        if (phone !== null && countryCode !== null) {
-            filters.push({
-                Phone       : phone,
-                CountryCode : countryCode
-            });
-        }
-        else if (email !== null) {
-            filters.push({
-                Email :  email 
-            });
-        }
-        else if (userName !== null) {
-            filters.push({
-                UserName : userName
-            });
-        }
-         const user = await this.prisma.users.findMany({
-             where : { 
-                OR:[
-                    phone, countryCode, email, userName
-                ]}
+    //     if (phone !== null && countryCode !== null) {
+    //         filters.push({
+    //             Phone       : phone,
+    //             CountryCode : countryCode
+    //         });
+    //     }
+    //     else if (email !== null) {
+    //         filters.push({
+    //             Email :  email 
+    //         });
+    //     }
+    //     else if (userName !== null) {
+    //         filters.push({
+    //             UserName : userName
+    //         });
+    //     }
+    //      const user = await this.prisma.users.findMany({
+    //          where : { 
+    //             OR:[
+    //                 phone, countryCode, email, userName
+    //             ]}
             
-         });
+    //      });
 
-        // if (!user) {
-        //     return null;
-        // }
+    //     // if (!user) {
+    //     //     return null;
+    //     // }
 
-        var role = await this.prisma.roles.findUnique(user.RoleId);
-        user['Role'] = role;
+    //     var role = await this.prisma.roles.findUnique(user.RoleId);
+    //     user['Role'] = role;
 
-        return user;
-     }
+    //     return user;
+    //  }
 
-    getUserUpdateModel = (inputModel) => {
+//  getUserUpdateModel = (inputModel) => {
 
-        var updateModel: any = {};
+//         var updateModel: any = {};
 
-        if (Helper.hasProperty(inputModel, 'Prefix')) {
-            updateModel.Prefix = inputModel.Prefix;
-        }
-        if (Helper.hasProperty(inputModel, 'FirstName')) {
-            updateModel.FirstName = inputModel.FirstName;
-        }
-        if (Helper.hasProperty(inputModel, 'LastName')) {
-            updateModel.LastName = inputModel.LastName;
-        }
-        if (Helper.hasProperty(inputModel, 'Phone')) {
-            updateModel.Phone = inputModel.Phone;
-        }
-        if (Helper.hasProperty(inputModel, 'Email')) {
-            updateModel.Email = inputModel.Email;
-        }
-        if (Helper.hasProperty(inputModel, 'Password')) {
-            updateModel.Password = Helper.hash(inputModel.Password);
-        }
-        if (Helper.hasProperty(inputModel, 'ImageUrl')) {
-            updateModel.ImageUrl = inputModel.ImageUrl;
-        }
-        if (Helper.hasProperty(inputModel, 'Gender')) {
-            updateModel.Gender = inputModel.Gender;
-        }
-        if (Helper.hasProperty(inputModel, 'BirthDate')) {
-            updateModel.BirthDate = inputModel.BirthDate;
-        }
+//         if (Helper.hasProperty(inputModel, 'Prefix')) {
+//             updateModel.Prefix = inputModel.Prefix;
+//         }
+//         if (Helper.hasProperty(inputModel, 'FirstName')) {
+//             updateModel.FirstName = inputModel.FirstName;
+//         }
+//         if (Helper.hasProperty(inputModel, 'LastName')) {
+//             updateModel.LastName = inputModel.LastName;
+//         }
+//         if (Helper.hasProperty(inputModel, 'Phone')) {
+//             updateModel.Phone = inputModel.Phone;
+//         }
+//         if (Helper.hasProperty(inputModel, 'Email')) {
+//             updateModel.Email = inputModel.Email;
+//         }
+//         if (Helper.hasProperty(inputModel, 'Password')) {
+//             updateModel.Password = Helper.hash(inputModel.Password);
+//         }
+//         if (Helper.hasProperty(inputModel, 'ImageUrl')) {
+//             updateModel.ImageUrl = inputModel.ImageUrl;
+//         }
+//         if (Helper.hasProperty(inputModel, 'Gender')) {
+//             updateModel.Gender = inputModel.Gender;
+//         }
+//         if (Helper.hasProperty(inputModel, 'BirthDate')) {
+//             updateModel.BirthDate = inputModel.BirthDate;
+//         }
 
-        return updateModel;
-    }
+//         return updateModel;
+//     }
 
-    createUserLoginSession = async (userId) => {
-        try {
-            var now = new Date();
-            var till = TimeHelper.addDuration(now, 3, DurationType.Day);
-            var record = await this.prisma.user_login_session.create({data:{
-                UserId    : userId,
-                IsActive  : true,
-                StartedAt : now,
-                ValidTill : till
-            }
-            });
-            return record;
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('Unable to create user login session!', error);
-        }
-    }
+//     createUserLoginSession = async (userId) => {
+//         try {
+//             var now = new Date();
+//             var till = TimeHelper.addDuration(now, 3, DurationType.Day);
+//             var record = await this.prisma.user_login_session.create({data:{
+//                 UserId    : userId,
+//                 IsActive  : true,
+//                 StartedAt : now,
+//                 ValidTill : till
+//             }
+//             });
+//             return record;
+//         } catch (error) {
+//             ErrorHandler.throwDbAccessError('Unable to create user login session!', error);
+//         }
+//     }
 
     // invalidateUserLoginSession = async (sessionId) => {
     //     try {
@@ -351,42 +354,42 @@ export class UserService {
     //     }
     // }
 
-    getBySessionId = async (sessionId) => {
-        try {
-            var session = await this.prisma.user_login_session.findUnique(sessionId);
-            if (session == null) {
-                return null;
-            }
-            if (session.ValidTill < new Date()) {
-                return null;
-            }
-            if (session.IsActive === false) {
-                return null;
-            }
+    // getBySessionId = async (sessionId) => {
+    //     try {
+    //         var session = await this.prisma.user_login_session.findUnique(sessionId);
+    //         if (session == null) {
+    //             return null;
+    //         }
+    //         if (session.ValidTill < new Date()) {
+    //             return null;
+    //         }
+    //         if (session.IsActive === false) {
+    //             return null;
+    //         }
 
-            var user = await this.prisma.users.findUnique({
-                where : {
-                    id : session.UserId
-                }
-            });
+    //         var user = await this.prisma.users.findUnique({
+    //             where : {
+    //                 id : session.UserId
+    //             }
+    //         });
 
-            if (user) {
-                const userRole = await this.prisma.user_roles.findMany({
-                    where : {
-                        UserId : session.id
-                    }
-                });
-                if (userRole) {
-                    const role = await this.prisma.roles.findUnique(userRole.RoleId);
-                    user['Role'] = role;
-                }
-            }
-            return user;
+    //         if (user) {
+    //             const userRole = await this.prisma.user_roles.findMany({
+    //                 where : {
+    //                     UserId : session.id
+    //                 }
+    //             });
+    //             if (userRole) {
+    //                 const role = await this.prisma.roles.findUnique(userRole.RoleId);
+    //                 user['Role'] = role;
+    //             }
+    //         }
+    //         return user;
 
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve user for the session!', error);
-        }
-    }
+    //     } catch (error) {
+    //         ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve user for the session!', error);
+    //     }
+    // }
 
     // resetPassword = async (userId, hashedPassword) => {
     //     try {
@@ -404,13 +407,13 @@ export class UserService {
     //     }
     // }
 
-    validatePasswordCriteria = (password) => {
-        var strength = passwordStrength(password);
-        if (strength.length < 8 || strength.contains.length < 4) {
-            //Criteria is min 8 characters and contains minimum diversities such as
-            //'lowercase', 'uppercase', 'symbol', 'number'
-            ErrorHandler.throwInputValidationError(['Password does not match security criteria!']);
-        }
-    }
+    // validatePasswordCriteria = (password) => {
+    //     var strength = passwordStrength(password);
+    //     if (strength.length < 8 || strength.contains.length < 4) {
+    //         //Criteria is min 8 characters and contains minimum diversities such as
+    //         //'lowercase', 'uppercase', 'symbol', 'number'
+    //         ErrorHandler.throwInputValidationError(['Password does not match security criteria!']);
+    //     }
+    // }
 
 }

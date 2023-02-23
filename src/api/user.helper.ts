@@ -37,60 +37,46 @@ export class UserHelper {
         if (!password) {
             password = Helper.generatePassword();
         }
-        else {
-            userService.validatePasswordCriteria(password);
-        }
+        // else {
+        //     userService.validatePasswordCriteria(password);
+        // }
         requestBody.Password = Helper.generateHashedPassword(password);
 
         //NOTE: please note that we are keeping user-name same as that of biocube id
-        var userName = requestBody.UserName;
-        if (!userName) {
-            userName = await userService.generateUserNameIfDoesNotExist(requestBody.UserName);
-        }
-        requestBody.UserName = userName;
+    //     var userName = requestBody.UserName;
+    //     if (!userName) {
+    //         userName = await userService.generateUserNameIfDoesNotExist(requestBody.UserName);
+    //     }
+    //     requestBody.UserName = userName;
 
-        requestBody.CountryCode = requestBody.CountryCode ?? "+91";
-        var userWithPhone = await userService.getUserWithPhone(requestBody.CountryCode, requestBody.Phone);
-        if (userWithPhone) {
-            ErrorHandler.throwDuplicateUserError(`User with phone ${requestBody.CountryCode} ${requestBody.Phone.toString()} already exists!`);
-        }
+    //     requestBody.CountryCode = requestBody.CountryCode ?? "+91";
+    //     var userWithPhone = await userService.getUserWithPhone(requestBody.CountryCode, requestBody.Phone);
+    //     if (userWithPhone) {
+    //         ErrorHandler.throwDuplicateUserError(`User with phone ${requestBody.CountryCode} ${requestBody.Phone.toString()} already exists!`);
+    //     }
 
-        var userWithUserName = await userService.getUserWithUserName(requestBody.UserName);
-        if (userWithUserName) {
-            ErrorHandler.throwDuplicateUserError(`User with user-name/biocube-id ${requestBody.UserName} already exists!`);
-        }
+    //     var userWithUserName = await userService.getUserWithUserName(requestBody.UserName);
+    //     if (userWithUserName) {
+    //         ErrorHandler.throwDuplicateUserError(`User with user-name ${requestBody.UserName} already exists!`);
+    //     }
 
-        var userWithEmail = await userService.getUserWithEmail(requestBody.Email);
-        if (userWithEmail) {
-            ErrorHandler.throwDuplicateUserError(`User with email ${requestBody.Email} already exists!`);
-        }
+    //     var userWithEmail = await userService.getUserWithEmail(requestBody.Email);
+    //     if (userWithEmail) {
+    //         ErrorHandler.throwDuplicateUserError(`User with email ${requestBody.Email} already exists!`);
+    //     }
 
         var userCreateModel: UserCreateModel = await this.getUserCreateModel(requestBody);
         return { userCreateModel, password };
-    }
+     }
 
-    // static getValidParticipantCreateModel = async (requestBody) => {
+   
 
-    //     const participantService = new ParticipantService();
+    // static getValidUserUpdateModel = async (user, requestBody) => {
 
-    //     requestBody.CountryCode = requestBody.CountryCode ?? "+91";
-    //     var userWithPhone =
-    //         await participantService.getParticipantWithPhone(requestBody.CountryCode, requestBody.Phone);
-    //     if (userWithPhone) {
-    //         ErrorHandler.throwDuplicateUserError(`Participant with phone ${requestBody.CountryCode} ${requestBody.Phone.toString()} already exists!`);
-    //     }
-
-    // }
-
-    // static getValidParticipantUpdateModel = async (user, requestBody) => {
-
-    //     const participantService = new ParticipantService();
+    //     const userService = new UserService();
 
     //     const updateModel: any = {};
 
-    //     if (Helper.hasProperty(requestBody, 'DisplayId')) {
-    //         updateModel.DisplayId = requestBody.DisplayId;
-    //     }
     //     if (Helper.hasProperty(requestBody, 'Prefix')) {
     //         updateModel.Prefix = requestBody.Prefix;
     //     }
@@ -101,107 +87,50 @@ export class UserHelper {
     //         updateModel.LastName = requestBody.LastName;
     //     }
     //     if (Helper.hasProperty(requestBody, 'CountryCode') && Helper.hasProperty(requestBody, 'Phone')) {
-    //         var userWithPhone =
-    //             await participantService.getParticipantWithPhone(requestBody.CountryCode, requestBody.Phone);
+    //         var userWithPhone = await userService.getUserWithPhone(requestBody.CountryCode, requestBody.Phone);
     //         if (userWithPhone) {
-    //             ErrorHandler.throwDuplicateUserError(`Other participant with phone ${requestBody.CountryCode} ${requestBody.Phone.toString()} already exists!`);
+    //             ErrorHandler.throwDuplicateUserError(`Other user with phone ${requestBody.CountryCode} ${requestBody.Phone.toString()} already exists!`);
     //         }
     //         updateModel.CountryCode = requestBody.CountryCode;
     //         updateModel.Phone = requestBody.Phone;
     //     }
     //     else if (Helper.hasProperty(requestBody, 'Phone')) {
-    //         var userWithPhone = await participantService.getParticipantWithPhone(user.CountryCode, requestBody.Phone);
+    //         var userWithPhone = await userService.getUserWithPhone(user.CountryCode, requestBody.Phone);
     //         if (userWithPhone && user.id !== userWithPhone.id) {
-    //             ErrorHandler.throwDuplicateUserError(`Other participant with phone ${user.CountryCode} ${requestBody.Phone.toString()} already exists!`);
+    //             ErrorHandler.throwDuplicateUserError(`Other user with phone ${user.CountryCode} ${requestBody.Phone.toString()} already exists!`);
     //         }
     //         updateModel.Phone = requestBody.Phone;
     //     }
     //     else if (Helper.hasProperty(requestBody, 'CountryCode')) {
-    //         var userWithCountryCode =
-    //             await participantService.getParticipantWithPhone(requestBody.CountryCode, user.Phone);
+    //         var userWithCountryCode = await userService.getUserWithPhone(requestBody.CountryCode, user.Phone);
     //         if (userWithCountryCode && user.id !== userWithCountryCode.id) {
-    //             ErrorHandler.throwDuplicateUserError(`Other participant with phone ${requestBody.CountryCode} ${user.Phone.toString()} already exists!`);
+    //             ErrorHandler.throwDuplicateUserError(`Other user with phone ${requestBody.CountryCode} ${user.Phone.toString()} already exists!`);
     //         }
     //         updateModel.CountryCode = requestBody.CountryCode;
     //     }
     //     if (Helper.hasProperty(requestBody, 'Email')) {
-    //         var userWithEmail = await participantService.getParticipantWithEmail(requestBody.Email);
+    //         var userWithEmail = await userService.getUserWithEmail(requestBody.Email);
     //         if (userWithEmail && user.id !== userWithEmail.id) {
-    //             ErrorHandler.throwDuplicateUserError(`Other participant with email ${requestBody.Email} already exists!`);
+    //             ErrorHandler.throwDuplicateUserError(`Other user with email ${requestBody.Email} already exists!`);
     //         }
     //         updateModel.Email = requestBody.Email;
     //     }
-    //     if (Helper.hasProperty(requestBody, 'ParticipantReferenceId')) {
-    //         updateModel.ParticipantReferenceId = requestBody.ParticipantReferenceId;
+    //     if (Helper.hasProperty(requestBody, 'UserName')) {
+    //         var userName = requestBody.UserName;
+    //         var userWithUserName = await userService.getUserWithUserName(userName);
+    //         if (userWithUserName && user.id !== userWithUserName.id) {
+    //             ErrorHandler.throwDuplicateUserError(`Other user with user-name ${requestBody.UserName} already exists!`);
+    //         }
+    //         updateModel.UserName = requestBody.UserName;
     //     }
     //     if (Helper.hasProperty(requestBody, 'Gender')) {
     //         updateModel.Gender = requestBody.Gender;
     //     }
+    //     if (Helper.hasProperty(requestBody, 'Password')) {
+    //         updateModel.Password = Helper.generateHashedPassword(requestBody.Password);
+    //     }
 
     //     return updateModel;
     // }
-
-    static getValidUserUpdateModel = async (user, requestBody) => {
-
-        const userService = new UserService();
-
-        const updateModel: any = {};
-
-        if (Helper.hasProperty(requestBody, 'Prefix')) {
-            updateModel.Prefix = requestBody.Prefix;
-        }
-        if (Helper.hasProperty(requestBody, 'FirstName')) {
-            updateModel.FirstName = requestBody.FirstName;
-        }
-        if (Helper.hasProperty(requestBody, 'LastName')) {
-            updateModel.LastName = requestBody.LastName;
-        }
-        if (Helper.hasProperty(requestBody, 'CountryCode') && Helper.hasProperty(requestBody, 'Phone')) {
-            var userWithPhone = await userService.getUserWithPhone(requestBody.CountryCode, requestBody.Phone);
-            if (userWithPhone) {
-                ErrorHandler.throwDuplicateUserError(`Other user with phone ${requestBody.CountryCode} ${requestBody.Phone.toString()} already exists!`);
-            }
-            updateModel.CountryCode = requestBody.CountryCode;
-            updateModel.Phone = requestBody.Phone;
-        }
-        else if (Helper.hasProperty(requestBody, 'Phone')) {
-            var userWithPhone = await userService.getUserWithPhone(user.CountryCode, requestBody.Phone);
-            if (userWithPhone && user.id !== userWithPhone.id) {
-                ErrorHandler.throwDuplicateUserError(`Other user with phone ${user.CountryCode} ${requestBody.Phone.toString()} already exists!`);
-            }
-            updateModel.Phone = requestBody.Phone;
-        }
-        else if (Helper.hasProperty(requestBody, 'CountryCode')) {
-            var userWithCountryCode = await userService.getUserWithPhone(requestBody.CountryCode, user.Phone);
-            if (userWithCountryCode && user.id !== userWithCountryCode.id) {
-                ErrorHandler.throwDuplicateUserError(`Other user with phone ${requestBody.CountryCode} ${user.Phone.toString()} already exists!`);
-            }
-            updateModel.CountryCode = requestBody.CountryCode;
-        }
-        if (Helper.hasProperty(requestBody, 'Email')) {
-            var userWithEmail = await userService.getUserWithEmail(requestBody.Email);
-            if (userWithEmail && user.id !== userWithEmail.id) {
-                ErrorHandler.throwDuplicateUserError(`Other user with email ${requestBody.Email} already exists!`);
-            }
-            updateModel.Email = requestBody.Email;
-        }
-        if (Helper.hasProperty(requestBody, 'BiocubeId') || Helper.hasProperty(requestBody, 'UserName')) {
-            var userName = requestBody.BiocubeId ?? requestBody.UserName;
-            var userWithUserName = await userService.getUserWithUserName(userName);
-            if (userWithUserName && user.id !== userWithUserName.id) {
-                ErrorHandler.throwDuplicateUserError(`Other user with user-name/biocube-id ${requestBody.UserName} already exists!`);
-            }
-            updateModel.BiocubeId = requestBody.BiocubeId;
-            updateModel.UserName = requestBody.UserName;
-        }
-        if (Helper.hasProperty(requestBody, 'Gender')) {
-            updateModel.Gender = requestBody.Gender;
-        }
-        if (Helper.hasProperty(requestBody, 'Password')) {
-            updateModel.Password = Helper.generateHashedPassword(requestBody.Password);
-        }
-
-        return updateModel;
-    }
 
 }

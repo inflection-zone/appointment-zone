@@ -24,24 +24,25 @@ export class UserRoleService {
     create = async (createModel) => {
         try {
             var record = await this.prisma.user_roles.create({data:createModel});
-            return await this.getById(record.id);
+          //  return await this.getById(record.id);
+          return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create user role!', error);
         }
     }
 
-    getById = async (id) => {
-        try {
-            const record = await this.prisma.user_roles.findUnique({
-                where : {
-                    id : id
-                }
-            });
-            return record;
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve user role!', error);
-        }
-    }
+    // getById = async (id) => {
+    //     try {
+    //         const record = await this.prisma.user_roles.findUnique({
+    //             where : {
+    //                 id : id
+    //             }
+    //         });
+    //         return record;
+    //     } catch (error) {
+    //         ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve user role!', error);
+    //     }
+    // }
 
     exists = async (id): Promise < boolean > => {
         try {
@@ -83,33 +84,33 @@ export class UserRoleService {
     //     }
     // }
 
-    update = async (id, updateModel) => {
-        try {
-            if (Object.keys(updateModel).length > 0) {
-                var res = await this.prisma.user_roles.update({data:updateModel,
-                        where :{
-                        id : id
-                    }
-                 });
+    // update = async (id, updateModel) => {
+    //     try {
+    //         if (Object.keys(updateModel).length > 0) {
+    //             var res = await this.prisma.user_roles.update({data:updateModel,
+    //                     where :{
+    //                     id : id
+    //                 }
+    //              });
                 
-            }
-            return await this.getById(id);
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to update Business!', error);
-        }
-    }
+    //         }
+    //         return await this.getById(id);
+    //     } catch (error) {
+    //         ErrorHandler.throwDbAccessError('DB Error: Unable to update Business!', error);
+    //     }
+    // }
 
-    delete = async (id) => {
-        try {
-            var result = await this.prisma.user_roles.delete({
-                where : {
-                    id : id
-                }
-            });
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to delete user role!', error);
-        }
-    }
+    // delete = async (id) => {
+    //     try {
+    //         var result = await this.prisma.user_roles.delete({
+    //             where : {
+    //                 id : id
+    //             }
+    //         });
+    //     } catch (error) {
+    //         ErrorHandler.throwDbAccessError('DB Error: Unable to delete user role!', error);
+    //     }
+    // }
 
     //#endregion
 
@@ -151,51 +152,51 @@ export class UserRoleService {
     //     return search;
     // }
 
-    private addSortingToSearch = (search, filters) => {
+    // private addSortingToSearch = (search, filters) => {
 
-        let orderByColumn = 'CreatedAt';
-        if (filters.OrderBy) {
-            orderByColumn = filters.OrderBy;
-        }
-        let order = 'ASC';
-        if (filters.Order === 'descending') {
-            order = 'DESC';
-        }
-        search['order'] = [
-            [orderByColumn, order]
-        ];
+    //     let orderByColumn = 'CreatedAt';
+    //     if (filters.OrderBy) {
+    //         orderByColumn = filters.OrderBy;
+    //     }
+    //     let order = 'ASC';
+    //     if (filters.Order === 'descending') {
+    //         order = 'DESC';
+    //     }
+    //     search['order'] = [
+    //         [orderByColumn, order]
+    //     ];
 
-        if (filters.OrderBy) {
-            //In case the 'order-by attribute' is on associated model
-            //search['order'] = [[ '<AssociatedModel>', filters.OrderBy, order]];
-        }
-        return {
-            order,
-            orderByColumn
-        };
-    }
+    //     if (filters.OrderBy) {
+    //         //In case the 'order-by attribute' is on associated model
+    //         //search['order'] = [[ '<AssociatedModel>', filters.OrderBy, order]];
+    //     }
+    //     return {
+    //         order,
+    //         orderByColumn
+    //     };
+    // }
 
-    private addPaginationToSearch = (search, filters) => {
+    // private addPaginationToSearch = (search, filters) => {
 
-        let limit = 25;
-        if (filters.ItemsPerPage) {
-            limit = filters.ItemsPerPage;
-        }
-        let offset = 0;
-        let pageIndex = 0;
-        if (filters.PageIndex) {
-            pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
-            offset = pageIndex * limit;
-        }
-        search['limit'] = limit;
-        search['offset'] = offset;
+    //     let limit = 25;
+    //     if (filters.ItemsPerPage) {
+    //         limit = filters.ItemsPerPage;
+    //     }
+    //     let offset = 0;
+    //     let pageIndex = 0;
+    //     if (filters.PageIndex) {
+    //         pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+    //         offset = pageIndex * limit;
+    //     }
+    //     search['limit'] = limit;
+    //     search['offset'] = offset;
 
-        return {
-            pageIndex,
-            limit
-        };
-    }
+    //     return {
+    //         pageIndex,
+    //         limit
+    //     };
+    // }
 
-    //#endregion
+    // //#endregion
 
 }

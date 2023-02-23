@@ -285,7 +285,7 @@ model user_messages {
   CustomerId       String    @db.Char(36)
   Body             String?   @db.Text
   Type             String?   @default("") @db.VarChar(255)
-  TypeId           Int
+  TypeId           Int       @db.Int
   MessageId        String?   @db.VarChar(255)
   Error            String?   @db.Text
   IsSent           Boolean   @default(true)
@@ -313,8 +313,8 @@ model api_clients {
 }
 
 model roles {
-  id            Int        @id @default(autoincrement())
-  RoleName      String        @db.Char(36)
+  id            Int           @id @default(autoincrement())
+  RoleName      String        @db.Char(36) @unique
   Description   String?       @db.Text
   RolePrivilege role_privileges[]
   User          users[]
@@ -324,9 +324,9 @@ model roles {
 }
 
 model role_privileges {
-  id              String      @id @default(uuid())
-  RoleName        String?     @db.Char(36)
-  RoleId          Int      
+  id              Int         @id  @default(autoincrement())
+  RoleName        String?     @db.Char(36) @unique
+  RoleId          Int         @db.Int @unique
   Privilege       String?     @db.Char(36)
   Role            roles       @relation(fields: [RoleId], references: [id])
   CreatedAt       DateTime    @default(now())
@@ -343,13 +343,15 @@ model users {
   CountryCode       String      @db.Char(36)
   Phone             String?     @db.VarChar(255)
   Email             String?     @db.VarChar(255)
-  Gender          String?   @db.VarChar(255)
+  Gender            String?     @db.VarChar(255)
   BirthDate         DateTime?   @db.Date
   Password          String?     @db.VarChar(512)
-  RoleId            Int   
+  RoleId            Int         @db.Int @unique
   Role              roles       @relation(fields: [RoleId], references: [id])
   UserRole          user_roles[]
   UserLoginSession  user_login_session[]
+  UserOtp           user_otp[]
+  FileResource      file_resource[]
   CreatedAt         DateTime    @default(now())
   UpdatedAt         DateTime    @updatedAt
 
@@ -357,9 +359,9 @@ model users {
 
 model user_roles {
   id              String      @id @default(uuid())           
-  UserId          String      @default(uuid())
+  UserId          String      @default(uuid()) @unique
   User            users       @relation(fields: [UserId], references: [id])
-  RoleId          Int         
+  RoleId          Int         @db.Int @unique
   Role            roles       @relation(fields: [RoleId], references: [id])
   CreatedAt       DateTime    @default(now())
   UpdatedAt       DateTime    @updatedAt
@@ -368,10 +370,52 @@ model user_roles {
  
 model user_login_session {
   id              String      @id @default(uuid())   
-  UserId          String
+  UserId          String      @default(uuid()) @unique
   IsActive        Boolean     @default(true)
   StartedAt       DateTime    @db.Date
   ValidTill       DateTime    @db.Date
   User            users       @relation(fields: [UserId],references: [id])
+  CreatedAt       DateTime    @default(now())
+  UpdatedAt       DateTime    @updatedAt
+}
+
+model user_otp {
+  id              String      @id @default(uuid()) 
+  UserId          String      @default(uuid()) @unique
+  Otp             String      @db.Char(10)
+  Purpose         purpose     @default(Login)
+  Channel         channel     @default(Mobile)
+  Validated       Boolean     @default(false)
+  ValidFrom       DateTime    @db.Date
+  ValidTill       DateTime    @db.Date
+  User            users       @relation(fields: [UserId],references: [id])
+  CreatedAt       DateTime    @default(now())
+  UpdatedAt       DateTime    @updatedAt
+}
+
+enum purpose {
+  Login 
+  Verification
+}
+enum channel {
+  Email
+  Mobile
+}
+
+model file_resource {
+  id                 String      @id @default(uuid()) 
+  StorageKey         String?     @db.Text()
+  OriginalFilename   String      @db.VarChar(512)
+  MimeType           String      @db.VarChar(255)
+  Public             Boolean     @default(false)
+  Size               Int?        @db.Int
+  Tags               String      @db.Text
+  DownloadCount      Int         @default(0)
+  UserId             String      @default(uuid()) @unique
+  User               users       @relation(fields: [UserId],references: [id])
+  CreatedAt          DateTime    @default(now())
+  UpdatedAt          DateTime    @updatedAt
+
+
 
 }
