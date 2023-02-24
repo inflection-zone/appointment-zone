@@ -1,4 +1,4 @@
-import { BusinessNodesSearchResults, BusinessNodesSearchFilters } from "../../domain.types/business.nodes/business.nodes.domain.types";
+import { BusinessNodeSearchResults, BusinessNodeSearchFilters } from "../../domain.types/business.node/business.node.domain.types";
 import instance from "tsyringe/dist/typings/dependency-container";
 import { Logger } from '../../common/logger';
 import { Helper } from "../../common/helper";
@@ -7,12 +7,12 @@ import { PrismaClientInit } from "../../startup/prisma.client.init";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export class BusinessNodesService{
+export class BusinessNodeService{
     prisma = PrismaClientInit.instance().prisma();
 
-    public static instance:BusinessNodesService=null;
+    public static instance:BusinessNodeService=null;
 
-    public static getInstance():BusinessNodesService{
+    public static getInstance():BusinessNodeService{
         return this.instance || (this.instance=new this());
 
     }

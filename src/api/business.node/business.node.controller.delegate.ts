@@ -1,7 +1,7 @@
 import { ApiError } from "../../common/api.error";
-import { BusinessNodesCreateModel, BusinessNodesUpdateModel, BusinessNodesDto,BusinessNodesSearchFilters, BusinessNodesSearchResults  } from "../../domain.types/business.nodes/business.nodes.domain.types";
-import { BusinessNodesValidator as validator } from './business.nodes.validator';
-import { BusinessNodesService } from '../../database/repository.services/business.nodes.service';
+import { BusinessNodeCreateModel, BusinessNodeUpdateModel, BusinessNodeDto,BusinessNodeSearchFilters, BusinessNodeSearchResults  } from "../../domain.types/business.node/business.node.domain.types";
+import { BusinessNodesValidator as validator } from './business.node.validator';
+import { BusinessNodeService } from '../../database/repository.services/business.node.service';
 import { ErrorHandler } from '../../common/error.handler';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { Helper } from "../../common/helper";
@@ -10,15 +10,15 @@ import { query } from "express";
 
 
 
-export class BusinessNodesControllerDelegate {
+export class BusinessNodeControllerDelegate {
 
     //#region member variables and constructors
 
-    _service: BusinessNodesService = null;
+    _service: BusinessNodeService = null;
 
 
     constructor() {
-        this._service = new BusinessNodesService();
+        this._service = new BusinessNodeService();
        
     }
 
@@ -29,8 +29,8 @@ export class BusinessNodesControllerDelegate {
         await validator.validateCreateRequest(requestBody);
 
         // eslint-DisplayPictureable-next-line @typescript-eslint/no-unused-vars
-        var createModel: BusinessNodesCreateModel = this.getCreateModel(requestBody);
-        const record: BusinessNodesDto = await this._service.create(createModel);
+        var createModel: BusinessNodeCreateModel = this.getCreateModel(requestBody);
+        const record: BusinessNodeDto = await this._service.create(createModel);
         if (record === null) {
             throw new ApiError('Unable to create Business!', 400);
         }
@@ -42,7 +42,7 @@ export class BusinessNodesControllerDelegate {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    getCreateModel = (requestBody): BusinessNodesCreateModel => {
+    getCreateModel = (requestBody): BusinessNodeCreateModel => {
         return {
             BusinessId                : requestBody.BusinessId? requestBody.BusinessId:null,
             Name                      : requestBody.Name? requestBody.Name: null,

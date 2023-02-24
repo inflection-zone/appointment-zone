@@ -3,7 +3,7 @@ import { Gender, uuid } from "../miscellaneous/system.types";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export interface BusinessNodesCreateModel {
+export interface BusinessNodeCreateModel {
     id?                       : String
     BusinessId?               : String   
     Name                      : String  
@@ -22,7 +22,7 @@ export interface BusinessNodesCreateModel {
   
 
 
-export interface BusinessNodesUpdateModel {
+export interface BusinessNodeUpdateModel {
     id?                       : String
     BusinessId?               : String   
     Name?                     : String  
@@ -39,7 +39,7 @@ export interface BusinessNodesUpdateModel {
     IsActive?                 : Boolean 
 }
 
-export interface BusinessNodesDto {
+export interface BusinessNodeDto {
    
     id                       : String
     BusinessId               : String   
@@ -58,7 +58,7 @@ export interface BusinessNodesDto {
       
 }
 
-export interface BusinessNodesSearchFilters extends BaseSearchFilters {
+export interface BusinessNodeSearchFilters extends BaseSearchFilters {
     
     id?                       : String
     BusinessId?               : String   
@@ -78,7 +78,7 @@ export interface BusinessNodesSearchFilters extends BaseSearchFilters {
     
 }
 
-export interface BusinessNodesSearchResults extends BaseSearchResults {
-    Items: BusinessNodesDto[];
+export interface BusinessNodeSearchResults extends BaseSearchResults {
+    Items: BusinessNodeDto[];
 }
 
