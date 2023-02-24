@@ -32,9 +32,17 @@ export class BusinessNodeControllerDelegate {
         var createModel: BusinessNodeCreateModel = this.getCreateModel(requestBody);
         const record: BusinessNodeDto = await this._service.create(createModel);
         if (record === null) {
-            throw new ApiError('Unable to create Business!', 400);
+            throw new ApiError('Unable to create Business node!', 400);
         }
 
+        return this.getEnrichedDto(record);
+    };
+
+    getById = async (id: uuid) => {
+        const record = await this._service.getById(id);
+        if (record === null) {
+            ErrorHandler.throwNotFoundError('Business with id ' + id.toString() + ' cannot be found!');
+        }
         return this.getEnrichedDto(record);
     };
 
@@ -44,6 +52,7 @@ export class BusinessNodeControllerDelegate {
 
     getCreateModel = (requestBody): BusinessNodeCreateModel => {
         return {
+            // id                        : requestBody.id? requestBody.id : null ,
             BusinessId                : requestBody.BusinessId? requestBody.BusinessId:null,
             Name                      : requestBody.Name? requestBody.Name: null,
             Mobile                    : requestBody.Mobile? requestBody.Mobile: null,
@@ -53,8 +62,9 @@ export class BusinessNodeControllerDelegate {
             Longitude                 : requestBody.Longitude ? requestBody.Longitude : null,
             Lattitude                 : requestBody.Lattitude ? requestBody.Lattitude : null,
             OverallRating             : requestBody.OverallRating? requestBody.OverallRating: null,
+            // TimeZone                  : requestBody.TimeZone ? requestBody.TimeZone : undefined,
             AllowWalkinAppointments   : requestBody.AllowWalkinAppointments ? requestBody.AllowWalkinAppointments :null,
-            AllowFutureBookingFor     : requestBody.AllowFutureBookingFor ? requestBody.AllowFutureBookingFor : null,
+            AllowFutureBookingFor     : requestBody.AllowFutureBookingFor ? requestBody.AllowFutureBookingFor : '30d',
             IsActive                  : requestBody.IsActive ? requestBody.IsActive : true,
            
         };
@@ -66,8 +76,8 @@ export class BusinessNodeControllerDelegate {
             return null;
         }
         return {
-          
-            ExternalId                : record.ExternalId,
+            id                        : record.id,
+            BusinessId                : record.BusinessId,
             Name                      : record.Name,
             Mobile                    : record.Mobile,
             Email                     : record.Email,
@@ -76,6 +86,7 @@ export class BusinessNodeControllerDelegate {
             Longitude                 : record.Longitude,
             Lattitude                 : record.Lattitude,
             OverallRating             : record.OverallRating,
+            // TimeZone                  : record.TimeZone,
             AllowWalkinAppointments   : record.AllowWalkinAppointments,
             AllowFutureBookingFor     : record.AllowFutureBookingFor,
             IsActive                  : record.IsActive,

@@ -10,12 +10,12 @@ export interface BusinessNodeCreateModel {
     Mobile                    : String   
     Email                     : String  
     DisplayPicture?           : String
-    Address?                   : String
+    Address                   : String
     Longitude?                 : String
     Lattitude?                 : String
     OverallRating?            : number
     TimeZone?                 : String  
-    AllowWalkinAppointments?  : Boolean  
+    AllowWalkinAppointments   : Boolean  
     AllowFutureBookingFor?    : String  
     IsActive                  : Boolean 
   }

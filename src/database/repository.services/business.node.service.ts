@@ -28,6 +28,18 @@ export class BusinessNodeService{
 
     }
 
+    getById = async (id) => {
+        try {
+            var record = await this.prisma.business_nodes.findUnique({where : {id : id}
+            });
+
+            return record;
+        } catch (error) {
+        ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve business node!', error);
+    }
+
+}
+
 
 
 

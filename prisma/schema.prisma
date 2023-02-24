@@ -89,18 +89,17 @@ model business_node_hours {
 }
 
 model business_nodes {
-  id                        String   @id @db.Char(36)
+  id                        String   @id @default(uuid())
   BusinessId                String   @db.Char(36)
   Name                      String   @db.VarChar(255)
   Mobile                    String   @db.VarChar(255)
   Email                     String   @db.VarChar(255)
-
   DisplayPicture            String?  @db.Text
   Address                   String?  @db.Text
   Longitude                 String?  @db.VarChar(255)
   Lattitude                 String?  @db.VarChar(255)
   OverallRating             Float?   @db.Float
-  TimeZone                  String   @default("+05:30") @db.VarChar(255)
+  TimeZone                  String?   @default("+05:30") @db.VarChar(255)
   AllowWalkinAppointments   Boolean  @default(true)
   AllowFutureBookingFor     String   @default("30d") @db.VarChar(255)
   IsActive                  Boolean  @default(true)

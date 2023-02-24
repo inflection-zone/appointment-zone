@@ -18,7 +18,7 @@ export class BusinessNodeController extends BaseController {
 
      create = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
-             await this.authorize('Business.Node.Create', request, response, false);
+             await this.authorize('BusinessNode.Create', request, response, false);
             const record = await this._delegate.create(request.body);
             const message = 'Business node added successfully!';
             ResponseHandler.success(request, response, message, 201, record);
@@ -27,18 +27,18 @@ export class BusinessNodeController extends BaseController {
         }
     };
 
-    // getById = async (request:express.Request, response:express.Response): Promise <void>=>{
-    //     try{
-    //         await this.authorize('Business.Node.GetById', request, response);
-    //         const record = await this._delegate.getById(request.params.id);
-    //         const message ="Business retrieved successfully!";
-    //         ResponseHandler.success(request, response, message, 200, record);
+    getById = async (request:express.Request, response:express.Response): Promise <void>=>{
+        try{
+            await this.authorize('BusinessNode.GetById', request, response);
+            const record = await this._delegate.getById(request.params.id);
+            const message ="Business retrieved successfully!";
+            ResponseHandler.success(request, response, message, 200, record);
             
 
-    //     }catch(error){
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // }
+        }catch(error){
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
 
 
 
