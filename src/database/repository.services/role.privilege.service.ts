@@ -16,7 +16,7 @@ export class RolePrivilegeService {
 
     create = async (createModel) => {
         try {
-            return await this.prisma.role_privileges.create(createModel);
+            return await this.prisma.role_privileges.create({data:createModel});
         } catch (error) {
             ErrorHandler.throwDbAccessError('Unable to create role privilege!', error);
         }
@@ -24,7 +24,8 @@ export class RolePrivilegeService {
 
     getById = async (id) => {
         try {
-            return await this.prisma.role_privileges.findUnique(id);
+            return await this.prisma.role_privileges.findUnique({where:{id:id}
+            });
         } catch (error) {
             ErrorHandler.throwDbAccessError('Unable to retrieve role privilege!', error);
         }
@@ -45,8 +46,10 @@ export class RolePrivilegeService {
 
     hasPrivilegeForRole = async (roleId, privilege) => {
         try {
-            const rolePrivileges = await this.prisma.role_privileges.findMany({
-                where : {RoleId  : roleId, Privilege :  privilege ,},
+            const rolePrivileges = await this.prisma.role_privileges.findMany({select:{
+                    RoleId  : roleId,
+                    Privilege : privilege,
+                }
             });
             return rolePrivileges.length > 0;
         } catch (error) {

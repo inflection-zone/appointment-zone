@@ -35,16 +35,16 @@ export class UserRoleController extends BaseController {
         }
     }
 
-    // getById = async (request: express.Request, response: express.Response): Promise < void > => {
-    //     try {
-    //         await this.authorize('UserRole.GetById', request, response);
-    //         const record = await this._delegate.getById(request.params.id);
-    //         const message = 'User role retrieved successfully!';
-    //         ResponseHandler.success(request, response, message, 200, record);
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // }
+    getById = async (request: express.Request, response: express.Response): Promise < void > => {
+        try {
+            await this.authorize('UserRole.GetById', request, response);
+            const record = await this._delegate.getById(request.params.id);
+            const message = 'User role retrieved successfully!';
+            ResponseHandler.success(request, response, message, 200, record);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
 
     // search = async (request: express.Request, response: express.Response): Promise < void > => {
     //     try {

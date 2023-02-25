@@ -18,22 +18,14 @@
             "FileResource.Search",
             "FileResource.Download",
 
-            "CareplanCategory.Create",
-            "CareplanCategory.Search",
-            "CareplanCategory.GetById",
-            "CareplanCategory.Update",
-            "CareplanCategory.Delete",
-
             "ApiClient.Create",
             "ApiClient.Search",
             "ApiClient.GetById",
             "ApiClient.Update",
             "ApiClient.Delete",
             "ApiClient.GetApiKey",
-            "ApiClient.RenewApiKey",
+            "ApiClient.RenewApiKey"
 
-            "Careplan.Search",
-            "Careplan.GetById"
         ]
     },
     {
@@ -54,18 +46,6 @@
             "FileResource.GetById",
             "FileResource.Search",
             "FileResource.Download",
-
-            "CareplanCategory.Create",
-            "CareplanCategory.Search",
-            "CareplanCategory.GetById",
-            "CareplanCategory.Update",
-            "CareplanCategory.Delete",
-
-            "Careplan.Create",
-            "Careplan.Search",
-            "Careplan.GetById",
-            "Careplan.Update",
-            "Careplan.Delete",
 
             "ActionPlan.Create",
             "ActionPlan.Search",

@@ -336,13 +336,13 @@ model role_privileges {
 
 model users {
   id                String      @id @default(uuid())
-  UserName          String      @db.Char(36)
+  UserName          String      @db.Char(36) @unique
   Prefix            String      @db.Char(36)
   FirstName         String      @db.VarChar(255)
   LastName          String      @db.VarChar(255)
-  CountryCode       String      @db.Char(36)
-  Phone             String?     @db.VarChar(255)
-  Email             String?     @db.VarChar(255)
+  CountryCode       String      @db.Char(36) @unique
+  Phone             String?     @db.VarChar(255) @unique
+  Email             String?     @db.VarChar(255) @unique
   Gender            String?     @db.VarChar(255)
   BirthDate         DateTime?   @db.Date
   Password          String?     @db.VarChar(512)
