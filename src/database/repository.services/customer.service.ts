@@ -1,6 +1,4 @@
-import { any, number } from "joi";
-import { where } from "sequelize";
-//import instance from "tsyringe/dist/typings/dependency-container";
+
 import { ErrorHandler } from "../../common/error.handler";
 import { PrismaClientInit } from "../../startup/prisma.client.init";
 import { Prisma } from '@prisma/client';
@@ -72,11 +70,11 @@ search = async (filters) => {
         // }
         // search['orderBy'] = [[orderByColumn, order]];
         search.orderBy = {
-                createdAt : 'asc'
+                CreatedAt : 'asc'
         }
         if (filters.Order === 'descending') {
             search.orderBy = {
-                createdAt : 'desc'
+                CreatedAt : 'desc'
         }
         }
         search.take = 25;

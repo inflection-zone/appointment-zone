@@ -1,6 +1,5 @@
 import { PrismaClientInit } from "../../startup/prisma.client.init";
 import { ErrorHandler } from '../../common/error.handler';
-import { Op } from 'sequelize';
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 export class RolePrivilegeService {
@@ -13,10 +12,11 @@ export class RolePrivilegeService {
 
     }
 
-
     create = async (createModel) => {
         try {
-            return await this.prisma.role_privileges.create({data:createModel});
+             const record =  await this.prisma.role_privileges.create({data:createModel});
+            //  return record;
+            console.log( "record", record);
         } catch (error) {
             ErrorHandler.throwDbAccessError('Unable to create role privilege!', error);
         }
@@ -46,7 +46,7 @@ export class RolePrivilegeService {
 
     hasPrivilegeForRole = async (roleId, privilege) => {
         try {
-            const rolePrivileges = await this.prisma.role_privileges.findMany({select:{
+            const rolePrivileges = await this.prisma.role_privileges.findMany({where:{
                     RoleId  : roleId,
                     Privilege : privilege,
                 }

@@ -85,10 +85,10 @@ export class Seeder {
 
             const role = await this._roleService.getByName(u.Role);
 
-            const existingUser = await this._userService.getUser(null, null, null, u.UserName);
-            if (existingUser) {
-                continue;
-            }
+            // const existingUser = await this._userService.getUser(null, null, null, u.UserName);
+            // if (existingUser) {
+            //     continue;
+            // }
        
             const userDomainModel : UserCreateModel = {
                 Phone       : u.Phone,
@@ -96,7 +96,7 @@ export class Seeder {
                 LastName    : u.LastName,
                 UserName    : u.UserName,
                 Password    : u.Password,
-                RoleId      : role.id,
+                // RoleId      : role.id,
                 CountryCode : u.CountryCode,
                 Email       : u.Email,
                 Gender      : Gender.Male,
