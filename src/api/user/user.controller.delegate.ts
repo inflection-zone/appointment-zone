@@ -59,13 +59,13 @@ export class UserControllerDelegate {
         return this.getEnrichedDto(record);
     }
 
-    getById = async (id: uuid) => {
-        const record = await this._service.getById(id);
-        if (record === null) {
-            ErrorHandler.throwNotFoundError('User with id ' + id.toString() + ' cannot be found!');
-        }
-        return this.getEnrichedDto(record);
-    }
+    // getById = async (id: uuid) => {
+    //     const record = await this._service.getById(id);
+    //     if (record === null) {
+    //         ErrorHandler.throwNotFoundError('User with id ' + id.toString() + ' cannot be found!');
+    //     }
+    //     return this.getEnrichedDto(record);
+    // }
 
     // search = async (query) => {
     //     await validator.validateSearchRequest(query);
@@ -105,20 +105,20 @@ export class UserControllerDelegate {
         await validator.validateLoginWithPasswordRequest(requestBody);
         const loginModel = await this.getLoginModel(requestBody);
         const sentPassword = loginModel.Password;
-        const hashedPassword = loginModel.User.Password;
-        const validPassword = Helper.compareHashedPassword(sentPassword, hashedPassword);
-        if (!validPassword) {
-            ErrorHandler.throwUnauthorizedUserError('Invalid password.');
-        }
-        const user = await this._service.getById(loginModel.User.id);
-        const loginSession = await this._service.createUserLoginSession(user.id);
-        const currentUser: CurrentUser = this.constructCurrentUser(user, loginSession.id);
-        const accessToken = await Loader.Authorizer.generateUserSessionToken(currentUser);
+        // const hashedPassword = loginModel.User.Password;
+        // const validPassword = Helper.compareHashedPassword(sentPassword, hashedPassword);
+        // if (!validPassword) {
+        //     ErrorHandler.throwUnauthorizedUserError('Invalid password.');
+        // }
+        // const user = await this._service.getById(loginModel.User.id);
+        // const loginSession = await this._service.createUserLoginSession(user.id);
+        // const currentUser: CurrentUser = this.constructCurrentUser(user, loginSession.id);
+        // const accessToken = await Loader.Authorizer.generateUserSessionToken(currentUser);
         const expiresIn: number = ConfigurationManager.JwtExpiresIn();
         const validTill = new Date(Date.now() + expiresIn * 1000);
         return {
-            User             : currentUser,
-            AccessToken      : accessToken,
+            // User             : currentUser,
+            // AccessToken      : accessToken,
             SessionValidTill : validTill
         };
     }
@@ -307,14 +307,14 @@ export class UserControllerDelegate {
         const password = (typeof requestBody.Password !== 'undefined') ? requestBody.Password : null;
         const otp = (typeof requestBody.Otp !== 'undefined') ? requestBody.Otp.toString() : null;
 
-        const user = await this._service.getUser(countryCode, phone, email, userName);
-        if (user === null) {
-            ErrorHandler.throwNotFoundError('User does not exist!');
-        }
+        // const user = await this._service.getUser(countryCode, phone, email, userName);
+        // if (user === null) {
+        //     ErrorHandler.throwNotFoundError('User does not exist!');
+        // }
 
         return {
-            User      : user,
-            LoginRole : user.Role.RoleName,
+            // User      : user,
+            // LoginRole : user.Role.RoleName,
             Password  : password,
             Otp       : otp
         };

@@ -222,6 +222,8 @@ model businesses {
   Yelp           String?  @db.VarChar(255)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  IsDeleted      Boolean   @default(false)
+  DeletedOn      DateTime? @db.DateTime(0)
 }
 
 model customers {
@@ -239,6 +241,8 @@ model customers {
   Prefix         String?   @db.VarChar(255)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+  IsDeleted      Boolean   @default(false)
+  DeletedOn      DateTime? @db.DateTime(0)
 }
 
 model notifications {
@@ -333,26 +337,25 @@ model role_privileges {
 }
 
 model users {
-  id                String      @id @default(uuid())
-  UserName          String      @db.Char(36) @unique
-  Prefix            String      @db.Char(36)
-  FirstName         String      @db.VarChar(255)
-  LastName          String      @db.VarChar(255)
-  CountryCode       String      @db.Char(36) @unique
-  Phone             String?     @db.VarChar(255) @unique
-  Email             String?     @db.VarChar(255) @unique
-  Gender            String?     @db.VarChar(255)
-  BirthDate         DateTime?   @db.Date
-  Password          String?     @db.VarChar(512)
-  RoleId            Int         @db.Int @unique
-  Role              roles       @relation(fields: [RoleId], references: [id])
-  UserRole          user_roles[]
-  UserLoginSession  user_login_session[]
-  UserOtp           user_otp[]
-  FileResource      file_resource[]
-  CreatedAt         DateTime    @default(now())
-  UpdatedAt         DateTime    @updatedAt
-
+  id               String              @id @default(uuid())
+  UserName         String              @db.Char(36)
+  Prefix           String              @db.Char(36)
+  FirstName        String              @db.VarChar(255)
+  LastName         String              @db.VarChar(255)
+  CountryCode      String              @db.Char(36)
+  Phone            String?             @db.VarChar(255)
+  Email            String?             @db.VarChar(255)
+  Gender           String?             @db.VarChar(255)
+  BirthDate        DateTime?           @db.Date
+  Password         String?             @db.VarChar(512)
+  RoleId           Int                 @unique
+  CreatedAt        DateTime            @default(now())
+  UpdatedAt        DateTime            @updatedAt
+  FileResource     file_resource?
+  UserLoginSession user_login_session?
+  UserOtp          user_otp?
+  UserRole         user_roles?
+  Role             roles               @relation(fields: [RoleId], references: [id])
 }
 
 model user_roles {

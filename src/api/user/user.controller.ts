@@ -32,9 +32,9 @@ export class UserController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
             await this.authorize('User.GetById', request, response);
-            const record = await this._delegate.getById(request.params.id);
+            // const record = await this._delegate.getById(request.params.id);
             const message = 'User retrieved successfully!';
-            ResponseHandler.success(request, response, message, 200, record);
+            // ResponseHandler.success(request, response, message, 200, record);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
