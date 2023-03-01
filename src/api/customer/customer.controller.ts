@@ -41,7 +41,7 @@ export class CustomerController extends BaseController {
 
   search = async (request: express.Request, response: express.Response): Promise <void> => {
     try {
-        await this.authorize('Customer.Search', request, response);
+        await this.authorize('Customer.Search', request, response ,false);
         const searchResults = await this._delegate.search(request.query);
         const message = 'Customer records retrieved successfully!';
         ResponseHandler.success(request, response, message, 200, searchResults);

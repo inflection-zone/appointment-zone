@@ -26,35 +26,30 @@ export class UserService {
         }
     }
 
-    getById = async (id) => {
-        try {
-            var record = await this.prisma.users.findUnique({
-                where : {
-                    id : id
-                }
-            });
+    // getById = async (id) => {
+    //     try {
+    //         var record = await this.prisma.users.findUnique({
+    //             where : {
+    //                 id : id
+    //             }
+    //         });
             
-            if (record) {
-                const userRole = await this.prisma.user_roles.findUnique({
-                    where : { 
-                         UserId : record.id
-                        }
-                });
-                if (userRole) {
-                    const role = await this.prisma.roles.findUnique({
-                        where : {
-                            RoleId : UserId
-                        }
-                    
-                    });
-                    record['roles'] = role;
-                }
-            }
-             return record;
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve user!', error);
-        }
-    }
+    //         if (record) {
+    //             const userRole = await this.prisma.user_roles.findUnique({
+    //                 where : { 
+    //                      UserId : record.id
+    //                     }
+    //             });
+    //             if (userRole) {
+    //                 const role = await this.prisma.roles.findUnique({userRole.RoleId});
+    //                 record['roles'] = role;
+    //             }
+    //         }
+    //          return record;
+    //     } catch (error) {
+    //         ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve user!', error);
+    //     }
+    // }
 
     exists = async (id) => {
         try {
@@ -235,50 +230,50 @@ export class UserService {
     //     return tmpUsername;
     // }
 
-    getUser = async (
-        countryCode,
-        phone,
-        email,
-        userName
-    ) => {
+    // getUser = async (
+    //     countryCode,
+    //     phone,
+    //     email,
+    //     userName
+    // ) => {
 
-        var filters = [];
+    //     var filters = [];
 
-        if (phone !== null && countryCode !== null) {
-            filters.push({
-                Phone       : phone,
-                CountryCode : countryCode
-            });
-        }
-        else if (email !== null) {
-            filters.push({
-                Email :  email 
-            });
-        }
-        else if (userName !== null) {
-            filters.push({
-                UserName : userName
-            });
-        }
-         const user = await this.prisma.users.findUnique({
-            where : {
-                    CountryCode:countryCode,
-                    Phone : phone,
-                    Email : email,
-                    UserName : userName,
-              }
+    //     if (phone !== null && countryCode !== null) {
+    //         filters.push({
+    //             Phone       : phone,
+    //             CountryCode : countryCode
+    //         });
+    //     }
+    //     else if (email !== null) {
+    //         filters.push({
+    //             Email :  email 
+    //         });
+    //     }
+    //     else if (userName !== null) {
+    //         filters.push({
+    //             UserName : userName
+    //         });
+    //     }
+    //      const user = await this.prisma.users.findUnique({
+    //         where : {
+    //                 CountryCode:countryCode,
+    //                 Phone : phone,
+    //                 Email : email,
+    //                 UserName : userName,
+    //           }
             
-         });
+    //      });
 
-        if (!user) {
-            return null;
-        }
+    //     if (!user) {
+    //         return null;
+    //     }
 
-        // var role = await this.roles.findUnique({where:{user.RoleId}});
-        // user['roles'] = role;
+    //     var role = await this.roles.findUnique(user.RoleId);
+    //     user['roles'] = role;
 
-        return user;
-     }
+    //     return user;
+    //  }
 
 //  getUserUpdateModel = (inputModel) => {
 
