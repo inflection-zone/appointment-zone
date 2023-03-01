@@ -33,6 +33,7 @@ export class UserService {
     //                 id : id
     //             }
     //         });
+            
     //         if (record) {
     //             const userRole = await this.prisma.user_roles.findUnique({
     //                 where : { 
@@ -41,10 +42,10 @@ export class UserService {
     //             });
     //             if (userRole) {
     //                 const role = await this.prisma.roles.findUnique({userRole.RoleId});
-    //                 record['Role'] = role;
+    //                 record['roles'] = role;
     //             }
     //         }
-    //         return record;
+    //          return record;
     //     } catch (error) {
     //         ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve user!', error);
     //     }
@@ -52,7 +53,8 @@ export class UserService {
 
     exists = async (id) => {
         try {
-            const record = await this.prisma.users.findUnique(id);
+            const record = await this.prisma.users.findUnique({where:{id:id}}
+                );
             return record !== null;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to determine existance of user!', error);
@@ -81,9 +83,7 @@ export class UserService {
     //         if (filters.LastName) {
     //             search.where['LastName'] = filters.LastName;
     //         }
-    //         if (filters.BiocubeId) {
-    //             search.where['BiocubeId'] = filters.BiocubeId;
-    //         }
+    //      
     //         if (filters.Gender) {
     //             search.where['Gender'] = filters.Gender;
     //         }
@@ -184,7 +184,7 @@ export class UserService {
 
     // getUserWithPhone = async (countryCode, phone) => {
     //     try {
-    //         const record = await this.prisma.users.findMany({
+    //         const record = await this.prisma.users.findUnique({
     //             where : {
     //                 CountryCode : countryCode,
     //                 Phone       : phone,
@@ -198,7 +198,7 @@ export class UserService {
 
     // getUserWithEmail = async (email) => {
     //     try {
-    //         const record = await this.prisma.users.findMany({
+    //         const record = await this.prisma.users.findUnique({
     //             where : {
     //                 Email : email
     //             }
@@ -211,7 +211,7 @@ export class UserService {
 
     // getUserWithUserName = async (username) => {
     //     try {
-    //         const record = await this.prisma.users.findMany({
+    //         const record = await this.prisma.users.findUnique({
     //             where : {
     //                 UserName : username
     //             }
@@ -255,20 +255,22 @@ export class UserService {
     //             UserName : userName
     //         });
     //     }
-    //      const user = await this.prisma.users.findMany({
-    //          where : { 
-    //             OR:[
-    //                 phone, countryCode, email, userName
-    //             ]}
+    //      const user = await this.prisma.users.findUnique({
+    //         where : {
+    //                 CountryCode:countryCode,
+    //                 Phone : phone,
+    //                 Email : email,
+    //                 UserName : userName,
+    //           }
             
     //      });
 
-    //     // if (!user) {
-    //     //     return null;
-    //     // }
+    //     if (!user) {
+    //         return null;
+    //     }
 
-    //     var role = await this.prisma.roles.findUnique(user.RoleId);
-    //     user['Role'] = role;
+    //     var role = await this.roles.findUnique(user.RoleId);
+    //     user['roles'] = role;
 
     //     return user;
     //  }
@@ -308,22 +310,22 @@ export class UserService {
 //         return updateModel;
 //     }
 
-//     createUserLoginSession = async (userId) => {
-//         try {
-//             var now = new Date();
-//             var till = TimeHelper.addDuration(now, 3, DurationType.Day);
-//             var record = await this.prisma.user_login_session.create({data:{
-//                 UserId    : userId,
-//                 IsActive  : true,
-//                 StartedAt : now,
-//                 ValidTill : till
-//             }
-//             });
-//             return record;
-//         } catch (error) {
-//             ErrorHandler.throwDbAccessError('Unable to create user login session!', error);
-//         }
-//     }
+    createUserLoginSession = async (userId) => {
+        try {
+            var now = new Date();
+            var till = TimeHelper.addDuration(now, 3, DurationType.Day);
+            var record = await this.prisma.user_login_session.create({data:{
+                UserId    : userId,
+                IsActive  : true,
+                StartedAt : now,
+                ValidTill : till
+            }
+            });
+            return record;
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('Unable to create user login session!', error);
+        }
+    }
 
     // invalidateUserLoginSession = async (sessionId) => {
     //     try {

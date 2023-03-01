@@ -31,22 +31,26 @@ export class UserRoleService {
         }
     }
 
-    // getById = async (id) => {
-    //     try {
-    //         const record = await this.prisma.user_roles.findUnique({
-    //             where : {
-    //                 id : id
-    //             }
-    //         });
-    //         return record;
-    //     } catch (error) {
-    //         ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve user role!', error);
-    //     }
-    // }
+    getById = async (id) => {
+        try {
+            const record = await this.prisma.user_roles.findUnique({
+                where : {
+                    id : id
+                }
+            });
+            return record;
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve user role!', error);
+        }
+    }
 
     exists = async (id): Promise < boolean > => {
         try {
-            const record = await this.prisma.user_roles.findUnique(id);
+            const record = await this.prisma.user_roles.findUnique({
+                where : {
+                    id : id
+                }
+            });
             return record !== null;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to determine existance of user role!', error);

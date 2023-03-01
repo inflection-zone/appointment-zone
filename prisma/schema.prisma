@@ -241,6 +241,8 @@ model customers {
   Prefix         String?   @db.VarChar(255)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+  IsDeleted      Boolean   @default(false)
+  DeletedOn      DateTime? @db.DateTime(0)
 }
 
 model notifications {
@@ -320,8 +322,8 @@ model roles {
   CreatedAt     DateTime         @default(now())
   UpdatedAt     DateTime         @updatedAt
   RolePrivilege role_privileges?
-  UserRole      user_roles?
-  User          users?
+  UserRole      user_roles[]
+  User          users[]
 }
 
 model role_privileges {

@@ -1,5 +1,5 @@
 import { BusinessSearchResults, BusinessSearchFilters } from "../../domain.types/business/business.domain.types";
-import instance from "tsyringe/dist/typings/dependency-container";
+//import instance from "tsyringe/dist/typings/dependency-container";
 import { Logger } from '../../common/logger';
 import { Helper } from "../../common/helper";
 import { ErrorHandler } from "../../common/error.handler";
@@ -59,13 +59,7 @@ export class BusinessService{
                 limit
             } = this.addPaginationToSearch(search, filters);
 
-            const foundResults = await this.prisma.businesses.findMany({where: {
-               Name : 'Ayurcare private limited'
-
-               
-
-                
-              },})
+            const foundResults = await this.prisma.businesses.findMany(search)
             const searchResults: BusinessSearchResults = {
                 TotalCount     : foundResults.length,
                 RetrievedCount : foundResults.length,
@@ -178,15 +172,23 @@ getBusinessWithMobile = async (Mobile) => {
     }
 
 private getSearchModel = (filters) => {
-
     var search = {
         where   : {},
+        orderBy: {   
+        },
+        take:25
         // include :{}
-       
     };
+    var {
+        order,
+        orderByColumn
+    } = this.addSortingToSearch(search, filters);
+    var {
+                pageIndex,
+                limit
+    } = this.addPaginationToSearch(search, filters);
 
     if (filters.ExternalId) {
-        where:{Email: { contains: filters.Email } }
         search.where['ExternalId'] = filters.ExternalId
         }
     
@@ -240,6 +242,14 @@ private getSearchModel = (filters) => {
         }
 
     return search;
+    // return {
+    //     search,
+    //     orderByColumn,
+    //     order,
+    //     pageIndex,
+    //     limit
+    //     };
+
 }
 
     private addSortingToSearch = (search, filters) => {

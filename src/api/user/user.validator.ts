@@ -32,8 +32,7 @@ export class UserValidator {
     static validateSearchRequest = async (query) => {
         try {
             const schema = joi.object({
-                roleId        : joi.string().max(16).required(),
-                biocubeId     : joi.string().max(16).optional(),
+                roleId        : joi.string().max(16).optional(),
                 prefix        : joi.string().max(16).optional(),
                 firstName     : joi.string().max(64).optional(),
                 lastName      : joi.string().max(64).optional(),
@@ -65,7 +64,6 @@ export class UserValidator {
                 CountryCode : joi.string().max(10).optional(),
                 Phone       : joi.string().max(16).min(6).optional(),
                 Email       : joi.string().max(256).optional(),
-                BiocubeId   : joi.string().max(32).optional(),
                 Gender      : joi.string().valid("Male", "Female", "Other").optional(),
                 Password    : joi.string().max(512).optional(),
                 State       : joi.string().max(64).optional(),

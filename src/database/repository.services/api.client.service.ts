@@ -199,7 +199,7 @@ export class ApiClientService{
                 ClientName   : client.ClientName,
                 ClientCode   : client.ClientCode,
                 IsPrivileged : client.IsPrivileged,
-                ClientApiKey : client.ApiKey
+                //ClientApiKey : client.ApiKey
 
             };
             return currentClient;

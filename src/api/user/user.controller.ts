@@ -29,16 +29,16 @@ export class UserController extends BaseController {
         }
     }
 
-    // getById = async (request: express.Request, response: express.Response): Promise <void> => {
-    //     try {
-    //         await this.authorize('User.GetById', request, response);
-    //         const record = await this._delegate.getById(request.params.id);
-    //         const message = 'User retrieved successfully!';
-    //         ResponseHandler.success(request, response, message, 200, record);
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // }
+    getById = async (request: express.Request, response: express.Response): Promise <void> => {
+        try {
+            await this.authorize('User.GetById', request, response);
+            // const record = await this._delegate.getById(request.params.id);
+            const message = 'User retrieved successfully!';
+            // ResponseHandler.success(request, response, message, 200, record);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
 
     // getBySessionId = async (request: express.Request, response: express.Response): Promise <void> => {
     //     try {
@@ -84,16 +84,16 @@ export class UserController extends BaseController {
     //     }
     // };
 
-    // loginWithPassword = async (request: express.Request, response: express.Response) => {
-    //     try {
-    //         this.authorize('User.LoginWithPassword', request, response, false);
-    //         const result = await this._delegate.loginWithPassword(request.body);
-    //         const message = 'User logged in successfully!';
-    //         ResponseHandler.success(request, response, message, 200, result);
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
+    loginWithPassword = async (request: express.Request, response: express.Response) => {
+        try {
+            this.authorize('User.LoginWithPassword', request, response, false);
+            const result = await this._delegate.loginWithPassword(request.body);
+            const message = 'User logged in successfully!';
+            ResponseHandler.success(request, response, message, 200, result);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 
     // changePassword = async (request: express.Request, response: express.Response): Promise <void> => {
     //     try {

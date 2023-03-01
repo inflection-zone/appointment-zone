@@ -47,13 +47,13 @@ export class UserRoleControllerDelegate {
         return this.getEnrichedDto(record);
     }
 
-    // getById = async (id: uuid) => {
-    //     const record = await this._service.getById(id);
-    //     if (record === null) {
-    //         ErrorHandler.throwNotFoundError('User role with id ' + id.toString() + ' cannot be found!');
-    //     }
-    //     return this.getEnrichedDto(record);
-    // }
+    getById = async (id: uuid) => {
+        const record = await this._service.getById(id);
+        if (record === null) {
+            ErrorHandler.throwNotFoundError('User role with id ' + id.toString() + ' cannot be found!');
+        }
+        return this.getEnrichedDto(record);
+    }
 
     // search = async (query: any) => {
     //     await validator.validateSearchRequest(query);
