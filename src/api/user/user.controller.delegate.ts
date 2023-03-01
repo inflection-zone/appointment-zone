@@ -314,7 +314,7 @@ export class UserControllerDelegate {
 
         return {
             User      : user,
-            LoginRole : user.Role.RoleName,
+           // LoginRole : user.Role.RoleName,
             Password  : password,
             Otp       : otp
         };

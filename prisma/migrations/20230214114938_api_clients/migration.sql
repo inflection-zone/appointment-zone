@@ -8,5 +8,5 @@
 */
 -- AlterTable
 ALTER TABLE `api_clients` MODIFY `ValidFrom` DATETIME NULL,
-    MODIFY `ValidTill` DATETIME NULL,
-    MODIFY `DeletedAt` DATETIME NOT NULL;
+    MODIFY `ValidTill` DATETIME NULL
+--   MODIFY `DeletedAt` DATETIME NOT NULL;

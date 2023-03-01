@@ -8,9 +8,10 @@
 
 */
 -- AlterTable
-ALTER TABLE `api_clients` MODIFY `ValidFrom` DATETIME NULL,
-    MODIFY `ValidTill` DATETIME NULL,
-    MODIFY `DeletedAt` DATETIME NOT NULL;
+/*ALTER TABLE `api_clients` MODIFY `ValidFrom` DATETIME NULL,
+    MODIFY `ValidTill` DATETIME NULL;
+    /*MODIFY `DeletedAt` DATETIME NOT NULL;
 
 -- CreateIndex
 CREATE UNIQUE INDEX `api_clients_ClientCode_key` ON `api_clients`(`ClientCode`);
+*/

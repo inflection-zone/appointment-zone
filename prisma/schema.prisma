@@ -318,8 +318,8 @@ model roles {
   CreatedAt     DateTime         @default(now())
   UpdatedAt     DateTime         @updatedAt
   RolePrivilege role_privileges?
-  UserRole      user_roles?
-  User          users?
+  UserRole      user_roles[]
+  User          users[]
 }
 
 model role_privileges {

@@ -41,7 +41,12 @@ export class UserService {
                         }
                 });
                 if (userRole) {
-                    const role = await this.prisma.roles.findUnique({userRole.RoleId});
+                    const role = await this.prisma.roles.findUnique({
+                        where : {
+                            RoleId : UserId
+                        }
+                    
+                    });
                     record['roles'] = role;
                 }
             }
@@ -184,7 +189,7 @@ export class UserService {
 
     // getUserWithPhone = async (countryCode, phone) => {
     //     try {
-    //         const record = await this.prisma.users.findMany({
+    //         const record = await this.prisma.users.findUnique({
     //             where : {
     //                 CountryCode : countryCode,
     //                 Phone       : phone,
@@ -198,7 +203,7 @@ export class UserService {
 
     // getUserWithEmail = async (email) => {
     //     try {
-    //         const record = await this.prisma.users.findMany({
+    //         const record = await this.prisma.users.findUnique({
     //             where : {
     //                 Email : email
     //             }
@@ -211,7 +216,7 @@ export class UserService {
 
     // getUserWithUserName = async (username) => {
     //     try {
-    //         const record = await this.prisma.users.findMany({
+    //         const record = await this.prisma.users.findUnique({
     //             where : {
     //                 UserName : username
     //             }
@@ -269,8 +274,8 @@ export class UserService {
             return null;
         }
 
-        var role = await this.roles.findUnique(user.RoleId);
-        user['roles'] = role;
+        // var role = await this.roles.findUnique({where:{user.RoleId}});
+        // user['roles'] = role;
 
         return user;
      }
