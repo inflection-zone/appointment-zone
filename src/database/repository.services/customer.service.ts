@@ -48,27 +48,25 @@ search = async (filters) => {
     try {
         const search : Prisma.customersFindManyArgs = {};
         if (filters.FirstName != null) {
-            search.where['FirstName'] = filters.FirstName;
+            search.where = {
+                FirstName : filters.FirstName
+            }
         }
         if (filters.LastName != null) {
-            search.where['LastName'] =  filters.LastName 
+            search.where =   {
+                LastName : filters.LastName 
+                }
         }
         if (filters.Mobile != null) {
-            search.where['Mobile'] = filters.Mobile
+            search.where =   {
+                Mobile : filters.Mobile
+                }
         }
         if (filters.Email != null) {
-            search.where['Email'] = filters.Email;
+            search.where =   {
+                Email : filters.Email
+                }
         }
-
-        // let orderByColumn = 'createdAt';
-        // if (filters.OrderBy) {
-        //     orderByColumn = filters.OrderBy;
-        // }
-        // let order = 'asc';
-        // if (filters.Order === 'descending') {
-        //     order = 'desc';
-        // }
-        // search['orderBy'] = [[orderByColumn, order]];
         search.orderBy = {
                 CreatedAt : 'asc'
         }
@@ -87,8 +85,6 @@ search = async (filters) => {
             pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
             search.skip = pageIndex * search.take;
         }
-        // search[''] = limit;
-        // search['offset'] = offset;
         const foundResults = await this.prisma.customers.findMany(search)
         const searchResults = {
             TotalCount     : foundResults.length,
@@ -107,8 +103,6 @@ search = async (filters) => {
     }
 }
 
-
-
 update = async (id, updateModel) => {
   try {
       if (Object.keys(updateModel).length > 0) {
@@ -117,14 +111,12 @@ update = async (id, updateModel) => {
                   id : id
               }
            });
-          
       }
       return await this.getById(id);
   } catch (error) {
       ErrorHandler.throwDbAccessError('DB Error: Unable to update customers!', error);
   }
 }
-
 
 delete = async (id) => {
   try {
