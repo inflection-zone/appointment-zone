@@ -184,7 +184,7 @@ export class UserService {
 
     // getUserWithPhone = async (countryCode, phone) => {
     //     try {
-    //         const record = await this.prisma.users.findMany({
+    //         const record = await this.prisma.users.findUnique({
     //             where : {
     //                 CountryCode : countryCode,
     //                 Phone       : phone,
@@ -198,7 +198,7 @@ export class UserService {
 
     // getUserWithEmail = async (email) => {
     //     try {
-    //         const record = await this.prisma.users.findMany({
+    //         const record = await this.prisma.users.findUnique({
     //             where : {
     //                 Email : email
     //             }
@@ -211,7 +211,7 @@ export class UserService {
 
     // getUserWithUserName = async (username) => {
     //     try {
-    //         const record = await this.prisma.users.findMany({
+    //         const record = await this.prisma.users.findUnique({
     //             where : {
     //                 UserName : username
     //             }

@@ -1,5 +1,5 @@
 import { BusinessSearchResults, BusinessSearchFilters } from "../../domain.types/business/business.domain.types";
-import instance from "tsyringe/dist/typings/dependency-container";
+//import instance from "tsyringe/dist/typings/dependency-container";
 import { Logger } from '../../common/logger';
 import { Helper } from "../../common/helper";
 import { ErrorHandler } from "../../common/error.handler";
