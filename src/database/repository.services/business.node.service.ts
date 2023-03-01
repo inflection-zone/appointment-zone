@@ -40,6 +40,68 @@ export class BusinessNodeService{
 
 }
 
+update = async (id, updateModel) => {
+    try {
+        if (Object.keys(updateModel).length > 0) {
+            var res = await this.prisma.business_nodes.updateMany({data:updateModel,
+                    where :{
+                    id : id
+                }
+             });
+            
+        }
+        return await this.getById(id);
+    } catch (error) {
+        ErrorHandler.throwDbAccessError('DB Error: Unable to update Business node!', error);
+    }
+}
+
+delete = async (id) => {
+    try {
+        const result = await this.prisma.business_nodes.delete({ where: 
+            { id: id } 
+        });
+        //return result ===1;
+    } catch (error) {
+        ErrorHandler.throwDbAccessError('DB Error: Unable to delete Business node!', error);
+
+    }
+};
+
+// getBusinessNodeWithName = async (Name) => {
+//     try {
+//         const record = await this.prisma.business_nodes.findUnique({ 
+//             where:
+//             { 
+//                 Name : Name, 
+//             }
+//         });
+//         return record;
+//     } catch (error) {
+//         ErrorHandler.throwDbAccessError('Unable to check if business node exists with name!', error);
+//     }
+// };
+
+getBusinessNodeWithEmail = async (email) => {
+    try {
+        const record = await this.prisma.business_nodes.findUnique({ where : {Email : email}
+        });
+        return record;
+    } catch (error) {
+        ErrorHandler.throwDbAccessError('Unable to check if business node exists with email!', error);
+    }
+}
+
+// getBusinessNodeWithMobile = async (Mobile) => {
+//     try {
+//         const record = await this.prisma.business_nodes.findUnique({ where : { Mobile: Mobile }
+//         });
+//         return record;
+//     } catch (error) {
+//         ErrorHandler.throwDbAccessError('Unable to check if business node exists with mobile!', error);
+//     }
+// }
+
 
 
 

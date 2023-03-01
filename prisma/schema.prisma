@@ -91,9 +91,10 @@ model business_node_hours {
 model business_nodes {
   id                        String   @id @default(uuid())
   BusinessId                String   @db.Char(36)
+  Business                  businesses  @relation(fields: [BusinessId],references: [id])
   Name                      String   @db.VarChar(255)
   Mobile                    String   @db.VarChar(255)
-  Email                     String   @db.VarChar(255)
+  Email                     String   @unique @db.VarChar(255)
   DisplayPicture            String?  @db.Text
   Address                   String?  @db.Text
   Longitude                 String?  @db.VarChar(255)
@@ -220,6 +221,7 @@ model businesses {
   Instagram       String?  @db.VarChar(255)
   Yelp            String?  @db.VarChar(255)
   IsActive        Boolean  @default(true)
+  BusinessNode    business_nodes[]
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }

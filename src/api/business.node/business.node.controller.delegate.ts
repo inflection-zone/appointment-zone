@@ -1,6 +1,6 @@
 import { ApiError } from "../../common/api.error";
 import { BusinessNodeCreateModel, BusinessNodeUpdateModel, BusinessNodeDto,BusinessNodeSearchFilters, BusinessNodeSearchResults  } from "../../domain.types/business.node/business.node.domain.types";
-import { BusinessNodesValidator as validator } from './business.node.validator';
+import { BusinessNodesValidator, BusinessNodesValidator as validator } from './business.node.validator';
 import { BusinessNodeService } from '../../database/repository.services/business.node.service';
 import { ErrorHandler } from '../../common/error.handler';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
@@ -27,6 +27,8 @@ export class BusinessNodeControllerDelegate {
     create = async (requestBody: any) => {
 
         await validator.validateCreateRequest(requestBody);
+        // const { userCreateModel } =
+        //     await BusinessNodesValidator.getValidUserCreateModel(requestBody);
 
         // eslint-DisplayPictureable-next-line @typescript-eslint/no-unused-vars
         var createModel: BusinessNodeCreateModel = this.getCreateModel(requestBody);
@@ -45,6 +47,32 @@ export class BusinessNodeControllerDelegate {
         }
         return this.getEnrichedDto(record);
     };
+
+    update = async (id: uuid, requestBody: any) => {
+        await validator.validateUpdateRequest(requestBody);
+        const record = await this._service.getById(id);
+        if (record === null) {
+            ErrorHandler.throwNotFoundError('Business node with id ' + id.toString() + ' cannot be found!');
+        }
+        const updateModel: BusinessNodeUpdateModel = this.getUpdateModel(requestBody);
+        const updated = await this._service.update(id, updateModel);
+        if (updated == null) {
+            throw new ApiError('Unable to update Business node!', 400);
+        }
+        return this.getEnrichedDto(updated);
+    }
+
+    delete = async (id: uuid) => {
+        const record = await this._service.getById(id);
+        if (record == null) {
+            ErrorHandler.throwNotFoundError('Business node with id ' + id.toString() + ' cannot be found!');
+        }
+        const businessDeleted = await this._service.delete(id);
+        return {
+            Deleted: businessDeleted
+        };
+
+    }
 
 
 
@@ -69,6 +97,53 @@ export class BusinessNodeControllerDelegate {
            
         };
     };
+
+
+    getUpdateModel = (requestBody): BusinessNodeUpdateModel => {
+
+        let updateModel: BusinessNodeUpdateModel = {};
+
+    if (Helper.hasProperty(requestBody, 'BusinessId')) {
+        updateModel.BusinessId = requestBody.BusinessId;
+    }
+    if (Helper.hasProperty(requestBody, 'Name')) {
+        updateModel.Name = requestBody.Name;
+    }
+    if (Helper.hasProperty(requestBody, 'Mobile')) {
+        updateModel.Mobile = requestBody.Mobile;
+    }
+    if (Helper.hasProperty(requestBody, 'Email')) {
+        updateModel.Email = requestBody.Email;
+    }
+    if (Helper.hasProperty(requestBody, 'DisplayPicture')) {
+        updateModel.DisplayPicture = requestBody.DisplayPicture;
+    }
+    if (Helper.hasProperty(requestBody, 'Address')) {
+        updateModel.Address = requestBody.Address;
+    }
+    if (Helper.hasProperty(requestBody, 'Longitude')) {
+        updateModel.Longitude = requestBody.Longitude;
+    }
+    if (Helper.hasProperty(requestBody, 'Lattitude')) {
+        updateModel.Lattitude = requestBody.Lattitude;
+    }
+    if (Helper.hasProperty(requestBody, 'OverallRating')) {
+        updateModel.OverallRating = requestBody.OverallRating;
+    }
+    if (Helper.hasProperty(requestBody, 'TimeZone')) {
+        updateModel.TimeZone = requestBody.TimeZone;
+    }
+    if (Helper.hasProperty(requestBody, 'AllowWalkinAppointments')) {
+        updateModel.AllowWalkinAppointments = requestBody.AllowWalkinAppointments;
+    }
+    if (Helper.hasProperty(requestBody, 'AllowFutureBookingFor')) {
+        updateModel.AllowFutureBookingFor = requestBody.AllowFutureBookingFor;
+    }
+    if (Helper.hasProperty(requestBody, 'IsActive')) {
+        updateModel.IsActive = requestBody.IsActive;
+    }
+    return updateModel;
+}
 
 
     getEnrichedDto = (record) => {
