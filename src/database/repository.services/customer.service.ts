@@ -73,11 +73,11 @@ search = async (filters) => {
         if (filters.Order === 'descending') {
             search.orderBy = {
                 CreatedAt : 'desc'
-        }
+                }
         }
         search.take = 25;
         if (filters.ItemsPerPage) {
-           search.take = filters.ItemsPerPage;
+           search.take = Number(filters.ItemsPerPage);
         }
         search.skip = 0;
         let pageIndex = 0;
@@ -91,8 +91,7 @@ search = async (filters) => {
             RetrievedCount : foundResults.length,
             PageIndex      : pageIndex,
             ItemsPerPage   : search.take,
-            Order          :  search.orderBy,
-            // OrderedBy      : orderByColumn,
+            Order          : search.orderBy["CreatedAt"] === 'desc' ? 'descending' : 'ascending',
             Items          : foundResults,
         };
 
