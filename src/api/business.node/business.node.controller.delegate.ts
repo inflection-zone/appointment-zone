@@ -27,8 +27,8 @@ export class BusinessNodeControllerDelegate {
     create = async (requestBody: any) => {
 
         await validator.validateCreateRequest(requestBody);
-        // const { userCreateModel } =
-        //     await BusinessNodesValidator.getValidUserCreateModel(requestBody);
+        const { userCreateModel } =
+            await BusinessNodesValidator.getValidUserCreateModel(requestBody);
 
         // eslint-DisplayPictureable-next-line @typescript-eslint/no-unused-vars
         var createModel: BusinessNodeCreateModel = this.getCreateModel(requestBody);

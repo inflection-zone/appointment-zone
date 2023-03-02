@@ -84,10 +84,11 @@ delete = async (id) => {
 
 getBusinessNodeWithEmail = async (email) => {
     try {
-        const record = await this.prisma.business_nodes.findUnique({ where : {Email : email}
+        const record = await this.prisma.business_nodes.findUniqueOrThrow({ where : {Email : email}
         });
         return record;
     } catch (error) {
+
         ErrorHandler.throwDbAccessError('Unable to check if business node exists with email!', error);
     }
 }

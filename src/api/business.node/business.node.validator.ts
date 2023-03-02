@@ -54,45 +54,45 @@ export class BusinessNodesValidator {
         };
     }
 
-    // static getValidUserCreateModel = async (requestBody) => {
+    static getValidUserCreateModel = async (requestBody) => {
 
-    //     const userService = new BusinessNodeService();
+        const userService = new BusinessNodeService();
 
-    //     // var password = requestBody.Password;
-    //     // if (!password) {
-    //     //     password = Helper.generatePassword();
-    //     // }
-    //     // else {
-    //     //     userService.validatePasswordCriteria(password);
-    //     // }
-    //     // requestBody.Password = Helper.generateHashedPassword(password);
+        // var password = requestBody.Password;
+        // if (!password) {
+        //     password = Helper.generatePassword();
+        // }
+        // else {
+        //     userService.validatePasswordCriteria(password);
+        // }
+        // requestBody.Password = Helper.generateHashedPassword(password);
 
-    //     //NOTE: please note that we are keeping user-name same as that of biocube id
-    //     // var userName = requestBody.UserName;
-    //     // if (!userName) {
-    //     //     userName = await userService.generateUserNameIfDoesNotExist(requestBody.UserName);
-    //     // }
-    //     // requestBody.UserName = userName;
+        //NOTE: please note that we are keeping user-name same as that of biocube id
+        // var userName = requestBody.UserName;
+        // if (!userName) {
+        //     userName = await userService.generateUserNameIfDoesNotExist(requestBody.UserName);
+        // }
+        // requestBody.UserName = userName;
 
-    //     // requestBody.CountryCode = requestBody.CountryCode ?? "+91";
-    //     // var userWithPhone = await userService.getBusinessNodeWithMobile( requestBody.Mobile);
-    //     // if (userWithPhone) {
-    //     //     ErrorHandler.throwDuplicateUserError(`User with phone ${requestBody.Mobile} already exists!`);
-    //     // }
+        // requestBody.CountryCode = requestBody.CountryCode ?? "+91";
+        // var userWithPhone = await userService.getBusinessNodeWithMobile( requestBody.Mobile);
+        // if (userWithPhone) {
+        //     ErrorHandler.throwDuplicateUserError(`User with phone ${requestBody.Mobile} already exists!`);
+        // }
 
-    //     // var userWithUserName = await userService.getBusinessNodeWithName(requestBody.Name);
-    //     // if (userWithUserName) {
-    //     //     ErrorHandler.throwDuplicateUserError(`User with name ${requestBody.Name} already exists!`);
-    //     // }
+        // var userWithUserName = await userService.getBusinessNodeWithName(requestBody.Name);
+        // if (userWithUserName) {
+        //     ErrorHandler.throwDuplicateUserError(`User with name ${requestBody.Name} already exists!`);
+        // }
 
-    //     var userWithEmail = await userService.getBusinessNodeWithEmail(requestBody.Email);
-    //     if (userWithEmail) {
-    //         ErrorHandler.throwDuplicateUserError(`User with email ${requestBody.Email} already exists!`);
-    //     }
+        var userWithEmail = await userService.getBusinessNodeWithEmail(requestBody.Email);
+        if (userWithEmail) {
+            ErrorHandler.throwDuplicateUserError(`User with email ${requestBody.Email} already exists!`);
+        }
 
-    //     var userCreateModel: BusinessNodeCreateModel = await this.getUserCreateModel(requestBody);
-    //     return { userCreateModel};
-    // }
+        var userCreateModel: BusinessNodeCreateModel = await this.getUserCreateModel(requestBody);
+        return { userCreateModel};
+    }
 
     static validateUpdateRequest = async (requestBody) => {
         try {
