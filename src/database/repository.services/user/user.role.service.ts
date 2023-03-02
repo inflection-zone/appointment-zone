@@ -24,7 +24,7 @@ export class UserRoleService {
     create = async (createModel) => {
         try {
             var record = await this.prisma.user_roles.create({data:createModel});
-          //  return await this.getById(record.id);
+        //    return await this.getById(record.id);
           return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create user role!', error);

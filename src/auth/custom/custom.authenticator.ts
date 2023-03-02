@@ -28,7 +28,7 @@
                 Message       : 'Authenticated',
                 HttpErrorCode : 200,
             };
-            let apiKey: string = request.headers['tikme-api-key'] as string;
+            let apiKey: string = request.headers['x-api-key'] as string;
 
             if (!apiKey) {
                 res = {

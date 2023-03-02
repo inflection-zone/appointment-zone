@@ -96,7 +96,7 @@ export class Seeder {
                 LastName    : u.LastName,
                 UserName    : u.UserName,
                 Password    : u.Password,
-                RoleId      : role.id,
+                // RoleId      : role.id,
                 CountryCode : u.CountryCode,
                 Email       : u.Email,
                 Gender      : Gender.Male,

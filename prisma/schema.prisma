@@ -8,24 +8,26 @@ datasource db {
 }
 
 model appointment_statuses {
-  id                   String   @id @db.Char(36)
-  BusinessNodeId       String   @db.Char(36)
-  CreatedAt            DateTime @default(now())
-  IsActive             Boolean  @default(true)
-  IsCancellationStatus Boolean  @default(false)
-  IsCompletedStatus    Boolean  @default(false)
-  IsConfirmedStatus    Boolean  @default(false)
-  IsDashboardStatus    Boolean  @default(true)
-  IsWalkinEntryStatus  Boolean  @default(false)
-  NotificationText     String?  @db.Text
-  SendNotification     Boolean  @default(true)
-  SendSms              Boolean  @default(true)
-  Sequence             Int      @default(0)
-  SmsText              String?  @db.Text
-  Status               String?  @default("") @db.VarChar(255)
-  StatusCode           String?  @default("") @db.VarChar(255)
-  StatusColor          String?  @default("") @db.VarChar(255)
-  UpdatedAt            DateTime @updatedAt
+  id                   String    @id @db.Char(36)
+  BusinessNodeId       String    @db.Char(36)
+  CreatedAt            DateTime  @default(now())
+  IsActive             Boolean   @default(true)
+  IsCancellationStatus Boolean   @default(false)
+  IsCompletedStatus    Boolean   @default(false)
+  IsConfirmedStatus    Boolean   @default(false)
+  IsDashboardStatus    Boolean   @default(true)
+  IsWalkinEntryStatus  Boolean   @default(false)
+  NotificationText     String?   @db.Text
+  SendNotification     Boolean   @default(true)
+  SendSms              Boolean   @default(true)
+  Sequence             Int       @default(0)
+  SmsText              String?   @db.Text
+  Status               String?   @default("") @db.VarChar(255)
+  StatusCode           String?   @default("") @db.VarChar(255)
+  StatusColor          String?   @default("") @db.VarChar(255)
+  UpdatedAt            DateTime  @updatedAt
+  IsDeleted            Boolean   @default(false)
+  DeletedAt            DateTime? @db.DateTime(0)
 }
 
 model appointments {
@@ -61,16 +63,20 @@ model appointments {
   TransactionId            String?   @db.Char(36)
   Type                     String    @default("IN-PERSON") @db.VarChar(255)
   UpdatedAt                DateTime  @updatedAt
+  IsDeleted                Boolean   @default(false)
+  DeletedAt                DateTime? @db.DateTime(0)
 }
 
 model business_node_customers {
-  id             String   @id @db.Char(36)
-  BusinessNodeId String   @db.Char(36)
-  CreatedAt      DateTime @default(now())
-  CustomerId     String   @db.Char(36)
-  IsActive       Boolean  @default(true)
-  SmsConsent     String   @default("NOT_REPLIED") @db.VarChar(255)
-  UpdatedAt      DateTime @updatedAt
+  id             String    @id @db.Char(36)
+  BusinessNodeId String    @db.Char(36)
+  CreatedAt      DateTime  @default(now())
+  CustomerId     String    @db.Char(36)
+  IsActive       Boolean   @default(true)
+  SmsConsent     String    @default("NOT_REPLIED") @db.VarChar(255)
+  UpdatedAt      DateTime  @updatedAt
+  IsDeleted      Boolean   @default(false)
+  DeletedAt      DateTime? @db.DateTime(0)
 }
 
 model business_node_hours {
@@ -86,62 +92,71 @@ model business_node_hours {
   StartTime      DateTime  @default(dbgenerated("'10:00:00'")) @db.Time(0)
   Type           String    @db.VarChar(255)
   UpdatedAt      DateTime  @updatedAt
+  IsDeleted      Boolean   @default(false)
+  DeletedAt      DateTime? @db.DateTime(0)
 }
 
 model business_nodes {
-  id                        String   @id @default(uuid())
-  BusinessId                String   @db.Char(36)
-  Business                  businesses  @relation(fields: [BusinessId],references: [id])
-  Name                      String   @unique @db.VarChar(255)
-  Mobile                    String   @unique @db.VarChar(255)
-  Email                     String   @unique @db.VarChar(255)
-  DisplayPicture            String?  @db.Text
-  Address                   String?  @db.Text
-  Longitude                 String?  @db.VarChar(255)
-  Lattitude                 String?  @db.VarChar(255)
-  OverallRating             Float?   @db.Float
-  TimeZone                  String   @default("+05:30") @db.VarChar(255)
-  AllowWalkinAppointments   Boolean  @default(true)
-  AllowFutureBookingFor     String   @default("30d") @db.VarChar(255)
-  IsActive                  Boolean  @default(true)
-  CreatedAt                 DateTime @default(now())
-  UpdatedAt                 DateTime @updatedAt
+  id                      String     @id @default(uuid())
+  BusinessId              String     @db.Char(36)
+  Name                    String     @db.VarChar(255)
+  Mobile                  String     @db.VarChar(255)
+  Email                   String     @unique @db.VarChar(255)
+  DisplayPicture          String?    @db.Text
+  Address                 String?    @db.Text
+  Longitude               String?    @db.VarChar(255)
+  Lattitude               String?    @db.VarChar(255)
+  OverallRating           Float?     @db.Float
+  TimeZone                String?    @default("+05:30") @db.VarChar(255)
+  AllowWalkinAppointments Boolean    @default(true)
+  AllowFutureBookingFor   String     @default("30d") @db.VarChar(255)
+  IsActive                Boolean    @default(true)
+  CreatedAt               DateTime   @default(now())
+  UpdatedAt               DateTime   @updatedAt
+  IsDeleted               Boolean    @default(false)
+  DeletedAt               DateTime?  @db.DateTime(0)
+  Business                businesses @relation(fields: [BusinessId], references: [id])
+
 }
 
 model business_services {
-  id                    String   @id @db.Char(36)
-  AllowCancellation     Boolean  @default(false)
-  BusinessNodeId        String   @db.Char(36)
-  CancellationCharges   Float    @default(0) @db.Float
-  CancellationWindow    String   @default("1h") @db.VarChar(255)
-  CreatedAt             DateTime @default(now())
-  Description           String?  @db.Text
-  DisplayServicePicture String?  @db.Text
-  EnableLoyalty         Boolean  @default(true)
-  Fees                  Float    @default(0) @db.Float
-  IsActive              Boolean  @default(true)
-  IsTaxable             Boolean  @default(false)
-  Name                  String   @db.VarChar(255)
-  PaymentPercent        Float    @default(0) @db.Float
-  PaymentRequired       Boolean  @default(false)
-  PriorBookingWindow    String   @default("1h") @db.VarChar(255)
-  ReminderType          String?  @db.VarChar(255)
-  ReminderWindow        String?  @db.VarChar(255)
-  SendReminder          Boolean  @default(false)
-  ServiceDuration       String   @default("30m") @db.VarChar(255)
-  TaxRate               Float    @default(0) @db.Float
-  UpdatedAt             DateTime @updatedAt
+  id                    String    @id @db.Char(36)
+  AllowCancellation     Boolean   @default(false)
+  BusinessNodeId        String    @db.Char(36)
+  CancellationCharges   Float     @default(0) @db.Float
+  CancellationWindow    String    @default("1h") @db.VarChar(255)
+  CreatedAt             DateTime  @default(now())
+  Description           String?   @db.Text
+  DisplayServicePicture String?   @db.Text
+  EnableLoyalty         Boolean   @default(true)
+  Fees                  Float     @default(0) @db.Float
+  IsActive              Boolean   @default(true)
+  IsTaxable             Boolean   @default(false)
+  Name                  String    @db.VarChar(255)
+  PaymentPercent        Float     @default(0) @db.Float
+  PaymentRequired       Boolean   @default(false)
+  PriorBookingWindow    String    @default("1h") @db.VarChar(255)
+  ReminderType          String?   @db.VarChar(255)
+  ReminderWindow        String?   @db.VarChar(255)
+  SendReminder          Boolean   @default(false)
+  ServiceDuration       String    @default("30m") @db.VarChar(255)
+  TaxRate               Float     @default(0) @db.Float
+  UpdatedAt             DateTime  @updatedAt
+  IsDeleted             Boolean   @default(false)
+  DeletedAt             DateTime? @db.DateTime(0)
 }
 
 model business_skills {
-  id             String   @id @db.Char(36)
-  BusinessNodeId String   @db.Char(36)
-  CreatedAt      DateTime @default(now())
-  Description    String?  @db.Text
-  DisplayPicture String?  @db.Text
-  IsActive       Boolean  @default(true)
-  Name           String   @db.VarChar(255)
-  UpdatedAt      DateTime @updatedAt
+  id             String    @id @db.Char(36)
+  BusinessNodeId String    @db.Char(36)
+  CreatedAt      DateTime  @default(now())
+  Description    String?   @db.Text
+  DisplayPicture String?   @db.Text
+  IsActive       Boolean   @default(true)
+  Name           String    @db.VarChar(255)
+  UpdatedAt      DateTime  @updatedAt
+  IsDeleted      Boolean   @default(false)
+  DeletedAt      DateTime? @db.DateTime(0)
 }
 
 model business_user_hours {
@@ -157,31 +172,36 @@ model business_user_hours {
   StartTime      DateTime  @default(dbgenerated("'10:00:00'")) @db.Time(0)
   Type           String    @db.VarChar(255)
   UpdatedAt      DateTime  @updatedAt
+  IsDeleted      Boolean   @default(false)
+  DeletedAt      DateTime? @db.DateTime(0)
 }
 
 model business_user_services {
-  id                String   @id @db.Char(36)
-  BusinessServiceId String   @db.Char(36)
-  BusinessUserId    String   @db.Char(36)
-  CreatedAt         DateTime @default(now())
-  IsActive          Boolean  @default(true)
-  UpdatedAt         DateTime @updatedAt
+  id                String    @id @db.Char(36)
+  BusinessServiceId String    @db.Char(36)
+  BusinessUserId    String    @db.Char(36)
+  CreatedAt         DateTime  @default(now())
+  IsActive          Boolean   @default(true)
+  UpdatedAt         DateTime  @updatedAt
+  IsDeleted         Boolean   @default(false)
+  DeletedAt         DateTime? @db.DateTime(0)
 }
 
 model business_user_skills {
-  id              String   @id @db.Char(36)
-  BusinessSkillId String   @db.Char(36)
-  BusinessUserId  String   @db.Char(36)
-  CreatedAt       DateTime @default(now())
-  IsActive        Boolean  @default(true)
-  UpdatedAt       DateTime @updatedAt
+  id              String    @id @db.Char(36)
+  BusinessSkillId String    @db.Char(36)
+  BusinessUserId  String    @db.Char(36)
+  CreatedAt       DateTime  @default(now())
+  IsActive        Boolean   @default(true)
+  UpdatedAt       DateTime  @updatedAt
+  IsDeleted       Boolean   @default(false)
+  DeletedAt       DateTime? @db.DateTime(0)
 }
 
 model business_users {
   id                      String    @id @db.Char(36)
   AboutMe                 String?   @db.Text
   BusinessNodeId          String    @db.Char(36)
-  CreatedAt               DateTime  @default(now())
   DisplayPicture          String?   @db.Text
   Dob                     DateTime? @db.DateTime(0)
   Email                   String?   @db.VarChar(255)
@@ -199,31 +219,36 @@ model business_users {
   Prefix                  String    @db.VarChar(255)
   Qualification           String?   @db.Text
   Twitter                 String?   @db.VarChar(255)
-  UpdatedAt               DateTime  @updatedAt
   Yelp                    String?   @db.VarChar(255)
+  CreatedAt               DateTime  @default(now())
+  UpdatedAt               DateTime  @updatedAt
+  IsDeleted               Boolean   @default(false)
+  DeletedAt               DateTime? @db.DateTime(0)
 }
 
 model businesses {
-  id              String   @id @default(uuid())
-  ExternalId      String?  @db.VarChar(255)
-  Name            String   @db.VarChar(255)
-  Mobile          String   @db.VarChar(255)
-  Email           String   @db.VarChar(255)
-  AboutUs         String?  @db.Text
-  Logo            String?  @db.Text
-  DisplayPicture  String?  @db.Text
-  OverallRating   Float?   @db.Float
-  Address         String?  @db.Text
-  ApiKey          String   @db.VarChar(255)
-  Facebook        String?  @db.VarChar(255)
-  Linkedin        String?  @db.VarChar(255)
-  Twitter         String?  @db.VarChar(255)
-  Instagram       String?  @db.VarChar(255)
-  Yelp            String?  @db.VarChar(255)
-  IsActive        Boolean  @default(true)
-  BusinessNode    business_nodes[]
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id             String           @id @default(uuid())
+  ExternalId     String?          @db.VarChar(255)
+  Name           String           @db.VarChar(255)
+  Mobile         String           @db.VarChar(255)
+  Email          String           @db.VarChar(255)
+  AboutUs        String?          @db.Text
+  Logo           String?          @db.Text
+  DisplayPicture String?          @db.Text
+  OverallRating  Float?           @db.Float
+  Address        String?          @db.Text
+  ApiKey         String           @db.VarChar(255)
+  Facebook       String?          @db.VarChar(255)
+  Linkedin       String?          @db.VarChar(255)
+  Twitter        String?          @db.VarChar(255)
+  Instagram      String?          @db.VarChar(255)
+  Yelp           String?          @db.VarChar(255)
+  IsActive       Boolean          @default(true)
+  CreatedAt      DateTime         @default(now())
+  UpdatedAt      DateTime         @updatedAt
+  IsDeleted      Boolean          @default(false)
+  DeletedAt      DateTime?        @db.DateTime(0)
+  BusinessNode   business_nodes[]
 }
 
 model customers {
@@ -239,21 +264,18 @@ model customers {
   LastName       String?   @db.VarChar(255)
   Mobile         String    @db.VarChar(255)
   Prefix         String?   @db.VarChar(255)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  CreatedAt      DateTime  @default(now())
+  UpdatedAt      DateTime  @updatedAt
   IsDeleted      Boolean   @default(false)
-  DeletedOn      DateTime? @db.DateTime(0)
+  DeletedAt      DateTime? @db.DateTime(0)
 }
 
 model notifications {
   id             String    @id @db.Char(36)
   Body           String?   @db.Text
   BusinessNodeId String    @db.Char(36)
-  CreatedAt      DateTime  @db.DateTime(0)
   CustomerId     String    @db.Char(36)
-  DeletedOn      DateTime? @db.DateTime(0)
   IsActive       Boolean   @default(true)
-  IsDeleted      Boolean   @default(false)
   IsRead         Boolean   @default(false)
   IsSent         Boolean   @default(true)
   Message        String?   @db.Text
@@ -262,7 +284,10 @@ model notifications {
   Title          String?   @default("") @db.VarChar(255)
   Type           String?   @default("") @db.VarChar(255)
   TypeId         Int
-  UpdatedAt      DateTime  @db.DateTime(0)
+  CreatedAt      DateTime  @default(now())
+  UpdatedAt      DateTime  @updatedAt
+  IsDeleted      Boolean   @default(false)
+  DeletedAt      DateTime? @db.DateTime(0)
 }
 
 model payment_transactions {
@@ -270,7 +295,6 @@ model payment_transactions {
   AppointmentId  String?   @db.Char(36)
   BusinessNodeId String    @db.Char(36)
   CompletedOn    DateTime? @db.DateTime(0)
-  CreatedAt      DateTime  @db.DateTime(0)
   Currency       String?   @default("") @db.VarChar(255)
   CustomerId     String    @db.Char(36)
   ExternalId     String?   @db.VarChar(255)
@@ -279,25 +303,28 @@ model payment_transactions {
   IsComplete     Boolean   @default(false)
   Status         String?   @default("") @db.VarChar(255)
   TotalAmount    Float     @default(0) @db.Float
-  UpdatedAt      DateTime  @db.DateTime(0)
+  CreatedAt      DateTime  @default(now())
+  UpdatedAt      DateTime  @updatedAt
+  IsDeleted      Boolean   @default(false)
+  DeletedAt      DateTime? @db.DateTime(0)
 }
 
 model user_messages {
   id             String    @id @db.Char(36)
   Body           String?   @db.Text
   BusinessNodeId String    @db.Char(36)
-  CreatedAt      DateTime  @db.DateTime(0)
   CustomerId     String    @db.Char(36)
-  DeletedOn      DateTime? @db.DateTime(0)
   Error          String?   @db.Text
   IsActive       Boolean   @default(true)
-  IsDeleted      Boolean   @default(false)
   IsSent         Boolean   @default(true)
   MessageId      String?   @db.VarChar(255)
   SentOn         DateTime? @db.DateTime(0)
   Type           String?   @default("") @db.VarChar(255)
   TypeId         Int
-  UpdatedAt      DateTime  @db.DateTime(0)
+  CreatedAt      DateTime  @default(now())
+  UpdatedAt      DateTime  @updatedAt
+  IsDeleted      Boolean   @default(false)
+  DeletedAt      DateTime? @db.DateTime(0)
 }
 
 model api_clients {
@@ -313,6 +340,8 @@ model api_clients {
   ValidTill    DateTime? @db.DateTime(0)
   CreatedAt    DateTime  @default(now())
   UpdatedAt    DateTime  @updatedAt
+  IsDeleted    Boolean   @default(false)
+  DeletedAt    DateTime? @db.DateTime(0)
 }
 
 model roles {
@@ -321,9 +350,8 @@ model roles {
   Description   String?          @db.Text
   CreatedAt     DateTime         @default(now())
   UpdatedAt     DateTime         @updatedAt
-  RolePrivilege role_privileges?
-  UserRole      user_roles[]
-  User          users[]
+  RolePrivileges role_privileges[]
+  Users         user_roles[]
 }
 
 model role_privileges {
@@ -348,20 +376,20 @@ model users {
   Gender           String?             @db.VarChar(255)
   BirthDate        DateTime?           @db.Date
   Password         String?             @db.VarChar(512)
-  RoleId           Int                 @unique
   CreatedAt        DateTime            @default(now())
   UpdatedAt        DateTime            @updatedAt
+  IsDeleted        Boolean             @default(false)
+  DeletedAt        DateTime?           @db.DateTime(0)
   FileResource     file_resource?
   UserLoginSession user_login_session?
   UserOtp          user_otp?
-  UserRole         user_roles?
-  Role             roles               @relation(fields: [RoleId], references: [id])
+  Roles            user_roles[]   
 }
 
 model user_roles {
   id        String   @id @default(uuid())
   UserId    String   @unique @default(uuid())
-  RoleId    Int      @unique
+  RoleId    Int      
   CreatedAt DateTime @default(now())
   UpdatedAt DateTime @updatedAt
   Role      roles    @relation(fields: [RoleId], references: [id])
@@ -394,18 +422,20 @@ model user_otp {
 }
 
 model file_resource {
-  id               String   @id @default(uuid())
-  StorageKey       String?  @db.Text
-  OriginalFilename String   @db.VarChar(512)
-  MimeType         String   @db.VarChar(255)
-  Public           Boolean  @default(false)
+  id               String    @id @default(uuid())
+  StorageKey       String?   @db.Text
+  OriginalFilename String    @db.VarChar(512)
+  MimeType         String    @db.VarChar(255)
+  Public           Boolean   @default(false)
   Size             Int?
-  Tags             String   @db.Text
-  DownloadCount    Int      @default(0)
-  UserId           String   @unique @default(uuid())
-  CreatedAt        DateTime @default(now())
-  UpdatedAt        DateTime @updatedAt
-  User             users    @relation(fields: [UserId], references: [id])
+  Tags             String    @db.Text
+  DownloadCount    Int       @default(0)
+  UserId           String    @unique @default(uuid())
+  CreatedAt        DateTime  @default(now())
+  UpdatedAt        DateTime  @updatedAt
+  IsDeleted        Boolean   @default(false)
+  DeletedAt        DateTime? @db.DateTime(0)
+  User             users     @relation(fields: [UserId], references: [id])
 }
 
 enum purpose {

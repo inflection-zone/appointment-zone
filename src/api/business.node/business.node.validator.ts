@@ -1,6 +1,6 @@
 import * as joi from 'joi';
 import { ErrorHandler } from '../../common/error.handler';
-import { Helper } from 'd:/Inflection-Zone/Inflection-Appointment/appointment-zone/src/common/helper';
+import { Helper } from '../../common/helper';
 import { BusinessNodeService } from '../../database/repository.services/business.node.service';
 import { BusinessNodeCreateModel} from "../../domain.types/business.node/business.node.domain.types";
 

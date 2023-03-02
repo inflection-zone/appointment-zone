@@ -18,6 +18,8 @@ CREATE TABLE `appointment_statuses` (
     `StatusCode` VARCHAR(255) NULL DEFAULT '',
     `StatusColor` VARCHAR(255) NULL DEFAULT '',
     `UpdatedAt` DATETIME(3) NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `DeletedAt` DATETIME(0) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -56,6 +58,8 @@ CREATE TABLE `appointments` (
     `TransactionId` CHAR(36) NULL,
     `Type` VARCHAR(255) NOT NULL DEFAULT 'IN-PERSON',
     `UpdatedAt` DATETIME(3) NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `DeletedAt` DATETIME(0) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -69,6 +73,8 @@ CREATE TABLE `business_node_customers` (
     `IsActive` BOOLEAN NOT NULL DEFAULT true,
     `SmsConsent` VARCHAR(255) NOT NULL DEFAULT 'NOT_REPLIED',
     `UpdatedAt` DATETIME(3) NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `DeletedAt` DATETIME(0) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -87,6 +93,8 @@ CREATE TABLE `business_node_hours` (
     `StartTime` TIME(0) NOT NULL DEFAULT '10:00:00',
     `Type` VARCHAR(255) NOT NULL,
     `UpdatedAt` DATETIME(3) NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `DeletedAt` DATETIME(0) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -94,22 +102,25 @@ CREATE TABLE `business_node_hours` (
 -- CreateTable
 CREATE TABLE `business_nodes` (
     `id` VARCHAR(191) NOT NULL,
-    `Address` TEXT NULL,
-    `AllowFutureBookingFor` VARCHAR(255) NOT NULL DEFAULT '30d',
-    `AllowWalkinAppointments` BOOLEAN NOT NULL DEFAULT true,
     `BusinessId` CHAR(36) NOT NULL,
-    `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `DisplayPicture` TEXT NULL,
-    `Email` VARCHAR(255) NOT NULL,
-    `IsActive` BOOLEAN NOT NULL DEFAULT true,
-    `Lattitude` VARCHAR(255) NULL,
-    `Longitude` VARCHAR(255) NULL,
-    `Mobile` VARCHAR(255) NOT NULL,
     `Name` VARCHAR(255) NOT NULL,
+    `Mobile` VARCHAR(255) NOT NULL,
+    `Email` VARCHAR(255) NOT NULL,
+    `DisplayPicture` TEXT NULL,
+    `Address` TEXT NULL,
+    `Longitude` VARCHAR(255) NULL,
+    `Lattitude` VARCHAR(255) NULL,
     `OverallRating` FLOAT NULL,
     `TimeZone` VARCHAR(255) NULL DEFAULT '+05:30',
+    `AllowWalkinAppointments` BOOLEAN NOT NULL DEFAULT true,
+    `AllowFutureBookingFor` VARCHAR(255) NOT NULL DEFAULT '30d',
+    `IsActive` BOOLEAN NOT NULL DEFAULT true,
+    `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `UpdatedAt` DATETIME(3) NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `DeletedAt` DATETIME(0) NULL,
 
+    UNIQUE INDEX `business_nodes_Email_key`(`Email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -137,6 +148,8 @@ CREATE TABLE `business_services` (
     `ServiceDuration` VARCHAR(255) NOT NULL DEFAULT '30m',
     `TaxRate` FLOAT NOT NULL DEFAULT 0,
     `UpdatedAt` DATETIME(3) NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `DeletedAt` DATETIME(0) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -151,6 +164,8 @@ CREATE TABLE `business_skills` (
     `IsActive` BOOLEAN NOT NULL DEFAULT true,
     `Name` VARCHAR(255) NOT NULL,
     `UpdatedAt` DATETIME(3) NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `DeletedAt` DATETIME(0) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -169,6 +184,8 @@ CREATE TABLE `business_user_hours` (
     `StartTime` TIME(0) NOT NULL DEFAULT '10:00:00',
     `Type` VARCHAR(255) NOT NULL,
     `UpdatedAt` DATETIME(3) NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `DeletedAt` DATETIME(0) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -181,6 +198,8 @@ CREATE TABLE `business_user_services` (
     `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `IsActive` BOOLEAN NOT NULL DEFAULT true,
     `UpdatedAt` DATETIME(3) NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `DeletedAt` DATETIME(0) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -193,6 +212,8 @@ CREATE TABLE `business_user_skills` (
     `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `IsActive` BOOLEAN NOT NULL DEFAULT true,
     `UpdatedAt` DATETIME(3) NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `DeletedAt` DATETIME(0) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -202,7 +223,6 @@ CREATE TABLE `business_users` (
     `id` CHAR(36) NOT NULL,
     `AboutMe` TEXT NULL,
     `BusinessNodeId` CHAR(36) NOT NULL,
-    `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `DisplayPicture` TEXT NULL,
     `Dob` DATETIME(0) NULL,
     `Email` VARCHAR(255) NULL,
@@ -220,8 +240,11 @@ CREATE TABLE `business_users` (
     `Prefix` VARCHAR(255) NOT NULL,
     `Qualification` TEXT NULL,
     `Twitter` VARCHAR(255) NULL,
-    `UpdatedAt` DATETIME(3) NOT NULL,
     `Yelp` VARCHAR(255) NULL,
+    `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `UpdatedAt` DATETIME(3) NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `DeletedAt` DATETIME(0) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -229,24 +252,26 @@ CREATE TABLE `business_users` (
 -- CreateTable
 CREATE TABLE `businesses` (
     `id` VARCHAR(191) NOT NULL,
+    `ExternalId` VARCHAR(255) NULL,
+    `Name` VARCHAR(255) NOT NULL,
+    `Mobile` VARCHAR(255) NOT NULL,
+    `Email` VARCHAR(255) NOT NULL,
     `AboutUs` TEXT NULL,
+    `Logo` TEXT NULL,
+    `DisplayPicture` TEXT NULL,
+    `OverallRating` FLOAT NULL,
     `Address` TEXT NULL,
     `ApiKey` VARCHAR(255) NOT NULL,
-    `DisplayPicture` TEXT NULL,
-    `Email` VARCHAR(255) NOT NULL,
-    `ExternalId` VARCHAR(255) NULL,
     `Facebook` VARCHAR(255) NULL,
-    `Instagram` VARCHAR(255) NULL,
-    `IsActive` BOOLEAN NOT NULL DEFAULT true,
     `Linkedin` VARCHAR(255) NULL,
-    `Logo` TEXT NULL,
-    `Mobile` VARCHAR(255) NOT NULL,
-    `Name` VARCHAR(255) NOT NULL,
-    `OverallRating` FLOAT NULL,
     `Twitter` VARCHAR(255) NULL,
+    `Instagram` VARCHAR(255) NULL,
     `Yelp` VARCHAR(255) NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+    `IsActive` BOOLEAN NOT NULL DEFAULT true,
+    `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `UpdatedAt` DATETIME(3) NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `DeletedAt` DATETIME(0) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -265,8 +290,10 @@ CREATE TABLE `customers` (
     `LastName` VARCHAR(255) NULL,
     `Mobile` VARCHAR(255) NOT NULL,
     `Prefix` VARCHAR(255) NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+    `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `UpdatedAt` DATETIME(3) NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `DeletedAt` DATETIME(0) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -276,11 +303,8 @@ CREATE TABLE `notifications` (
     `id` CHAR(36) NOT NULL,
     `Body` TEXT NULL,
     `BusinessNodeId` CHAR(36) NOT NULL,
-    `CreatedAt` DATETIME(0) NOT NULL,
     `CustomerId` CHAR(36) NOT NULL,
-    `DeletedOn` DATETIME(0) NULL,
     `IsActive` BOOLEAN NOT NULL DEFAULT true,
-    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
     `IsRead` BOOLEAN NOT NULL DEFAULT false,
     `IsSent` BOOLEAN NOT NULL DEFAULT true,
     `Message` TEXT NULL,
@@ -289,7 +313,10 @@ CREATE TABLE `notifications` (
     `Title` VARCHAR(255) NULL DEFAULT '',
     `Type` VARCHAR(255) NULL DEFAULT '',
     `TypeId` INTEGER NOT NULL,
-    `UpdatedAt` DATETIME(0) NOT NULL,
+    `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `UpdatedAt` DATETIME(3) NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `DeletedAt` DATETIME(0) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -300,7 +327,6 @@ CREATE TABLE `payment_transactions` (
     `AppointmentId` CHAR(36) NULL,
     `BusinessNodeId` CHAR(36) NOT NULL,
     `CompletedOn` DATETIME(0) NULL,
-    `CreatedAt` DATETIME(0) NOT NULL,
     `Currency` VARCHAR(255) NULL DEFAULT '',
     `CustomerId` CHAR(36) NOT NULL,
     `ExternalId` VARCHAR(255) NULL,
@@ -309,7 +335,10 @@ CREATE TABLE `payment_transactions` (
     `IsComplete` BOOLEAN NOT NULL DEFAULT false,
     `Status` VARCHAR(255) NULL DEFAULT '',
     `TotalAmount` FLOAT NOT NULL DEFAULT 0,
-    `UpdatedAt` DATETIME(0) NOT NULL,
+    `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `UpdatedAt` DATETIME(3) NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `DeletedAt` DATETIME(0) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -319,18 +348,18 @@ CREATE TABLE `user_messages` (
     `id` CHAR(36) NOT NULL,
     `Body` TEXT NULL,
     `BusinessNodeId` CHAR(36) NOT NULL,
-    `CreatedAt` DATETIME(0) NOT NULL,
     `CustomerId` CHAR(36) NOT NULL,
-    `DeletedOn` DATETIME(0) NULL,
     `Error` TEXT NULL,
     `IsActive` BOOLEAN NOT NULL DEFAULT true,
-    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
     `IsSent` BOOLEAN NOT NULL DEFAULT true,
     `MessageId` VARCHAR(255) NULL,
     `SentOn` DATETIME(0) NULL,
     `Type` VARCHAR(255) NULL DEFAULT '',
     `TypeId` INTEGER NOT NULL,
-    `UpdatedAt` DATETIME(0) NOT NULL,
+    `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `UpdatedAt` DATETIME(3) NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `DeletedAt` DATETIME(0) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -349,6 +378,8 @@ CREATE TABLE `api_clients` (
     `ValidTill` DATETIME(0) NULL,
     `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `UpdatedAt` DATETIME(3) NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `DeletedAt` DATETIME(0) NULL,
 
     UNIQUE INDEX `api_clients_ClientName_key`(`ClientName`),
     UNIQUE INDEX `api_clients_ClientCode_key`(`ClientCode`),
@@ -398,6 +429,8 @@ CREATE TABLE `users` (
     `RoleId` INTEGER NOT NULL,
     `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `UpdatedAt` DATETIME(3) NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `DeletedAt` DATETIME(0) NULL,
 
     UNIQUE INDEX `users_RoleId_key`(`RoleId`),
     PRIMARY KEY (`id`)
@@ -460,10 +493,15 @@ CREATE TABLE `file_resource` (
     `UserId` VARCHAR(191) NOT NULL,
     `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `UpdatedAt` DATETIME(3) NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
+    `DeletedAt` DATETIME(0) NULL,
 
     UNIQUE INDEX `file_resource_UserId_key`(`UserId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `business_nodes` ADD CONSTRAINT `business_nodes_BusinessId_fkey` FOREIGN KEY (`BusinessId`) REFERENCES `businesses`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `role_privileges` ADD CONSTRAINT `role_privileges_RoleId_fkey` FOREIGN KEY (`RoleId`) REFERENCES `roles`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

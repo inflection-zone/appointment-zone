@@ -53,7 +53,7 @@ export class CustomerControllerDelegate {
         var filters: CustomerSearchFilters = this.getSearchFilters(query);
         var searchResults = await this._service.search(filters);
         var items = searchResults.Items.map(x => this.getPublicDto(x));
-        // searchResults.Items = items;
+        searchResults.Items = items;
         return searchResults;
        
     }
@@ -119,6 +119,14 @@ export class CustomerControllerDelegate {
         var email = query.email ? query.email : null;
         if (email != null) {
             filters['Email'] = email;
+        }
+        var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : null;
+        if (itemsPerPage != null) {
+            filters['ItemsPerPage'] = itemsPerPage;
+        }
+        var order = query.order ? query.order : null;
+        if (order != null) {
+            filters['Order'] = order;
         }
         return filters;
     }
