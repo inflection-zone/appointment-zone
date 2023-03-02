@@ -1,9 +1,7 @@
-import { any, number } from "joi";
-import { where } from "sequelize";
-import instance from "tsyringe/dist/typings/dependency-container";
+
 import { ErrorHandler } from "../../common/error.handler";
 import { PrismaClientInit } from "../../startup/prisma.client.init";
-
+import { Prisma } from '@prisma/client';
 export class CustomerService {
   prisma = PrismaClientInit.instance().prisma();
 
@@ -48,105 +46,61 @@ exists = async (id) => {
 
 search = async (filters) => {
     try {
-        var search;
-       if(filters.FirstName || filters.LastName || filters.Mobile || filters.Email ){
-         search= await this.prisma.customers.findMany({
-            where   : {OR:[
-                { FirstName: { contains: filters.FirstName } },
-                { LastName: { contains: filters.LastName } },
-                { Mobile: { contains: filters.Mobile } },
-                { Email: { contains: filters.Email } }
-                
-                
-            ]}})}else{
-                search= await this.prisma.customers.findMany()
-
+        const search : Prisma.customersFindManyArgs = {};
+        if (filters.FirstName != null) {
+            search.where = {
+                FirstName : filters.FirstName
             }
-            
-                // select:{
-                //     FirstName: true,
-                //     LastName: true,
-                    
-                //     Mobile: true,
-                //     Email: true
-                //    }
-            // include : {}
-            // var results = await this.prisma.$transaction([
-            //     count=this.prisma.customers.count({
-            //         where   : {OR:[{ Email: { contains: filters.Email } },
-            //             { Mobile: { contains: filters.Mobile } }]}
-            //     }),
-            //     this.prisma.customers.findMany({
-            //     where   : {OR:[{ Email: { contains: filters.Email } },
-            //         { Mobile: { contains: filters.Mobile } }]}
-        
-   
-        
-        // if (filters.Email) {
-        //     search['Email'] = filters.Email;
-        // }
-        // if (filters.Mobile) {
-        //     search['Mobile'] = filters.Mobile;
-        // }
-        // if (filters.LastName) 
-        //     search['LastName'] = filters.LastName;
-        
-
-        
-       
-
-        // Sorting
-        let orderByColumn = 'CreatedAt';
-        if (filters.OrderBy) {
-            orderByColumn = filters.OrderBy;
         }
-        let order = 'ASC';
+        if (filters.LastName != null) {
+            search.where =   {
+                LastName : filters.LastName 
+                }
+        }
+        if (filters.Mobile != null) {
+            search.where =   {
+                Mobile : filters.Mobile
+                }
+        }
+        if (filters.Email != null) {
+            search.where =   {
+                Email : filters.Email
+                }
+        }
+        search.orderBy = {
+                CreatedAt : 'asc'
+        }
         if (filters.Order === 'descending') {
-            order = 'DESC';
+            search.orderBy = {
+                CreatedAt : 'desc'
+                }
         }
-        search['order'] = [
-            [orderByColumn, order]
-        ];
-
-        if (filters.OrderBy) {
-        //     //In case the order-by attribute is on associated model
-        //     //search['order'] = [[ '<AssociatedModel>', filters.OrderBy, order]];
-        }
-
-        // //Pagination
-        let limit = 25;
+        search.take = 25;
         if (filters.ItemsPerPage) {
-            limit = filters.ItemsPerPage;
+           search.take = Number(filters.ItemsPerPage);
         }
-        let offset = 0;
+        search.skip = 0;
         let pageIndex = 0;
         if (filters.PageIndex) {
             pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
-            offset = pageIndex * limit;
+            search.skip = pageIndex * search.take;
         }
-        search['limit'] = limit;
-        search['offset'] = offset;
-
-        const foundResults = search
+        const foundResults = await this.prisma.customers.findMany(search)
         const searchResults = {
             TotalCount     : foundResults.length,
             RetrievedCount : foundResults.length,
             PageIndex      : pageIndex,
-            ItemsPerPage   : limit,
-            Order          : order === 'DESC' ? 'descending' : 'ascending',
-            OrderedBy      : orderByColumn,
+            ItemsPerPage   : search.take,
+            Order          : search.orderBy["CreatedAt"] === 'desc' ? 'descending' : 'ascending',
             Items          : foundResults,
         };
 
         return searchResults;
-        // return results;
     
     } catch (error) {
         ErrorHandler.throwDbAccessError('DB Error: Unable to search user records!', error);
     }
 }
-
-
 
 update = async (id, updateModel) => {
   try {
@@ -156,14 +110,12 @@ update = async (id, updateModel) => {
                   id : id
               }
            });
-          
       }
       return await this.getById(id);
   } catch (error) {
       ErrorHandler.throwDbAccessError('DB Error: Unable to update customers!', error);
   }
 }
-
 
 delete = async (id) => {
   try {

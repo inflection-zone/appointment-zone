@@ -83,11 +83,6 @@ export class CustomerControllerDelegate {
         };
     }
 
-
-
-
-  
-
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     getCreateModel = (requestBody): CustomerCreateModel => {
@@ -109,49 +104,29 @@ export class CustomerControllerDelegate {
 
     getSearchFilters = (query) => {
         var filters = {};
-        var Prefix = query.Prefix ? query.Prefix : null;
-        if (Prefix != null) {
-            filters['Prefix'] = Prefix;
+        var firstName = query.firstName ? query.firstName : null;
+        if (firstName != null) {
+            filters['FirstName'] = firstName;
         }
-        var FirstName = query.FirstName ? query.FirstName : null;
-        if (FirstName != null) {
-            filters['FirstName'] = FirstName;
+        var lastName = query.lastName ? query.lastName : null;
+        if (lastName != null) {
+            filters['LastName'] = lastName;
         }
-        var LastName = query.LastName ? query.LastName : null;
-        if (LastName != null) {
-            filters['LastName'] = LastName;
+        var mobile = query.mobile ? query.mobile : null;
+        if (mobile != null) {
+            filters['Mobile'] = mobile;
         }
-        var Mobile = query.Mobile ? query.Mobile : null;
-        if (Mobile != null) {
-            filters['Mobile'] = Mobile;
+        var email = query.email ? query.email : null;
+        if (email != null) {
+            filters['Email'] = email;
         }
-        var Email = query.Email ? query.Email : null;
-        if (Email != null) {
-            filters['Email'] = Email;
+        var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : null;
+        if (itemsPerPage != null) {
+            filters['ItemsPerPage'] = itemsPerPage;
         }
-        var BirthDate = query.BirthDate ? query.BirthDate : null;
-        if (BirthDate != null) {
-            filters['BirthDate'] = BirthDate;
-        }
-        var Gender = query.Gender ? query.Gender : null;
-        if (Gender != null) {
-            filters['Gender'] = Gender;
-        }
-        var DisplayPicture = query.DisplayPicture ? query.DisplayPicture : null;
-        if (DisplayPicture != null) {
-            filters['DisplayPicture'] = DisplayPicture;
-        }
-        var Address = query.Address ? query.Address : null;
-        if (Address != null) {
-            filters['Address'] = Address;
-        }
-        var IsActive = query.IsActive ? query.IsActive : null;
-        if (IsActive != null) {
-            filters['IsActive'] = IsActive;
-        }
-        var InAppUser = query.InAppUser ? query.InAppUser : null;
-        if (InAppUser != null) {
-            filters['InAppUser'] = InAppUser;
+        var order = query.order ? query.order : null;
+        if (order != null) {
+            filters['Order'] = order;
         }
         return filters;
     }
@@ -192,8 +167,15 @@ export class CustomerControllerDelegate {
             Mobile              : record.Mobile,
             Email               : record.Email,
             Gender              : record.Gender,
+            DisplayPicture      : record.DisplayPicture,
             BirthDate           : record.BirthDate,
             Address             : record.Address,
+            IsActive            : record.IsActive,
+            InAppUser           : record.InAppUser,
+            CreatedAt           : record.createdAt,
+            UpdatedAt           : record.updatedAt,
+            DeletedOn           : record.DeletedOn,
+            IsDeleted           : record.IsDeleted
         };
     };
 

@@ -11,7 +11,7 @@ export interface ApiClientCreateModel {
     IsPrivileged?: boolean;
     ValidFrom?   : Date;
     ValidTill?   : Date;
-    DeletedOn?   : Date;
+    //DeletedAt?   : Date;
     
 }
 
