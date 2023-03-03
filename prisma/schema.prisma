@@ -346,13 +346,14 @@ model api_clients {
 }
 
 model roles {
-  id            Int              @id @default(autoincrement())
-  RoleName      String           @unique @db.Char(36)
-  Description   String?          @db.Text
-  CreatedAt     DateTime         @default(now())
-  UpdatedAt     DateTime         @updatedAt
-  RolePrivileges role_privileges[]
-  Users         user_roles[]
+  id              Int              @id @default(autoincrement())
+  RoleName        String           @unique @db.Char(36)
+  Description     String?          @db.Text
+  CreatedAt       DateTime         @default(now())
+  UpdatedAt       DateTime         @updatedAt
+  RolePrivileges  role_privileges[]
+  Users           user_roles[]
+ // User            users[]
 }
 
 model role_privileges {
@@ -362,7 +363,7 @@ model role_privileges {
   Privilege String?  @db.Char(36)
   CreatedAt DateTime @default(now())
   UpdatedAt DateTime @updatedAt
-  Role      roles    @relation(fields: [RoleId], references: [id])
+  Roles     roles    @relation(fields: [RoleId], references: [id])
 }
 
 model users {
@@ -384,7 +385,9 @@ model users {
   FileResource     file_resource?
   UserLoginSession user_login_session?
   UserOtp          user_otp?
-  Roles            user_roles[]   
+  Roles            user_roles[]  
+  // Role             roles               @relation(fields: [RoleId],references: [id]) 
+  // RoleId           Int                  
 }
 
 model user_roles {
@@ -395,6 +398,7 @@ model user_roles {
   UpdatedAt DateTime @updatedAt
   Role      roles    @relation(fields: [RoleId], references: [id])
   User      users    @relation(fields: [UserId], references: [id])
+  
 }
 
 model user_login_session {

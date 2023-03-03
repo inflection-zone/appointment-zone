@@ -230,50 +230,53 @@ export class UserService {
     //     return tmpUsername;
     // }
 
-    // getUser = async (
-    //     countryCode,
-    //     phone,
-    //     email,
-    //     userName
-    // ) => {
+    getUser = async (
+        countryCode,
+        phone,
+        email,
+        userName
+    ) => {
 
-    //     var filters = [];
+        var filters = [];
 
-    //     if (phone !== null && countryCode !== null) {
-    //         filters.push({
-    //             Phone       : phone,
-    //             CountryCode : countryCode
-    //         });
-    //     }
-    //     else if (email !== null) {
-    //         filters.push({
-    //             Email :  email 
-    //         });
-    //     }
-    //     else if (userName !== null) {
-    //         filters.push({
-    //             UserName : userName
-    //         });
-    //     }
-    //      const user = await this.prisma.users.findUnique({
-    //         where : {
-    //                 CountryCode:countryCode,
-    //                 Phone : phone,
-    //                 Email : email,
-    //                 UserName : userName,
-    //           }
+        if (phone !== null && countryCode !== null) {
+            filters.push({
+                Phone       : phone,
+                CountryCode : countryCode
+            });
+        }
+        else if (email !== null) {
+            filters.push({
+                Email :  email 
+            });
+        }
+        else if (userName !== null) {
+            filters.push({
+                UserName : userName
+            });
+        }
+         const user = await this.prisma.users.findMany({
+            where : {
+                OR : [
+                    {CountryCode : countryCode},
+                    {Phone : phone},
+                    {Email : email},
+                    {UserName : userName},
+                ],
+                    
+              },
             
-    //      });
+         });
 
-    //     if (!user) {
-    //         return null;
-    //     }
+        if (!user) {
+            return null;
+        }
 
-    //     var role = await this.roles.findUnique(user.RoleId);
-    //     user['roles'] = role;
+        // var role = await this.roles.findUnique({where:user.RoleId});
+        // user['roles'] = role;
 
-    //     return user;
-    //  }
+        return user;
+     }
 
 //  getUserUpdateModel = (inputModel) => {
 

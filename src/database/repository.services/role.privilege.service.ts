@@ -14,7 +14,7 @@ export class RolePrivilegeService {
 
     create = async (createModel) => {
         try {
-             const record =  await this.prisma.role_privileges.create({data:createModel});
+             const record =  await this.prisma.role_privileges.create({data:createModel, include:{Roles:true}});
             //  return record;
             console.log( "record", record);
         } catch (error) {
@@ -47,9 +47,10 @@ export class RolePrivilegeService {
     hasPrivilegeForRole = async (roleId, privilege) => {
         try {
             const rolePrivileges = await this.prisma.role_privileges.findMany({where:{
-                    RoleId  : roleId,
-                    Privilege : privilege,
-                }
+                OR:[{ RoleId  : roleId},
+                    {Privilege : privilege},
+                ],
+             },
             });
             return rolePrivileges.length > 0;
         } catch (error) {
