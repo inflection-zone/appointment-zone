@@ -4,6 +4,7 @@ import { Logger } from '../../common/logger';
 import { Helper } from "../../common/helper";
 import { ErrorHandler } from "../../common/error.handler";
 import { PrismaClientInit } from "../../startup/prisma.client.init";
+import { Prisma } from '@prisma/client';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,6 +39,59 @@ export class BusinessNodeService{
         ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve business node!', error);
     }
 
+}
+
+search = async (filters) => {
+    try {
+        const search : Prisma.business_nodesFindManyArgs = {};
+        if (filters.Name != null) {
+            search.where = {
+                Name : filters.Name
+            }
+        }
+        if (filters.Mobile != null) {
+            search.where =   {
+                Mobile : filters.Mobile
+                }
+        }
+        if (filters.Email != null) {
+            search.where =   {
+                Email : filters.Email
+                }
+        }
+        search.orderBy = {
+                CreatedAt : 'asc'
+        }
+        if (filters.Order === 'descending') {
+            search.orderBy = {
+                CreatedAt : 'desc'
+                }
+        }
+        search.take = 25;
+        if (filters.ItemsPerPage) {
+           search.take = Number(filters.ItemsPerPage);
+        }
+        search.skip = 0;
+        let pageIndex = 0;
+        if (filters.PageIndex) {
+            pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+            search.skip = pageIndex * search.take;
+        }
+        const foundResults = await this.prisma.business_nodes.findMany(search)
+        const searchResults = {
+            TotalCount     : foundResults.length,
+            RetrievedCount : foundResults.length,
+            PageIndex      : pageIndex,
+            ItemsPerPage   : search.take,
+            Order          : search.orderBy["CreatedAt"] === 'desc' ? 'descending' : 'ascending',
+            Items          : foundResults,
+        };
+
+        return searchResults;
+    
+    } catch (error) {
+        ErrorHandler.throwDbAccessError('DB Error: Unable to search user records!', error);
+    }
 }
 
 update = async (id, updateModel) => {
@@ -84,7 +138,7 @@ delete = async (id) => {
 
 getBusinessNodeWithEmail = async (email) => {
     try {
-        const record = await this.prisma.business_nodes.findUniqueOrThrow({ where : {Email : email}
+        const record = await this.prisma.business_nodes.findUnique({ where : {Email : email}
         });
         return record;
     } catch (error) {
@@ -93,15 +147,15 @@ getBusinessNodeWithEmail = async (email) => {
     }
 }
 
-// getBusinessNodeWithMobile = async (Mobile) => {
-//     try {
-//         const record = await this.prisma.business_nodes.findUnique({ where : { Mobile: Mobile }
-//         });
-//         return record;
-//     } catch (error) {
-//         ErrorHandler.throwDbAccessError('Unable to check if business node exists with mobile!', error);
-//     }
-// }
+getBusinessNodeWithMobile = async (mobile) => {
+    try {
+        const record = await this.prisma.business_nodes.findUnique({ where : { Mobile: mobile }
+        });
+        return record;
+    } catch (error) {
+        ErrorHandler.throwDbAccessError('Unable to check if business node exists with mobile!', error);
+    }
+}
 
 
 

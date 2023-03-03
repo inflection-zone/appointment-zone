@@ -100,7 +100,7 @@ model business_nodes {
   id                      String     @id @default(uuid())
   BusinessId              String     @db.Char(36)
   Name                    String     @db.VarChar(255)
-  Mobile                  String     @db.VarChar(255)
+  Mobile                  String     @unique @db.VarChar(255)
   Email                   String     @unique @db.VarChar(255)
   DisplayPicture          String?    @db.Text
   Address                 String?    @db.Text
@@ -256,13 +256,13 @@ model customers {
   Address        String?   @db.Text
   BirthDate      DateTime? @db.DateTime(0)
   DisplayPicture String?   @db.Text
-  Email          String?   @db.VarChar(255)
+  Email          String?   @unique @db.VarChar(255)
   FirstName      String?   @db.VarChar(255)
   Gender         String?   @db.VarChar(255)
   InAppUser      Boolean   @default(false)
   IsActive       Boolean   @default(true)
   LastName       String?   @db.VarChar(255)
-  Mobile         String    @db.VarChar(255)
+  Mobile         String    @unique @db.VarChar(255)
   Prefix         String?   @db.VarChar(255)
   CreatedAt      DateTime  @default(now())
   UpdatedAt      DateTime  @updatedAt

@@ -32,11 +32,22 @@ export class BusinessNodeController extends BaseController {
         try{
             await this.authorize('BusinessNode.GetById', request, response);
             const record = await this._delegate.getById(request.params.id);
-            const message ="Business retrieved successfully!";
+            const message ="Business node retrieved successfully!";
             ResponseHandler.success(request, response, message, 200, record);
             
 
         }catch(error){
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
+
+    search = async (request: express.Request, response: express.Response): Promise <void> => {
+        try {
+            await this.authorize('BusinessNode.Search', request, response ,false);
+            const searchResults = await this._delegate.search(request.query);
+            const message = 'Business node records retrieved successfully!';
+            ResponseHandler.success(request, response, message, 200, searchResults);
+        } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     }

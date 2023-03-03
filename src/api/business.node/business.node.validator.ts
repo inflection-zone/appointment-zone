@@ -33,9 +33,7 @@ export class BusinessNodesValidator {
         }
     }
 
-    static getUserCreateModel = (requestBody): BusinessNodeCreateModel => {
-
-        const birthDate = requestBody.BirthDate ? Date.parse(requestBody.BirthDate) : null;
+    static getNodeCreateModel = (requestBody): BusinessNodeCreateModel => {
 
         return {
             BusinessId                : requestBody.BusinessId? requestBody.BusinessId:null,
@@ -47,16 +45,16 @@ export class BusinessNodesValidator {
             Longitude                 : requestBody.Longitude ? requestBody.Longitude : null,
             Lattitude                 : requestBody.Lattitude ? requestBody.Lattitude : null,
             OverallRating             : requestBody.OverallRating? requestBody.OverallRating: null,
-            // TimeZone                  : requestBody.TimeZone ? requestBody.TimeZone : undefined,
+            TimeZone                  : requestBody.TimeZone ? requestBody.TimeZone : undefined,
             AllowWalkinAppointments   : requestBody.AllowWalkinAppointments ? requestBody.AllowWalkinAppointments :null,
             AllowFutureBookingFor     : requestBody.AllowFutureBookingFor ? requestBody.AllowFutureBookingFor : '30d',
-            IsActive                  : requestBody.IsActive ? requestBody.IsActive : true,
+            IsActive                  : requestBody.IsActive ? requestBody.IsActive : true
         };
     }
 
-    static getValidUserCreateModel = async (requestBody) => {
+    static getValidNodeCreateModel = async (requestBody) => {
 
-        const userService = new BusinessNodeService();
+        const nodeService = new BusinessNodeService();
 
         // var password = requestBody.Password;
         // if (!password) {
@@ -75,23 +73,42 @@ export class BusinessNodesValidator {
         // requestBody.UserName = userName;
 
         // requestBody.CountryCode = requestBody.CountryCode ?? "+91";
-        // var userWithPhone = await userService.getBusinessNodeWithMobile( requestBody.Mobile);
-        // if (userWithPhone) {
-        //     ErrorHandler.throwDuplicateUserError(`User with phone ${requestBody.Mobile} already exists!`);
-        // }
+        var nodeWithPhone = await nodeService.getBusinessNodeWithMobile( requestBody.Mobile);
+        if (nodeWithPhone) {
+            ErrorHandler.throwDuplicateUserError(`User with phone ${requestBody.Mobile} already exists!`);
+        }
 
-        // var userWithUserName = await userService.getBusinessNodeWithName(requestBody.Name);
-        // if (userWithUserName) {
-        //     ErrorHandler.throwDuplicateUserError(`User with name ${requestBody.Name} already exists!`);
-        // }
-
-        var userWithEmail = await userService.getBusinessNodeWithEmail(requestBody.Email);
-        if (userWithEmail) {
+        var nodeWithEmail = await nodeService.getBusinessNodeWithEmail(requestBody.Email);
+        if (nodeWithEmail) {
             ErrorHandler.throwDuplicateUserError(`User with email ${requestBody.Email} already exists!`);
         }
 
-        var userCreateModel: BusinessNodeCreateModel = await this.getUserCreateModel(requestBody);
-        return { userCreateModel};
+        var nodeCreateModel: BusinessNodeCreateModel = await this.getNodeCreateModel(requestBody);
+        return { nodeCreateModel};
+    }
+
+    static validateSearchRequest = async (query) => {
+        try {
+            const schema = joi.object({
+                BusinessId               : joi.string().max(255).optional(),
+                Name                     : joi.string().max(255).optional(),
+                Mobile                   : joi.string().max(255).optional(),
+                Email                    : joi.string().max(255).optional(),
+                DisplayPicture           : joi.string().optional(),
+                Address                  : joi.string().max(255).optional(),
+                Longitude                : joi.string().optional(),             
+                Lattitude                : joi.string().optional(),            
+                OverallRating            : joi.number().optional(),
+                TimeZone                 : joi.date().iso().optional(),      
+                AllowWalkinAppointments  : joi.boolean().optional(),
+                AllowFutureBookingFor    : joi.string().max(255).optional(),
+                IsActive                 : joi.boolean().optional(),
+            });
+            return await schema.validateAsync(query);
+
+        } catch (error) {
+            ErrorHandler.handleValidationError(error);
+        }
     }
 
     static validateUpdateRequest = async (requestBody) => {
@@ -103,10 +120,10 @@ export class BusinessNodesValidator {
                 Email                    : joi.string().max(255).optional(),
                 DisplayPicture           : joi.string().optional(),
                 Address                  : joi.string().max(255).optional(),
-                Longitude                : joi.string().optional(),              //doubt
-                Lattitude                : joi.string().optional(),             //doubt
+                Longitude                : joi.string().optional(),             
+                Lattitude                : joi.string().optional(),            
                 OverallRating            : joi.number().optional(),
-                TimeZone                 : joi.date().iso().optional(),         //doubt
+                TimeZone                 : joi.date().iso().optional(),      
                 AllowWalkinAppointments  : joi.boolean().optional(),
                 AllowFutureBookingFor    : joi.string().max(255).optional(),
                 IsActive                 : joi.boolean().optional(),
