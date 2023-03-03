@@ -4,6 +4,7 @@ import { Helper } from '../../../common/helper';
 import { TimeHelper } from '../../../common/time.helper';
 import { DurationType } from "../../../domain.types/miscellaneous/time.types";
 import { PrismaClientInit } from '../../../startup/prisma.client.init';
+import { Prisma } from '@prisma/client';
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 export class UserService {
@@ -26,30 +27,30 @@ export class UserService {
         }
     }
 
-    // getById = async (id) => {
-    //     try {
-    //         var record = await this.prisma.users.findUnique({
-    //             where : {
-    //                 id : id
-    //             }
-    //         });
+    getById = async (id) => {
+        try {
+            var record = await this.prisma.users.findUnique({
+                where : {
+                    id : id
+                }
+            });
             
-    //         if (record) {
-    //             const userRole = await this.prisma.user_roles.findUnique({
-    //                 where : { 
-    //                      UserId : record.id
-    //                     }
-    //             });
-    //             if (userRole) {
-    //                 const role = await this.prisma.roles.findUnique({userRole.RoleId});
-    //                 record['roles'] = role;
-    //             }
-    //         }
-    //          return record;
-    //     } catch (error) {
-    //         ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve user!', error);
-    //     }
-    // }
+            if (record) {
+                const userRole = await this.prisma.user_roles.findUnique({
+                    where : { 
+                         UserId : record.id
+                        }
+                });
+            //     if (userRole) {
+            //         const role = await this.prisma.roles.findUnique({userRole.RoleId});
+            //         record['roles'] = role;
+            //     }
+             }
+             return record;
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve user!', error);
+        }
+    }
 
     exists = async (id) => {
         try {
@@ -61,97 +62,69 @@ export class UserService {
         }
     }
 
-    // search = async (filters) => {
-    //     try {
+    
+    search = async (filters) => {
+    try {
+        const search : Prisma.usersFindManyArgs = {};
 
-    //         var search = {
-    //             where   : {},
-    //             include : []
-    //         };
+        if (filters.FirstName != null) {
+            search.where = {
+                FirstName : filters.FirstName
+            }
+        }
 
-    //         if (filters.RoleId) {
-    //             search.where['RoleId'] = {
-    //                 [Op.like] : '%' + filters.RoleId + '%'
-    //             };
-    //         }
-    //         if (filters.Prefix) {
-    //             search.where['Prefix'] = filters.Prefix;
-    //         }
-    //         if (filters.FirstName) {
-    //             search.where['FirstName'] = filters.FirstName;
-    //         }
-    //         if (filters.LastName) {
-    //             search.where['LastName'] = filters.LastName;
-    //         }
-    //      
-    //         if (filters.Gender) {
-    //             search.where['Gender'] = filters.Gender;
-    //         }
-    //         if (filters.State) {
-    //             search.where['State'] = {
-    //                 [Op.like] : '%' + filters.State + '%'
-    //             };
-    //         }
-    //         if (filters.Country) {
-    //             search.where['Country'] = {
-    //                 [Op.like] : '%' + filters.Country + '%'
-    //             };
-    //         }
-    //         if (filters.Address) {
-    //             search.where['Address'] = {
-    //                 [Op.like] : '%' + filters.Address + '%'
-    //             };
-    //         }
+        if (filters.LastName != null) {
+            search.where =   {
+                LastName : filters.LastName 
+                }
+        }
 
-    //         //Sorting
-    //         let orderByColumn = 'CreatedAt';
-    //         if (filters.OrderBy) {
-    //             orderByColumn = filters.OrderBy;
-    //         }
-    //         let order = 'ASC';
-    //         if (filters.Order === 'descending') {
-    //             order = 'DESC';
-    //         }
-    //         search['order'] = [
-    //             [orderByColumn, order]
-    //         ];
+        if (filters.Phone != null) {
+            search.where =   {
+                Phone : filters.Phone
+                }
+        }
+        if (filters.Email != null) {
+            search.where =   {
+                Email : filters.Email
+                }
+        }
 
-    //         if (filters.OrderBy) {
-    //             //In case the order-by attribute is on associated model
-    //             //search['order'] = [[ '<AssociatedModel>', filters.OrderBy, order]];
-    //         }
+        search.orderBy = {
+                CreatedAt : 'asc'
+        }
+        if (filters.Order === 'descending') {
+            search.orderBy = {
+                CreatedAt : 'desc'
+                }
+        }
+        search.take = 25;
+        if (filters.ItemsPerPage) {
+           search.take = Number(filters.ItemsPerPage);
+        }
+        search.skip = 0;
+        let pageIndex = 0;
+        if (filters.PageIndex) {
+            pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+            search.skip = pageIndex * search.take;
+        }
+        const foundResults = await this.prisma.users.findMany(search)
+        const searchResults = {
+            TotalCount     : foundResults.length,
+            RetrievedCount : foundResults.length,
+            PageIndex      : pageIndex,
+            ItemsPerPage   : search.take,
+            Order          : search.orderBy["CreatedAt"] === 'desc' ? 'descending' : 'ascending',
+            Items          : foundResults,
+        };
 
-    //         //Pagination
-    //         let limit = 25;
-    //         if (filters.ItemsPerPage) {
-    //             limit = filters.ItemsPerPage;
-    //         }
-    //         let offset = 0;
-    //         let pageIndex = 0;
-    //         if (filters.PageIndex) {
-    //             pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
-    //             offset = pageIndex * limit;
-    //         }
-    //         search['limit'] = limit;
-    //         search['offset'] = offset;
+        return searchResults;
+    
+    } catch (error) {
+        ErrorHandler.throwDbAccessError('DB Error: Unable to search user records!', error);
+    }
+}
 
-    //         const foundResults = await this.users.findAndCountAll(search);
-    //         const searchResults = {
-    //             TotalCount     : foundResults.count,
-    //             RetrievedCount : foundResults.rows.length,
-    //             PageIndex      : pageIndex,
-    //             ItemsPerPage   : limit,
-    //             Order          : order === 'DESC' ? 'descending' : 'ascending',
-    //             OrderedBy      : orderByColumn,
-    //             Items          : foundResults.rows,
-    //         };
-
-    //         return searchResults;
-
-    //     } catch (error) {
-    //         ErrorHandler.throwDbAccessError('DB Error: Unable to search user records!', error);
-    //     }
-    // }
 
     // update = async (id, updateModel) => {
     //     try {
@@ -263,7 +236,7 @@ export class UserService {
         if (!user) {
             return null;
         }
-        
+        console.log("user", user);
         return user;
      }
 

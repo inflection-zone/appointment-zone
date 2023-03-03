@@ -40,12 +40,19 @@ export class UserValidator {
                 state         : joi.string().max(64).optional(),
                 country       : joi.string().max(64).optional(),
                 address       : joi.string().max(256).optional(),
+                itemsPerPage : joi.number().min(1).optional(),
+                orderBy      : joi.string().max(256).optional(),
+                order        : joi.string().valid('ascending', 'descending')
+                    .optional()
+                    .error(()=> new Error("order param: 'ascending' and 'descending' are the only valid values.")),
+          
                 addedByUserId : joi.string().guid({
                     version : ['uuidv4']
                 }).optional(),
                 lastUpdatedByUserId : joi.string().guid({
                     version : ['uuidv4']
-                }).optional()
+                }).optional(),
+                
             });
             return await schema.validateAsync(query);
 

@@ -7,6 +7,7 @@ import { Logger } from '../../common/logger';
 import { ApiError } from '../../common/api.error';
 import { UserValidator as validator } from './user.validator';
 import {
+    UserCreateModel,
     UserDto,
     UserSearchFilters,
     UserSearchResults,
@@ -59,13 +60,13 @@ export class UserControllerDelegate {
         return this.getEnrichedDto(record);
     }
 
-    // getById = async (id: uuid) => {
-    //     const record = await this._service.getById(id);
-    //     if (record === null) {
-    //         ErrorHandler.throwNotFoundError('User with id ' + id.toString() + ' cannot be found!');
-    //     }
-    //     return this.getEnrichedDto(record);
-    // }
+    getById = async (id: uuid) => {
+        const record = await this._service.getById(id);
+        if (record === null) {
+            ErrorHandler.throwNotFoundError('User with id ' + id.toString() + ' cannot be found!');
+        }
+        return this.getEnrichedDto(record);
+    }
 
     // search = async (query) => {
     //     await validator.validateSearchRequest(query);
@@ -74,8 +75,8 @@ export class UserControllerDelegate {
     //     var items = searchResults.Items.map(x => this.getPublicDto(x));
     //     searchResults.Items = items;
     //     return searchResults;
+       
     // }
-
     // update = async (id: uuid, requestBody: any) => {
     //     await validator.validateUpdateRequest(requestBody);
     //     const record = await this._service.getById(id);
@@ -105,20 +106,20 @@ export class UserControllerDelegate {
         await validator.validateLoginWithPasswordRequest(requestBody);
         const loginModel = await this.getLoginModel(requestBody);
         const sentPassword = loginModel.Password;
-        // const hashedPassword = loginModel.User.Password;
-        // const validPassword = Helper.compareHashedPassword(sentPassword, hashedPassword);
-        // if (!validPassword) {
-        //     ErrorHandler.throwUnauthorizedUserError('Invalid password.');
-        // }
-        // const user = await this._service.getById(loginModel.User.id);
-        // const loginSession = await this._service.createUserLoginSession(user.id);
-        // const currentUser: CurrentUser = this.constructCurrentUser(user, loginSession.id);
-        // const accessToken = await Loader.Authorizer.generateUserSessionToken(currentUser);
+        const hashedPassword = loginModel.User[0].Password;
+        const validPassword = Helper.compareHashedPassword(sentPassword, hashedPassword);
+        if (!validPassword) {
+            ErrorHandler.throwUnauthorizedUserError('Invalid password.');
+        }
+        const user = await this._service.getById(loginModel.User[0].id);
+        const loginSession = await this._service.createUserLoginSession(user.id);
+        const currentUser: CurrentUser = this.constructCurrentUser(user, loginSession.id);
+        const accessToken = await Loader.Authorizer.generateUserSessionToken(currentUser);
         const expiresIn: number = ConfigurationManager.JwtExpiresIn();
         const validTill = new Date(Date.now() + expiresIn * 1000);
         return {
-            // User             : currentUser,
-            // AccessToken      : accessToken,
+            User             : currentUser,
+            AccessToken      : accessToken,
             SessionValidTill : validTill
         };
     }
@@ -205,51 +206,58 @@ export class UserControllerDelegate {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    // getSearchFilters = (query) => {
-    //     var filters = {};
-    //     var roleId = query.roleId ? query.roleId : null;
-    //     if (roleId != null) {
-    //         filters['RoleId'] = roleId;
-    //     }
-    //     var prefix = query.prefix ? query.prefix : null;
-    //     if (prefix != null) {
-    //         filters['Prefix'] = prefix;
-    //     }
-    //     var firstName = query.firstName ? query.firstName : null;
-    //     if (firstName != null) {
-    //         filters['FirstName'] = firstName;
-    //     }
-    //     var lastName = query.lastName ? query.lastName : null;
-    //     if (lastName != null) {
-    //         filters['LastName'] = lastName;
-    //     }
-    
-    //     var gender = query.gender ? query.gender : null;
-    //     if (gender != null) {
-    //         filters['Gender'] = gender;
-    //     }
-    //     var state = query.state ? query.state : null;
-    //     if (state != null) {
-    //         filters['State'] = state;
-    //     }
-    //     var country = query.country ? query.country : null;
-    //     if (country != null) {
-    //         filters['Country'] = country;
-    //     }
-    //     var address = query.address ? query.address : null;
-    //     if (address != null) {
-    //         filters['Address'] = address;
-    //     }
-    //     var addedByUserId = query.addedByUserId ? query.addedByUserId : null;
-    //     if (addedByUserId != null) {
-    //         filters['AddedByUserId'] = addedByUserId;
-    //     }
-    //     var lastUpdatedByUserId = query.lastUpdatedByUserId ? query.lastUpdatedByUserId : null;
-    //     if (lastUpdatedByUserId != null) {
-    //         filters['LastUpdatedByUserId'] = lastUpdatedByUserId;
-    //     }
-    //     return filters;
-    // }
+    getSearchFilters = (query) => {
+        var filters = {};
+        var firstName = query.firstName ? query.firstName : null;
+        if (firstName != null) {
+            filters['FirstName'] = firstName;
+        }
+        var lastName = query.lastName ? query.lastName : null;
+        if (lastName != null) {
+            filters['LastName'] = lastName;
+        }
+        var mobile = query.mobile ? query.mobile : null;
+        if (mobile != null) {
+            filters['Mobile'] = mobile;
+        }
+        var email = query.email ? query.email : null;
+        if (email != null) {
+            filters['Email'] = email;
+        }
+        var gender = query.gender ? query.gender : null;
+        if (gender != null) {
+            filters['Gender'] = gender;
+        }
+        var state = query.state ? query.state : null;
+        if (state != null) {
+            filters['State'] = state;
+        }
+        var country = query.country ? query.country : null;
+        if (country != null) {
+            filters['Country'] = country;
+        }
+        var address = query.address ? query.address : null;
+        if (address != null) {
+            filters['Address'] = address;
+        }
+        var addedByUserId = query.addedByUserId ? query.addedByUserId : null;
+        if (addedByUserId != null) {
+            filters['AddedByUserId'] = addedByUserId;
+        }
+        var lastUpdatedByUserId = query.lastUpdatedByUserId ? query.lastUpdatedByUserId : null;
+        if (lastUpdatedByUserId != null) {
+            filters['LastUpdatedByUserId'] = lastUpdatedByUserId;
+        }
+        var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : null;
+        if (itemsPerPage != null) {
+            filters['ItemsPerPage'] = itemsPerPage;
+        }
+        var order = query.order ? query.order : null;
+        if (order != null) {
+            filters['Order'] = order;
+        }
+        return filters;
+    }
 
     //This function returns a response DTO which is enriched with available resource data
 
@@ -307,14 +315,15 @@ export class UserControllerDelegate {
         const password = (typeof requestBody.Password !== 'undefined') ? requestBody.Password : null;
         const otp = (typeof requestBody.Otp !== 'undefined') ? requestBody.Otp.toString() : null;
 
-        // const user = await this._service.getUser(countryCode, phone, email, userName);
-        // if (user === null) {
-        //     ErrorHandler.throwNotFoundError('User does not exist!');
-        // }
+        const user = await this._service.getUser(countryCode, phone, email, userName);
+        
+        if (user === null) {
+            ErrorHandler.throwNotFoundError('User does not exist!');
+        }
 
         return {
-            // User      : user,
-            // LoginRole : user.Role.RoleName,
+            User      : user,
+          //  LoginRole : user.Role.RoleName,
             Password  : password,
             Otp       : otp
         };
