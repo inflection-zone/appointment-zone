@@ -121,6 +121,7 @@ CREATE TABLE `business_nodes` (
     `DeletedAt` DATETIME(0) NULL,
 
     UNIQUE INDEX `business_nodes_Email_key`(`Email`),
+    INDEX `business_nodes_BusinessId_fkey`(`BusinessId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -395,21 +396,17 @@ CREATE TABLE `roles` (
     `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `UpdatedAt` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `roles_RoleName_key`(`RoleName`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `role_privileges` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `RoleName` CHAR(36) NULL,
-    `RoleId` INTEGER NOT NULL,
-    `Privilege` CHAR(36) NULL,
+CREATE TABLE `privileges` (
+    `id` VARCHAR(191) NOT NULL,
+    `RoleName` CHAR(36) NOT NULL,
+    `Privilege` CHAR(36) NOT NULL,
     `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `UpdatedAt` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `role_privileges_RoleName_key`(`RoleName`),
-    UNIQUE INDEX `role_privileges_RoleId_key`(`RoleId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -426,13 +423,11 @@ CREATE TABLE `users` (
     `Gender` VARCHAR(255) NULL,
     `BirthDate` DATE NULL,
     `Password` VARCHAR(512) NULL,
-    `RoleId` INTEGER NOT NULL,
     `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `UpdatedAt` DATETIME(3) NOT NULL,
     `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
     `DeletedAt` DATETIME(0) NULL,
 
-    UNIQUE INDEX `users_RoleId_key`(`RoleId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -445,7 +440,6 @@ CREATE TABLE `user_roles` (
     `UpdatedAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `user_roles_UserId_key`(`UserId`),
-    UNIQUE INDEX `user_roles_RoleId_key`(`RoleId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -500,14 +494,17 @@ CREATE TABLE `file_resource` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `_privilegesToroles` (
+    `A` VARCHAR(191) NOT NULL,
+    `B` INTEGER NOT NULL,
+
+    UNIQUE INDEX `_privilegesToroles_AB_unique`(`A`, `B`),
+    INDEX `_privilegesToroles_B_index`(`B`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `business_nodes` ADD CONSTRAINT `business_nodes_BusinessId_fkey` FOREIGN KEY (`BusinessId`) REFERENCES `businesses`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `role_privileges` ADD CONSTRAINT `role_privileges_RoleId_fkey` FOREIGN KEY (`RoleId`) REFERENCES `roles`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `users` ADD CONSTRAINT `users_RoleId_fkey` FOREIGN KEY (`RoleId`) REFERENCES `roles`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `user_roles` ADD CONSTRAINT `user_roles_RoleId_fkey` FOREIGN KEY (`RoleId`) REFERENCES `roles`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -523,3 +520,9 @@ ALTER TABLE `user_otp` ADD CONSTRAINT `user_otp_UserId_fkey` FOREIGN KEY (`UserI
 
 -- AddForeignKey
 ALTER TABLE `file_resource` ADD CONSTRAINT `file_resource_UserId_fkey` FOREIGN KEY (`UserId`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `_privilegesToroles` ADD CONSTRAINT `_privilegesToroles_A_fkey` FOREIGN KEY (`A`) REFERENCES `privileges`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `_privilegesToroles` ADD CONSTRAINT `_privilegesToroles_B_fkey` FOREIGN KEY (`B`) REFERENCES `roles`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

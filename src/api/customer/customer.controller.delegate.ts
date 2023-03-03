@@ -51,7 +51,7 @@ export class CustomerControllerDelegate {
     search = async (query) => {
         await validator.validateSearchRequest(query);
         var filters: CustomerSearchFilters = this.getSearchFilters(query);
-        var searchResults = await this._service.search(filters);
+        var searchResults: CustomerSearchResults = await this._service.search(filters);
         var items = searchResults.Items.map(x => this.getPublicDto(x));
         searchResults.Items = items;
         return searchResults;

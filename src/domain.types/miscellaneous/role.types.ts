@@ -1,9 +1,9 @@
 export enum Roles {
-    Admin          = 'Admin',
-    Moderator      = 'Moderator'
+    Admin     = 'Admin',
+    User      = 'User'
 }
 
 export const RoleList: Roles[] = [
     Roles.Admin,
-    Roles.Moderator,
+    Roles.User,
 ];
