@@ -12,6 +12,7 @@ import { RoleList } from '../domain.types/miscellaneous/role.types';
 import { Gender } from "../domain.types/miscellaneous/system.types";
 import { UserCreateModel } from "../domain.types/user/user.domain.types";
 import { UserRoleCreateModel } from "../domain.types/user/user.role.domain.types";
+import { PrismaClientInit } from "./prisma.client.init";
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -26,6 +27,8 @@ export class Seeder {
     _rolePrivilegeService: RolePrivilegeService = new RolePrivilegeService();
 
     _userRoleService: UserRoleService = new UserRoleService();
+    
+    prisma = PrismaClientInit.instance().prisma();
 
 
     // _fileResourceService: FileResourceService = null;
@@ -61,13 +64,30 @@ export class Seeder {
                     continue;
                 }
                 for (const privilege of privileges) {
-                    const exists = await this._rolePrivilegeService.hasPrivilegeForRole(role.id, privilege);
+                    const exists = await this._rolePrivilegeService.hasPrivilegeForRole(role[0].RoleName, privilege);
                     if (!exists) {
                         await this._rolePrivilegeService.create({
-                            RoleId    : role.id,
-                            RoleName  : role.RoleName,
+                            // RoleId    : role[0].id,
+                            RoleName  : role[0].RoleName,
                             Privilege : privilege,
+                            Role : {
+                                    connect:{
+                                        id : role[0].id
+                                    }
+                                }
                         });
+                        // await this.prisma.privileges.create({
+                        //     data: {
+                        //     RoleName  : 'Admin',
+                        //     Privilege : privilege,
+                        //     // Role : {
+                        //     //     connect:{
+                        //     //         id : 1
+                        //     //     }
+                        //     // }
+                        //     }
+                        // })
+
                     }
                 }
             }
@@ -108,7 +128,7 @@ export class Seeder {
             const user = await this._userService.create(userDomainModel);
             const userRole: UserRoleCreateModel = {
                 UserId : user.id,
-                RoleId : role.id,
+                RoleId : role[0].id,
             };
             await this._userRoleService.create(userRole);
         }
@@ -156,13 +176,12 @@ export class Seeder {
         for await (var role of RoleList) {
 
             var r = await this._roleService.getByName(role);
-            if (!r) {
+            if (!r[0]) {
                 await this._roleService.create({
                     RoleName : role
                 });
             }
         }
-
         Logger.instance().log('Seeded default roles successfully!');
     };
 

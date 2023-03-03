@@ -256,25 +256,14 @@ export class UserService {
             });
         }
          const user = await this.prisma.users.findMany({
-            where : {
-                OR : [
-                    {CountryCode : countryCode},
-                    {Phone : phone},
-                    {Email : email},
-                    {UserName : userName},
-                ],
-                    
-              },
-            
+            where : 
+                {UserName : userName},  
          });
 
         if (!user) {
             return null;
         }
-
-        // var role = await this.roles.findUnique({where:user.RoleId});
-        // user['roles'] = role;
-
+        
         return user;
      }
 

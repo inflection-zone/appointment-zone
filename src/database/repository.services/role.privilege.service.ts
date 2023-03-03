@@ -14,9 +14,9 @@ export class RolePrivilegeService {
 
     create = async (createModel) => {
         try {
-             const record =  await this.prisma.role_privileges.create({data:createModel, include:{Roles:true}});
+            return await this.prisma.privileges.create({data:createModel});
             //  return record;
-            console.log( "record", record);
+        
         } catch (error) {
             ErrorHandler.throwDbAccessError('Unable to create role privilege!', error);
         }
@@ -24,33 +24,32 @@ export class RolePrivilegeService {
 
     getById = async (id) => {
         try {
-            return await this.prisma.role_privileges.findUnique({where:{id:id}
+            return await this.prisma.privileges.findUnique({where:{id:id}
             });
         } catch (error) {
             ErrorHandler.throwDbAccessError('Unable to retrieve role privilege!', error);
         }
     };
 
-    getPrivilegesForRole = async (roleId) => {
-        try {
-            const rolePrivileges = await this.prisma.role_privileges.findMany({
-                where : {
-                    RoleId : roleId,
-                },
-            });
-            return rolePrivileges.map((x) => x.Privilege);
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('Unable to retrieve role privileges!', error);
-        }
-    };
+    // getPrivilegesForRole = async (roleId) => {
+    //     try {
+    //         const rolePrivileges = await this.prisma.privileges.findMany({
+    //             where : {
+    //                 RoleId : roleId,
+    //             },
+    //         });
+    //         return rolePrivileges.map((x) => x.Privilege);
+    //     } catch (error) {
+    //         ErrorHandler.throwDbAccessError('Unable to retrieve role privileges!', error);
+    //     }
+    // };
 
-    hasPrivilegeForRole = async (roleId, privilege) => {
+    hasPrivilegeForRole = async (roleName, privilege) => {
         try {
-            const rolePrivileges = await this.prisma.role_privileges.findMany({where:{
-                OR:[{ RoleId  : roleId},
-                    {Privilege : privilege},
-                ],
-             },
+            const rolePrivileges = await this.prisma.privileges.findMany({where:{
+                    RoleName  : roleName,
+                    Privilege : privilege,
+                }
             });
             return rolePrivileges.length > 0;
         } catch (error) {

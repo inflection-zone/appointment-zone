@@ -38,6 +38,7 @@ export class CustomerValidator {
                 orderBy      : joi.string().max(256).optional(),
                 order        : joi.string().valid('ascending', 'descending')
                     .optional()
+                    .error(()=> new Error("order param: 'ascending' and 'descending' are the only valid values.")),
             });
             return await schema.validateAsync(query);
 

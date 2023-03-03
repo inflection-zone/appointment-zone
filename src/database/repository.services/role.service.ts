@@ -32,7 +32,7 @@ export class RoleService{
 
     getByName = async (name) => {
         try {
-            return await this.prisma.roles.findUnique({ where: { RoleName: name  }
+            return await this.prisma.roles.findMany({ where: { RoleName: name }
 	 });
         } catch (error) {
             ErrorHandler.throwDbAccessError('Unable to retrieve role!', error);
