@@ -428,6 +428,7 @@ CREATE TABLE `users` (
     `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
     `DeletedAt` DATETIME(0) NULL,
 
+    UNIQUE INDEX `users_UserName_key`(`UserName`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

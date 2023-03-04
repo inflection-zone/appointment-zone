@@ -367,7 +367,7 @@ model privileges {
 
 model users {
   id               String              @id @default(uuid())
-  UserName         String              @db.Char(36)
+  UserName         String              @unique @db.Char(36)
   Prefix           String              @db.Char(36)
   FirstName        String              @db.VarChar(255)
   LastName         String              @db.VarChar(255)

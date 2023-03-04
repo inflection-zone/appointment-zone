@@ -228,7 +228,7 @@ export class UserService {
                 UserName : userName
             });
         }
-         const user = await this.prisma.users.findMany({
+         const user = await this.prisma.users.findUnique({
             where : 
                 {UserName : userName},  
          });
