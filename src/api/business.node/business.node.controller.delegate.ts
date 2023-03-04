@@ -109,21 +109,17 @@ export class BusinessNodeControllerDelegate {
 
     getSearchFilters = (query) => {
         var filters = {};
-        var Name = query.Name ? query.Name : null;
-        if (Name != null) {
-            filters['Name'] = Name;
+        var name = query.name ? query.name : null;
+        if (name != null) {
+            filters['Name'] = name;
         }
-        var lastName = query.lastName ? query.lastName : null;
-        if (lastName != null) {
-            filters['LastName'] = lastName;
+        var mobile = query.mobile ? query.mobile : null;
+        if (mobile != null) {
+            filters['Mobile'] = mobile
         }
-        var Mobile = query.Mobile ? query.Mobile : null;
-        if (Mobile != null) {
-            filters['Mobile'] = Mobile
-        }
-        var Email = query.Email ? query.Email : null;
-        if (Email != null) {
-            filters['Email'] = Email;
+        var email = query.email ? query.email : null;
+        if (email != null) {
+            filters['Email'] = email;
         }
         var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : null;
         if (itemsPerPage != null) {

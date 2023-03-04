@@ -19,10 +19,10 @@ export class BusinessNodesValidator {
                 Email                    : joi.string().max(255).required(),
                 DisplayPicture           : joi.string().optional(),
                 Address                  : joi.string().max(255).optional(),
-                Longitude                : joi.string().optional(),              //doubt
-                Lattitude                : joi.string().optional(),             //doubt
+                Longitude                : joi.string().optional(),              
+                Lattitude                : joi.string().optional(),             
                 OverallRating            : joi.number().optional(),
-                TimeZone                 : joi.date().iso().optional(),         //doubt
+                TimeZone                 : joi.date().iso().optional(),         
                 AllowWalkinAppointments  : joi.boolean().required(),
                 AllowFutureBookingFor    : joi.string().max(255).optional(),
                 IsActive                 : joi.boolean().required(),

@@ -8,6 +8,7 @@ import { register as registerUserRoleRoutes } from "../api/user.role/user.role.r
 import { register as registerFileREsourceRoutes       } from "../api/file.resource/file.resource.routes";
 import { register as registerTypesRoutes} from "../api/types/types.routes";
 import { register as registerUserRoutes } from "../api/user/user.routes";
+import { register as registerBusinessUserRoutes} from "../api/business.user/business.user.routes"
 
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -39,6 +40,7 @@ export class Router {
                 registerFileREsourceRoutes(this._app);
                 registerTypesRoutes(this._app);
                 registerUserRoutes(this._app);
+                registerBusinessUserRoutes(this._app);
 
                 
 
