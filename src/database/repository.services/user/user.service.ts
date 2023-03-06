@@ -67,6 +67,12 @@ export class UserService {
     try {
         const search : Prisma.usersFindManyArgs = {};
 
+        if (filters.Prefix != null) {
+            search.where = {
+                Prefix : filters.Prefix
+            }
+        }
+
         if (filters.FirstName != null) {
             search.where = {
                 FirstName : filters.FirstName
@@ -79,11 +85,17 @@ export class UserService {
                 }
         }
 
+        if (filters.Gender != null) {
+            search.where =   {
+                Gender : filters.Gender
+                }
+        }
         if (filters.Phone != null) {
             search.where =   {
                 Phone : filters.Phone
                 }
         }
+
         if (filters.Email != null) {
             search.where =   {
                 Email : filters.Email
@@ -126,82 +138,82 @@ export class UserService {
 }
 
 
-    // update = async (id, updateModel) => {
-    //     try {
-    //         if (Object.keys(updateModel).length > 0) {
-    //             var res = await this.prisma.users.update({data:updateModel,
-    //                     where :{
-    //                     id : id
-    //                 }
-    //              });
+    update = async (id, updateModel) => {
+        try {
+            if (Object.keys(updateModel).length > 0) {
+                var res = await this.prisma.users.update({data:updateModel,
+                        where :{
+                        id : id
+                    }
+                 });
                 
-    //         }
-    //         return await this.getById(id);
-    //     } catch (error) {
-    //         ErrorHandler.throwDbAccessError('DB Error: Unable to update Business!', error);
-    //     }
-    // }
+            }
+            return await this.getById(id);
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('DB Error: Unable to update Business!', error);
+        }
+    }
 
-    // delete = async (id) => {
-    //     try {
-    //         var result = await this.prisma.users.delete({
-    //             where : {
-    //                 id : id
-    //             }
-    //         });
+    delete = async (id) => {
+        try {
+            var result = await this.prisma.users.delete({
+                where : {
+                    id : id
+                }
+            });
             
-    //     } catch (error) {
-    //         ErrorHandler.throwDbAccessError('DB Error: Unable to delete user!', error);
-    //     }
-    // }
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('DB Error: Unable to delete user!', error);
+        }
+    }
 
-    // getUserWithPhone = async (countryCode, phone) => {
-    //     try {
-    //         const record = await this.prisma.users.findUnique({
-    //             where : {
-    //                 CountryCode : countryCode,
-    //                 Phone       : phone,
-    //             }
-    //         });
-    //         return record;
-    //     } catch (error) {
-    //         ErrorHandler.throwDbAccessError('Unable to check if user exists with phone!', error);
-    //     }
-    // };
+    getUserWithPhone = async (countryCode, phone) => {
+        try {
+            const record = await this.prisma.users.findMany({
+                where : {
+                    CountryCode : countryCode,
+                    Phone       : phone,
+                }
+            });
+            return record;
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('Unable to check if user exists with phone!', error);
+        }
+    };
 
-    // getUserWithEmail = async (email) => {
-    //     try {
-    //         const record = await this.prisma.users.findUnique({
-    //             where : {
-    //                 Email : email
-    //             }
-    //         });
-    //         return record;
-    //     } catch (error) {
-    //         ErrorHandler.throwDbAccessError('Unable to check if user exists with email!', error);
-    //     }
-    // }
+    getUserWithEmail = async (email) => {
+        try {
+            const record = await this.prisma.users.findMany({
+                where : {
+                    Email : email
+                }
+            });
+            return record;
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('Unable to check if user exists with email!', error);
+        }
+    }
 
-    // getUserWithUserName = async (username) => {
-    //     try {
-    //         const record = await this.prisma.users.findUnique({
-    //             where : {
-    //                 UserName : username
-    //             }
-    //         });
-    //         return record;
-    //     } catch (error) {
-    //         ErrorHandler.throwDbAccessError('Unable to check username!', error);
-    //     }
-    // }
+    getUserWithUserName = async (username) => {
+        try {
+            const record = await this.prisma.users.findUnique({
+                where : {
+                    UserName : username
+                }
+            });
+            return record;
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('Unable to check username!', error);
+        }
+    }
 
-    // generateUserNameIfDoesNotExist = async (userName) => {
-    //     var tmpUsername = userName ?? Helper.generateUserName();
-    //     while (await this.getUserWithUserName(tmpUsername) != null) {
-    //         tmpUsername = Helper.generateUserName();
-    //     }
-    //     return tmpUsername;
-    // }
+    generateUserNameIfDoesNotExist = async (userName) => {
+        var tmpUsername = userName ?? Helper.generateUserName();
+        while (await this.getUserWithUserName(tmpUsername) != null) {
+            tmpUsername = Helper.generateUserName();
+        }
+        return tmpUsername;
+    }
 
     getUser = async (
         countryCode,
@@ -239,40 +251,43 @@ export class UserService {
         return user;
      }
 
-//  getUserUpdateModel = (inputModel) => {
+ getUserUpdateModel = (inputModel) => {
 
-//         var updateModel: any = {};
+        var updateModel: any = {};
 
-//         if (Helper.hasProperty(inputModel, 'Prefix')) {
-//             updateModel.Prefix = inputModel.Prefix;
-//         }
-//         if (Helper.hasProperty(inputModel, 'FirstName')) {
-//             updateModel.FirstName = inputModel.FirstName;
-//         }
-//         if (Helper.hasProperty(inputModel, 'LastName')) {
-//             updateModel.LastName = inputModel.LastName;
-//         }
-//         if (Helper.hasProperty(inputModel, 'Phone')) {
-//             updateModel.Phone = inputModel.Phone;
-//         }
-//         if (Helper.hasProperty(inputModel, 'Email')) {
-//             updateModel.Email = inputModel.Email;
-//         }
-//         if (Helper.hasProperty(inputModel, 'Password')) {
-//             updateModel.Password = Helper.hash(inputModel.Password);
-//         }
-//         if (Helper.hasProperty(inputModel, 'ImageUrl')) {
-//             updateModel.ImageUrl = inputModel.ImageUrl;
-//         }
-//         if (Helper.hasProperty(inputModel, 'Gender')) {
-//             updateModel.Gender = inputModel.Gender;
-//         }
-//         if (Helper.hasProperty(inputModel, 'BirthDate')) {
-//             updateModel.BirthDate = inputModel.BirthDate;
-//         }
+        if (Helper.hasProperty(inputModel, 'UserName')) {
+            updateModel.UserName = inputModel.UserName;
+        }
+        if (Helper.hasProperty(inputModel, 'Prefix')) {
+            updateModel.Prefix = inputModel.Prefix;
+        }
+        if (Helper.hasProperty(inputModel, 'FirstName')) {
+            updateModel.FirstName = inputModel.FirstName;
+        }
+        if (Helper.hasProperty(inputModel, 'LastName')) {
+            updateModel.LastName = inputModel.LastName;
+        }
+        if (Helper.hasProperty(inputModel, 'Phone')) {
+            updateModel.Phone = inputModel.Phone;
+        }
+        if (Helper.hasProperty(inputModel, 'Email')) {
+            updateModel.Email = inputModel.Email;
+        }
+        if (Helper.hasProperty(inputModel, 'Password')) {
+            updateModel.Password = Helper.hash(inputModel.Password);
+        }
+        if (Helper.hasProperty(inputModel, 'ImageUrl')) {
+            updateModel.ImageUrl = inputModel.ImageUrl;
+        }
+        if (Helper.hasProperty(inputModel, 'Gender')) {
+            updateModel.Gender = inputModel.Gender;
+        }
+        if (Helper.hasProperty(inputModel, 'BirthDate')) {
+            updateModel.BirthDate = inputModel.BirthDate;
+        }
 
-//         return updateModel;
-//     }
+        return updateModel;
+    }
 
     createUserLoginSession = async (userId) => {
         try {
@@ -345,10 +360,10 @@ export class UserService {
     //                     UserId : session.id
     //                 }
     //             });
-    //             if (userRole) {
-    //                 const role = await this.prisma.roles.findUnique(userRole.RoleId);
-    //                 user['Role'] = role;
-    //             }
+                // if (userRole) {
+                //     const role = await this.prisma.roles.findUnique(userRole.RoleId);
+                //     user['roles'] = role;
+                // }
     //         }
     //         return user;
 

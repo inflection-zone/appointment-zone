@@ -58,28 +58,28 @@ export class ApiClientControllerDelegate {
         return this.getEnrichedDto(record);
     }
 
-    // search = async (query: any) => {
-    //     await validator.validateSearchRequest(query);
-    //     var filters: ApiClientSearchFilters = this.getSearchFilters(query);
-    //     var searchResults: ApiClientSearchResults = await this._service.search(filters);
-    //     var items = searchResults.Items.map(x => this.getSearchDto(x));
-    //     searchResults.Items = items;
-    //     return searchResults;
-    // }
+    search = async (query: any) => {
+        await validator.validateSearchRequest(query);
+        var filters: ApiClientSearchFilters = this.getSearchFilters(query);
+        var searchResults: ApiClientSearchResults = await this._service.search(filters);
+        var items = searchResults.Items.map(x => this.getSearchDto(x));
+        searchResults.Items = items;
+        return searchResults;
+    }
 
-    // update = async (id: uuid, requestBody: any) => {
-    //     await validator.validateUpdateRequest(requestBody);
-    //     const record = await this._service.getById(id);
-    //     if (record === null) {
-    //         ErrorHandler.throwNotFoundError('Api client with id ' + id.toString() + ' cannot be found!');
-    //     }
-    //     const updateModel: ApiClientUpdateModel = this.getUpdateModel(requestBody);
-    //     const updated = await this._service.update(id, updateModel);
-    //     if (updated == null) {
-    //         throw new ApiError('Unable to update api client!', 400);
-    //     }
-    //     return this.getEnrichedDto(updated);
-    // }
+    update = async (id: uuid, requestBody: any) => {
+        await validator.validateUpdateRequest(requestBody);
+        const record = await this._service.getById(id);
+        if (record === null) {
+            ErrorHandler.throwNotFoundError('Api client with id ' + id.toString() + ' cannot be found!');
+        }
+        const updateModel: ApiClientUpdateModel = this.getUpdateModel(requestBody);
+        const updated = await this._service.update(id, updateModel);
+        if (updated == null) {
+            throw new ApiError('Unable to update api client!', 400);
+        }
+        return this.getEnrichedDto(updated);
+    }
 
     delete = async (id: uuid) => {
         const record = await this._service.getById(id);
@@ -123,45 +123,45 @@ export class ApiClientControllerDelegate {
 
     //#region Privates
 
-    // getSearchFilters = (query) => {
+    getSearchFilters = (query) => {
 
-    //     var filters = {};
+        var filters = {};
 
-    //     var clientName = query.clientName ? query.clientName : null;
-    //     if (clientName != null) {
-    //         filters['ClientName'] = clientName;
-    //     }
-    //     var clientCode = query.clientCode ? query.clientCode : null;
-    //     if (clientCode != null) {
-    //         filters['ClientCode'] = clientCode;
-    //     }
-    //     var isPrivileged = query.isPrivileged ? query.isPrivileged : null;
-    //     if (isPrivileged != null) {
-    //         filters['IsPrivileged'] = isPrivileged;
-    //     }
-    //     var countryCode = query.countryCode ? query.countryCode : null;
-    //     if (countryCode != null) {
-    //         filters['CountryCode'] = countryCode;
-    //     }
-    //     var phone = query.phone ? query.phone : null;
-    //     if (phone != null) {
-    //         filters['Phone'] = phone;
-    //     }
-    //     var email = query.email ? query.email : null;
-    //     if (email != null) {
-    //         filters['Email'] = email;
-    //     }
-    //     var validFrom = query.validFrom ? query.validFrom : null;
-    //     if (validFrom != null) {
-    //         filters['ValidFrom'] = validFrom;
-    //     }
-    //     var validTill = query.validTill ? query.validTill : null;
-    //     if (validTill != null) {
-    //         filters['ValidTill'] = validTill;
-    //     }
+        var clientName = query.clientName ? query.clientName : null;
+        if (clientName != null) {
+            filters['ClientName'] = clientName;
+        }
+        var clientCode = query.clientCode ? query.clientCode : null;
+        if (clientCode != null) {
+            filters['ClientCode'] = clientCode;
+        }
+        var isPrivileged = query.isPrivileged ? query.isPrivileged : null;
+        if (isPrivileged != null) {
+            filters['IsPrivileged'] = isPrivileged;
+        }
+        var countryCode = query.countryCode ? query.countryCode : null;
+        if (countryCode != null) {
+            filters['CountryCode'] = countryCode;
+        }
+        var phone = query.phone ? query.phone : null;
+        if (phone != null) {
+            filters['Phone'] = phone;
+        }
+        var email = query.email ? query.email : null;
+        if (email != null) {
+            filters['Email'] = email;
+        }
+        var validFrom = query.validFrom ? query.validFrom : null;
+        if (validFrom != null) {
+            filters['ValidFrom'] = validFrom;
+        }
+        var validTill = query.validTill ? query.validTill : null;
+        if (validTill != null) {
+            filters['ValidTill'] = validTill;
+        }
 
-    //     return filters;
-    // }
+        return filters;
+    }
 
     getUpdateModel = (requestBody): ApiClientUpdateModel => {
 

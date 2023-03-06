@@ -19,9 +19,7 @@ export class UserValidator {
                 Gender      : joi.string().valid("Male", "Female", "Other").required(),
                 BirthDate   : joi.string().optional(),
                 Password    : joi.string().max(512).required(),
-                State       : joi.string().max(64).optional(),
-                Country     : joi.string().max(64).optional(),
-                Address     : joi.string().max(256).optional()
+              
             });
             return await schema.validateAsync(requestBody);
         } catch (error) {
@@ -36,10 +34,9 @@ export class UserValidator {
                 prefix        : joi.string().max(16).optional(),
                 firstName     : joi.string().max(64).optional(),
                 lastName      : joi.string().max(64).optional(),
+                phone       : joi.string().max(16).min(6).required(),
+                email       : joi.string().max(256).required(),
                 gender        : joi.string().valid("Male", "Female", "Other").optional(),
-                state         : joi.string().max(64).optional(),
-                country       : joi.string().max(64).optional(),
-                address       : joi.string().max(256).optional(),
                 itemsPerPage : joi.number().min(1).optional(),
                 orderBy      : joi.string().max(256).optional(),
                 order        : joi.string().valid('ascending', 'descending')

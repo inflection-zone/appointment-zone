@@ -68,39 +68,39 @@ export class UserControllerDelegate {
         return this.getEnrichedDto(record);
     }
 
-    // search = async (query) => {
-    //     await validator.validateSearchRequest(query);
-    //     var filters: UserSearchFilters = this.getSearchFilters(query);
-    //     var searchResults: UserSearchResults = await this._service.search(filters);
-    //     var items = searchResults.Items.map(x => this.getPublicDto(x));
-    //     searchResults.Items = items;
-    //     return searchResults;
+    search = async (query) => {
+        await validator.validateSearchRequest(query);
+        var filters: UserSearchFilters = this.getSearchFilters(query);
+        var searchResults: UserSearchResults = await this._service.search(filters);
+        var items = searchResults.Items.map(x => this.getPublicDto(x));
+        searchResults.Items = items;
+        return searchResults;
        
-    // }
-    // update = async (id: uuid, requestBody: any) => {
-    //     await validator.validateUpdateRequest(requestBody);
-    //     const record = await this._service.getById(id);
-    //     if (record === null) {
-    //         ErrorHandler.throwNotFoundError('User with id ' + id.toString() + ' cannot be found!');
-    //     }
-    //     const updateModel: UserUpdateModel = await UserHelper.getValidUserUpdateModel(record, requestBody);
-    //     const updated = await this._service.update(id, updateModel);
-    //     if (updated == null) {
-    //         throw new ApiError('Unable to update user!', 400);
-    //     }
-    //     return this.getEnrichedDto(updated);
-    // }
+    }
+    update = async (id: uuid, requestBody: any) => {
+        await validator.validateUpdateRequest(requestBody);
+        const record = await this._service.getById(id);
+        if (record === null) {
+            ErrorHandler.throwNotFoundError('User with id ' + id.toString() + ' cannot be found!');
+        }
+        const updateModel: UserUpdateModel = await UserHelper.getValidUserUpdateModel(record, requestBody);
+        const updated = await this._service.update(id, updateModel);
+        if (updated == null) {
+            throw new ApiError('Unable to update user!', 400);
+        }
+        return this.getEnrichedDto(updated);
+    }
 
-    // delete = async (id: uuid) => {
-    //     const record = await this._service.getById(id);
-    //     if (record == null) {
-    //         ErrorHandler.throwNotFoundError('User with id ' + id.toString() + ' cannot be found!');
-    //     }
-    //     const userDeleted = await this._service.delete(id);
-    //     return {
-    //         Deleted : userDeleted
-    //     };
-    // }
+    delete = async (id: uuid) => {
+        const record = await this._service.getById(id);
+        if (record == null) {
+            ErrorHandler.throwNotFoundError('User with id ' + id.toString() + ' cannot be found!');
+        }
+        const userDeleted = await this._service.delete(id);
+        return {
+            Deleted : userDeleted
+        };
+    }
 
     loginWithPassword = async (requestBody) => {
         await validator.validateLoginWithPasswordRequest(requestBody);

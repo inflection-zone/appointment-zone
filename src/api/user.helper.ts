@@ -71,66 +71,66 @@ export class UserHelper {
 
    
 
-    // static getValidUserUpdateModel = async (user, requestBody) => {
+    static getValidUserUpdateModel = async (user, requestBody) => {
 
-    //     const userService = new UserService();
+        const userService = new UserService();
 
-    //     const updateModel: any = {};
+        const updateModel: any = {};
 
-    //     if (Helper.hasProperty(requestBody, 'Prefix')) {
-    //         updateModel.Prefix = requestBody.Prefix;
-    //     }
-    //     if (Helper.hasProperty(requestBody, 'FirstName')) {
-    //         updateModel.FirstName = requestBody.FirstName;
-    //     }
-    //     if (Helper.hasProperty(requestBody, 'LastName')) {
-    //         updateModel.LastName = requestBody.LastName;
-    //     }
-    //     if (Helper.hasProperty(requestBody, 'CountryCode') && Helper.hasProperty(requestBody, 'Phone')) {
-    //         var userWithPhone = await userService.getUserWithPhone(requestBody.CountryCode, requestBody.Phone);
-    //         if (userWithPhone) {
-    //             ErrorHandler.throwDuplicateUserError(`Other user with phone ${requestBody.CountryCode} ${requestBody.Phone.toString()} already exists!`);
-    //         }
-    //         updateModel.CountryCode = requestBody.CountryCode;
-    //         updateModel.Phone = requestBody.Phone;
-    //     }
-    //     else if (Helper.hasProperty(requestBody, 'Phone')) {
-    //         var userWithPhone = await userService.getUserWithPhone(user.CountryCode, requestBody.Phone);
-    //         if (userWithPhone && user.id !== userWithPhone.id) {
-    //             ErrorHandler.throwDuplicateUserError(`Other user with phone ${user.CountryCode} ${requestBody.Phone.toString()} already exists!`);
-    //         }
-    //         updateModel.Phone = requestBody.Phone;
-    //     }
-    //     else if (Helper.hasProperty(requestBody, 'CountryCode')) {
-    //         var userWithCountryCode = await userService.getUserWithPhone(requestBody.CountryCode, user.Phone);
-    //         if (userWithCountryCode && user.id !== userWithCountryCode.id) {
-    //             ErrorHandler.throwDuplicateUserError(`Other user with phone ${requestBody.CountryCode} ${user.Phone.toString()} already exists!`);
-    //         }
-    //         updateModel.CountryCode = requestBody.CountryCode;
-    //     }
-    //     if (Helper.hasProperty(requestBody, 'Email')) {
-    //         var userWithEmail = await userService.getUserWithEmail(requestBody.Email);
-    //         if (userWithEmail && user.id !== userWithEmail.id) {
-    //             ErrorHandler.throwDuplicateUserError(`Other user with email ${requestBody.Email} already exists!`);
-    //         }
-    //         updateModel.Email = requestBody.Email;
-    //     }
-    //     if (Helper.hasProperty(requestBody, 'UserName')) {
-    //         var userName = requestBody.UserName;
-    //         var userWithUserName = await userService.getUserWithUserName(userName);
-    //         if (userWithUserName && user.id !== userWithUserName.id) {
-    //             ErrorHandler.throwDuplicateUserError(`Other user with user-name ${requestBody.UserName} already exists!`);
-    //         }
-    //         updateModel.UserName = requestBody.UserName;
-    //     }
-    //     if (Helper.hasProperty(requestBody, 'Gender')) {
-    //         updateModel.Gender = requestBody.Gender;
-    //     }
-    //     if (Helper.hasProperty(requestBody, 'Password')) {
-    //         updateModel.Password = Helper.generateHashedPassword(requestBody.Password);
-    //     }
+        if (Helper.hasProperty(requestBody, 'Prefix')) {
+            updateModel.Prefix = requestBody.Prefix;
+        }
+        if (Helper.hasProperty(requestBody, 'FirstName')) {
+            updateModel.FirstName = requestBody.FirstName;
+        }
+        if (Helper.hasProperty(requestBody, 'LastName')) {
+            updateModel.LastName = requestBody.LastName;
+        }
+        if (Helper.hasProperty(requestBody, 'CountryCode') && Helper.hasProperty(requestBody, 'Phone')) {
+            var userWithPhone = await userService.getUserWithPhone(requestBody.CountryCode, requestBody.Phone);
+            if (userWithPhone) {
+                ErrorHandler.throwDuplicateUserError(`Other user with phone ${requestBody.CountryCode} ${requestBody.Phone.toString()} already exists!`);
+            }
+            updateModel.CountryCode = requestBody.CountryCode;
+            updateModel.Phone = requestBody.Phone;
+        }
+        // else if (Helper.hasProperty(requestBody, 'Phone')) {
+        //     var userWithPhone = await userService.getUserWithPhone(user.CountryCode, requestBody.Phone);
+        //     if (userWithPhone && user.id !== userWithPhone.id) {
+        //         ErrorHandler.throwDuplicateUserError(`Other user with phone ${user.CountryCode} ${requestBody.Phone.toString()} already exists!`);
+        //     }
+        //     updateModel.Phone = requestBody.Phone;
+        // }
+        // else if (Helper.hasProperty(requestBody, 'CountryCode')) {
+        //     var userWithCountryCode = await userService.getUserWithPhone(requestBody.CountryCode, user.Phone);
+        //     if (userWithCountryCode && user.id !== userWithCountryCode.id) {
+        //         ErrorHandler.throwDuplicateUserError(`Other user with phone ${requestBody.CountryCode} ${user.Phone.toString()} already exists!`);
+        //     }
+        //     updateModel.CountryCode = requestBody.CountryCode;
+        // }
+        // if (Helper.hasProperty(requestBody, 'Email')) {
+        //     var userWithEmail = await userService.getUserWithEmail(requestBody.Email);
+        //     if (userWithEmail && user.id !== userWithEmail.id) {
+        //         ErrorHandler.throwDuplicateUserError(`Other user with email ${requestBody.Email} already exists!`);
+        //     }
+        //     updateModel.Email = requestBody.Email;
+        // }
+        if (Helper.hasProperty(requestBody, 'UserName')) {
+            var userName = requestBody.UserName;
+            var userWithUserName = await userService.getUserWithUserName(userName);
+            if (userWithUserName && user.id !== userWithUserName.id) {
+                ErrorHandler.throwDuplicateUserError(`Other user with user-name ${requestBody.UserName} already exists!`);
+            }
+            updateModel.UserName = requestBody.UserName;
+        }
+        if (Helper.hasProperty(requestBody, 'Gender')) {
+            updateModel.Gender = requestBody.Gender;
+        }
+        if (Helper.hasProperty(requestBody, 'Password')) {
+            updateModel.Password = Helper.generateHashedPassword(requestBody.Password);
+        }
 
-    //     return updateModel;
-    // }
+        return updateModel;
+    }
 
 }
