@@ -29,26 +29,26 @@ export class FileResourceService {
         }
     }
 
-    // getById = async (id) => {
-    //     try {
-    //         const record = await this.prisma.file_resource.findUnique({
-    //             where : {
-    //                 id : id
-    //             },
-    //             // include : [{
-    //             //     model    : this.User,
-    //             //     required : false,
-    //             //     as       : 'User',
-    //             //     //through: { attributes: [] }
-    //             // },
+    getById = async (id) => {
+        try {
+            const record = await this.prisma.file_resource.findUnique({
+                where : {
+                    id : id
+                },
+                // include : [{
+                //     model    : this.User,
+                //     required : false,
+                //     as       : 'User',
+                //     //through: { attributes: [] }
+               // },
 
-    //             // ]
-    //         });
-    //         return record;
-    //     } catch (error) {
-    //         ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve file resource!', error);
-    //     }
-    // }
+                // ]
+            });
+            return record;
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve file resource!', error);
+        }
+    }
 
     // incrementDownloadCount = async (id) => {
     //     try {
@@ -125,17 +125,17 @@ export class FileResourceService {
     //     }
     // }
 
-    // delete = async (id) => {
-    //     try {
-    //         var result = await this.prisma.file_resource.delete({
-    //             where : {
-    //                 id : id
-    //             }
-    //         });
-    //     } catch (error) {
-    //         ErrorHandler.throwDbAccessError('DB Error: Unable to delete file resource!', error);
-    //     }
-    // }
+    delete = async (id) => {
+        try {
+            var result = await this.prisma.file_resource.delete({
+                where : {
+                    id : id
+                }
+            });
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('DB Error: Unable to delete file resource!', error);
+        }
+    }
 
     //#endregion
 

@@ -8,7 +8,7 @@ export class UserValidator {
     static validateCreateRequest = async (requestBody) => {
         try {
             const schema = joi.object({
-                RoleId      : joi.string().max(16).required(),
+             //   RoleId      : joi.string().max(16).required(),
                 UserName    : joi.string().max(16).optional(),
                 Prefix      : joi.string().max(16).optional(),
                 FirstName   : joi.string().max(64).optional(),

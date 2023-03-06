@@ -454,7 +454,6 @@ CREATE TABLE `user_login_session` (
     `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `UpdatedAt` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `user_login_session_UserId_key`(`UserId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

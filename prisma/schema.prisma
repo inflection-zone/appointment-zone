@@ -230,9 +230,9 @@ model business_users {
 model businesses {
   id             String           @id @default(uuid())
   ExternalId     String?          @db.VarChar(255)
-  Name           String           @db.VarChar(255)
-  Mobile         String           @db.VarChar(255)
-  Email          String           @db.VarChar(255)
+  Name           String           @unique @db.VarChar(255)
+  Mobile         String           @unique @db.VarChar(255)
+  Email          String           @unique @db.VarChar(255)
   AboutUs        String?          @db.Text
   Logo           String?          @db.Text
   DisplayPicture String?          @db.Text
@@ -382,7 +382,7 @@ model users {
   IsDeleted        Boolean             @default(false)
   DeletedAt        DateTime?           @db.DateTime(0)
   FileResource     file_resource?
-  UserLoginSession user_login_session?
+  UserLoginSession user_login_session[]
   UserOtp          user_otp?
   // Roles            roles[]
   Roles        user_roles[]
@@ -400,7 +400,7 @@ model user_roles {
 
 model user_login_session {
   id        String   @id @default(uuid())
-  UserId    String   @unique @default(uuid())
+  UserId    String   @default(uuid())
   IsActive  Boolean  @default(true)
   StartedAt DateTime @db.Date
   ValidTill DateTime @db.Date

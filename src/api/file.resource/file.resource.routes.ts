@@ -12,7 +12,7 @@ export const register = (app: express.Application): void => {
 
     router.post('/upload', authenticator.authenticateUser, controller.upload);
     // router.get('/download/:id', controller.download);
-    // router.get('/:id', authenticator.authenticateUser, controller.getById);
+    router.get('/:id', authenticator.authenticateUser, controller.getById);
     // router.delete('/:id', authenticator.authenticateUser, controller.delete);
 
     // router.post('/', authenticator.authenticateUser, controller.create);

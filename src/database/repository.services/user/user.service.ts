@@ -236,7 +236,6 @@ export class UserService {
         if (!user) {
             return null;
         }
-        console.log("user", user);
         return user;
      }
 

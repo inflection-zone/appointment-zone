@@ -106,12 +106,12 @@ export class UserControllerDelegate {
         await validator.validateLoginWithPasswordRequest(requestBody);
         const loginModel = await this.getLoginModel(requestBody);
         const sentPassword = loginModel.Password;
-        const hashedPassword = loginModel.User[0].Password;
+        const hashedPassword = loginModel.User.Password;
         const validPassword = Helper.compareHashedPassword(sentPassword, hashedPassword);
         if (!validPassword) {
             ErrorHandler.throwUnauthorizedUserError('Invalid password.');
         }
-        const user = await this._service.getById(loginModel.User[0].id);
+        const user = await this._service.getById(loginModel.User.id);
         const loginSession = await this._service.createUserLoginSession(user.id);
         const currentUser: CurrentUser = this.constructCurrentUser(user, loginSession.id);
         const accessToken = await Loader.Authorizer.generateUserSessionToken(currentUser);

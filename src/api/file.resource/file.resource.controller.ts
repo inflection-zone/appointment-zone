@@ -52,26 +52,26 @@ export class FileResourceController extends BaseController {
     //     }
     // }
 
-    // getById = async (request: express.Request, response: express.Response): Promise < void > => {
-    //     try {
-    //         await this.authorize('FileResource.GetById', request, response);
-    //         const record = await this._delegate.getById(request.params.id);
-    //         const message = 'File resource retrieved successfully!';
-    //         ResponseHandler.success(request, response, message, 200, record);
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // }
+    getById = async (request: express.Request, response: express.Response): Promise < void > => {
+        try {
+            await this.authorize('FileResource.GetById', request, response);
+            const record = await this._delegate.getById(request.params.id);
+            const message = 'File resource retrieved successfully!';
+            ResponseHandler.success(request, response, message, 200, record);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
 
-    // delete = async (request: express.Request, response: express.Response): Promise < void > => {
-    //     try {
-    //         await this.authorize('FileResource.Delete', request, response);
-    //         const result = await this._delegate.delete(request.params.id);
-    //         const message = 'File resource deleted successfully!';
-    //         ResponseHandler.success(request, response, message, 200, result);
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
+    delete = async (request: express.Request, response: express.Response): Promise < void > => {
+        try {
+            await this.authorize('FileResource.Delete', request, response);
+            const result = await this._delegate.delete(request.params.id);
+            const message = 'File resource deleted successfully!';
+            ResponseHandler.success(request, response, message, 200, result);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 
 }

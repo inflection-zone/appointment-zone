@@ -11,10 +11,10 @@ export const register = (app: express.Application): void => {
     const controller = new CustomerController();
 
     router.post('', controller.create);
-    router.get('/search', /*authenticator.authenticateClient,*/ controller.search);
-    router.get('/:id', /*authenticator.authenticateClient,*/ controller.getById);
-    router.put('/:id', /*authenticator.authenticateClient,*/ controller.update);
-    router.delete('/:id', /*authenticator.authenticateClient,*/ controller.delete);
+    router.get('/search', authenticator.authenticateUser, controller.search);
+    router.get('/:id', authenticator.authenticateUser, controller.getById);
+    router.put('/:id', authenticator.authenticateUser, controller.update);
+    router.delete('/:id', authenticator.authenticateUser, controller.delete);
 
     app.use('/api/v1/customers', router);
 };
