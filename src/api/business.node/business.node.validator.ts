@@ -90,19 +90,19 @@ export class BusinessNodesValidator {
     static validateSearchRequest = async (query) => {
         try {
             const schema = joi.object({
-                BusinessId               : joi.string().max(255).optional(),
-                Name                     : joi.string().max(255).optional(),
-                Mobile                   : joi.string().max(255).optional(),
-                Email                    : joi.string().max(255).optional(),
-                DisplayPicture           : joi.string().optional(),
-                Address                  : joi.string().max(255).optional(),
-                Longitude                : joi.string().optional(),             
-                Lattitude                : joi.string().optional(),            
-                OverallRating            : joi.number().optional(),
-                TimeZone                 : joi.date().iso().optional(),      
-                AllowWalkinAppointments  : joi.boolean().optional(),
-                AllowFutureBookingFor    : joi.string().max(255).optional(),
-                IsActive                 : joi.boolean().optional(),
+                businessId               : joi.string().max(255).optional(),
+                name                     : joi.string().max(255).optional(),
+                mobile                   : joi.string().max(255).optional(),
+                email                    : joi.string().max(255).optional(),
+                displayPicture           : joi.string().optional(),
+                address                  : joi.string().max(255).optional(),
+                longitude                : joi.string().optional(),             
+                lattitude                : joi.string().optional(),            
+                overallRating            : joi.number().optional(),
+                timeZone                 : joi.date().iso().optional(),      
+                allowWalkinAppointments  : joi.boolean().optional(),
+                allowFutureBookingFor    : joi.string().max(255).optional(),
+                isActive                 : joi.boolean().optional(),
             });
             return await schema.validateAsync(query);
 
