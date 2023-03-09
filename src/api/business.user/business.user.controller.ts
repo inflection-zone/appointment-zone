@@ -1,27 +1,27 @@
 import express from 'express';
 import { ResponseHandler } from '../../common/response.handler';
-import { BusinessNodeControllerDelegate } from './business.node.controller.delegate';
+import { BusinessUserControllerDelegate } from './business.user.controller.delegate';
 import { BaseController } from '../base.controller';
 
-export class BusinessNodeController extends BaseController {
+export class BusinessUserController extends BaseController {
 
     //#region member variables and constructors
 
-    _delegate: BusinessNodeControllerDelegate = null;
+    _delegate: BusinessUserControllerDelegate = null;
 
     constructor() {
         super();
-        this._delegate = new BusinessNodeControllerDelegate();
+        this._delegate = new BusinessUserControllerDelegate();
     }
 
      //#endregion
 
      create = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
-             await this.authorize('BusinessNode.Create', request, response, false);
+             await this.authorize('BusinessUser.Create', request, response, false);
              
             const record = await this._delegate.create(request.body);
-            const message = 'Business node added successfully!';
+            const message = 'Business user added successfully!';
             ResponseHandler.success(request, response, message, 201, record);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -30,9 +30,9 @@ export class BusinessNodeController extends BaseController {
 
     getById = async (request:express.Request, response:express.Response): Promise <void>=>{
         try{
-            await this.authorize('BusinessNode.GetById', request, response);
+            await this.authorize('BusinessUser.GetById', request, response);
             const record = await this._delegate.getById(request.params.id);
-            const message ="Business node retrieved successfully!";
+            const message ="Business user retrieved successfully!";
             ResponseHandler.success(request, response, message, 200, record);
             
 
@@ -43,9 +43,9 @@ export class BusinessNodeController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
-            await this.authorize('BusinessNode.Search', request, response ,false);
+            await this.authorize('BusinessUser.Search', request, response ,false);
             const searchResults = await this._delegate.search(request.query);
-            const message = 'Business node records retrieved successfully!';
+            const message = 'Business user records retrieved successfully!';
             ResponseHandler.success(request, response, message, 200, searchResults);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -54,9 +54,9 @@ export class BusinessNodeController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
-            await this.authorize('BusinessNode.Update', request, response);
+            await this.authorize('BusinessUser.Update', request, response);
             const updatedRecord = await this._delegate.update(request.params.id, request.body);
-            const message = 'Business node updated successfully!';
+            const message = 'Business user updated successfully!';
             ResponseHandler.success(request, response, message, 200, updatedRecord);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -65,9 +65,9 @@ export class BusinessNodeController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
-            await this.authorize('BusinessNode.Delete', request, response);
+            await this.authorize('BusinessUser.Delete', request, response);
             const result = await this._delegate.delete(request.params.id);
-            const message = 'Business node deleted successfully!';
+            const message = 'Business user deleted successfully!';
             ResponseHandler.success(request, response, message, 200, result);
 
         }catch (error) {

@@ -27,12 +27,12 @@ export class BusinessNodeControllerDelegate {
     create = async (requestBody: any) => {
 
         await validator.validateCreateRequest(requestBody);
-        // const { userCreateModel } =
-        //     await BusinessNodesValidator.getValidUserCreateModel(requestBody);
+        const { nodeCreateModel } =
+            await BusinessNodesValidator.getValidNodeCreateModel(requestBody);
 
         // eslint-DisplayPictureable-next-line @typescript-eslint/no-unused-vars
         var createModel: BusinessNodeCreateModel = this.getCreateModel(requestBody);
-        const record: BusinessNodeDto = await this._service.create(createModel);
+        const record: BusinessNodeDto = await this._service.create(nodeCreateModel);
         if (record === null) {
             throw new ApiError('Unable to create Business node!', 400);
         }
@@ -47,6 +47,16 @@ export class BusinessNodeControllerDelegate {
         }
         return this.getEnrichedDto(record);
     };
+
+    search = async (query) => {
+        await validator.validateSearchRequest(query);
+        var filters: BusinessNodeSearchFilters = this.getSearchFilters(query);
+        var searchResults : BusinessNodeSearchResults = await this._service.search(filters);
+        var items = searchResults.Items.map(x => this.getPublicDto(x));
+        searchResults.Items = items;
+        return searchResults;
+       
+    }
 
     update = async (id: uuid, requestBody: any) => {
         await validator.validateUpdateRequest(requestBody);
@@ -80,7 +90,6 @@ export class BusinessNodeControllerDelegate {
 
     getCreateModel = (requestBody): BusinessNodeCreateModel => {
         return {
-            // id                        : requestBody.id? requestBody.id : null ,
             BusinessId                : requestBody.BusinessId? requestBody.BusinessId:null,
             Name                      : requestBody.Name? requestBody.Name: null,
             Mobile                    : requestBody.Mobile? requestBody.Mobile: null,
@@ -90,13 +99,39 @@ export class BusinessNodeControllerDelegate {
             Longitude                 : requestBody.Longitude ? requestBody.Longitude : null,
             Lattitude                 : requestBody.Lattitude ? requestBody.Lattitude : null,
             OverallRating             : requestBody.OverallRating? requestBody.OverallRating: null,
-            // TimeZone                  : requestBody.TimeZone ? requestBody.TimeZone : undefined,
+            TimeZone                  : requestBody.TimeZone ? requestBody.TimeZone : undefined,
             AllowWalkinAppointments   : requestBody.AllowWalkinAppointments ? requestBody.AllowWalkinAppointments :null,
             AllowFutureBookingFor     : requestBody.AllowFutureBookingFor ? requestBody.AllowFutureBookingFor : '30d',
             IsActive                  : requestBody.IsActive ? requestBody.IsActive : true,
            
         };
     };
+
+    getSearchFilters = (query) => {
+        var filters = {};
+        var name = query.name ? query.name : null;
+        if (name != null) {
+            filters['Name'] = name;
+        }
+        var mobile = query.mobile ? query.mobile : null;
+        if (mobile != null) {
+            filters['Mobile'] = mobile
+        }
+        var email = query.email ? query.email : null;
+        if (email != null) {
+            filters['Email'] = email;
+        }
+        var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : null;
+        if (itemsPerPage != null) {
+            filters['ItemsPerPage'] = itemsPerPage;
+        }
+        var order = query.order ? query.order : null;
+        if (order != null) {
+            filters['Order'] = order;
+        }
+        return filters;
+    }
+
 
 
     getUpdateModel = (requestBody): BusinessNodeUpdateModel => {
@@ -161,7 +196,30 @@ export class BusinessNodeControllerDelegate {
             Longitude                 : record.Longitude,
             Lattitude                 : record.Lattitude,
             OverallRating             : record.OverallRating,
-            // TimeZone                  : record.TimeZone,
+            TimeZone                  : record.TimeZone,
+            AllowWalkinAppointments   : record.AllowWalkinAppointments,
+            AllowFutureBookingFor     : record.AllowFutureBookingFor,
+            IsActive                  : record.IsActive,
+           
+        };
+    };
+
+    getPublicDto = (record) => {
+        if (record == null) {
+            return null;
+        }
+        return {
+            id                        : record.id,
+            BusinessId                : record.BusinessId,
+            Name                      : record.Name,
+            Mobile                    : record.Mobile,
+            Email                     : record.Email,
+            DisplayPicture            : record.DisplayPicture,
+            Address                   : record.Address,
+            Longitude                 : record.Longitude,
+            Lattitude                 : record.Lattitude,
+            OverallRating             : record.OverallRating,
+            TimeZone                  : record.TimeZone,
             AllowWalkinAppointments   : record.AllowWalkinAppointments,
             AllowFutureBookingFor     : record.AllowFutureBookingFor,
             IsActive                  : record.IsActive,

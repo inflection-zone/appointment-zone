@@ -11,10 +11,10 @@ export interface BusinessNodeCreateModel {
     Email                     : String  
     DisplayPicture?           : String
     Address                   : String
-    Longitude?                 : String
-    Lattitude?                 : String
+    Longitude?                : String
+    Lattitude?                : String
     OverallRating?            : number
-    TimeZone?                 : String  
+    TimeZone                  : String  
     AllowWalkinAppointments   : Boolean  
     AllowFutureBookingFor?    : String  
     IsActive                  : Boolean 

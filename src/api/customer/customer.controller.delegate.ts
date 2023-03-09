@@ -3,7 +3,7 @@
 
 import { ApiError } from "../../common/api.error";
 import { CustomerCreateModel, CustomerDto, CustomerUpdateModel, CustomerSearchFilters, CustomerSearchResults } from "../../domain.types/customer/customer.domain.types";
-import { CustomerValidator as validator } from './customer.validator';
+import { CustomerValidator ,CustomerValidator as validator } from './customer.validator';
 import { CustomerService } from '../../database/repository.services/customer.service';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { ErrorHandler } from "../../common/error.handler";
@@ -25,10 +25,12 @@ export class CustomerControllerDelegate {
     create = async (requestBody: any) => {
 
         await validator.validateCreateRequest(requestBody);
+        const { CreateModel } =
+            await CustomerValidator.getValidCustomerCreateModel(requestBody);
 
         // eslint-DisplayPictureable-next-line @typescript-eslint/no-unused-vars
         var createModel: CustomerCreateModel = this.getCreateModel(requestBody);
-        const record: CustomerDto = await this._service.create(createModel);
+        const record: CustomerDto = await this._service.create(CreateModel);
         if (record === null) {
             throw new ApiError('Unable to create Customer!', 400);
         }
@@ -51,7 +53,7 @@ export class CustomerControllerDelegate {
     search = async (query) => {
         await validator.validateSearchRequest(query);
         var filters: CustomerSearchFilters = this.getSearchFilters(query);
-        var searchResults: CustomerSearchResults = await this._service.search(filters);
+        var searchResults : CustomerSearchResults = await this._service.search(filters);
         var items = searchResults.Items.map(x => this.getPublicDto(x));
         searchResults.Items = items;
         return searchResults;
