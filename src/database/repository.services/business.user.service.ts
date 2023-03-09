@@ -1,4 +1,4 @@
-import { BusinessNodeSearchResults, BusinessNodeSearchFilters } from "../../domain.types/business.node/business.node.domain.types";
+import { BusinessUserSearchResults, BusinessUserSearchFilters } from "../../domain.types/business.user/business.user.domain.types";
 //import instance from "tsyringe/dist/typings/dependency-container";
 import { Logger } from '../../common/logger';
 import { Helper } from "../../common/helper";
@@ -8,45 +8,50 @@ import { Prisma } from '@prisma/client';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export class BusinessNodeService{
+export class BusinessUserService{
     prisma = PrismaClientInit.instance().prisma();
 
-    public static instance:BusinessNodeService=null;
+    public static instance:BusinessUserService=null;
 
-    public static getInstance():BusinessNodeService{
+    public static getInstance():BusinessUserService{
         return this.instance || (this.instance=new this());
 
     }
 
     create = async (createModel) => {
         try{
-            var record=await this.prisma.business_nodes.create({data:createModel});
+            var record=await this.prisma.business_users.create({data:createModel});
             console.log(record);
             return record;
         }catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to create business node!',error)
+            ErrorHandler.throwDbAccessError('DB Error: Unable to create business user!',error)
     } 
 
     }
 
     getById = async (id) => {
         try {
-            var record = await this.prisma.business_nodes.findUnique({where : {id : id}
+            var record = await this.prisma.business_users.findUnique({where : {id : id}
             });
 
             return record;
         } catch (error) {
-        ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve business node!', error);
+        ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve business user!', error);
     }
 
 }
 
 search = async (filters) => {
     try {
-        const search : Prisma.business_nodesFindManyArgs = {};
-        if (filters.Name != null) {
+        const search : Prisma.business_usersFindManyArgs = {};
+        if (filters.FirstName != null) {
             search.where = {
-                Name : filters.Name
+                FirstName : filters.FirstName
+            }
+        }
+        if (filters.LastName != null) {
+            search.where = {
+                LastName : filters.LastName
             }
         }
         if (filters.Mobile != null) {
@@ -77,7 +82,7 @@ search = async (filters) => {
             pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
             search.skip = pageIndex * search.take;
         }
-        const foundResults = await this.prisma.business_nodes.findMany(search)
+        const foundResults = await this.prisma.business_users.findMany(search)
         const searchResults = {
             TotalCount     : foundResults.length,
             RetrievedCount : foundResults.length,
@@ -97,7 +102,7 @@ search = async (filters) => {
 update = async (id, updateModel) => {
     try {
         if (Object.keys(updateModel).length > 0) {
-            var res = await this.prisma.business_nodes.updateMany({data:updateModel,
+            var res = await this.prisma.business_users.updateMany({data:updateModel,
                     where :{
                     id : id
                 }
@@ -106,18 +111,18 @@ update = async (id, updateModel) => {
         }
         return await this.getById(id);
     } catch (error) {
-        ErrorHandler.throwDbAccessError('DB Error: Unable to update Business node!', error);
+        ErrorHandler.throwDbAccessError('DB Error: Unable to update Business user!', error);
     }
 }
 
 delete = async (id) => {
     try {
-        const result = await this.prisma.business_nodes.delete({ where: 
+        const result = await this.prisma.business_users.delete({ where: 
             { id: id } 
         });
         //return result ===1;
     } catch (error) {
-        ErrorHandler.throwDbAccessError('DB Error: Unable to delete Business node!', error);
+        ErrorHandler.throwDbAccessError('DB Error: Unable to delete Business user!', error);
 
     }
 };
@@ -136,26 +141,29 @@ delete = async (id) => {
 //     }
 // };
 
-getBusinessNodeWithEmail = async (email) => {
+getBusinessUserWithEmail = async (email) => {
     try {
-        const record = await this.prisma.business_nodes.findUnique({ where : {Email : email}
+        const record = await this.prisma.business_users.findUnique({ where : {Email : email}
         });
         return record;
     } catch (error) {
 
-        ErrorHandler.throwDbAccessError('Unable to check if business node exists with email!', error);
+        ErrorHandler.throwDbAccessError('Unable to check if business user exists with email!', error);
     }
 }
 
-getBusinessNodeWithMobile = async (mobile) => {
+getBusinessUserWithMobile = async (mobile) => {
     try {
-        const record = await this.prisma.business_nodes.findUnique({ where : { Mobile: mobile }
+        const record = await this.prisma.business_users.findUnique({ where : { Mobile: mobile }
         });
         return record;
     } catch (error) {
-        ErrorHandler.throwDbAccessError('Unable to check if business node exists with mobile!', error);
+        ErrorHandler.throwDbAccessError('Unable to check if business user exists with mobile!', error);
     }
 }
+
+
+
 
 
 

@@ -1,5 +1,7 @@
 import * as joi from 'joi';
 import { ErrorHandler } from '../../common/error.handler';
+import { CustomerCreateModel, CustomerDto, CustomerUpdateModel, CustomerSearchFilters, CustomerSearchResults } from "../../domain.types/customer/customer.domain.types";
+import { CustomerService } from '../../database/repository.services/customer.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,6 +27,59 @@ export class CustomerValidator {
             ErrorHandler.handleValidationError(error);
         }
     };
+
+    static getCustomerCreateModel = (requestBody): CustomerCreateModel => {
+
+        return {
+            Prefix          : requestBody.Prefix ? requestBody.Prefix : null,
+            FirstName       : requestBody.FirstName? requestBody.FirstName: null,
+            LastName        : requestBody.LastName ? requestBody.LastName : null,
+            Mobile          : requestBody.Mobile? requestBody.Mobile: null,
+            Email           : requestBody.Email ? requestBody.Email : null,
+            BirthDate       : requestBody.BirthDate? requestBody.BirthDate:new Date(),
+            Gender          : requestBody.Gender ? requestBody.Gender : null,
+            DisplayPicture  : requestBody.DisplayPicture? requestBody.DisplayPicture: null,
+            Address         : requestBody.Address ? requestBody.Address : null,
+            IsActive        : requestBody.IsActive ? requestBody.IsActive : null,
+            InAppUser       : requestBody.InAppUser ? requestBody.InAppUser : null,
+
+        };
+    }
+
+    static getValidCustomerCreateModel = async (requestBody) => {
+
+        const validCustomerService = new CustomerService();
+
+        // var password = requestBody.Password;
+        // if (!password) {
+        //     password = Helper.generatePassword();
+        // }
+        // else {
+        //     userService.validatePasswordCriteria(password);
+        // }
+        // requestBody.Password = Helper.generateHashedPassword(password);
+
+        //NOTE: please note that we are keeping user-name same as that of biocube id
+        // var userName = requestBody.UserName;
+        // if (!userName) {
+        //     userName = await userService.generateUserNameIfDoesNotExist(requestBody.UserName);
+        // }
+        // requestBody.UserName = userName;
+
+        // requestBody.CountryCode = requestBody.CountryCode ?? "+91";
+        var customerWithMobile = await validCustomerService.getCustomerWithMobile( requestBody.Mobile);
+        if (customerWithMobile) {
+            ErrorHandler.throwDuplicateUserError(`User with phone ${requestBody.Mobile} already exists!`);
+        }
+
+        var customerWithEmail = await validCustomerService.getCustomerWithEmail(requestBody.Email);
+        if (customerWithEmail) {
+            ErrorHandler.throwDuplicateUserError(`User with email ${requestBody.Email} already exists!`);
+        }
+
+        var CreateModel: CustomerCreateModel = await this.getCustomerCreateModel(requestBody);
+        return { CreateModel};
+    }
 
     static validateSearchRequest = async (query) => {
         try {

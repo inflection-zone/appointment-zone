@@ -128,4 +128,25 @@ delete = async (id) => {
 
   }
 }
+
+getCustomerWithEmail = async (email) => {
+    try {
+        const record = await this.prisma.customers.findUnique({ where : {Email : email}
+        });
+        return record;
+    } catch (error) {
+
+        ErrorHandler.throwDbAccessError('Unable to check if business node exists with email!', error);
+    }
+}
+
+getCustomerWithMobile = async (mobile) => {
+    try {
+        const record = await this.prisma.customers.findUnique({ where : { Mobile: mobile }
+        });
+        return record;
+    } catch (error) {
+        ErrorHandler.throwDbAccessError('Unable to check if business node exists with mobile!', error);
+    }
+}
 }

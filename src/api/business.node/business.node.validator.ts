@@ -19,10 +19,10 @@ export class BusinessNodesValidator {
                 Email                    : joi.string().max(255).required(),
                 DisplayPicture           : joi.string().optional(),
                 Address                  : joi.string().max(255).optional(),
-                Longitude                : joi.string().optional(),              //doubt
-                Lattitude                : joi.string().optional(),             //doubt
+                Longitude                : joi.string().optional(),              
+                Lattitude                : joi.string().optional(),             
                 OverallRating            : joi.number().optional(),
-                TimeZone                 : joi.date().iso().optional(),         //doubt
+                TimeZone                 : joi.date().iso().optional(),         
                 AllowWalkinAppointments  : joi.boolean().required(),
                 AllowFutureBookingFor    : joi.string().max(255).optional(),
                 IsActive                 : joi.boolean().required(),
@@ -33,9 +33,7 @@ export class BusinessNodesValidator {
         }
     }
 
-    static getUserCreateModel = (requestBody): BusinessNodeCreateModel => {
-
-        const birthDate = requestBody.BirthDate ? Date.parse(requestBody.BirthDate) : null;
+    static getNodeCreateModel = (requestBody): BusinessNodeCreateModel => {
 
         return {
             BusinessId                : requestBody.BusinessId? requestBody.BusinessId:null,
@@ -47,52 +45,71 @@ export class BusinessNodesValidator {
             Longitude                 : requestBody.Longitude ? requestBody.Longitude : null,
             Lattitude                 : requestBody.Lattitude ? requestBody.Lattitude : null,
             OverallRating             : requestBody.OverallRating? requestBody.OverallRating: null,
-            // TimeZone                  : requestBody.TimeZone ? requestBody.TimeZone : undefined,
+            TimeZone                  : requestBody.TimeZone ? requestBody.TimeZone : undefined,
             AllowWalkinAppointments   : requestBody.AllowWalkinAppointments ? requestBody.AllowWalkinAppointments :null,
             AllowFutureBookingFor     : requestBody.AllowFutureBookingFor ? requestBody.AllowFutureBookingFor : '30d',
-            IsActive                  : requestBody.IsActive ? requestBody.IsActive : true,
+            IsActive                  : requestBody.IsActive ? requestBody.IsActive : true
         };
     }
 
-    // static getValidUserCreateModel = async (requestBody) => {
+    static getValidNodeCreateModel = async (requestBody) => {
 
-    //     const userService = new BusinessNodeService();
+        const nodeService = new BusinessNodeService();
 
-    //     // var password = requestBody.Password;
-    //     // if (!password) {
-    //     //     password = Helper.generatePassword();
-    //     // }
-    //     // else {
-    //     //     userService.validatePasswordCriteria(password);
-    //     // }
-    //     // requestBody.Password = Helper.generateHashedPassword(password);
+        // var password = requestBody.Password;
+        // if (!password) {
+        //     password = Helper.generatePassword();
+        // }
+        // else {
+        //     userService.validatePasswordCriteria(password);
+        // }
+        // requestBody.Password = Helper.generateHashedPassword(password);
 
-    //     //NOTE: please note that we are keeping user-name same as that of biocube id
-    //     // var userName = requestBody.UserName;
-    //     // if (!userName) {
-    //     //     userName = await userService.generateUserNameIfDoesNotExist(requestBody.UserName);
-    //     // }
-    //     // requestBody.UserName = userName;
+        //NOTE: please note that we are keeping user-name same as that of biocube id
+        // var userName = requestBody.UserName;
+        // if (!userName) {
+        //     userName = await userService.generateUserNameIfDoesNotExist(requestBody.UserName);
+        // }
+        // requestBody.UserName = userName;
 
-    //     // requestBody.CountryCode = requestBody.CountryCode ?? "+91";
-    //     // var userWithPhone = await userService.getBusinessNodeWithMobile( requestBody.Mobile);
-    //     // if (userWithPhone) {
-    //     //     ErrorHandler.throwDuplicateUserError(`User with phone ${requestBody.Mobile} already exists!`);
-    //     // }
+        // requestBody.CountryCode = requestBody.CountryCode ?? "+91";
+        var nodeWithPhone = await nodeService.getBusinessNodeWithMobile( requestBody.Mobile);
+        if (nodeWithPhone) {
+            ErrorHandler.throwDuplicateUserError(`User with phone ${requestBody.Mobile} already exists!`);
+        }
 
-    //     // var userWithUserName = await userService.getBusinessNodeWithName(requestBody.Name);
-    //     // if (userWithUserName) {
-    //     //     ErrorHandler.throwDuplicateUserError(`User with name ${requestBody.Name} already exists!`);
-    //     // }
+        var nodeWithEmail = await nodeService.getBusinessNodeWithEmail(requestBody.Email);
+        if (nodeWithEmail) {
+            ErrorHandler.throwDuplicateUserError(`User with email ${requestBody.Email} already exists!`);
+        }
 
-    //     var userWithEmail = await userService.getBusinessNodeWithEmail(requestBody.Email);
-    //     if (userWithEmail) {
-    //         ErrorHandler.throwDuplicateUserError(`User with email ${requestBody.Email} already exists!`);
-    //     }
+        var nodeCreateModel: BusinessNodeCreateModel = await this.getNodeCreateModel(requestBody);
+        return { nodeCreateModel};
+    }
 
-    //     var userCreateModel: BusinessNodeCreateModel = await this.getUserCreateModel(requestBody);
-    //     return { userCreateModel};
-    // }
+    static validateSearchRequest = async (query) => {
+        try {
+            const schema = joi.object({
+                businessId               : joi.string().max(255).optional(),
+                name                     : joi.string().max(255).optional(),
+                mobile                   : joi.string().max(255).optional(),
+                email                    : joi.string().max(255).optional(),
+                displayPicture           : joi.string().optional(),
+                address                  : joi.string().max(255).optional(),
+                longitude                : joi.string().optional(),             
+                lattitude                : joi.string().optional(),            
+                overallRating            : joi.number().optional(),
+                timeZone                 : joi.date().iso().optional(),      
+                allowWalkinAppointments  : joi.boolean().optional(),
+                allowFutureBookingFor    : joi.string().max(255).optional(),
+                isActive                 : joi.boolean().optional(),
+            });
+            return await schema.validateAsync(query);
+
+        } catch (error) {
+            ErrorHandler.handleValidationError(error);
+        }
+    }
 
     static validateUpdateRequest = async (requestBody) => {
         try {
@@ -103,10 +120,10 @@ export class BusinessNodesValidator {
                 Email                    : joi.string().max(255).optional(),
                 DisplayPicture           : joi.string().optional(),
                 Address                  : joi.string().max(255).optional(),
-                Longitude                : joi.string().optional(),              //doubt
-                Lattitude                : joi.string().optional(),             //doubt
+                Longitude                : joi.string().optional(),             
+                Lattitude                : joi.string().optional(),            
                 OverallRating            : joi.number().optional(),
-                TimeZone                 : joi.date().iso().optional(),         //doubt
+                TimeZone                 : joi.date().iso().optional(),      
                 AllowWalkinAppointments  : joi.boolean().optional(),
                 AllowFutureBookingFor    : joi.string().max(255).optional(),
                 IsActive                 : joi.boolean().optional(),
