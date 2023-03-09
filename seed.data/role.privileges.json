@@ -24,7 +24,39 @@
             "ApiClient.Update",
             "ApiClient.Delete",
             "ApiClient.GetApiKey",
-            "ApiClient.RenewApiKey"
+            "ApiClient.RenewApiKey",
+
+            "Business.Create",
+            "Business.Search",
+            "Business.GetById",
+            "Business.Update",
+            "Business.Delete",
+
+            "BusinessNode.Create",
+            "BusinessNode.Search",
+            "BusinessNode.GetById",
+            "BusinessNode.Update",
+            "BusinessNode.Delete",
+
+            "BusinessUser.Create",
+            "BusinessUser.Search",
+            "BusinessUser.GetById",
+            "BusinessUser.Update",
+            "BusinessUser.Delete",
+
+            "BusinessService.Create",
+            "BusinessService.Search",
+            "BusinessService.GetById",
+            "BusinessService.Update",
+            "BusinessService.Delete",
+
+            "Customer.Create",
+            "Customer.Search",
+            "Customer.GetById",
+            "Customer.Update",
+            "Customer.Delete"
+
+            
 
         ]
     },

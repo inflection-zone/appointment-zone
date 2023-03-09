@@ -29,7 +29,7 @@ export interface UserUpdateModel {
 }
 
 export interface UserDto {
-    id         : uuid;
+  //  id         : uuid;
     UserName   : string;
     Prefix     : string;
     FirstName  : string;
@@ -37,7 +37,7 @@ export interface UserDto {
     CountryCode: string;
     Phone      : string;
     Email      : string;
-    Gender     : Gender;
+    Gender     : string;
     BirthDate  : Date;
 }
 

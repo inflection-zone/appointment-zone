@@ -6,6 +6,7 @@ import { ErrorHandler } from '../../common/error.handler';
 import { Helper } from '../../common/helper';
 import { PrismaClientInit } from "../../startup/prisma.client.init";
 import * as apikeyGenerator from 'uuid-apikey';
+import { Prisma } from '@prisma/client';
 
 export class ApiClientService{
     prisma = PrismaClientInit.instance().prisma();
@@ -54,36 +55,79 @@ export class ApiClientService{
         }
     };
 
-    // search = async (filters: ApiClientSearchFilters): Promise < ApiClientSearchResults > => {
-    //     try {
+    search = async (filters) => {
+        try {
+            const search : Prisma.api_clientsFindManyArgs = {};
+            if (filters.ClientName != null) {
+                search.where = {
+                    ClientName : filters.ClientName
+                }
+            }
+            if (filters.ClientCode != null) {
+                search.where =   {
+                    ClientCode : filters.ClientCode 
+                    }
+            }
+            if (filters.IsPrivileged != null) {
+                search.where =   {
+                    IsPrivileged : filters.IsPrivileged
+                    }
+            }
+            if (filters.Phone != null) {
+                search.where =   {
+                    Phone : filters.Phone
+                    }
+            }
+            if (filters.Email != null) {
+                search.where =   {
+                    Email : filters.Email
+                    }
+            }
+            if (filters.ValidFrom != null) {
+                search.where =   {
+                    ValidFrom : filters.ValidFrom
+                    }
+            }
+            if (filters.ValidTill != null) {
+                search.where =   {
+                    ValidTill : filters.ValidTill
+                    }
+            }
 
-    //         var search = this.getSearchModel(filters);
-    //         var {
-    //             order,
-    //             orderByColumn
-    //         } = this.addSortingToSearch(search, filters);
-    //         var {
-    //             pageIndex,
-    //             limit
-    //         } = this.addPaginationToSearch(search, filters);
-
-    //         const foundResults = await this.apiClients.findAndCountAll(search);
-    //         const searchResults: ApiClientSearchResults = {
-    //             TotalCount     : foundResults.count,
-    //             RetrievedCount : foundResults.rows.length,
-    //             PageIndex      : pageIndex,
-    //             ItemsPerPage   : limit,
-    //             Order          : order === 'DESC' ? 'descending' : 'ascending',
-    //             OrderedBy      : orderByColumn,
-    //             Items          : foundResults.rows,
-    //         };
-
-    //         return searchResults;
-
-    //     } catch (error) {
-    //         ErrorHandler.throwDbAccessError('DB Error: Unable to search api client records!', error);
-    //     }
-    // }
+            search.orderBy = {
+                    CreatedAt : 'asc'
+            }
+            if (filters.Order === 'descending') {
+                search.orderBy = {
+                    CreatedAt : 'desc'
+                    }
+            }
+            search.take = 25;
+            if (filters.ItemsPerPage) {
+               search.take = Number(filters.ItemsPerPage);
+            }
+            search.skip = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                search.skip = pageIndex * search.take;
+            }
+            const foundResults = await this.prisma.api_clients.findMany(search)
+            const searchResults = {
+                TotalCount     : foundResults.length,
+                RetrievedCount : foundResults.length,
+                PageIndex      : pageIndex,
+                ItemsPerPage   : search.take,
+                Order          : search.orderBy["CreatedAt"] === 'desc' ? 'descending' : 'ascending',
+                Items          : foundResults,
+            };
+    
+            return searchResults;
+        
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('DB Error: Unable to search user records!', error);
+        }
+    }
 
     getByClientCode = async (clientCode: string): Promise<ApiClientDto> =>{
         try {
@@ -209,44 +253,44 @@ export class ApiClientService{
         }
     }
     
-    // update = async (id: string, clientDomainModel: ApiClientUpdateModel): Promise<ApiClientDto> => {
-    //     try {
-    //         const client = await this.prisma.api_clients.findUnique({where:{id:id}
-    //         });
+    update = async (id: string, clientDomainModel: ApiClientUpdateModel): Promise<ApiClientDto> => {
+        try {
+            const client = await this.prisma.api_clients.findUnique({where:{id:id}
+            });
 
-    //         //Client code is not modifiable
-    //         //Use renew key to update ApiKey, ValidFrom and ValidTill
+            //Client code is not modifiable
+            //Use renew key to update ApiKey, ValidFrom and ValidTill
             
-    //         if (clientDomainModel.ClientName != null) {
-    //             client.ClientName = clientDomainModel.ClientName;
-    //         }
-    //         if (clientDomainModel.Password != null) {
-    //             client.Password = Helper.hash(clientDomainModel.Password);
-    //         }
-    //         if (clientDomainModel.Phone != null) {
-    //             client.Phone = clientDomainModel.Phone;
-    //         }
-    //         if (clientDomainModel.IsPrivileged != null) {
-    //             client.IsPrivileged = clientDomainModel.IsPrivileged;
-    //         }
-    //         if (clientDomainModel.Email != null) {
-    //             client.Email = clientDomainModel.Email;
-    //         }
-    //         if (clientDomainModel.ValidFrom != null) {
-    //             client.ValidFrom = clientDomainModel.ValidFrom;
-    //         }
-    //         if (clientDomainModel.ValidTill != null) {
-    //             client.ValidTill = clientDomainModel.ValidTill;
-    //         }
-    //         await client.save();
+            if (clientDomainModel.ClientName != null) {
+                client.ClientName = clientDomainModel.ClientName;
+            }
+            if (clientDomainModel.Password != null) {
+                client.Password = Helper.hash(clientDomainModel.Password);
+            }
+            if (clientDomainModel.Phone != null) {
+                client.Phone = clientDomainModel.Phone;
+            }
+            if (clientDomainModel.IsPrivileged != null) {
+                client.IsPrivileged = clientDomainModel.IsPrivileged;
+            }
+            if (clientDomainModel.Email != null) {
+                client.Email = clientDomainModel.Email;
+            }
+            if (clientDomainModel.ValidFrom != null) {
+                client.ValidFrom = clientDomainModel.ValidFrom;
+            }
+            if (clientDomainModel.ValidTill != null) {
+                client.ValidTill = clientDomainModel.ValidTill;
+            }
+          //  await client.save();
 
-    //         const dto = await this.toDto(client);
-    //         return dto;
-    //     } catch (error) {
-    //         Logger.instance().log(error.message);
-    //         throw new ApiError(error.message, 500);
-    //     }
-    // }
+            const dto = await this.toDto(client);
+            return dto;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(error.message, 500);
+        }
+    }
 
     delete = async (id) => {
         try {
@@ -291,90 +335,7 @@ export class ApiClientService{
         };
         return dto;
     }
-    
-    //#region Privates
-
-    // private getSearchModel = (filters) => {
-
-    //     var search = {
-    //         where   : {},
-    //         include : []
-    //     };
-
-    //     if (filters.ClientName) {
-    //         search.where['ClientName'] = filters.ClientName;
-            
-    //     }
-    //     if (filters.ClientCode) {
-    //         search.where['ClientCode'] = filters.ClientCode;
-    //     }
-    //     if (filters.IsPrivileged) {
-    //         search.where['IsPrivileged'] = filters.IsPrivileged;
-    //     }
-    //     if (filters.CountryCode) {
-    //         search.where['CountryCode'] = filters.CountryCode;
-    //     }
-    //     if (filters.Phone) {
-    //         search.where['Phone'] = filters.Phone;
-    //     }
-    //     if (filters.Email) {
-    //         search.where['Email'] = filters.Email;
-    //     }
-    //     if (filters.ValidFrom) {
-    //         search.where['ValidFrom'] = filters.ValidFrom;
-    //     }
-    //     if (filters.ValidTill) {
-    //         search.where['ValidTill'] = filters.ValidTill;
-    //     }
-
-    //     return search;
-    // }
-
-    // private addSortingToSearch = (search, filters) => {
-
-    //     let orderByColumn = 'CreatedAt';
-    //     if (filters.OrderBy) {
-    //         orderByColumn = filters.OrderBy;
-    //     }
-    //     let order = 'ASC';
-    //     if (filters.Order === 'descending') {
-    //         order = 'DESC';
-    //     }
-    //     search['order'] = [
-    //         [orderByColumn, order]
-    //     ];
-
-    //     if (filters.OrderBy) {
-    //         //In case the 'order-by attribute' is on associated model
-    //         //search['order'] = [[ '<AssociatedModel>', filters.OrderBy, order]];
-    //     }
-    //     return {
-    //         order,
-    //         orderByColumn
-    //     };
-    // }
-
-    // private addPaginationToSearch = (search, filters) => {
-
-    //     let limit = 25;
-    //     if (filters.ItemsPerPage) {
-    //         limit = filters.ItemsPerPage;
-    //     }
-    //     let offset = 0;
-    //     let pageIndex = 0;
-    //     if (filters.PageIndex) {
-    //         pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
-    //         offset = pageIndex * limit;
-    //     }
-    //     search['limit'] = limit;
-    //     search['offset'] = offset;
-
-    //     return {
-    //         pageIndex,
-    //         limit
-    //     };
-    // }
-
-    // //#endregion
+        
+     //#endregion
 
 }

@@ -28,7 +28,18 @@ export class BusinessControllerDelegate {
     create = async (requestBody: any) => {
 
         await validator.validateCreateRequest(requestBody);
-
+        var businessWithName = await this._service.getBusinessWithName(requestBody.Name);
+        if (businessWithName) {
+            ErrorHandler.throwDuplicateUserError(`Business with name ${requestBody.Name} already exists!`);
+        }
+        var businessWithEmail = await this._service.getBusinessWithEmail(requestBody.Email);
+        if (businessWithEmail) {
+            ErrorHandler.throwDuplicateUserError(`Business with email ${requestBody.Email} already exists!`);
+        }
+        var businessWithMobile = await this._service.getBusinessWithMobile(requestBody.Mobile);
+        if (businessWithMobile) {
+            ErrorHandler.throwDuplicateUserError(`Business with mobile ${requestBody.Mobile} already exists!`);
+        }
         // eslint-DisplayPictureable-next-line @typescript-eslint/no-unused-vars
         var createModel: BusinessCreateModel = this.getCreateModel(requestBody);
         const record: BusinessDto = await this._service.create(createModel);
@@ -110,66 +121,79 @@ export class BusinessControllerDelegate {
 
     getSearchFilters = (query) => {
         var filters = {};
-            var ExternalId= query.ExternalId  ? query.ExternalId : null;
-            if (ExternalId!= null) {
-                filters['ExternalId'] = ExternalId;
+            // var ExternalId= query.ExternalId  ? query.ExternalId : null;
+            // if (ExternalId!= null) {
+            //     filters['ExternalId'] = ExternalId;
+            // }
+
+            // var Name= query.Name ? query.Name : null;
+            // if (Name!= null) {
+            //     filters['Name'] = Name;
+            // }
+
+            // var Email= query.Email ? query.Email : null;
+            // if (Email!= null) {
+            //     filters['Email'] = Email;
+            // }
+
+            // var Mobile= query.Mobile ? query.Mobile : null;
+            // if (Mobile!= null) {
+            //     filters['Mobile'] = Mobile;
+            // }
+
+            // var AboutUs= query.AboutUs ? query.AboutUs : null;
+            // if (AboutUs != null) {
+            //     filters['AboutUs'] = AboutUs;
+            // }
+
+            // var Logo= query.Logo ? query.Logo : null;
+            // if (Logo!= null) {
+            //     filters['Logo'] = Logo;
+            //     }
+
+            // var Address= query.Address ? query.Address : null;
+            // if (Address != null) {
+            //     filters['Address'] = Address;
+            //     }
+
+            // var Facebook= query.Facebook ? query.Facebook : null;
+            // if (Facebook != null) {
+            //     filters['Facebook'] = Facebook;
+            //     }
+
+            // var  Linkedin= query. Linkedin ? query. Linkedin : null;
+            // if ( Linkedin != null) {
+            //     filters[' Linkedin'] =  Linkedin;
+            // }
+
+            // var Twitter= query.Twitter ? query.Twitter : null;
+            // if (Twitter != null) {
+            //     filters['Twitter'] = Twitter;
+            // }
+
+            // var Instagram= query.Instagram ? query.Instagram : null;
+            // if (Instagram != null) {
+            //     filters['Instagram'] = Instagram;
+            // }
+
+            // var Yelp=query.Yelp ? query.Yelp : null;
+            // if (Yelp != null) {
+            //     filters['Yelp'] = Yelp;
+            // }
+
+            var IsActive= query.IsActive ? query.IsActive : null;
+            if (IsActive != null) {
+                filters['IsActive'] = IsActive;
             }
 
-            var Name= query.Name ? query.Name : null;
-            if (Name!= null) {
-                filters['Name'] = Name;
+            var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : null;
+            if (itemsPerPage != null) {
+                filters['ItemsPerPage'] = itemsPerPage;
             }
-
-            var Email= query.Email ? query.Email : null;
-            if (Email!= null) {
-                filters['Email'] = Email;
+            var order = query.order ? query.order : null;
+            if (order != null) {
+              filters['Order'] = order;
             }
-
-            var Mobile= query.Mobile ? query.Mobile : null;
-            if (Mobile!= null) {
-                filters['Mobile'] = Mobile;
-            }
-
-            var AboutUs= query.AboutUs ? query.AboutUs : null;
-            if (AboutUs != null) {
-                filters['AboutUs'] = AboutUs;
-            }
-
-            var Logo= query.Logo ? query.Logo : null;
-            if (Logo!= null) {
-                filters['Logo'] = Logo;
-                }
-
-            var Address= query.Address ? query.Address : null;
-            if (Address != null) {
-                filters['Address'] = Address;
-                }
-
-            var Facebook= query.Facebook ? query.Facebook : null;
-            if (Facebook != null) {
-                filters['Facebook'] = Facebook;
-                }
-
-            var  Linkedin= query. Linkedin ? query. Linkedin : null;
-            if ( Linkedin != null) {
-                filters[' Linkedin'] =  Linkedin;
-            }
-
-            var Twitter= query.Twitter ? query.Twitter : null;
-            if (Twitter != null) {
-                filters['Twitter'] = Twitter;
-            }
-
-            var Instagram= query.Instagram ? query.Instagram : null;
-            if (Instagram != null) {
-                filters['Instagram'] = Instagram;
-            }
-
-            var Yelp=query.Yelp ? query.Yelp : null;
-            if (Yelp != null) {
-                filters['Yelp'] = Yelp;
-            }
-            
             return filters;
 
     };
