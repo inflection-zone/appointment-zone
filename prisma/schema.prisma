@@ -80,7 +80,7 @@ model business_node_customers {
 }
 
 model business_node_hours {
-  id             String    @id @db.Char(36)
+  id             String    @id @default(uuid())
   BusinessNodeId String    @db.Char(36)
   CreatedAt      DateTime  @default(now())
   Date           DateTime? @db.DateTime(0)
@@ -94,6 +94,7 @@ model business_node_hours {
   UpdatedAt      DateTime  @updatedAt
   IsDeleted      Boolean   @default(false)
   DeletedAt      DateTime? @db.DateTime(0)
+  BusinessNode            business_nodes @relation(fields: [BusinessNodeId], references: [id])
 }
 
 model business_nodes {
@@ -117,6 +118,7 @@ model business_nodes {
   DeletedAt               DateTime?  @db.DateTime(0)
   Business                businesses @relation(fields: [BusinessId], references: [id])
   BusinessUser     business_users[]
+  BusinessNodeHour     business_node_hours[]
 
 }
 

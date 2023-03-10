@@ -1,5 +1,5 @@
 import express from 'express';
-import { BusinessUserController } from './business.user.controller';
+import { BusinessNodeHourController } from './business.node.hour.controller';
 import { Loader } from '../../startup/loader';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -8,7 +8,7 @@ export const register = (app: express.Application): void => {
 
     const router = express.Router();
     const authenticator = Loader.Authenticator;
-    const controller = new BusinessUserController();
+    const controller = new BusinessNodeHourController();
 
     router.post('', controller.create);
      router.put('/:id', authenticator.authenticateClient,controller.update);
@@ -17,5 +17,5 @@ export const register = (app: express.Application): void => {
      router.get('/search', authenticator.authenticateClient, controller.search);
      router.get('/:id', authenticator.authenticateClient, controller.getById);
      
-    app.use('/api/v1/businessusers', router);
+    app.use('/api/v1/business-node-hours', router);
 };

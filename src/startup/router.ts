@@ -9,6 +9,7 @@ import { register as registerFileREsourceRoutes       } from "../api/file.resour
 import { register as registerTypesRoutes} from "../api/types/types.routes";
 import { register as registerUserRoutes } from "../api/user/user.routes";
 import { register as registerBusinessUserRoutes} from "../api/business.user/business.user.routes"
+import { register as registerBusinessNodeHourRoutes} from "../api/business.node.hour/business.node.hour.routes"
 
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -41,6 +42,7 @@ export class Router {
                 registerTypesRoutes(this._app);
                 registerUserRoutes(this._app);
                 registerBusinessUserRoutes(this._app);
+                registerBusinessNodeHourRoutes(this._app);
 
                 
 
