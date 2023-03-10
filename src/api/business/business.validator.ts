@@ -40,8 +40,8 @@ export class BusinessValidator {
                 Mobile          : joi.string().max(255).optional(),
                 Email           : joi.string().max(255).optional(),
                 AboutUs         : joi.string().max(255).optional(),
-                Logo            : joi.string().optional(),
-                DisplayPicture  : joi.string().optional(),
+                Logo            : joi.string().max(255).optional(),
+                DisplayPicture  : joi.string().max(255).optional(),
                 OverallRating   : joi.number().optional(),
                 Address         : joi.string().max(255).optional(),
                 ApiKey          : joi.string().max(255).optional(),
@@ -63,9 +63,9 @@ export class BusinessValidator {
         try {
             const schema = joi.object({
                 ExternalId      : joi.string().max(255).optional(),
-                Name            : joi.string().max(255).required(),
-                Mobile          : joi.string().max(255).required(),
-                Email           : joi.string().max(255).required(),
+                Name            : joi.string().max(255).optional(),
+                Mobile          : joi.string().max(255).optional(),
+                Email           : joi.string().max(255).optional(),
                 AboutUs         : joi.string().max(255).optional(),
                 Logo            : joi.string().optional(),
                 DisplayPicture  : joi.string().optional(),
@@ -75,7 +75,7 @@ export class BusinessValidator {
                 Twitter         : joi.string().max(255).optional(),
                 Instagram       : joi.string().max(255).optional(),
                 Yelp            : joi.string().max(255).optional(),
-                IsActive        : joi.boolean().required(),
+                IsActive        : joi.boolean().optional(),
             });
             return await schema.validateAsync(requestBody);
         } catch (error) {

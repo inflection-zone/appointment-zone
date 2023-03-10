@@ -11,8 +11,8 @@ export const register = (app: express.Application): void => {
     const controller = new UserController();
 
     router.post('', controller.create);
-    // router.put('/:id', authenticator.authenticateUser, controller.update);
-    // router.delete('/:id', authenticator.authenticateUser, controller.delete);
+     router.put('/:id', authenticator.authenticateUser, controller.update);
+     router.delete('/:id', authenticator.authenticateUser, controller.delete);
 
     router.post('/login-password', controller.loginWithPassword);
     // router.post('/login-otp', controller.loginWithOtp);
@@ -20,7 +20,7 @@ export const register = (app: express.Application): void => {
     // router.post('/change-password', authenticator.authenticateUser, controller.changePassword);
     // router.post('/logout', authenticator.authenticateUser, controller.logout);
 
-    // router.get('/search', authenticator.authenticateUser, controller.search);
+    router.get('/search', authenticator.authenticateUser, controller.search);
     router.get('/:id', authenticator.authenticateUser, controller.getById);
 
     //router.get('/session/:sessionId', controller.getBySessionId);

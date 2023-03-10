@@ -40,27 +40,27 @@ export class ApiClientController extends BaseController {
         }
     }
 
-    // search = async (request: express.Request, response: express.Response): Promise < void > => {
-    //     try {
-    //         await this.authorize('ApiClient.Search', request, response);
-    //         const searchResults = await this._delegate.search(request.query);
-    //         const message = 'Api client records retrieved successfully!';
-    //         ResponseHandler.success(request, response, message, 200, searchResults);
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // }
+    search = async (request: express.Request, response: express.Response): Promise < void > => {
+        try {
+            await this.authorize('ApiClient.Search', request, response);
+            const searchResults = await this._delegate.search(request.query);
+            const message = 'Api client records retrieved successfully!';
+            ResponseHandler.success(request, response, message, 200, searchResults);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
 
-    // update = async (request: express.Request, response: express.Response): Promise < void > => {
-    //     try {
-    //         await this.authorize('ApiClient.Update', request, response);
-    //         const updatedRecord = await this._delegate.update(request.params.id, request.body);
-    //         const message = 'Api client updated successfully!';
-    //         ResponseHandler.success(request, response, message, 200, updatedRecord);
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // }
+    update = async (request: express.Request, response: express.Response): Promise < void > => {
+        try {
+            await this.authorize('ApiClient.Update', request, response);
+            const updatedRecord = await this._delegate.update(request.params.id, request.body);
+            const message = 'Api client updated successfully!';
+            ResponseHandler.success(request, response, message, 200, updatedRecord);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
 
     delete = async (request: express.Request, response: express.Response): Promise < void > => {
         try {

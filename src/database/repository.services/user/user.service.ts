@@ -4,6 +4,7 @@ import { Helper } from '../../../common/helper';
 import { TimeHelper } from '../../../common/time.helper';
 import { DurationType } from "../../../domain.types/miscellaneous/time.types";
 import { PrismaClientInit } from '../../../startup/prisma.client.init';
+import { Prisma } from '@prisma/client';
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 export class UserService {
@@ -26,30 +27,30 @@ export class UserService {
         }
     }
 
-    // getById = async (id) => {
-    //     try {
-    //         var record = await this.prisma.users.findUnique({
-    //             where : {
-    //                 id : id
-    //             }
-    //         });
+    getById = async (id) => {
+        try {
+            var record = await this.prisma.users.findUnique({
+                where : {
+                    id : id
+                }
+            });
             
-    //         if (record) {
-    //             const userRole = await this.prisma.user_roles.findUnique({
-    //                 where : { 
-    //                      UserId : record.id
-    //                     }
-    //             });
-    //             if (userRole) {
-    //                 const role = await this.prisma.roles.findUnique({userRole.RoleId});
-    //                 record['roles'] = role;
-    //             }
-    //         }
-    //          return record;
-    //     } catch (error) {
-    //         ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve user!', error);
-    //     }
-    // }
+            if (record) {
+                const userRole = await this.prisma.user_roles.findUnique({
+                    where : { 
+                         UserId : record.id
+                        }
+                });
+            //     if (userRole) {
+            //         const role = await this.prisma.roles.findUnique({userRole.RoleId});
+            //         record['roles'] = role;
+            //     }
+             }
+             return record;
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve user!', error);
+        }
+    }
 
     exists = async (id) => {
         try {
@@ -61,174 +62,158 @@ export class UserService {
         }
     }
 
-    // search = async (filters) => {
-    //     try {
+    
+    search = async (filters) => {
+    try {
+        const search : Prisma.usersFindManyArgs = {};
 
-    //         var search = {
-    //             where   : {},
-    //             include : []
-    //         };
+        if (filters.Prefix != null) {
+            search.where = {
+                Prefix : filters.Prefix
+            }
+        }
 
-    //         if (filters.RoleId) {
-    //             search.where['RoleId'] = {
-    //                 [Op.like] : '%' + filters.RoleId + '%'
-    //             };
-    //         }
-    //         if (filters.Prefix) {
-    //             search.where['Prefix'] = filters.Prefix;
-    //         }
-    //         if (filters.FirstName) {
-    //             search.where['FirstName'] = filters.FirstName;
-    //         }
-    //         if (filters.LastName) {
-    //             search.where['LastName'] = filters.LastName;
-    //         }
-    //      
-    //         if (filters.Gender) {
-    //             search.where['Gender'] = filters.Gender;
-    //         }
-    //         if (filters.State) {
-    //             search.where['State'] = {
-    //                 [Op.like] : '%' + filters.State + '%'
-    //             };
-    //         }
-    //         if (filters.Country) {
-    //             search.where['Country'] = {
-    //                 [Op.like] : '%' + filters.Country + '%'
-    //             };
-    //         }
-    //         if (filters.Address) {
-    //             search.where['Address'] = {
-    //                 [Op.like] : '%' + filters.Address + '%'
-    //             };
-    //         }
+        if (filters.FirstName != null) {
+            search.where = {
+                FirstName : filters.FirstName
+            }
+        }
 
-    //         //Sorting
-    //         let orderByColumn = 'CreatedAt';
-    //         if (filters.OrderBy) {
-    //             orderByColumn = filters.OrderBy;
-    //         }
-    //         let order = 'ASC';
-    //         if (filters.Order === 'descending') {
-    //             order = 'DESC';
-    //         }
-    //         search['order'] = [
-    //             [orderByColumn, order]
-    //         ];
+        if (filters.LastName != null) {
+            search.where =   {
+                LastName : filters.LastName 
+                }
+        }
 
-    //         if (filters.OrderBy) {
-    //             //In case the order-by attribute is on associated model
-    //             //search['order'] = [[ '<AssociatedModel>', filters.OrderBy, order]];
-    //         }
+        if (filters.Gender != null) {
+            search.where =   {
+                Gender : filters.Gender
+                }
+        }
+        if (filters.Phone != null) {
+            search.where =   {
+                Phone : filters.Phone
+                }
+        }
 
-    //         //Pagination
-    //         let limit = 25;
-    //         if (filters.ItemsPerPage) {
-    //             limit = filters.ItemsPerPage;
-    //         }
-    //         let offset = 0;
-    //         let pageIndex = 0;
-    //         if (filters.PageIndex) {
-    //             pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
-    //             offset = pageIndex * limit;
-    //         }
-    //         search['limit'] = limit;
-    //         search['offset'] = offset;
+        if (filters.Email != null) {
+            search.where =   {
+                Email : filters.Email
+                }
+        }
 
-    //         const foundResults = await this.users.findAndCountAll(search);
-    //         const searchResults = {
-    //             TotalCount     : foundResults.count,
-    //             RetrievedCount : foundResults.rows.length,
-    //             PageIndex      : pageIndex,
-    //             ItemsPerPage   : limit,
-    //             Order          : order === 'DESC' ? 'descending' : 'ascending',
-    //             OrderedBy      : orderByColumn,
-    //             Items          : foundResults.rows,
-    //         };
+        search.orderBy = {
+                CreatedAt : 'asc'
+        }
+        if (filters.Order === 'descending') {
+            search.orderBy = {
+                CreatedAt : 'desc'
+                }
+        }
+        search.take = 25;
+        if (filters.ItemsPerPage) {
+           search.take = Number(filters.ItemsPerPage);
+        }
+        search.skip = 0;
+        let pageIndex = 0;
+        if (filters.PageIndex) {
+            pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+            search.skip = pageIndex * search.take;
+        }
+        const foundResults = await this.prisma.users.findMany(search)
+        const searchResults = {
+            TotalCount     : foundResults.length,
+            RetrievedCount : foundResults.length,
+            PageIndex      : pageIndex,
+            ItemsPerPage   : search.take,
+            Order          : search.orderBy["CreatedAt"] === 'desc' ? 'descending' : 'ascending',
+            Items          : foundResults,
+        };
 
-    //         return searchResults;
+        return searchResults;
+    
+    } catch (error) {
+        ErrorHandler.throwDbAccessError('DB Error: Unable to search user records!', error);
+    }
+}
 
-    //     } catch (error) {
-    //         ErrorHandler.throwDbAccessError('DB Error: Unable to search user records!', error);
-    //     }
-    // }
 
-    // update = async (id, updateModel) => {
-    //     try {
-    //         if (Object.keys(updateModel).length > 0) {
-    //             var res = await this.prisma.users.update({data:updateModel,
-    //                     where :{
-    //                     id : id
-    //                 }
-    //              });
+    update = async (id, updateModel) => {
+        try {
+            if (Object.keys(updateModel).length > 0) {
+                var res = await this.prisma.users.update({data:updateModel,
+                        where :{
+                        id : id
+                    }
+                 });
                 
-    //         }
-    //         return await this.getById(id);
-    //     } catch (error) {
-    //         ErrorHandler.throwDbAccessError('DB Error: Unable to update Business!', error);
-    //     }
-    // }
+            }
+            return await this.getById(id);
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('DB Error: Unable to update Business!', error);
+        }
+    }
 
-    // delete = async (id) => {
-    //     try {
-    //         var result = await this.prisma.users.delete({
-    //             where : {
-    //                 id : id
-    //             }
-    //         });
+    delete = async (id) => {
+        try {
+            var result = await this.prisma.users.delete({
+                where : {
+                    id : id
+                }
+            });
             
-    //     } catch (error) {
-    //         ErrorHandler.throwDbAccessError('DB Error: Unable to delete user!', error);
-    //     }
-    // }
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('DB Error: Unable to delete user!', error);
+        }
+    }
 
-    // getUserWithPhone = async (countryCode, phone) => {
-    //     try {
-    //         const record = await this.prisma.users.findUnique({
-    //             where : {
-    //                 CountryCode : countryCode,
-    //                 Phone       : phone,
-    //             }
-    //         });
-    //         return record;
-    //     } catch (error) {
-    //         ErrorHandler.throwDbAccessError('Unable to check if user exists with phone!', error);
-    //     }
-    // };
+    getUserWithPhone = async (countryCode, phone) => {
+        try {
+            const record = await this.prisma.users.findMany({
+                where : {
+                    CountryCode : countryCode,
+                    Phone       : phone,
+                }
+            });
+            return record;
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('Unable to check if user exists with phone!', error);
+        }
+    };
 
-    // getUserWithEmail = async (email) => {
-    //     try {
-    //         const record = await this.prisma.users.findUnique({
-    //             where : {
-    //                 Email : email
-    //             }
-    //         });
-    //         return record;
-    //     } catch (error) {
-    //         ErrorHandler.throwDbAccessError('Unable to check if user exists with email!', error);
-    //     }
-    // }
+    getUserWithEmail = async (email) => {
+        try {
+            const record = await this.prisma.users.findMany({
+                where : {
+                    Email : email
+                }
+            });
+            return record;
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('Unable to check if user exists with email!', error);
+        }
+    }
 
-    // getUserWithUserName = async (username) => {
-    //     try {
-    //         const record = await this.prisma.users.findUnique({
-    //             where : {
-    //                 UserName : username
-    //             }
-    //         });
-    //         return record;
-    //     } catch (error) {
-    //         ErrorHandler.throwDbAccessError('Unable to check username!', error);
-    //     }
-    // }
+    getUserWithUserName = async (username) => {
+        try {
+            const record = await this.prisma.users.findUnique({
+                where : {
+                    UserName : username
+                }
+            });
+            return record;
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('Unable to check username!', error);
+        }
+    }
 
-    // generateUserNameIfDoesNotExist = async (userName) => {
-    //     var tmpUsername = userName ?? Helper.generateUserName();
-    //     while (await this.getUserWithUserName(tmpUsername) != null) {
-    //         tmpUsername = Helper.generateUserName();
-    //     }
-    //     return tmpUsername;
-    // }
+    generateUserNameIfDoesNotExist = async (userName) => {
+        var tmpUsername = userName ?? Helper.generateUserName();
+        while (await this.getUserWithUserName(tmpUsername) != null) {
+            tmpUsername = Helper.generateUserName();
+        }
+        return tmpUsername;
+    }
 
     getUser = async (
         countryCode,
@@ -255,7 +240,7 @@ export class UserService {
                 UserName : userName
             });
         }
-         const user = await this.prisma.users.findMany({
+         const user = await this.prisma.users.findUnique({
             where : 
                 {UserName : userName},  
          });
@@ -263,44 +248,46 @@ export class UserService {
         if (!user) {
             return null;
         }
-        
         return user;
      }
 
-//  getUserUpdateModel = (inputModel) => {
+ getUserUpdateModel = (inputModel) => {
 
-//         var updateModel: any = {};
+        var updateModel: any = {};
 
-//         if (Helper.hasProperty(inputModel, 'Prefix')) {
-//             updateModel.Prefix = inputModel.Prefix;
-//         }
-//         if (Helper.hasProperty(inputModel, 'FirstName')) {
-//             updateModel.FirstName = inputModel.FirstName;
-//         }
-//         if (Helper.hasProperty(inputModel, 'LastName')) {
-//             updateModel.LastName = inputModel.LastName;
-//         }
-//         if (Helper.hasProperty(inputModel, 'Phone')) {
-//             updateModel.Phone = inputModel.Phone;
-//         }
-//         if (Helper.hasProperty(inputModel, 'Email')) {
-//             updateModel.Email = inputModel.Email;
-//         }
-//         if (Helper.hasProperty(inputModel, 'Password')) {
-//             updateModel.Password = Helper.hash(inputModel.Password);
-//         }
-//         if (Helper.hasProperty(inputModel, 'ImageUrl')) {
-//             updateModel.ImageUrl = inputModel.ImageUrl;
-//         }
-//         if (Helper.hasProperty(inputModel, 'Gender')) {
-//             updateModel.Gender = inputModel.Gender;
-//         }
-//         if (Helper.hasProperty(inputModel, 'BirthDate')) {
-//             updateModel.BirthDate = inputModel.BirthDate;
-//         }
+        if (Helper.hasProperty(inputModel, 'UserName')) {
+            updateModel.UserName = inputModel.UserName;
+        }
+        if (Helper.hasProperty(inputModel, 'Prefix')) {
+            updateModel.Prefix = inputModel.Prefix;
+        }
+        if (Helper.hasProperty(inputModel, 'FirstName')) {
+            updateModel.FirstName = inputModel.FirstName;
+        }
+        if (Helper.hasProperty(inputModel, 'LastName')) {
+            updateModel.LastName = inputModel.LastName;
+        }
+        if (Helper.hasProperty(inputModel, 'Phone')) {
+            updateModel.Phone = inputModel.Phone;
+        }
+        if (Helper.hasProperty(inputModel, 'Email')) {
+            updateModel.Email = inputModel.Email;
+        }
+        if (Helper.hasProperty(inputModel, 'Password')) {
+            updateModel.Password = Helper.hash(inputModel.Password);
+        }
+        if (Helper.hasProperty(inputModel, 'ImageUrl')) {
+            updateModel.ImageUrl = inputModel.ImageUrl;
+        }
+        if (Helper.hasProperty(inputModel, 'Gender')) {
+            updateModel.Gender = inputModel.Gender;
+        }
+        if (Helper.hasProperty(inputModel, 'BirthDate')) {
+            updateModel.BirthDate = inputModel.BirthDate;
+        }
 
-//         return updateModel;
-//     }
+        return updateModel;
+    }
 
     createUserLoginSession = async (userId) => {
         try {
@@ -373,10 +360,10 @@ export class UserService {
     //                     UserId : session.id
     //                 }
     //             });
-    //             if (userRole) {
-    //                 const role = await this.prisma.roles.findUnique(userRole.RoleId);
-    //                 user['Role'] = role;
-    //             }
+                // if (userRole) {
+                //     const role = await this.prisma.roles.findUnique(userRole.RoleId);
+                //     user['roles'] = role;
+                // }
     //         }
     //         return user;
 

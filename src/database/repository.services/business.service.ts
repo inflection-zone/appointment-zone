@@ -4,6 +4,7 @@ import { Logger } from '../../common/logger';
 import { Helper } from "../../common/helper";
 import { ErrorHandler } from "../../common/error.handler";
 import { PrismaClientInit } from "../../startup/prisma.client.init";
+import { Prisma } from '@prisma/client';
 
 export class BusinessService{
     prisma = PrismaClientInit.instance().prisma();
@@ -37,6 +38,48 @@ export class BusinessService{
         }
 
     }
+    getBusinessWithName = async (name) => {
+        try {
+            const record = await this.prisma.businesses.findUnique({ 
+                where : 
+                {
+                    Name : name,                    
+                 }
+            });
+            return record;
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('Unable to check if business exists with name!', error);
+        }
+    }
+
+    getBusinessWithEmail = async (email) => {
+        try {
+            const record = await this.prisma.businesses.findUnique({ 
+                where : 
+                {
+                    Email : email,
+                 }
+            });
+            return record;
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('Unable to check if business exists with email!', error);
+        }
+    }
+
+    getBusinessWithMobile = async (mobile) => {
+        try {
+            const record = await this.prisma.businesses.findUnique({ 
+                where : 
+                { 
+                    Mobile: mobile,
+                }
+            });
+            return record;
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('Unable to check if business exists with mobile!', error);
+        }
+    }
+
 
     exists = async (id) => {
         try {
@@ -47,37 +90,52 @@ export class BusinessService{
         }
     }
 
-    search = async (filters: BusinessSearchFilters): Promise <BusinessSearchResults> => {            
-        try{
-            var search = this.getSearchModel(filters);
-            var {
-                order,
-                orderByColumn
-            } = this.addSortingToSearch(search, filters);
-            var {
-                pageIndex,
-                limit
-            } = this.addPaginationToSearch(search, filters);
+    search = async (filters) => {
+        try {
+                const search : Prisma.businessesFindManyArgs = {};
+            
+            if (filters.IsActive != null) {
+                search.where =   {
+                    IsActive : true,
+                    }
+            }
 
+            search.orderBy = {
+                    CreatedAt : 'asc'
+            }
+            if (filters.Order === 'descending') {
+                search.orderBy = {
+                    CreatedAt : 'desc'
+                    }
+            }
+            search.take = 25;
+            if (filters.ItemsPerPage) {
+               search.take = Number(filters.ItemsPerPage);
+            }
+            search.skip = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                search.skip = pageIndex * search.take;
+            }
+            
             const foundResults = await this.prisma.businesses.findMany(search)
-            const searchResults: BusinessSearchResults = {
+            const searchResults = {
                 TotalCount     : foundResults.length,
                 RetrievedCount : foundResults.length,
                 PageIndex      : pageIndex,
-                ItemsPerPage   : limit,
-                Order          : order === 'DESC' ? 'descending' : 'ascending',
-                OrderedBy      : orderByColumn,
+                ItemsPerPage   : search.take,
+                Order          : search.orderBy["CreatedAt"] === 'desc' ? 'descending' : 'ascending',
                 Items          : foundResults,
-
-            }
-                
-             return searchResults;
-            }catch (error) {
-                ErrorHandler.throwDbAccessError('DB Error: Unable to create business!',error)
-        } 
-
-      }
-
+            };
+    
+            return searchResults;
+        
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('DB Error: Unable to search user records!', error);
+        }
+    }
+    
     update = async (id, updateModel) => {
         try {
             if (Object.keys(updateModel).length > 0) {
@@ -107,44 +165,7 @@ export class BusinessService{
     };
 
 
-    getBusinessWithName = async (Name) => {
-        try {
-            const record = await this.prisma.businesses.findMany({ 
-                where:
-                { 
-                    Name : Name, 
-                }
-            });
-            return record;
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('Unable to check if business exists with name!', error);
-        }
-    };
-
- getBusinessWithEmail = async (email) => {
-        try {
-            const record = await this.prisma.businesses.findMany({ 
-                where : 
-                {
-                    Email : email,
-                 }
-            });
-            return record;
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('Unable to check if business exists with email!', error);
-        }
-    }
-
-getBusinessWithMobile = async (Mobile) => {
-        try {
-            const record = await this.prisma.businesses.findMany({ where : { Mobile: Mobile }
-            });
-            return record;
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('Unable to check if business exists with mobile!', error);
-        }
-    }
-
+    
     getBusiness = async (
         Name,
         Mobile,
@@ -171,77 +192,77 @@ getBusinessWithMobile = async (Mobile) => {
 
     }
 
-private getSearchModel = (filters) => {
-    var search = {
-        where   : {},
-        orderBy: {   
-        },
-        take:25
-        // include :{}
-    };
-    var {
-        order,
-        orderByColumn
-    } = this.addSortingToSearch(search, filters);
-    var {
-                pageIndex,
-                limit
-    } = this.addPaginationToSearch(search, filters);
+// private getSearchModel = (filters) => {
+//     var search = {
+//         where   : {},
+//         orderBy: {   
+//         },
+//         take:25
+//         // include :{}
+//     };
+//     var {
+//         order,
+//         orderByColumn
+//     } = this.addSortingToSearch(search, filters);
+//     var {
+//                 pageIndex,
+//                 limit
+//     } = this.addPaginationToSearch(search, filters);
 
-    if (filters.ExternalId) {
-        search.where['ExternalId'] = filters.ExternalId
-        }
+//     if (filters.ExternalId) {
+//         search.where['ExternalId'] = filters.ExternalId
+//         }
     
-    if (filters.Name) {
-        search.where['Name'] = filters.Name
-        }
+//     if (filters.Name) {
+//         search.where['Name'] = filters.Name
+//         }
    
-    if (filters.Mobile) {
-        search.where['Mobile'] = filters.Mobile;
-        }
+//     if (filters.Mobile) {
+//         search.where['Mobile'] = filters.Mobile;
+//         }
 
-    if (filters.Email) {
-        search.where['Email'] = filters.Email;
-        }
+//     if (filters.Email) {
+//         search.where['Email'] = filters.Email;
+//         }
 
-    if (filters.AboutUs) {
-        search.where['AboutUs'] = filters.AboutUs;
-        }
+//     if (filters.AboutUs) {
+//         search.where['AboutUs'] = filters.AboutUs;
+//         }
 
-    if (filters.Logo) {
-        search.where['Logo'] = filters.Logo;
-        }
+//     if (filters.Logo) {
+//         search.where['Logo'] = filters.Logo;
+//         }
     
-    if (filters.Address) {
-        search.where['Address'] = filters.Address;
-        }
+//     if (filters.Address) {
+//         search.where['Address'] = filters.Address;
+//         }
     
-    if (filters.DisplayPicture) {
-        search.where['DisplayPicture'] = filters.DisplayPicture;
-        }
-    if (filters.OverallRating) {
-        search.where['OverallRating'] = filters.OverallRating;
-        }
+//     if (filters.DisplayPicture) {
+//         search.where['DisplayPicture'] = filters.DisplayPicture;
+//         }
+//     if (filters.OverallRating) {
+//         search.where['OverallRating'] = filters.OverallRating;
+//         }
     
-    if (filters.Facebook) {
-        search.where['Facebook'] = filters.Facebook;
-        }
+//     if (filters.Facebook) {
+//         search.where['Facebook'] = filters.Facebook;
+//         }
 
-    if (filters.Linkedin) {
-        search.where['Linkedin'] = filters.Linkedin;
-        }
-    if (filters.Instagram) {
-        search.where['Instagram'] = filters.Instagram;
-        }
-    if (filters.Twitter) {
-        search.where['Twitter'] = filters.Twitter;
-        }
+//     if (filters.Linkedin) {
+//         search.where['Linkedin'] = filters.Linkedin;
+//         }
+//     if (filters.Instagram) {
+//         search.where['Instagram'] = filters.Instagram;
+//         }
+//     if (filters.Twitter) {
+//         search.where['Twitter'] = filters.Twitter;
+//         }
 
-    if (filters.Yelp ) {
-        search.where['Yelp '] = filters.Yelp;
-        }
+//     if (filters.Yelp ) {
+//         search.where['Yelp '] = filters.Yelp;
+//         }
 
-    return search;
+//     return search;
     // return {
     //     search,
     //     orderByColumn,
@@ -250,57 +271,6 @@ private getSearchModel = (filters) => {
     //     limit
     //     };
 
-}
-
-    private addSortingToSearch = (search, filters) => {
-
-        let orderByColumn = 'CreatedAt';
-        if (filters.OrderBy) {
-        orderByColumn = filters.OrderBy;
-        }
-
-        let order = 'ASC';
-        if (filters.Order === 'descending') {
-        order = 'DESC';
-        }
-
-        search['order'] = [
-        [orderByColumn, order]
-        ];
-
-        if (filters.OrderBy) {
-        //In case the 'order-by attribute' is on associated model
-        //search['order'] = [[ '<AssociatedModel>', filters.OrderBy, order]];
-        }
-        return {
-            order,
-            orderByColumn
-    };
-}
-
-    private addPaginationToSearch = (search, filters) => {
-
-        let limit = 25;
-        if (filters.ItemsPerPage) {
-        limit = filters.ItemsPerPage;
-         }
-
-        let offset = 0;
-        let pageIndex = 0;
-
-        if (filters.PageIndex) {
-        pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
-        offset = pageIndex * limit;
-        }
-
-        search['limit'] = limit;
-        search['offset'] = offset;
-
-        return {
-             pageIndex,
-             limit
-    };
-}
-
+// }
 
 }

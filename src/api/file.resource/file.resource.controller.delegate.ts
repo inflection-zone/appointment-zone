@@ -80,31 +80,31 @@ export class FileResourceControllerDelegate {
     //     return readStream;
     // }
 
-    // getById = async (id: uuid) => {
-    //     const record = await this._service.getById(id);
-    //     if (record === null) {
-    //         ErrorHandler.throwNotFoundError('File resource with id ' + id.toString() + ' cannot be found!');
-    //     }
-    //     return this.getEnrichedDto(record);
-    // }
+    getById = async (id: uuid) => {
+        const record = await this._service.getById(id);
+        if (record === null) {
+            ErrorHandler.throwNotFoundError('File resource with id ' + id.toString() + ' cannot be found!');
+        }
+        return this.getEnrichedDto(record);
+    }
 
-    // delete = async (id: uuid) => {
-    //     const record = await this._service.getById(id);
-    //     if (record == null) {
-    //         ErrorHandler.throwNotFoundError('File resource with id ' + id.toString() + ' cannot be found!');
-    //     }
-    //     var storageKey = record.StorageKey;
-    //     var s3 = getS3Client();
-    //     const params = {
-    //         Bucket : process.env.STORAGE_BUCKET,
-    //         Key    : storageKey
-    //     };
-    //     await s3.deleteObject(params).promise();
-    //     const fileResourceDeleted = await this._service.delete(id);
-    //     return {
-    //         Deleted : fileResourceDeleted
-    //     };
-    // }
+    delete = async (id: uuid) => {
+        const record = await this._service.getById(id);
+        if (record == null) {
+            ErrorHandler.throwNotFoundError('File resource with id ' + id.toString() + ' cannot be found!');
+        }
+        var storageKey = record.StorageKey;
+        var s3 = getS3Client();
+        const params = {
+            Bucket : process.env.STORAGE_BUCKET,
+            Key    : storageKey
+        };
+        await s3.deleteObject(params).promise();
+        const fileResourceDeleted = await this._service.delete(id);
+        return {
+            Deleted : fileResourceDeleted
+        };
+    }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
