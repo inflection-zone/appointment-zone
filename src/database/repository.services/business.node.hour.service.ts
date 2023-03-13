@@ -44,9 +44,9 @@ export class BusinessNodeHourService{
 search = async (filters) => {
     try {
         const search : Prisma.business_node_hoursFindManyArgs = {};
-        if (filters.BusinessNodeId != null) {
+        if (filters.businessNodeId != null) {
             search.where = {
-                BusinessNodeId : filters.BusinessNodeId
+                BusinessNodeId : filters.businessNodeId
             }
         }
         // if (filters.LastName != null) {

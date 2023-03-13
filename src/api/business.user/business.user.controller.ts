@@ -30,7 +30,7 @@ export class BusinessUserController extends BaseController {
 
     getById = async (request:express.Request, response:express.Response): Promise <void>=>{
         try{
-            await this.authorize('BusinessUser.GetById', request, response);
+            await this.authorize('BusinessUser.GetById', request, response, false);
             const record = await this._delegate.getById(request.params.id);
             const message ="Business user retrieved successfully!";
             ResponseHandler.success(request, response, message, 200, record);
@@ -54,7 +54,7 @@ export class BusinessUserController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
-            await this.authorize('BusinessUser.Update', request, response);
+            await this.authorize('BusinessUser.Update', request, response, false);
             const updatedRecord = await this._delegate.update(request.params.id, request.body);
             const message = 'Business user updated successfully!';
             ResponseHandler.success(request, response, message, 200, updatedRecord);
@@ -65,7 +65,7 @@ export class BusinessUserController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
-            await this.authorize('BusinessUser.Delete', request, response);
+            await this.authorize('BusinessUser.Delete', request, response, false);
             const result = await this._delegate.delete(request.params.id);
             const message = 'Business user deleted successfully!';
             ResponseHandler.success(request, response, message, 200, result);

@@ -30,7 +30,7 @@ export class BusinessNodeHourController extends BaseController {
 
     getById = async (request:express.Request, response:express.Response): Promise <void>=>{
         try{
-            await this.authorize('BusinessNodeHour.GetById', request, response);
+            await this.authorize('BusinessNodeHour.GetById', request, response, false);
             const record = await this._delegate.getById(request.params.id);
             const message ="Business node hour retrieved successfully!";
             ResponseHandler.success(request, response, message, 200, record);
@@ -54,7 +54,7 @@ export class BusinessNodeHourController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
-            await this.authorize('BusinessNodeHour.Update', request, response);
+            await this.authorize('BusinessNodeHour.Update', request, response, false);
             const updatedRecord = await this._delegate.update(request.params.id, request.body);
             const message = 'Business node hour updated successfully!';
             ResponseHandler.success(request, response, message, 200, updatedRecord);
@@ -65,7 +65,7 @@ export class BusinessNodeHourController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
-            await this.authorize('BusinessNodeHour.Delete', request, response);
+            await this.authorize('BusinessNodeHour.Delete', request, response, false);
             const result = await this._delegate.delete(request.params.id);
             const message = 'Business node hour deleted successfully!';
             ResponseHandler.success(request, response, message, 200, result);

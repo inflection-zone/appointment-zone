@@ -85,16 +85,16 @@ export class BusinessNodeHourValidator {
     static validateSearchRequest = async (query) => {
         try {
             const schema = joi.object({
-                BusinessNodeId                     : joi.string().max(255).optional(),
-                Type                               : joi.string().max(255).optional(),
-                Day                                : joi.string().max(255).optional(),
-                Date                               : joi.date().iso().optional(),
-                IsOpen                             : joi.boolean().optional().default('true'),
-                Message                            : joi.string().max(255).optional(),
-                StartTime                          : joi.date().iso().optional().default('10:00:00'), 
-                EndTime                            : joi.date().iso().optional().default('21:00:00'),
-                IsActive                           : joi.boolean().optional().default('true'),
-                IsDeleted                          : joi.boolean().optional(),
+                businessNodeId                     : joi.string().max(255).optional(),
+                type                               : joi.string().max(255).optional(),
+                day                                : joi.string().max(255).optional(),
+                date                               : joi.date().iso().optional(),
+                isOpen                             : joi.boolean().optional().default('true'),
+                message                            : joi.string().max(255).optional(),
+                startTime                          : joi.date().iso().optional().default('10:00:00'), 
+                endTime                            : joi.date().iso().optional().default('21:00:00'),
+                isActive                           : joi.boolean().optional().default('true'),
+                isDeleted                          : joi.boolean().optional(),
             });
             return await schema.validateAsync(query);
 
