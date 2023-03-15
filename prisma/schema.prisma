@@ -116,12 +116,12 @@ model business_nodes {
   IsDeleted               Boolean    @default(false)
   DeletedAt               DateTime?  @db.DateTime(0)
   Business                businesses @relation(fields: [BusinessId], references: [id])
-  BusinessUser     business_users[]
+  BusinessService         business_services[]
 
 }
 
 model business_services {
-  id                    String    @id @db.Char(36)
+  id                    String    @id @default(uuid())
   AllowCancellation     Boolean   @default(false)
   BusinessNodeId        String    @db.Char(36)
   CancellationCharges   Float     @default(0) @db.Float
@@ -145,6 +145,8 @@ model business_services {
   UpdatedAt             DateTime  @updatedAt
   IsDeleted             Boolean   @default(false)
   DeletedAt             DateTime? @db.DateTime(0)
+  BusinessNode          business_nodes @relation(fields: [BusinessNodeId], references: [id])
+
 }
 
 model business_skills {
@@ -225,32 +227,31 @@ model business_users {
   UpdatedAt               DateTime  @updatedAt
   IsDeleted               Boolean   @default(false)
   DeletedAt               DateTime? @db.DateTime(0)
-  BusinessNode            business_nodes @relation(fields: [BusinessNodeId], references: [id])
 }
 
 model businesses {
-  id             String           @id @default(uuid())
-  ExternalId     String?          @db.VarChar(255)
-  Name           String           @unique @db.VarChar(255)
-  Mobile         String           @unique @db.VarChar(255)
-  Email          String           @unique @db.VarChar(255)
-  AboutUs        String?          @db.Text
-  Logo           String?          @db.Text
-  DisplayPicture String?          @db.Text
-  OverallRating  Float?           @db.Float
-  Address        String?          @db.Text
-  ApiKey         String           @db.VarChar(255)
-  Facebook       String?          @db.VarChar(255)
-  Linkedin       String?          @db.VarChar(255)
-  Twitter        String?          @db.VarChar(255)
-  Instagram      String?          @db.VarChar(255)
-  Yelp           String?          @db.VarChar(255)
-  IsActive       Boolean          @default(true)
-  CreatedAt      DateTime         @default(now())
-  UpdatedAt      DateTime         @updatedAt
-  IsDeleted      Boolean          @default(false)
-  DeletedAt      DateTime?        @db.DateTime(0)
-  BusinessNode   business_nodes[]
+  id                    String              @id @default(uuid())
+  ExternalId            String?             @db.VarChar(255)
+  Name                  String              @db.VarChar(255)
+  Mobile                String              @unique @db.VarChar(255)
+  Email                 String              @unique @db.VarChar(255)
+  AboutUs               String?             @db.Text
+  Logo                  String?             @db.Text
+  DisplayPicture        String?             @db.Text
+  OverallRating         Float?              @db.Float
+  Address               String?             @db.Text
+  ApiKey                String              @db.VarChar(255)
+  Facebook              String?             @db.VarChar(255)
+  Linkedin              String?             @db.VarChar(255)
+  Twitter               String?             @db.VarChar(255)
+  Instagram             String?             @db.VarChar(255)
+  Yelp                  String?             @db.VarChar(255)
+  IsActive              Boolean             @default(true)
+  CreatedAt             DateTime            @default(now())
+  UpdatedAt             DateTime            @updatedAt
+  IsDeleted             Boolean             @default(false)
+  DeletedAt             DateTime?           @db.DateTime(0)
+  BusinessNode          business_nodes[]
 }
 
 model customers {

@@ -4,6 +4,7 @@ import { register as registerCustomerRoutes}  from "../api/customer/customer.rou
 import { register as registerBusinessRoutes}  from "../api/business/business.routes";
 import { register as registerApiClientRoutes}  from "../api/api.client/api.client.routes";
 import { register as registerBusinessNodeRoutes } from "../api/business.node/business.node.routes";
+import { register as registerBusinessServiceRoutes } from "../api/business.service/business.service.routes";
 import { register as registerUserRoleRoutes } from "../api/user.role/user.role.routes";
 import { register as registerFileREsourceRoutes       } from "../api/file.resource/file.resource.routes";
 import { register as registerTypesRoutes} from "../api/types/types.routes";
@@ -36,11 +37,14 @@ export class Router {
                 registerBusinessRoutes(this._app);
                 registerApiClientRoutes(this._app);
                 registerBusinessNodeRoutes(this._app)
+                registerBusinessServiceRoutes(this._app);
+
                 registerUserRoleRoutes(this._app);
                 registerFileREsourceRoutes(this._app);
                 registerTypesRoutes(this._app);
                 registerUserRoutes(this._app);
                 registerBusinessUserRoutes(this._app);
+
 
                 
 

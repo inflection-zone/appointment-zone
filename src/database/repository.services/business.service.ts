@@ -38,19 +38,6 @@ export class BusinessService{
         }
 
     }
-    getBusinessWithName = async (name) => {
-        try {
-            const record = await this.prisma.businesses.findUnique({ 
-                where : 
-                {
-                    Name : name,                    
-                 }
-            });
-            return record;
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('Unable to check if business exists with name!', error);
-        }
-    }
 
     getBusinessWithEmail = async (email) => {
         try {

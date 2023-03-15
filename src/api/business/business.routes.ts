@@ -17,5 +17,5 @@ export const register = (app: express.Application): void => {
      router.get('/search', authenticator.authenticateClient, controller.search);
      router.get('/:id', authenticator.authenticateClient, controller.getById);
      
-    app.use('/api/v1/business', router);
+    app.use('/api/v1/businesses', router);
 };

@@ -120,8 +120,8 @@ CREATE TABLE `business_nodes` (
     `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
     `DeletedAt` DATETIME(0) NULL,
 
+    UNIQUE INDEX `business_nodes_Mobile_key`(`Mobile`),
     UNIQUE INDEX `business_nodes_Email_key`(`Email`),
-    INDEX `business_nodes_BusinessId_fkey`(`BusinessId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -221,7 +221,7 @@ CREATE TABLE `business_user_skills` (
 
 -- CreateTable
 CREATE TABLE `business_users` (
-    `id` CHAR(36) NOT NULL,
+    `id` VARCHAR(191) NOT NULL,
     `AboutMe` TEXT NULL,
     `BusinessNodeId` CHAR(36) NOT NULL,
     `DisplayPicture` TEXT NULL,
@@ -247,6 +247,8 @@ CREATE TABLE `business_users` (
     `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
     `DeletedAt` DATETIME(0) NULL,
 
+    UNIQUE INDEX `business_users_Email_key`(`Email`),
+    UNIQUE INDEX `business_users_Mobile_key`(`Mobile`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -274,6 +276,9 @@ CREATE TABLE `businesses` (
     `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
     `DeletedAt` DATETIME(0) NULL,
 
+    UNIQUE INDEX `businesses_Name_key`(`Name`),
+    UNIQUE INDEX `businesses_Mobile_key`(`Mobile`),
+    UNIQUE INDEX `businesses_Email_key`(`Email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -296,6 +301,8 @@ CREATE TABLE `customers` (
     `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
     `DeletedAt` DATETIME(0) NULL,
 
+    UNIQUE INDEX `customers_Email_key`(`Email`),
+    UNIQUE INDEX `customers_Mobile_key`(`Mobile`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -505,6 +512,9 @@ CREATE TABLE `_privilegesToroles` (
 
 -- AddForeignKey
 ALTER TABLE `business_nodes` ADD CONSTRAINT `business_nodes_BusinessId_fkey` FOREIGN KEY (`BusinessId`) REFERENCES `businesses`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `business_services` ADD CONSTRAINT `business_services_BusinessNodeId_fkey` FOREIGN KEY (`BusinessNodeId`) REFERENCES `business_nodes`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `user_roles` ADD CONSTRAINT `user_roles_RoleId_fkey` FOREIGN KEY (`RoleId`) REFERENCES `roles`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

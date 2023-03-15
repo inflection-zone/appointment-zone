@@ -2,7 +2,9 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 import { ApiError } from "../../common/api.error";
-import { BusinessCreateModel, BusinessUpdateModel, BusinessDto,BusinessSearchFilters, BusinessSearchResults  } from "../../domain.types/business/business.domain.types";
+import { BusinessCreateModel, BusinessUpdateModel,
+         BusinessDto,BusinessSearchFilters, BusinessSearchResults } 
+         from "../../domain.types/business/business.domain.types";
 import { BusinessValidator as validator } from './business.validator';
 import { BusinessService } from '../../database/repository.services/business.service';
 import { ErrorHandler } from '../../common/error.handler';
@@ -28,10 +30,6 @@ export class BusinessControllerDelegate {
     create = async (requestBody: any) => {
 
         await validator.validateCreateRequest(requestBody);
-        var businessWithName = await this._service.getBusinessWithName(requestBody.Name);
-        if (businessWithName) {
-            ErrorHandler.throwDuplicateUserError(`Business with name ${requestBody.Name} already exists!`);
-        }
         var businessWithEmail = await this._service.getBusinessWithEmail(requestBody.Email);
         if (businessWithEmail) {
             ErrorHandler.throwDuplicateUserError(`Business with email ${requestBody.Email} already exists!`);
