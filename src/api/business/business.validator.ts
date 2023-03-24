@@ -31,33 +31,17 @@ export class BusinessValidator {
         }
     };
 
-
     static validateSearchRequest = async (query) => {
         try {
             const schema = joi.object({
-                ExternalId      : joi.string().max(255).optional(),
-                Name            : joi.string().max(255).optional(),
-                Mobile          : joi.string().max(255).optional(),
-                Email           : joi.string().max(255).optional(),
-                AboutUs         : joi.string().max(255).optional(),
-                Logo            : joi.string().max(255).optional(),
-                DisplayPicture  : joi.string().max(255).optional(),
-                OverallRating   : joi.number().optional(),
-                Address         : joi.string().max(255).optional(),
-                ApiKey          : joi.string().max(255).optional(),
-                Facebook        : joi.string().max(255).optional(),
-                Linkedin        : joi.string().max(255).optional(),
-                Twitter         : joi.string().max(255).optional(),
-                Instagram       : joi.string().max(255).optional(),
-                Yelp            : joi.string().max(255).optional(),
-           
+                isActive        : joi.boolean().optional(),
             });
             return await schema.validateAsync(query);
 
         } catch (error) {
             ErrorHandler.handleValidationError(error);
         }
-    }
+    };
 
     static validateUpdateRequest = async (requestBody) => {
         try {
@@ -81,6 +65,6 @@ export class BusinessValidator {
         } catch (error) {
             ErrorHandler.handleValidationError(error);
         }
-    }
+    };
    
 }

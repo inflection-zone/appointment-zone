@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["createMany"]
 }
 
 datasource db {
@@ -8,7 +9,7 @@ datasource db {
 }
 
 model appointment_statuses {
-  id                   String    @id @db.Char(36)
+  id                   String    @id @default(uuid())
   BusinessNodeId       String    @db.Char(36)
   CreatedAt            DateTime  @default(now())
   IsActive             Boolean   @default(true)
@@ -31,7 +32,7 @@ model appointment_statuses {
 }
 
 model appointments {
-  id                       String    @id @db.Char(36)
+  id                       String    @id @default(uuid())
   BusinessNodeId           String    @db.Char(36)
   BusinessServiceId        String    @db.Char(36)
   BusinessUserId           String    @db.Char(36)
@@ -68,7 +69,7 @@ model appointments {
 }
 
 model business_node_customers {
-  id             String    @id @db.Char(36)
+  id             String  @id @default(uuid())
   BusinessNodeId String    @db.Char(36)
   CreatedAt      DateTime  @default(now())
   CustomerId     String    @db.Char(36)
@@ -80,7 +81,7 @@ model business_node_customers {
 }
 
 model business_node_hours {
-  id             String    @id @db.Char(36)
+  id             String    @id @default(uuid())
   BusinessNodeId String    @db.Char(36)
   CreatedAt      DateTime  @default(now())
   Date           DateTime? @db.DateTime(0)
@@ -121,36 +122,37 @@ model business_nodes {
 }
 
 model business_services {
-  id                    String    @id @default(uuid())
-  AllowCancellation     Boolean   @default(false)
-  BusinessNodeId        String    @db.Char(36)
-  CancellationCharges   Float     @default(0) @db.Float
-  CancellationWindow    String    @default("1h") @db.VarChar(255)
-  CreatedAt             DateTime  @default(now())
-  Description           String?   @db.Text
-  DisplayServicePicture String?   @db.Text
-  EnableLoyalty         Boolean   @default(true)
-  Fees                  Float     @default(0) @db.Float
-  IsActive              Boolean   @default(true)
-  IsTaxable             Boolean   @default(false)
-  Name                  String    @db.VarChar(255)
-  PaymentPercent        Float     @default(0) @db.Float
-  PaymentRequired       Boolean   @default(false)
-  PriorBookingWindow    String    @default("1h") @db.VarChar(255)
-  ReminderType          String?   @db.VarChar(255)
-  ReminderWindow        String?   @db.VarChar(255)
-  SendReminder          Boolean   @default(false)
-  ServiceDuration       String    @default("30m") @db.VarChar(255)
-  TaxRate               Float     @default(0) @db.Float
-  UpdatedAt             DateTime  @updatedAt
-  IsDeleted             Boolean   @default(false)
-  DeletedAt             DateTime? @db.DateTime(0)
-  BusinessNode          business_nodes @relation(fields: [BusinessNodeId], references: [id])
+  id                    String                    @id @default(uuid())
+  AllowCancellation     Boolean                   @default(false)
+  BusinessNodeId        String                    @db.Char(36)
+  CancellationCharges   Float                     @default(0) @db.Float
+  CancellationWindow    String                    @default("1h") @db.VarChar(255)
+  CreatedAt             DateTime                  @default(now())
+  Description           String?                   @db.Text
+  DisplayServicePicture String?                   @db.Text
+  EnableLoyalty         Boolean                   @default(true)
+  Fees                  Float                     @default(0) @db.Float
+  IsActive              Boolean                   @default(true)
+  IsTaxable             Boolean                   @default(false)
+  Name                  String                    @db.VarChar(255)
+  PaymentPercent        Float                     @default(0) @db.Float
+  PaymentRequired       Boolean                   @default(false)
+  PriorBookingWindow    String                    @default("1h") @db.VarChar(255)
+  ReminderType          String?                   @db.VarChar(255)
+  ReminderWindow        String?                   @db.VarChar(255)
+  SendReminder          Boolean                   @default(false)
+  ServiceDuration       String                    @default("30m") @db.VarChar(255)
+  TaxRate               Float                     @default(0) @db.Float
+  UpdatedAt             DateTime                  @updatedAt
+  IsDeleted             Boolean                   @default(false)
+  DeletedAt             DateTime?                 @db.DateTime(0)
+  BusinessNode          business_nodes            @relation(fields: [BusinessNodeId], references: [id])
+  BusinessServices      business_user_services[]
 
 }
 
 model business_skills {
-  id             String    @id @db.Char(36)
+  id             String    @id @default(uuid())
   BusinessNodeId String    @db.Char(36)
   CreatedAt      DateTime  @default(now())
   Description    String?   @db.Text
@@ -163,7 +165,7 @@ model business_skills {
 }
 
 model business_user_hours {
-  id             String    @id @db.Char(36)
+  id             String    @id @default(uuid())
   BusinessUserId String    @db.Char(36)
   CreatedAt      DateTime  @default(now())
   Date           DateTime? @db.DateTime(0)
@@ -177,21 +179,25 @@ model business_user_hours {
   UpdatedAt      DateTime  @updatedAt
   IsDeleted      Boolean   @default(false)
   DeletedAt      DateTime? @db.DateTime(0)
+  BusinessUser   business_users  @relation(fields: [BusinessUserId], references: [id]) 
 }
 
 model business_user_services {
-  id                String    @id @db.Char(36)
-  BusinessServiceId String    @db.Char(36)
-  BusinessUserId    String    @db.Char(36)
-  CreatedAt         DateTime  @default(now())
-  IsActive          Boolean   @default(true)
-  UpdatedAt         DateTime  @updatedAt
-  IsDeleted         Boolean   @default(false)
-  DeletedAt         DateTime? @db.DateTime(0)
+  id                  String              @id @default(uuid())
+  BusinessServiceId   String              @db.Char(36)
+  BusinessUserId      String              @db.Char(36)
+  CreatedAt           DateTime            @default(now())
+  IsActive            Boolean             @default(true)
+  UpdatedAt           DateTime            @updatedAt
+  IsDeleted           Boolean             @default(false)
+  DeletedAt           DateTime?           @db.DateTime(0)
+  BusinessService     business_services   @relation(fields: [BusinessServiceId], references: [id])
+  BusinessUser        business_users      @relation(fields: [BusinessUserId], references: [id])
+
 }
 
 model business_user_skills {
-  id              String    @id @db.Char(36)
+  id              String   @id @default(uuid())
   BusinessSkillId String    @db.Char(36)
   BusinessUserId  String    @db.Char(36)
   CreatedAt       DateTime  @default(now())
@@ -202,31 +208,33 @@ model business_user_skills {
 }
 
 model business_users {
-  id                      String    @id @default(uuid())
-  AboutMe                 String?   @db.Text
-  BusinessNodeId          String    @db.Char(36)
-  DisplayPicture          String?   @db.Text
-  Dob                     DateTime? @db.DateTime(0)
-  Email                   String?   @unique @db.VarChar(255)
-  Experience              String?   @db.VarChar(255)
-  Facebook                String?   @db.VarChar(255)
-  FirstName               String    @db.VarChar(255)
-  Gender                  String?   @db.VarChar(255)
-  Instagram               String?   @db.VarChar(255)
-  IsActive                Boolean   @default(true)
-  IsAvailableForEmergency Boolean?  @default(true)
-  LastName                String    @db.VarChar(255)
-  Linkedin                String?   @db.VarChar(255)
-  Mobile                  String    @unique @db.VarChar(255)
-  OverallRating           Float?    @db.Float
-  Prefix                  String    @db.VarChar(255)
-  Qualification           String?   @db.Text
-  Twitter                 String?   @db.VarChar(255)
-  Yelp                    String?   @db.VarChar(255)
-  CreatedAt               DateTime  @default(now())
-  UpdatedAt               DateTime  @updatedAt
-  IsDeleted               Boolean   @default(false)
-  DeletedAt               DateTime? @db.DateTime(0)
+  id                      String                     @id @default(uuid())
+  AboutMe                 String?                    @db.Text
+  BusinessNodeId          String                     @db.Char(36)
+  DisplayPicture          String?                    @db.Text
+  Dob                     DateTime?                  @db.DateTime(0)
+  Email                   String?                    @unique @db.VarChar(255)
+  Experience              String?                    @db.VarChar(255)
+  Facebook                String?                    @db.VarChar(255)
+  FirstName               String                     @db.VarChar(255)
+  Gender                  String?                    @db.VarChar(255)
+  Instagram               String?                    @db.VarChar(255)
+  IsActive                Boolean                    @default(true)
+  IsAvailableForEmergency Boolean?                   @default(true)
+  LastName                String                     @db.VarChar(255)
+  Linkedin                String?                    @db.VarChar(255)
+  Mobile                  String                     @unique @db.VarChar(255)
+  OverallRating           Float?                     @db.Float
+  Prefix                  String                     @db.VarChar(255)
+  Qualification           String?                    @db.Text
+  Twitter                 String?                    @db.VarChar(255)
+  Yelp                    String?                    @db.VarChar(255)
+  CreatedAt               DateTime                   @default(now())
+  UpdatedAt               DateTime                   @updatedAt
+  IsDeleted               Boolean                    @default(false)
+  DeletedAt               DateTime?                  @db.DateTime(0)
+  BusinessUsers           business_user_services[]
+  BusinessUserHours       business_user_hours[]
 }
 
 model businesses {
@@ -274,7 +282,7 @@ model customers {
 }
 
 model notifications {
-  id             String    @id @db.Char(36)
+  id             String    @id @default(uuid())
   Body           String?   @db.Text
   BusinessNodeId String    @db.Char(36)
   CustomerId     String    @db.Char(36)
@@ -294,7 +302,7 @@ model notifications {
 }
 
 model payment_transactions {
-  id             String    @id @db.Char(36)
+  id             String    @id @default(uuid())
   AppointmentId  String?   @db.Char(36)
   BusinessNodeId String    @db.Char(36)
   CompletedOn    DateTime? @db.DateTime(0)
@@ -313,7 +321,7 @@ model payment_transactions {
 }
 
 model user_messages {
-  id             String    @id @db.Char(36)
+  id             String    @id @default(uuid())
   Body           String?   @db.Text
   BusinessNodeId String    @db.Char(36)
   CustomerId     String    @db.Char(36)
@@ -348,22 +356,21 @@ model api_clients {
 }
 
 model roles {
-  id            Int              @id @default(autoincrement())
-  RoleName      String           @db.Char(36)
-  Description   String?          @db.Text
-  CreatedAt     DateTime         @default(now())
-  UpdatedAt     DateTime         @updatedAt
+  id             Int              @id @default(autoincrement())
+  RoleName       String           @db.Char(36)
+  Description    String?          @db.Text
+  CreatedAt      DateTime         @default(now())
+  UpdatedAt      DateTime         @updatedAt
   RolePrivileges privileges[]
-  // Users         users[]
-  Users      user_roles[]
+  Users          user_roles[]
 }
 
 model privileges {
-  id        String  @id @default(uuid())
-  RoleName  String  @db.Char(36)   
-  Privilege String  @db.Char(36)
-  CreatedAt DateTime @default(now())
-  UpdatedAt DateTime @updatedAt
+  id        String    @id @default(uuid())
+  RoleName  String    @db.Char(36)   
+  Privilege String    @db.Char(36)
+  CreatedAt DateTime  @default(now())
+  UpdatedAt DateTime  @updatedAt
   Role      roles[]   
 }
 
@@ -386,8 +393,7 @@ model users {
   FileResource     file_resource?
   UserLoginSession user_login_session[]
   UserOtp          user_otp?
-  // Roles            roles[]
-  Roles        user_roles[]
+  Roles            user_roles[]
 }
 model user_roles {
   id        String   @id @default(uuid())
