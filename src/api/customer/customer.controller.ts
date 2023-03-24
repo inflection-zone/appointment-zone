@@ -30,7 +30,7 @@ export class CustomerController extends BaseController {
 
   getById = async ( request: express.Request, response: express.Response ): Promise<void> => {
     try {
-      await this.authorize("Customer.GetById", request, response);
+      await this.authorize("Customer.GetById", request, response, false);
       const record = await this._delegate.getById(request.params.id);
       const message = "Customer retrieved successfully!";
       ResponseHandler.success(request, response, message, 200, record);
@@ -52,7 +52,7 @@ export class CustomerController extends BaseController {
 
   update = async (request: express.Request,response: express.Response): Promise<void> => {
     try {
-      await this.authorize("Customer.Update", request, response);
+      await this.authorize("Customer.Update", request, response, false);
       const record = await this._delegate.update(request.params.id, request.body);
       const message = "Customer updated successfully!";
       ResponseHandler.success(request, response, message, 200, record);
@@ -63,7 +63,7 @@ export class CustomerController extends BaseController {
 
   delete = async (request:express.Request,response:express.Response):Promise<void> =>{
     try{
-        await this.authorize('Customer.Delete',request,response);
+        await this.authorize('Customer.Delete',request,response, false);
         const record = await this._delegate.delete(request.params.id);
         const message = "Customer deleted successfully!";
         ResponseHandler.success(request, response, message, 200, record);

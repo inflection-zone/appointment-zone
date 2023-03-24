@@ -12,7 +12,8 @@ import { register as registerApiClientRoutes}  from "../api/api.client/api.clien
 import { register as registerUserRoleRoutes } from "../api/user.role/user.role.routes";
 import { register as registerFileREsourceRoutes       } from "../api/file.resource/file.resource.routes";
 import { register as registerTypesRoutes} from "../api/types/types.routes";
-import { register as registerUserRoutes } from "../api/user/user.routes";
+import { register as registerUserRoutes } from "../api/user/user.routes"
+import { register as registerBusinessNodeHourRoutes} from "../api/business.node.hour/business.node.hour.routes"
 
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -49,7 +50,8 @@ export class Router {
                 registerFileREsourceRoutes(this._app);
                 registerTypesRoutes(this._app);
                 registerUserRoutes(this._app);
-                
+                registerBusinessUserRoutes(this._app);
+                registerBusinessNodeHourRoutes(this._app);
 
                 resolve(true);
 

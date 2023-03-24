@@ -95,6 +95,7 @@ model business_node_hours {
   UpdatedAt      DateTime  @updatedAt
   IsDeleted      Boolean   @default(false)
   DeletedAt      DateTime? @db.DateTime(0)
+  BusinessNode            business_nodes @relation(fields: [BusinessNodeId], references: [id])
 }
 
 model business_nodes {
@@ -117,7 +118,8 @@ model business_nodes {
   IsDeleted               Boolean    @default(false)
   DeletedAt               DateTime?  @db.DateTime(0)
   Business                businesses @relation(fields: [BusinessId], references: [id])
-  BusinessService         business_services[]
+  // BusinessUser     business_users[]
+  BusinessNodeHour     business_node_hours[]
 
 }
 
@@ -146,7 +148,7 @@ model business_services {
   UpdatedAt             DateTime                  @updatedAt
   IsDeleted             Boolean                   @default(false)
   DeletedAt             DateTime?                 @db.DateTime(0)
-  BusinessNode          business_nodes            @relation(fields: [BusinessNodeId], references: [id])
+  // BusinessNode          business_nodes            @relation(fields: [BusinessNodeId], references: [id])
   BusinessServices      business_user_services[]
 
 }
