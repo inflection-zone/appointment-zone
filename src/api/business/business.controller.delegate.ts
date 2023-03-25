@@ -2,7 +2,9 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 import { ApiError } from "../../common/api.error";
-import { BusinessCreateModel, BusinessUpdateModel, BusinessDto,BusinessSearchFilters, BusinessSearchResults  } from "../../domain.types/business/business.domain.types";
+import { BusinessCreateModel, BusinessUpdateModel,
+         BusinessDto,BusinessSearchFilters, BusinessSearchResults } 
+         from "../../domain.types/business/business.domain.types";
 import { BusinessValidator as validator } from './business.validator';
 import { BusinessService } from '../../database/repository.services/business.service';
 import { ErrorHandler } from '../../common/error.handler';
@@ -28,10 +30,6 @@ export class BusinessControllerDelegate {
     create = async (requestBody: any) => {
 
         await validator.validateCreateRequest(requestBody);
-        var businessWithName = await this._service.getBusinessWithName(requestBody.Name);
-        if (businessWithName) {
-            ErrorHandler.throwDuplicateUserError(`Business with name ${requestBody.Name} already exists!`);
-        }
         var businessWithEmail = await this._service.getBusinessWithEmail(requestBody.Email);
         if (businessWithEmail) {
             ErrorHandler.throwDuplicateUserError(`Business with email ${requestBody.Email} already exists!`);
@@ -40,13 +38,11 @@ export class BusinessControllerDelegate {
         if (businessWithMobile) {
             ErrorHandler.throwDuplicateUserError(`Business with mobile ${requestBody.Mobile} already exists!`);
         }
-        // eslint-DisplayPictureable-next-line @typescript-eslint/no-unused-vars
         var createModel: BusinessCreateModel = this.getCreateModel(requestBody);
         const record: BusinessDto = await this._service.create(createModel);
         if (record === null) {
             throw new ApiError('Unable to create Business!', 400);
         }
-
         return this.getEnrichedDto(record);
     };
 
@@ -93,8 +89,6 @@ export class BusinessControllerDelegate {
 
     }
     
-
-
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     getCreateModel = (requestBody): BusinessCreateModel => {
@@ -121,71 +115,14 @@ export class BusinessControllerDelegate {
 
     getSearchFilters = (query) => {
         var filters = {};
-            // var ExternalId= query.ExternalId  ? query.ExternalId : null;
-            // if (ExternalId!= null) {
-            //     filters['ExternalId'] = ExternalId;
-            // }
-
-            // var Name= query.Name ? query.Name : null;
-            // if (Name!= null) {
-            //     filters['Name'] = Name;
-            // }
-
-            // var Email= query.Email ? query.Email : null;
-            // if (Email!= null) {
-            //     filters['Email'] = Email;
-            // }
-
-            // var Mobile= query.Mobile ? query.Mobile : null;
-            // if (Mobile!= null) {
-            //     filters['Mobile'] = Mobile;
-            // }
-
-            // var AboutUs= query.AboutUs ? query.AboutUs : null;
-            // if (AboutUs != null) {
-            //     filters['AboutUs'] = AboutUs;
-            // }
-
-            // var Logo= query.Logo ? query.Logo : null;
-            // if (Logo!= null) {
-            //     filters['Logo'] = Logo;
-            //     }
-
-            // var Address= query.Address ? query.Address : null;
-            // if (Address != null) {
-            //     filters['Address'] = Address;
-            //     }
-
-            // var Facebook= query.Facebook ? query.Facebook : null;
-            // if (Facebook != null) {
-            //     filters['Facebook'] = Facebook;
-            //     }
-
-            // var  Linkedin= query. Linkedin ? query. Linkedin : null;
-            // if ( Linkedin != null) {
-            //     filters[' Linkedin'] =  Linkedin;
-            // }
-
-            // var Twitter= query.Twitter ? query.Twitter : null;
-            // if (Twitter != null) {
-            //     filters['Twitter'] = Twitter;
-            // }
-
-            // var Instagram= query.Instagram ? query.Instagram : null;
-            // if (Instagram != null) {
-            //     filters['Instagram'] = Instagram;
-            // }
-
-            // var Yelp=query.Yelp ? query.Yelp : null;
-            // if (Yelp != null) {
-            //     filters['Yelp'] = Yelp;
-            // }
-
-            var IsActive= query.IsActive ? query.IsActive : null;
-            if (IsActive != null) {
-                filters['IsActive'] = IsActive;
+        
+            var isActive = query.isActive ? query.isActive : true;
+            if (isActive == true) {
+                filters['IsActive'] = isActive;
             }
-
+            else {
+                ErrorHandler.throwNotFoundError("No active business found!");
+            }
             var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : null;
             if (itemsPerPage != null) {
                 filters['ItemsPerPage'] = itemsPerPage;
@@ -200,7 +137,7 @@ export class BusinessControllerDelegate {
 
     getUpdateModel = (requestBody): BusinessUpdateModel => {
 
-        let updateModel: BusinessUpdateModel = {};
+    let updateModel: BusinessUpdateModel = {};
 
     if (Helper.hasProperty(requestBody, 'ExternalId')) {
         updateModel.ExternalId = requestBody.ExternalId;
@@ -241,15 +178,14 @@ export class BusinessControllerDelegate {
     if (Helper.hasProperty(requestBody, 'Instagram')) {
         updateModel.Instagram = requestBody.Instagram;
     }
-  if (Helper.hasProperty(requestBody, 'Yelp')) {
+    if (Helper.hasProperty(requestBody, 'Yelp')) {
         updateModel.Yelp = requestBody.Yelp;
     }
-  if (Helper.hasProperty(requestBody, 'IsActive')) {
+    if (Helper.hasProperty(requestBody, 'IsActive')) {
         updateModel.IsActive = requestBody.IsActive;
     }
     return updateModel;
-}
-
+    };
 
     //This function returns a response DTO which is enriched with available resource data
 
@@ -302,10 +238,7 @@ export class BusinessControllerDelegate {
             Instagram           : record.Instagram,
             Yelp                : record.Yelp,
             IsActive            : record.IsActive,
-
-
         };
     };
-
 
 }

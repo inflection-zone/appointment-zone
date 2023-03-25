@@ -50,6 +50,12 @@
             "BusinessService.Update",
             "BusinessService.Delete",
 
+            "BusinessUserService.Create",
+            "BusinessUserService.Search",
+            "BusinessUserService.GetById",
+            "BusinessUserService.Update",
+            "BusinessUserService.Delete",
+
             "Customer.Create",
             "Customer.Search",
             "Customer.GetById",

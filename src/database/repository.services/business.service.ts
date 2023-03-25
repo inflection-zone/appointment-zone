@@ -23,7 +23,7 @@ export class BusinessService{
             return record;
         }catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create business!',error)
-    } 
+        } 
 
     }
 
@@ -37,19 +37,6 @@ export class BusinessService{
             ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve business!', error);
         }
 
-    }
-    getBusinessWithName = async (name) => {
-        try {
-            const record = await this.prisma.businesses.findUnique({ 
-                where : 
-                {
-                    Name : name,                    
-                 }
-            });
-            return record;
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('Unable to check if business exists with name!', error);
-        }
     }
 
     getBusinessWithEmail = async (email) => {
@@ -80,7 +67,6 @@ export class BusinessService{
         }
     }
 
-
     exists = async (id) => {
         try {
             const record = await this.prisma.businesses.findUnique({where:{id:id}});
@@ -99,7 +85,6 @@ export class BusinessService{
                     IsActive : true,
                     }
             }
-
             search.orderBy = {
                     CreatedAt : 'asc'
             }
@@ -128,13 +113,12 @@ export class BusinessService{
                 Order          : search.orderBy["CreatedAt"] === 'desc' ? 'descending' : 'ascending',
                 Items          : foundResults,
             };
-    
             return searchResults;
         
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to search user records!', error);
         }
-    }
+    };
     
     update = async (id, updateModel) => {
         try {
@@ -143,28 +127,24 @@ export class BusinessService{
                         where :{
                         id : id
                     }
-                 });
-                
+                 });  
             }
             return await this.getById(id);
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to update Business!', error);
         }
-    }
+    };
 
     delete = async (id) => {
         try {
             const result = await this.prisma.businesses.delete({ where: 
                 { id: id } 
             });
-            //return result ===1;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to delete Business!', error);
   
         }
     };
-
-
     
     getBusiness = async (
         Name,
@@ -191,86 +171,5 @@ export class BusinessService{
         }
 
     }
-
-// private getSearchModel = (filters) => {
-//     var search = {
-//         where   : {},
-//         orderBy: {   
-//         },
-//         take:25
-//         // include :{}
-//     };
-//     var {
-//         order,
-//         orderByColumn
-//     } = this.addSortingToSearch(search, filters);
-//     var {
-//                 pageIndex,
-//                 limit
-//     } = this.addPaginationToSearch(search, filters);
-
-//     if (filters.ExternalId) {
-//         search.where['ExternalId'] = filters.ExternalId
-//         }
-    
-//     if (filters.Name) {
-//         search.where['Name'] = filters.Name
-//         }
-   
-//     if (filters.Mobile) {
-//         search.where['Mobile'] = filters.Mobile;
-//         }
-
-//     if (filters.Email) {
-//         search.where['Email'] = filters.Email;
-//         }
-
-//     if (filters.AboutUs) {
-//         search.where['AboutUs'] = filters.AboutUs;
-//         }
-
-//     if (filters.Logo) {
-//         search.where['Logo'] = filters.Logo;
-//         }
-    
-//     if (filters.Address) {
-//         search.where['Address'] = filters.Address;
-//         }
-    
-//     if (filters.DisplayPicture) {
-//         search.where['DisplayPicture'] = filters.DisplayPicture;
-//         }
-//     if (filters.OverallRating) {
-//         search.where['OverallRating'] = filters.OverallRating;
-//         }
-    
-//     if (filters.Facebook) {
-//         search.where['Facebook'] = filters.Facebook;
-//         }
-
-//     if (filters.Linkedin) {
-//         search.where['Linkedin'] = filters.Linkedin;
-//         }
-//     if (filters.Instagram) {
-//         search.where['Instagram'] = filters.Instagram;
-//         }
-//     if (filters.Twitter) {
-//         search.where['Twitter'] = filters.Twitter;
-//         }
-
-//     if (filters.Yelp ) {
-//         search.where['Yelp '] = filters.Yelp;
-//         }
-
-//     return search;
-    // return {
-    //     search,
-    //     orderByColumn,
-    //     order,
-    //     pageIndex,
-    //     limit
-    //     };
-
-// }
 
 }

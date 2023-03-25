@@ -1,29 +1,28 @@
 import express from 'express';
 import { ResponseHandler } from '../../common/response.handler';
-import { BusinessControllerDelegate } from './business.controller.delegate';
+import { BusinessUserHourControllerDelegate } from './business.user.hour.controller.delegate';
 import { BaseController } from '../base.controller';
-import { request } from 'http';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BusinessController extends BaseController {
+export class BusinessUserHourController extends BaseController {
 
     //#region member variables and constructors
 
-    _delegate: BusinessControllerDelegate = null;
+    _delegate: BusinessUserHourControllerDelegate = null;
 
     constructor() {
         super();
-        this._delegate = new BusinessControllerDelegate();
+        this._delegate = new BusinessUserHourControllerDelegate();
     }
 
     //#endregion
 
     create = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
-             await this.authorize('Business.Create', request, response, false);
+             await this.authorize('BusinessUserHour.Create', request, response, false);
             const record = await this._delegate.create(request.body);
-            const message = 'Business added successfully!';
+            const message = 'Business user hours added successfully!';
             ResponseHandler.success(request, response, message, 201, record);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -32,20 +31,20 @@ export class BusinessController extends BaseController {
 
     getById = async (request:express.Request, response:express.Response): Promise <void>=>{
         try{
-            await this.authorize('Business.GetById', request, response,false);
+            await this.authorize('BusinessUserHour.GetById', request, response, false);
             const record = await this._delegate.getById(request.params.id);
-            const message ="Business retrieved successfully!";
+            const message ="Business user hours retrieved successfully!";
             ResponseHandler.success(request, response, message, 200, record);
-        } catch(error){
+        }catch(error){
             ResponseHandler.handleError(request, response, error);
         }
     };
 
     search = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
-            await this.authorize('Business.Search', request, response, false);
+            await this.authorize('BusinessUserHour.Search', request, response, false);
             const searchResults = await this._delegate.search(request.query);
-            const message = 'Business records retrieved successfully!';
+            const message = 'Business user hours records retrieved successfully!';
             ResponseHandler.success(request, response, message, 200, searchResults);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -54,9 +53,9 @@ export class BusinessController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
-            await this.authorize('Business.Update', request, response, false);
+            await this.authorize('BusinessUserHour.Update', request, response, false);
             const updatedRecord = await this._delegate.update(request.params.id, request.body);
-            const message = 'Business updated successfully!';
+            const message = 'Business user hours updated successfully!';
             ResponseHandler.success(request, response, message, 200, updatedRecord);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -65,13 +64,15 @@ export class BusinessController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
-            await this.authorize('Business.Delete', request, response,false);
-            const result = await this._delegate.delete(request.params.id);
-            const message = 'Business deleted successfully!';
+            await this.authorize('BusinessUserHour.Delete', request, response, false);
+            const result = await this._delegate.delete(request.params.id, request.params.updateModel);
+            const message = 'Business user hours deleted successfully!';
             ResponseHandler.success(request, response, message, 200, result);
-        } catch (error) {
+
+        }catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
+    
 }
