@@ -32,8 +32,8 @@ export interface BusinessUserHourDto {
     Date               : Date;
     IsOpen             : boolean;
     Message            : string;
-    StartTime          : Date;
-    EndTime            : Date;
+    StartTime          : string;
+    EndTime            : string;
     IsActive           : boolean;
 }
 
@@ -44,8 +44,8 @@ export interface BusinessUserHourSearchFilters extends BaseSearchFilters {
     Date             ? : Date;
     IsOpen           ? : boolean;
     Message          ? : string;
-    StartTime        ? : Date;
-    EndTime          ? : Date;
+    StartTime        ? : string;
+    EndTime          ? : string;
     IsActive         ? : boolean;
 }
 

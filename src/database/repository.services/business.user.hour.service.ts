@@ -33,32 +33,28 @@ export class BusinessUserHourService{
 
     };
 
-    exists = async (requestBody): Promise < boolean > => {
-        try {
-            const search : Prisma.business_user_hoursFindManyArgs = {};
+    // exists = async (requestBody) => {
+    //     try {
+    //         const search : Prisma.business_user_hoursFindManyArgs = {};
             
-            var businessUserId = requestBody.BusinessUserId;
-            var type = requestBody.Type;
-            var day = requestBody.Day;
-            var date = requestBody.Date;
+    //         var businessUserId = requestBody.BusinessUserId;
+    //         var type = requestBody.Type;
+    //         var day = requestBody.Day;
+    //         var date = requestBody.Date;
 
-            search.where = {
-                IsActive : true,
-                BusinessUserId : businessUserId,
-                Type : type,
-                Day : day,
-                Date : date,
-            }
-            const record = await this.prisma.business_user_hours.findMany(search);
-            if(record.length > 0)
-            {
-                record[0];
-            }
-            return record !== null;
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to determine existance of business user hours!', error);
-        }
-    };
+    //         search.where = {
+    //             IsActive : true,
+    //             BusinessUserId : businessUserId,
+    //             Type : type,
+    //             Day : day,
+    //             Date : date,
+    //         }
+    //         const record = await this.prisma.business_user_hours.findMany(search);
+    //         return record;
+    //     } catch (error) {
+    //         ErrorHandler.throwDbAccessError('DB Error: Unable to determine existance of business user hours!', error);
+    //     }
+    // };
 
     search = async (filters) => {
         try {
@@ -124,10 +120,10 @@ export class BusinessUserHourService{
     delete = async (id, updateModel) => {
         try {
             const result = await this.prisma.business_user_hours.delete({ where: { id: id } });
-            const deleted = await this.prisma.business_user_hours.updateMany({data : {IsActive: false , id:id},
-                where : { IsActive: true}
-            });
-            return deleted;
+            // const deleted = await this.prisma.business_user_hours.updateMany({data : {IsActive: false , id:id},
+            //     where : { IsActive: true}
+            // });
+            return result;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to delete business user hours!', error);
     

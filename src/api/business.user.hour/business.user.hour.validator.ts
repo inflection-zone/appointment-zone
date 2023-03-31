@@ -14,8 +14,8 @@ export class BusinessUserHourValidator {
                 Date                : joi.date().iso().optional(),
                 IsOpen              : joi.boolean().required(),
                 Message             : joi.string().max(255).optional(),
-                StartTime           : joi.date().required(),
-                EndTime             : joi.date().required(),
+                StartTime           : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).required(),
+                EndTime             : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).required(),
                 IsActive            : joi.boolean().required(), 
             });
             return await schema.validateAsync(requestBody);
@@ -56,8 +56,8 @@ export class BusinessUserHourValidator {
                 Date                : joi.date().iso().optional(),
                 IsOpen              : joi.boolean().optional(),
                 Message             : joi.string().max(255).optional(),
-                StartTime           : joi.date().iso().optional(),
-                EndTime             : joi.date().iso().optional(),
+                StartTime           : joi.string().optional(),
+                EndTime             : joi.string().optional(),
                 IsActive            : joi.boolean().optional(), 
             });
             return await schema.validateAsync(requestBody);

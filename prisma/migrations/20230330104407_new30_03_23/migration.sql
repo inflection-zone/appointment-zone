@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE `appointment_statuses` (
-    `id` CHAR(36) NOT NULL,
+    `id` VARCHAR(191) NOT NULL,
     `BusinessNodeId` CHAR(36) NOT NULL,
     `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `IsActive` BOOLEAN NOT NULL DEFAULT true,
@@ -26,7 +26,7 @@ CREATE TABLE `appointment_statuses` (
 
 -- CreateTable
 CREATE TABLE `appointments` (
-    `id` CHAR(36) NOT NULL,
+    `id` VARCHAR(191) NOT NULL,
     `BusinessNodeId` CHAR(36) NOT NULL,
     `BusinessServiceId` CHAR(36) NOT NULL,
     `BusinessUserId` CHAR(36) NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE `appointments` (
 
 -- CreateTable
 CREATE TABLE `business_node_customers` (
-    `id` CHAR(36) NOT NULL,
+    `id` VARCHAR(191) NOT NULL,
     `BusinessNodeId` CHAR(36) NOT NULL,
     `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `CustomerId` CHAR(36) NOT NULL,
@@ -127,7 +127,7 @@ CREATE TABLE `business_nodes` (
 
 -- CreateTable
 CREATE TABLE `business_services` (
-    `id` CHAR(36) NOT NULL,
+    `id` VARCHAR(191) NOT NULL,
     `AllowCancellation` BOOLEAN NOT NULL DEFAULT false,
     `BusinessNodeId` CHAR(36) NOT NULL,
     `CancellationCharges` FLOAT NOT NULL DEFAULT 0,
@@ -157,7 +157,7 @@ CREATE TABLE `business_services` (
 
 -- CreateTable
 CREATE TABLE `business_skills` (
-    `id` CHAR(36) NOT NULL,
+    `id` VARCHAR(191) NOT NULL,
     `BusinessNodeId` CHAR(36) NOT NULL,
     `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `Description` TEXT NULL,
@@ -173,16 +173,16 @@ CREATE TABLE `business_skills` (
 
 -- CreateTable
 CREATE TABLE `business_user_hours` (
-    `id` CHAR(36) NOT NULL,
+    `id` VARCHAR(191) NOT NULL,
     `BusinessUserId` CHAR(36) NOT NULL,
     `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `Date` DATETIME(0) NULL,
     `Day` INTEGER NOT NULL,
-    `EndTime` TIME(0) NOT NULL DEFAULT '21:00:00',
+    `EndTime` VARCHAR(191) NOT NULL DEFAULT '21:00:00',
     `IsActive` BOOLEAN NOT NULL DEFAULT true,
     `IsOpen` BOOLEAN NOT NULL DEFAULT true,
     `Message` VARCHAR(255) NULL,
-    `StartTime` TIME(0) NOT NULL DEFAULT '10:00:00',
+    `StartTime` VARCHAR(191) NOT NULL DEFAULT '10:00:00',
     `Type` VARCHAR(255) NOT NULL,
     `UpdatedAt` DATETIME(3) NOT NULL,
     `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
@@ -193,7 +193,7 @@ CREATE TABLE `business_user_hours` (
 
 -- CreateTable
 CREATE TABLE `business_user_services` (
-    `id` CHAR(36) NOT NULL,
+    `id` VARCHAR(191) NOT NULL,
     `BusinessServiceId` CHAR(36) NOT NULL,
     `BusinessUserId` CHAR(36) NOT NULL,
     `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -207,7 +207,7 @@ CREATE TABLE `business_user_services` (
 
 -- CreateTable
 CREATE TABLE `business_user_skills` (
-    `id` CHAR(36) NOT NULL,
+    `id` VARCHAR(191) NOT NULL,
     `BusinessSkillId` CHAR(36) NOT NULL,
     `BusinessUserId` CHAR(36) NOT NULL,
     `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -276,7 +276,6 @@ CREATE TABLE `businesses` (
     `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
     `DeletedAt` DATETIME(0) NULL,
 
-    UNIQUE INDEX `businesses_Name_key`(`Name`),
     UNIQUE INDEX `businesses_Mobile_key`(`Mobile`),
     UNIQUE INDEX `businesses_Email_key`(`Email`),
     PRIMARY KEY (`id`)
@@ -308,7 +307,7 @@ CREATE TABLE `customers` (
 
 -- CreateTable
 CREATE TABLE `notifications` (
-    `id` CHAR(36) NOT NULL,
+    `id` VARCHAR(191) NOT NULL,
     `Body` TEXT NULL,
     `BusinessNodeId` CHAR(36) NOT NULL,
     `CustomerId` CHAR(36) NOT NULL,
@@ -331,7 +330,7 @@ CREATE TABLE `notifications` (
 
 -- CreateTable
 CREATE TABLE `payment_transactions` (
-    `id` CHAR(36) NOT NULL,
+    `id` VARCHAR(191) NOT NULL,
     `AppointmentId` CHAR(36) NULL,
     `BusinessNodeId` CHAR(36) NOT NULL,
     `CompletedOn` DATETIME(0) NULL,
@@ -353,7 +352,7 @@ CREATE TABLE `payment_transactions` (
 
 -- CreateTable
 CREATE TABLE `user_messages` (
-    `id` CHAR(36) NOT NULL,
+    `id` VARCHAR(191) NOT NULL,
     `Body` TEXT NULL,
     `BusinessNodeId` CHAR(36) NOT NULL,
     `CustomerId` CHAR(36) NOT NULL,
@@ -517,11 +516,19 @@ ALTER TABLE `business_node_hours` ADD CONSTRAINT `business_node_hours_BusinessNo
 ALTER TABLE `business_nodes` ADD CONSTRAINT `business_nodes_BusinessId_fkey` FOREIGN KEY (`BusinessId`) REFERENCES `businesses`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-<<<<<<<< HEAD:prisma/migrations/20230309094821_new_business_service/migration.sql
 ALTER TABLE `business_services` ADD CONSTRAINT `business_services_BusinessNodeId_fkey` FOREIGN KEY (`BusinessNodeId`) REFERENCES `business_nodes`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-========
+
+-- AddForeignKey
+ALTER TABLE `business_user_hours` ADD CONSTRAINT `business_user_hours_BusinessUserId_fkey` FOREIGN KEY (`BusinessUserId`) REFERENCES `business_users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `business_user_services` ADD CONSTRAINT `business_user_services_BusinessServiceId_fkey` FOREIGN KEY (`BusinessServiceId`) REFERENCES `business_services`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `business_user_services` ADD CONSTRAINT `business_user_services_BusinessUserId_fkey` FOREIGN KEY (`BusinessUserId`) REFERENCES `business_users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `business_users` ADD CONSTRAINT `business_users_BusinessNodeId_fkey` FOREIGN KEY (`BusinessNodeId`) REFERENCES `business_nodes`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
->>>>>>>> origin/stabilization:prisma/migrations/20230313133053_ankit/migration.sql
 
 -- AddForeignKey
 ALTER TABLE `user_roles` ADD CONSTRAINT `user_roles_RoleId_fkey` FOREIGN KEY (`RoleId`) REFERENCES `roles`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -1,6 +1,7 @@
 import { ApiError } from "../../common/api.error";
 import { BusinessUserHourService } from '../../database/repository.services/business.user.hour.service';
 import { BusinessUserHourCreateModel, 
+         BusinessUserHourDto,
          BusinessUserHourSearchFilters,
          BusinessUserHourUpdateModel,
          BusinessUserHourSearchResults, }
@@ -38,15 +39,17 @@ export class BusinessUserHourControllerDelegate {
         if (!businessUser) {
             ErrorHandler.throwNotFoundError(`Business user id not found!`);
         }
+        // var existing = await this._service.exists(requestBody);
+        // if(existing){
+        //     ErrorHandler.throwDuplicateUserError("Business user hours with same characteristics found!");
+        // }
         var createModel: BusinessUserHourCreateModel = this.getCreateModel(requestBody);
-        const record = await this._service.create(createModel);
+        const record: BusinessUserHourDto = await this._service.create(createModel);
         if (record === null) {
             throw new ApiError('Unable to create business user hours!', 400);
         }
-        const existing = await this._service.exists(createModel);
-            if(existing){
-                ErrorHandler.throwDuplicateUserError("Business user hours with same characteristics found!")
-            }
+        
+        
             // if(requestBody.Day != null && requestBody.Date) {
             //     var nodeHours = await this._businessNodeHourService.search({
             //         businessNodeId : businessUser.BusinessNodeId,
@@ -104,7 +107,7 @@ export class BusinessUserHourControllerDelegate {
     delete = async (id: uuid, updateModel:any) => {
         const record = await this._service.getById(id);
         if (record == null) {
-            ErrorHandler.throwNotFoundError('Busieness user hours with id ' + id.toString() + ' cannot be found!');
+            ErrorHandler.throwNotFoundError('Business user hours with id ' + id.toString() + ' cannot be found!');
         }
         const businessUserHourDeleted = await this._service.delete(id, updateModel);
         return {
@@ -117,13 +120,11 @@ export class BusinessUserHourControllerDelegate {
             BusinessUserId     : requestBody.BusinessUserId ? requestBody.BusinessUserId : null,
             Type               : requestBody.Type ? requestBody.Type : null,
             Day                : requestBody.Day ? requestBody.Day : null,
-            Date               : requestBody.Date ? requestBody.Date : null,
+            Date               : requestBody.Date ? requestBody.Date : new Date(),
             IsOpen             : requestBody.IsOpen ? requestBody.IsOpen : false,
             Message            : requestBody.Message ? requestBody.Message : null,
-            StartTime          : requestBody.StartTime ? requestBody.StartTime : null,
-            EndTime            : requestBody.EndTime ? requestBody.EndTime : null,
-            // StartTime          : requestBody.StartTime ? dayjs(requestBody.StartTime).format('LT') : '10:00:00',
-            // EndTime            : requestBody.EndTime ? dayjs(requestBody.EndTime).format('LT')  :'21:00:00',
+            StartTime          : requestBody.StartTime ? requestBody.StartTime : '10:00:00',
+            EndTime            : requestBody.EndTime ? requestBody.EndTime : '21:00:00',
             IsActive           : requestBody.IsActive ? requestBody.IsActive : true
         };     
     };

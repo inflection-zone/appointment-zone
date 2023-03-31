@@ -1,6 +1,7 @@
 import { ApiError } from "../../common/api.error";
 import { BusinessUserServiceService } from '../../database/repository.services/business.user.service.service';
 import { BusinessUserServiceCreateModel,
+         BusinessUserServiceCreateManyModel,
          BusinessUserServiceDto, 
          BusinessUserServiceSearchFilters,
          BusinessUserServiceUpdateModel,
@@ -41,20 +42,20 @@ export class BusinessUserServiceControllerDelegate {
         if (!businessService) {
             ErrorHandler.throwNotFoundError(`Business service id not found!`);
         }
-        var createModel: BusinessUserServiceCreateModel = this.getCreateModel(requestBody);
-        const record = await this._service.create(createModel);
-        if (record === null) {
-            // var existing = await this._service.getService(requestBody);
-            // if (existing) {
-            //     ErrorHandler.throwConflictError(`Business user service with ${requestBody.BusinessServiceId} and ${requestBody.BusinessUserId} already exists!`);
-
-            // }
-            throw new ApiError('Unable to create business user service!', 400);
-        }
-        return this.getEnrichedDto(record);
+        // const existing = await this._service.exists(requestBody);
+        // if(existing) {
+        //     ErrorHandler.throwConflictError(`Business user service with ${requestBody.BusinessServiceId} and ${requestBody.BusinessUserId} already exists!`);
+        // }else {
+            var createModel: BusinessUserServiceCreateModel = this.getCreateModel(requestBody);
+            const record = await this._service.create(createModel);
+            if (record === null) {
+                throw new ApiError('Unable to create business user service!', 400);
+            }
+            return this.getEnrichedDto(record);
+        
     };
 
-    // createMany = async (s: any) => {
+    // createMany = async (s : any) => {
     //     await validator.validateCreateManyRequest(s);
         
     //     var createModel = this.getCreateManyModel(s);
@@ -71,13 +72,16 @@ export class BusinessUserServiceControllerDelegate {
     //         }
 
     //     const records = await this._service.createMany(createModel);
+    //     var items =records.Items.map(x=>this.getEnrichedDto(x));
+    //     records.Items = items;
+    //     return records;
     //     if (records === null) {
-    //         throw new ApiError('Unable to create business user service!', 400);
+    //         throw new ApiError('Unable to create business user services!', 400);
     //     }
-    //     return this.getEnrichedDto(records);
+        // return this.getEnrichedDto(records);
             
-    // }
-    // };
+    //}
+    //};
 
     getById = async (id: uuid) => {
         const record = await this._service.getById(id);
@@ -94,7 +98,6 @@ export class BusinessUserServiceControllerDelegate {
         var items = searchResults.Items.map(x => this.getSearchDto(x));
         searchResults.Items = items;
         return searchResults;
-   
     };
 
     update = async (id: uuid ,requestBody: any) => {
@@ -130,13 +133,13 @@ export class BusinessUserServiceControllerDelegate {
         };     
     };
 
-    // getCreateManyModel = (s): BusinessUserServiceCreateModel => {
-    //     return {
-    //         BusinessUserId     : s.BusinessUserId ? s.BusinessUserId : null,
-    //         BusinessServiceId  : s.BusinessServiceId ? s.BusinessServiceId : null,
-    //         IsActive           : s.IsActive ? s.IsActive : true
-    //     };     
-    // };
+    getCreateManyModel = (s) => {
+        return {
+            BusinessUserId     : s.BusinessUserId ? s.BusinessUserId : null,
+            BusinessServiceId  : s.BusinessServiceId ? s.BusinessServiceId : null,
+            IsActive           : s.IsActive ? s.IsActive : true
+        };     
+    };
 
     getSearchFilters = (query) => {
         var filters = {};
@@ -170,9 +173,8 @@ export class BusinessUserServiceControllerDelegate {
                     updateModel.IsActive = requestBody.IsActive;
                 }
                 return updateModel;
-            };
+        };
     
-
         getEnrichedDto = (record) => {
             if (record == null) {
                 return null;

@@ -120,9 +120,6 @@ export class BusinessControllerDelegate {
             if (isActive == true) {
                 filters['IsActive'] = isActive;
             }
-            else {
-                ErrorHandler.throwNotFoundError("No active business found!");
-            }
             var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : null;
             if (itemsPerPage != null) {
                 filters['ItemsPerPage'] = itemsPerPage;

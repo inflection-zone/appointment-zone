@@ -88,7 +88,7 @@ export class BusinessServiceControllerDelegate {
     };
 
     delete = async (id: uuid) => {
-        const record: BusinessServiceDto = await this._service.getById(id);
+        const record = await this._service.getById(id);
         if (record == null) {
             ErrorHandler.throwNotFoundError('Customer with id ' + id.toString() + ' cannot be found!');
         }
@@ -97,7 +97,6 @@ export class BusinessServiceControllerDelegate {
             Deleted : businessServiceDeleted
         };
     };
-
 
     getCreateModel = (requestBody): BusinessServiceCreateModel => {
     return {

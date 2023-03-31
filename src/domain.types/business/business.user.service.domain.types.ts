@@ -5,8 +5,11 @@ export interface BusinessUserServiceCreateModel {
     BusinessUserId     : string;
     BusinessServiceId  : string;
     IsActive           : boolean;
+    
 }
-
+export interface BusinessUserServiceCreateManyModel {
+    Items: BusinessUserServiceDto[];
+}
 export interface BusinessUserServiceUpdateModel {
     id                  ? : string;
     BusinessUserId      ? : string;
