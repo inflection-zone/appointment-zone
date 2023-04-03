@@ -1,4 +1,5 @@
 import * as joi from 'joi';
+import { BusinessUserServiceCreateModel } from '../../domain.types/business/business.user.service.domain.types';
 import { ErrorHandler } from '../../common/error.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -19,13 +20,20 @@ export class BusinessUserServiceValidator {
     };
 
     static validateCreateManyRequest = async (requestBody) => {
+        const records: BusinessUserServiceCreateModel[] = [];
         try {
             const schema = joi.object({
                 BusinessUserId               : joi.string().guid({version : ['uuidv4'] }).optional(),
                 BusinessServiceId            : joi.string().guid({version : ['uuidv4'] }).optional(),
                 IsActive                     : joi.boolean().required(),  
             });
-            return await schema.validateAsync(requestBody);
+
+            for (const r of requestBody){
+                const request = await schema.validateAsync(r);
+                records.push(request)
+            }
+              
+            return records;
         } catch (error) {
             ErrorHandler.handleValidationError(error);
         }

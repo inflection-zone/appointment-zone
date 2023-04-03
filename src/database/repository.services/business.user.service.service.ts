@@ -22,13 +22,12 @@ export class BusinessUserServiceService{
         } 
     };
     
-    createMany = async (createModel) => {
+    createMany = async (createModels) => {
         try{
-            //const services : Prisma.business_user_servicesCreateManyArgs = [];
-            var records = await this.prisma.business_user_services.createMany({data:[createModel]});
+            var records = await this.prisma.business_user_services.createMany({data:createModels});
             return records;
-        }catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to create business user service!', error)
+            }catch (error) {
+                ErrorHandler.throwDbAccessError('DB Error: Unable to create business user service!', error)
         } 
     };
 

@@ -42,46 +42,45 @@ export class BusinessUserServiceControllerDelegate {
         if (!businessService) {
             ErrorHandler.throwNotFoundError(`Business service id not found!`);
         }
-        // const existing = await this._service.exists(requestBody);
-        // if(existing) {
-        //     ErrorHandler.throwConflictError(`Business user service with ${requestBody.BusinessServiceId} and ${requestBody.BusinessUserId} already exists!`);
-        // }else {
-            var createModel: BusinessUserServiceCreateModel = this.getCreateModel(requestBody);
-            const record = await this._service.create(createModel);
-            if (record === null) {
-                throw new ApiError('Unable to create business user service!', 400);
-            }
-            return this.getEnrichedDto(record);
-        
+        var createModel: BusinessUserServiceCreateModel = this.getCreateModel(requestBody);
+        const record = await this._service.create(createModel);
+        if (record === null) {
+            // var existing = await this._service.getService(requestBody);
+            // if (existing) {
+            //     ErrorHandler.throwConflictError(`Business user service with ${requestBody.BusinessServiceId} and ${requestBody.BusinessUserId} already exists!`);
+
+            // }
+            throw new ApiError('Unable to create business user service!', 400);
+        }
+        return this.getEnrichedDto(record);
     };
 
-    // createMany = async (s : any) => {
-    //     await validator.validateCreateManyRequest(s);
-        
-    //     var createModel = this.getCreateManyModel(s);
-    //     for await (const s of createModel) {
-    //         var businessUserId = s.BusinessUserId;
-    //         const businessUser = await this._businessUserService.getById(businessUserId);
-    //         if (!businessUser) {
-    //             ErrorHandler.throwNotFoundError(`Business user id not found!`);
-    //         }
-    //         var businessServiceId = s.BusinessServiceId;
-    //         const businessService = await this._businessServiceService.getById(businessServiceId);
-    //         if (!businessService) {
-    //             ErrorHandler.throwNotFoundError(`Business service id not found!`);
-    //         }
-
-    //     const records = await this._service.createMany(createModel);
-    //     var items =records.Items.map(x=>this.getEnrichedDto(x));
-    //     records.Items = items;
-    //     return records;
-    //     if (records === null) {
-    //         throw new ApiError('Unable to create business user services!', 400);
-    //     }
-        // return this.getEnrichedDto(records);
+    createMany = async (requestBody: any) => {
+        await validator.validateCreateManyRequest(requestBody);
+        var createModels = await this.getCreateManyModel(requestBody);
+        {
+            for (const createModel of createModels)
+            {
+                var businessUserId = createModel.BusinessUserId;
+                const businessUser = await this._businessUserService.getById(businessUserId);
+                if (!businessUser) {
+                    ErrorHandler.throwNotFoundError(`Business user id not found!`);
+                }
+                var businessServiceId = createModel.BusinessServiceId;
+                const businessService = await this._businessServiceService.getById(businessServiceId);
+                if (!businessService) {
+                    ErrorHandler.throwNotFoundError(`Business service id not found!`);
+                }
+          }
+        const records = await this._service.createMany(createModels);
+        if (records === null) {
+            throw new ApiError('Unable to create business user service!', 400);
+        }
+        return records;
+        // return this.getEnrichedDtos(records);
             
-    //}
-    //};
+    }
+    };
 
     getById = async (id: uuid) => {
         const record = await this._service.getById(id);
@@ -133,12 +132,17 @@ export class BusinessUserServiceControllerDelegate {
         };     
     };
 
-    getCreateManyModel = (s) => {
-        return {
-            BusinessUserId     : s.BusinessUserId ? s.BusinessUserId : null,
-            BusinessServiceId  : s.BusinessServiceId ? s.BusinessServiceId : null,
-            IsActive           : s.IsActive ? s.IsActive : true
-        };     
+    getCreateManyModel = (requestBody) => {
+        const records: BusinessUserServiceCreateModel[] = [];
+        for (const s of requestBody) {
+            const record = {
+                BusinessUserId     : s.BusinessUserId ? s.BusinessUserId : null,
+                BusinessServiceId  : s.BusinessServiceId ? s.BusinessServiceId : null,
+                IsActive           : s.IsActive ? s.IsActive : true
+            };  
+            records.push(record);
+        }
+        return records
     };
 
     getSearchFilters = (query) => {
@@ -185,7 +189,23 @@ export class BusinessUserServiceControllerDelegate {
                 BusinessServiceId   : record.BusinessServiceId,
                 IsActive            : record.IsActive    
         };
-    };
+     };
+
+     getEnrichedDtos = (records) => {
+        if (records == null) {
+            return null;
+        }
+        for (const r of records){
+            const record = {
+                id                  : r.id,
+                BusinessUserId      : r.BusinessUserId,
+                BusinessServiceId   : r.BusinessServiceId,
+                IsActive            : r.IsActive   
+            }
+            records.push(record);
+        }
+        return records;
+ };
 
         getSearchDto = (record) => {
             if (record == null) {
