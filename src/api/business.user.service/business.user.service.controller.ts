@@ -29,16 +29,16 @@ export class BusinessUserServiceController extends BaseController {
         }
     };
 
-    // createMany = async (request: express.Request, response: express.Response): Promise <void> => {
-    //     try {
-    //          await this.authorize('BusinessUserService.CreateMany', request, response, false);
-    //         const records = await this._delegate.createMany(request.body);
-    //         const message = 'Business user services added successfully!';
-    //         ResponseHandler.success(request, response, message, 201, records);
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
+    createMany = async (request: express.Request, response: express.Response): Promise <void> => {
+        try {
+             await this.authorize('BusinessUserService.CreateMany', request, response, false);
+            const records = await this._delegate.createMany(request.body.records);
+            const message = 'Business user services added successfully!';
+            ResponseHandler.success(request, response, message, 201, records);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 
     getById = async (request:express.Request, response:express.Response): Promise <void>=>{
         try{
