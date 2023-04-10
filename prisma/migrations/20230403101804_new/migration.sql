@@ -516,12 +516,9 @@ ALTER TABLE `business_node_hours` ADD CONSTRAINT `business_node_hours_BusinessNo
 ALTER TABLE `business_nodes` ADD CONSTRAINT `business_nodes_BusinessId_fkey` FOREIGN KEY (`BusinessId`) REFERENCES `businesses`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-<<<<<<<< HEAD:prisma/migrations/20230330104407_new30_03_23/migration.sql
 ALTER TABLE `business_services` ADD CONSTRAINT `business_services_BusinessNodeId_fkey` FOREIGN KEY (`BusinessNodeId`) REFERENCES `business_nodes`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-========
->>>>>>>> origin/stabilization:prisma/migrations/20230325040035_initial/migration.sql
 ALTER TABLE `business_user_hours` ADD CONSTRAINT `business_user_hours_BusinessUserId_fkey` FOREIGN KEY (`BusinessUserId`) REFERENCES `business_users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -529,12 +526,9 @@ ALTER TABLE `business_user_services` ADD CONSTRAINT `business_user_services_Busi
 
 -- AddForeignKey
 ALTER TABLE `business_user_services` ADD CONSTRAINT `business_user_services_BusinessUserId_fkey` FOREIGN KEY (`BusinessUserId`) REFERENCES `business_users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-<<<<<<<< HEAD:prisma/migrations/20230330104407_new30_03_23/migration.sql
 
 -- AddForeignKey
 ALTER TABLE `business_users` ADD CONSTRAINT `business_users_BusinessNodeId_fkey` FOREIGN KEY (`BusinessNodeId`) REFERENCES `business_nodes`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-========
->>>>>>>> origin/stabilization:prisma/migrations/20230325040035_initial/migration.sql
 
 -- AddForeignKey
 ALTER TABLE `user_roles` ADD CONSTRAINT `user_roles_RoleId_fkey` FOREIGN KEY (`RoleId`) REFERENCES `roles`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

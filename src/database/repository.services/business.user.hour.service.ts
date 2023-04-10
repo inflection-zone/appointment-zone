@@ -1,12 +1,12 @@
 import { ErrorHandler } from "../../common/error.handler";
 import { PrismaClientInit } from "../../startup/prisma.client.init";
 import { Prisma } from '@prisma/client';
-
+import { TimeHelper } from "../../common/time.helper"; 
 export class BusinessUserHourService{
     prisma = PrismaClientInit.instance().prisma();
 
     public static instance:BusinessUserHourService=null;
-
+   
     public static getInstance():BusinessUserHourService{
         return this.instance || (this.instance=new this());
     }
@@ -20,6 +20,15 @@ export class BusinessUserHourService{
             ErrorHandler.throwDbAccessError('DB Error: Unable to create business user hours!', error)
         } 
 
+    };
+
+    createMany = async (createModels) => {
+        try{
+            var records = await this.prisma.business_user_hours.createMany({data:createModels});
+            return records;
+            }catch (error) {
+                ErrorHandler.throwDbAccessError('DB Error: Unable to create business user service!', error)
+        } 
     };
 
     getById = async (id) => {
@@ -116,6 +125,56 @@ export class BusinessUserHourService{
             ErrorHandler.throwDbAccessError('DB Error: Unable to update business user hours!', error);
         }
     };
+
+    updateMany = async (id, updateModel) => {
+        try {
+            for await (var wh of updateModel){
+                var businessUserId = wh.BusinessUserId;
+                const search  : Prisma.business_user_hoursFindManyArgs = {};
+                search.where = {
+                    BusinessUserId : wh.BusinessUserId,
+                    Day : wh.Day,
+                    Date : null,
+                    IsActive : true
+                };
+                var userHoursList = await this.prisma.business_user_hours.findMany(search)
+                var nodeHoursList = await this.prisma.business_node_hours.findMany({select: {
+                    BusinessNodeId : businessUserId,
+                    Day : wh.Day,
+                    Date : null,
+                    StartTime : wh.StartTime,
+                    EndTime : wh.EndTime,
+                    IsActive : true
+                }})
+                var nodeHoursForDay = nodeHoursList.length > 0 ? nodeHoursList[0] : null
+                if (nodeHoursForDay != null && wh.StartTime != null && wh.EndTime != null) {
+                  var nodeStartTime = nodeHoursForDay.StartTime
+                  var nodeEndTime = nodeHoursForDay.EndTime
+            }
+            if (TimeHelper.isBefore(wh.StartTime, nodeStartTime)) {
+                wh.StartTime = nodeStartTime;
+            }
+            if (TimeHelper.isAfter(wh.EndTime, nodeEndTime)) {
+                wh.EndTime = nodeEndTime;
+            }
+            var updateIsOpen = wh.hasOwnProperty('IsOpen') ? wh.IsOpen :null;
+            var type = "WORK-DAY"
+        if (!updateIsOpen || nodeHoursForDay == null) {
+            type = "NON-WORKING-DAY"
+        }
+            if (Object.keys(updateModel).length > 0) {
+                var res = await this.prisma.business_user_hours.updateMany({data:updateModel,
+                        where :{
+                        id : id
+                    }
+                 });
+            }
+            return await this.getById(id);
+        }
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('DB Error: Unable to update business user hours!', error);
+        }
+    };
     
     delete = async (id, updateModel) => {
         try {
@@ -130,4 +189,30 @@ export class BusinessUserHourService{
         }
     };
 
+    getNodeDetails = async(requestBody) => {
+        try{
+            var nodeHoursList = await this.prisma.business_node_hours.findMany({where : {
+                BusinessNodeId : requestBody.id,
+                Day : requestBody.Day,
+                Date : null,
+                IsActive : true
+            }
+            });
+            var nodeHoursDay = nodeHoursList.length > 0 ? nodeHoursList[0] : null;
+            if(nodeHoursDay != null && requestBody.StartTime !=null && requestBody.EndTime != null){
+                    var nodeStartTime = nodeHoursDay.StartTime;
+                    var nodeEndTime = nodeHoursDay.EndTime;
+
+                    if (TimeHelper.isBefore(requestBody.StartTime, nodeStartTime)) {
+                        requestBody.StartTime = nodeStartTime;
+                    }
+                    if (TimeHelper.isAfter(requestBody.EndTime, nodeEndTime)) {
+                        requestBody.EndTime = nodeEndTime;
+                    }
+                }
+            } catch (error) {
+                ErrorHandler.throwDbAccessError('DB Error: Unable to search business node hours!', error);
+        
+            }
+        }
 }

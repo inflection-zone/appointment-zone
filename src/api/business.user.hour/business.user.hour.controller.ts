@@ -29,6 +29,17 @@ export class BusinessUserHourController extends BaseController {
         }
     };
 
+    createMany = async (request: express.Request, response: express.Response): Promise <void> => {
+        try {
+             await this.authorize('BusinessUserHour.CreateMany', request, response, false);
+            const DayWiseWorkingHours = await this._delegate.createMany(request.body.DayWiseWorkingHours);
+            const message = 'Business user hours added successfully!';
+            ResponseHandler.success(request, response, message, 201, DayWiseWorkingHours);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     getById = async (request:express.Request, response:express.Response): Promise <void>=>{
         try{
             await this.authorize('BusinessUserHour.GetById', request, response, false);
