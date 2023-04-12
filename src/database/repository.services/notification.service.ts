@@ -3,72 +3,49 @@ import { PrismaClientInit } from "../../startup/prisma.client.init";
 import { Prisma } from '@prisma/client';
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export class BusinessUserSkillService{
+export class NotificationService{
     prisma = PrismaClientInit.instance().prisma();
 
-    public static instance:BusinessUserSkillService=null;
-    public static getInstance():BusinessUserSkillService{
+    public static instance:NotificationService=null;
+    public static getInstance():NotificationService{
         return this.instance || (this.instance=new this());
     }
 
     create = async (createModel) => {
         try {
-            var record=await this.prisma.business_user_skills.create({data:createModel});
+            var record=await this.prisma.notifications.create({data:createModel});
             console.log(record);
             return record;
         } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to create business user skills!',error)
-        }
-    };
-
-    createMany = async (createModels) => {
-        try {
-            var skills = await this.prisma.business_user_skills.createMany({data:createModels});
-            return skills ;
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to create business user skills!', error)
-        } 
-    };
-
-    exists = async (businessSkillId, businessUserId) => {
-        try {
-            const search : Prisma.business_user_skillsFindManyArgs = {};
-            search.where = {
-                BusinessSkillId : businessSkillId,
-                BusinessUserId : businessUserId
-            }
-            const result = await this.prisma.business_user_skills.findMany(search);
-            return result;
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve business user skills!', error);
+            ErrorHandler.throwDbAccessError('DB Error: Unable to create notifications!',error)
         }
     };
 
     getById = async (id) => {
         try {
-            var record = await this.prisma.business_user_skills.findUnique({where : {id : id}
+            var record = await this.prisma.notifications.findUnique({where : {id : id}
             });
             return record;
         } catch (error) {
-        ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve business user skills!', error);
+        ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve notifications!', error);
         }
     };
 
     search = async (filters) => {
         try {
-            const search : Prisma.business_user_skillsFindManyArgs = {};
+            const search : Prisma.notificationsFindManyArgs = {};
 
                 search.where = {
                     IsActive : true,
                 }
-                if (filters.businessSkillId != null) {
+                if (filters.businessNodeId != null) {
                     search.where =   {
-                        BusinessSkillId : filters.BusinessSkillId,
+                        BusinessNodeId : filters.BusinessNodeId,
                         }
                 }
-                if (filters.businessUserId != null) {
+                if (filters.customerId != null) {
                     search.where =   {
-                            BusinessUserId : filters.BusinessUserId,
+                            CustomerId : filters.CustomerId,
                         }
                 }
                 search.orderBy = {
@@ -89,7 +66,7 @@ export class BusinessUserSkillService{
                 pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
                 search.skip = pageIndex * search.take;
                 }
-                const foundResults = await this.prisma.business_user_skills.findMany(search)
+                const foundResults = await this.prisma.notifications.findMany(search)
                 const searchResults = {
                     TotalCount     : foundResults.length,
                     RetrievedCount : foundResults.length,
@@ -100,14 +77,14 @@ export class BusinessUserSkillService{
                 };
                 return searchResults; 
         } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to search business user skill records!', error);
+            ErrorHandler.throwDbAccessError('DB Error: Unable to search notifications records!', error);
         }
     };
 
     update = async (id, updateModel) => {
         try {
             if (Object.keys(updateModel).length > 0) {
-            var res = await this.prisma.business_user_skills.updateMany({data:updateModel,
+            var res = await this.prisma.notifications.updateMany({data:updateModel,
                     where :{
                     id : id
                 }
@@ -115,17 +92,17 @@ export class BusinessUserSkillService{
         }
         return await this.getById(id);
         } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to update business user skills!', error);
+            ErrorHandler.throwDbAccessError('DB Error: Unable to update notifications!', error);
         }
     };
 
     delete = async (id) => {
         try {
-        const result = await this.prisma.business_user_skills.delete({ where: 
+        const result = await this.prisma.notifications.delete({ where: 
             { id: id } 
         });
         } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to delete business user skills!', error);
+            ErrorHandler.throwDbAccessError('DB Error: Unable to delete notifications!', error);
         }
     };
 }
