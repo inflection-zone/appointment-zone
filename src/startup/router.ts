@@ -10,6 +10,7 @@ import { register as registerBusinessUserHourRoutes} from "../api/business.user.
 import { register as registerBusinessSkillRoutes } from "../api/business.skill/business.skill.routes";
 import { register as registerBusinessUserSkillRoutes } from "../api/business.user.skill/business.user.skill.routes";
 import { register as registerNotificationRoutes}  from "../api/notification/notification.routes";
+import { register as registerUserMessageRoutes } from "../api/user.message/user.message.routes";
 
 import { register as registerApiClientRoutes}  from "../api/api.client/api.client.routes";
 import { register as registerUserRoleRoutes } from "../api/user.role/user.role.routes";
@@ -50,6 +51,7 @@ export class Router {
                 registerBusinessSkillRoutes(this._app);
                 registerBusinessUserSkillRoutes(this._app);
                 registerNotificationRoutes(this._app);
+                registerUserMessageRoutes(this._app);
 
                 registerApiClientRoutes(this._app);
                 registerUserRoleRoutes(this._app);
