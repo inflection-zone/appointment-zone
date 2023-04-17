@@ -11,7 +11,9 @@ import { register as registerBusinessSkillRoutes } from "../api/business.skill/b
 import { register as registerBusinessUserSkillRoutes } from "../api/business.user.skill/business.user.skill.routes";
 import { register as registerNotificationRoutes}  from "../api/notification/notification.routes";
 import { register as registerUserMessageRoutes } from "../api/user.message/user.message.routes";
-import { register as registerPaymentTransationRoures } from "../api/payment.transaction/payment.transaction.routes";
+import { register as registerPaymentTransationRoutes } from "../api/payment.transaction/payment.transaction.routes";
+import { register as registerAppointmentStatusRoutes } from "../api/appointment.status/appointment.status.routes";
+
 import { register as registerApiClientRoutes}  from "../api/api.client/api.client.routes";
 import { register as registerUserRoleRoutes } from "../api/user.role/user.role.routes";
 import { register as registerFileREsourceRoutes       } from "../api/file.resource/file.resource.routes";
@@ -52,7 +54,9 @@ export class Router {
                 registerBusinessUserSkillRoutes(this._app);
                 registerNotificationRoutes(this._app);
                 registerUserMessageRoutes(this._app);
-                registerPaymentTransationRoures(this._app);
+                registerPaymentTransationRoutes(this._app);
+                registerAppointmentStatusRoutes(this._app);
+
 
                 registerApiClientRoutes(this._app);
                 registerUserRoleRoutes(this._app);
