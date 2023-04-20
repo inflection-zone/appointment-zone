@@ -3,6 +3,7 @@ import { Logger } from "../common/logger";
 import { register as registerCustomerRoutes}  from "../api/customer/customer.routes";
 import { register as registerBusinessRoutes}  from "../api/business/business.routes";
 import { register as registerBusinessNodeRoutes } from "../api/business.node/business.node.routes";
+import { register as registerBusinessNodeCustomerRoutes } from "../api/business.node.customer/business.node.customer.routes";
 import { register as registerBusinessServiceRoutes } from "../api/business.service/business.service.routes";
 import { register as registerBusinessUserRoutes} from "../api/business.user/business.user.routes";
 import { register as registerBusinessUserServiceRoutes } from "../api/business.user.service/business.user.service.routes";
@@ -46,6 +47,7 @@ export class Router {
                 registerCustomerRoutes(this._app);
                 registerBusinessRoutes(this._app);
                 registerBusinessNodeRoutes(this._app)
+                registerBusinessNodeCustomerRoutes(this._app)
                 registerBusinessServiceRoutes(this._app);
                 registerBusinessUserRoutes(this._app);
                 registerBusinessUserServiceRoutes(this._app);
