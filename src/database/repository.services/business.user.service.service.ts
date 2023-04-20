@@ -35,30 +35,37 @@ export class BusinessUserServiceService{
             try {
                 var record = await this.prisma.business_user_services.findUnique({where : {id : id}
                 });
-
                 return record;
             } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve business user service!', error);
         }
-
     };
 
-    exists = async (id): Promise < boolean > => {
-        try {
-            const record = await this.prisma.business_user_services.findUnique({where : {id : id}
-            });
-            return record !== null;
-        } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to determine existance of business user service!', error);
-        }
-    };
+    // exists = async (requestBody): Promise < boolean > => { 
+    //     try {
+    //         const search : Prisma.business_user_servicesFindManyArgs = {};
+
+    //         var businessServiceId = requestBody.BusinessServiceId;
+    //         var businessUserId = requestBody.BusinessUserId;
+
+    //         search.where = {
+    //             BusinessServiceId : businessServiceId,
+    //             BusinessUserId : businessUserId,           
+    //         }
+    //         const records = await this.prisma.business_user_services.findMany(search);
+    //         return records !== null;
+    //     } catch (error) {
+    //         ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve business user service!', error);
+    //     }
+    // };
 
     search = async (filters) => {
         try {
             const search : Prisma.business_user_servicesFindManyArgs = {};
+
             if (filters.IsActive != null) {
                 search.where =   {
-                    IsActive : true,
+                    IsActive : filters.IsActive,
                     }
             }
             if (filters.BusinessUserId != null) {
@@ -99,7 +106,6 @@ export class BusinessUserServiceService{
                 Order          : search.orderBy["CreatedAt"] === 'desc' ? 'descending' : 'ascending',
                 Items          : foundResults,
             };
-    
             return searchResults;
         
         } catch (error) {
@@ -111,10 +117,10 @@ export class BusinessUserServiceService{
         try {
             if (Object.keys(updateModel).length > 0) {
                 var res = await this.prisma.business_user_services.updateMany({data:updateModel,
-                        where :{
-                        id : id
-                    }
-                 });
+                        where : {
+                            id : id
+                        }
+                    });  
             }
             return await this.getById(id);
         } catch (error) {
@@ -129,21 +135,7 @@ export class BusinessUserServiceService{
             });
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to delete business user service!', error);
-    
         }
     };
     
-
-    // getService = async (requestBody) => {
-    //     try {
-    //         const service = await this.prisma.business_user_services.findMany({
-    //             where : {
-    //                 BusinessServiceId : requestBody.businessServiceId,
-    //                 BusinessUserId : requestBody.businessUserId,
-    //             }});
-    //     } catch (error) {
-    //         Logger.instance().log(error.message);
-    //         throw new ApiError(error.message, 500);
-    //     }
-    // };
 }

@@ -178,11 +178,11 @@ CREATE TABLE `business_user_hours` (
     `CreatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `Date` DATETIME(0) NULL,
     `Day` INTEGER NOT NULL,
-    `EndTime` TIME(0) NOT NULL DEFAULT '21:00:00',
+    `EndTime` VARCHAR(191) NOT NULL DEFAULT '21:00:00',
     `IsActive` BOOLEAN NOT NULL DEFAULT true,
     `IsOpen` BOOLEAN NOT NULL DEFAULT true,
     `Message` VARCHAR(255) NULL,
-    `StartTime` TIME(0) NOT NULL DEFAULT '10:00:00',
+    `StartTime` VARCHAR(191) NOT NULL DEFAULT '10:00:00',
     `Type` VARCHAR(255) NOT NULL,
     `UpdatedAt` DATETIME(3) NOT NULL,
     `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
@@ -516,6 +516,9 @@ ALTER TABLE `business_node_hours` ADD CONSTRAINT `business_node_hours_BusinessNo
 ALTER TABLE `business_nodes` ADD CONSTRAINT `business_nodes_BusinessId_fkey` FOREIGN KEY (`BusinessId`) REFERENCES `businesses`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `business_services` ADD CONSTRAINT `business_services_BusinessNodeId_fkey` FOREIGN KEY (`BusinessNodeId`) REFERENCES `business_nodes`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `business_user_hours` ADD CONSTRAINT `business_user_hours_BusinessUserId_fkey` FOREIGN KEY (`BusinessUserId`) REFERENCES `business_users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -523,6 +526,9 @@ ALTER TABLE `business_user_services` ADD CONSTRAINT `business_user_services_Busi
 
 -- AddForeignKey
 ALTER TABLE `business_user_services` ADD CONSTRAINT `business_user_services_BusinessUserId_fkey` FOREIGN KEY (`BusinessUserId`) REFERENCES `business_users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `business_users` ADD CONSTRAINT `business_users_BusinessNodeId_fkey` FOREIGN KEY (`BusinessNodeId`) REFERENCES `business_nodes`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `user_roles` ADD CONSTRAINT `user_roles_RoleId_fkey` FOREIGN KEY (`RoleId`) REFERENCES `roles`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

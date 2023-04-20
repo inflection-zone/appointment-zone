@@ -96,7 +96,6 @@ export class BusinessUserServiceControllerDelegate {
         var items = searchResults.Items.map(x => this.getSearchDto(x));
         searchResults.Items = items;
         return searchResults;
-   
     };
 
     update = async (id: uuid ,requestBody: any) => {
@@ -177,9 +176,8 @@ export class BusinessUserServiceControllerDelegate {
                     updateModel.IsActive = requestBody.IsActive;
                 }
                 return updateModel;
-            };
+        };
     
-
         getEnrichedDto = (record) => {
             if (record == null) {
                 return null;

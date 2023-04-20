@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["createMany"]
 }
 
 datasource db {
@@ -95,7 +94,7 @@ model business_node_hours {
   UpdatedAt      DateTime  @updatedAt
   IsDeleted      Boolean   @default(false)
   DeletedAt      DateTime? @db.DateTime(0)
-  BusinessNode            business_nodes @relation(fields: [BusinessNodeId], references: [id])
+  BusinessNode   business_nodes @relation(fields: [BusinessNodeId], references: [id])
 }
 
 model business_nodes {
@@ -118,8 +117,10 @@ model business_nodes {
   IsDeleted               Boolean    @default(false)
   DeletedAt               DateTime?  @db.DateTime(0)
   Business                businesses @relation(fields: [BusinessId], references: [id])
-  // BusinessUser     business_users[]
-  BusinessNodeHour     business_node_hours[]
+  BusinessUser            business_users[]
+  BusinessService         business_services[]
+  BusinessNodeHour        business_node_hours[]
+  BusinessSkill           business_skills[]
 
 }
 
@@ -148,22 +149,24 @@ model business_services {
   UpdatedAt             DateTime                  @updatedAt
   IsDeleted             Boolean                   @default(false)
   DeletedAt             DateTime?                 @db.DateTime(0)
-  // BusinessNode          business_nodes            @relation(fields: [BusinessNodeId], references: [id])
+  BusinessNode          business_nodes            @relation(fields: [BusinessNodeId], references: [id])
   BusinessServices      business_user_services[]
 
 }
 
 model business_skills {
-  id             String    @id @default(uuid())
-  BusinessNodeId String    @db.Char(36)
-  CreatedAt      DateTime  @default(now())
-  Description    String?   @db.Text
-  DisplayPicture String?   @db.Text
-  IsActive       Boolean   @default(true)
-  Name           String    @db.VarChar(255)
-  UpdatedAt      DateTime  @updatedAt
-  IsDeleted      Boolean   @default(false)
-  DeletedAt      DateTime? @db.DateTime(0)
+  id                    String         @id @default(uuid())
+  BusinessNodeId        String         @db.Char(36)
+  CreatedAt             DateTime       @default(now())
+  Description           String?        @db.Text
+  DisplayPicture        String?        @db.Text
+  IsActive              Boolean        @default(true)
+  Name                  String         @db.VarChar(255)
+  UpdatedAt             DateTime       @updatedAt
+  IsDeleted             Boolean        @default(false)
+  DeletedAt             DateTime?      @db.DateTime(0)
+  BusinessNode          business_nodes  @relation(fields: [BusinessNodeId], references: [id])
+  BusinessUserSkill     business_user_skills[]
 }
 
 model business_user_hours {
@@ -172,11 +175,11 @@ model business_user_hours {
   CreatedAt      DateTime  @default(now())
   Date           DateTime? @db.DateTime(0)
   Day            Int
-  EndTime        DateTime  @default(dbgenerated("'21:00:00'")) @db.Time(0)
+  EndTime        String    @default(dbgenerated("'21:00:00'"))
   IsActive       Boolean   @default(true)
   IsOpen         Boolean   @default(true)
   Message        String?   @db.VarChar(255)
-  StartTime      DateTime  @default(dbgenerated("'10:00:00'")) @db.Time(0)
+  StartTime      String    @default(dbgenerated("'10:00:00'"))
   Type           String    @db.VarChar(255)
   UpdatedAt      DateTime  @updatedAt
   IsDeleted      Boolean   @default(false)
@@ -199,14 +202,16 @@ model business_user_services {
 }
 
 model business_user_skills {
-  id              String   @id @default(uuid())
-  BusinessSkillId String    @db.Char(36)
-  BusinessUserId  String    @db.Char(36)
-  CreatedAt       DateTime  @default(now())
-  IsActive        Boolean   @default(true)
-  UpdatedAt       DateTime  @updatedAt
-  IsDeleted       Boolean   @default(false)
-  DeletedAt       DateTime? @db.DateTime(0)
+  id              String            @id @default(uuid())
+  BusinessSkillId String            @db.Char(36)
+  BusinessUserId  String            @db.Char(36)
+  CreatedAt       DateTime          @default(now())
+  IsActive        Boolean           @default(true)
+  UpdatedAt       DateTime          @updatedAt
+  IsDeleted       Boolean           @default(false)
+  DeletedAt       DateTime?         @db.DateTime(0)
+  BusinessSkill   business_skills   @relation(fields: [BusinessSkillId], references: [id])
+  BusinessUser    business_users    @relation(fields: [BusinessUserId],references: [id])
 }
 
 model business_users {
@@ -235,8 +240,10 @@ model business_users {
   UpdatedAt               DateTime                   @updatedAt
   IsDeleted               Boolean                    @default(false)
   DeletedAt               DateTime?                  @db.DateTime(0)
+  BusinessNodes           business_nodes             @relation(fields: [BusinessNodeId],references: [id])
   BusinessUsers           business_user_services[]
   BusinessUserHours       business_user_hours[]
+  BusinessUser            business_user_skills[]
 }
 
 model businesses {

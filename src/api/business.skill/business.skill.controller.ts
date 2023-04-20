@@ -1,40 +1,30 @@
 import express from 'express';
 import { ResponseHandler } from '../../common/response.handler';
-import { BusinessUserHourControllerDelegate } from './business.user.hour.controller.delegate';
+import { BusinessSkillControllerDelegate } from './business.skill.controller.delegate';
 import { BaseController } from '../base.controller';
+import { request } from 'http';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BusinessUserHourController extends BaseController {
+export class BusinessSkillController extends BaseController {
 
     //#region member variables and constructors
 
-    _delegate: BusinessUserHourControllerDelegate = null;
+    _delegate: BusinessSkillControllerDelegate = null;
 
     constructor() {
         super();
-        this._delegate = new BusinessUserHourControllerDelegate();
+        this._delegate = new BusinessSkillControllerDelegate ();
     }
 
     //#endregion
 
     create = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
-             await this.authorize('BusinessUserHour.Create', request, response, false);
+            await this.authorize('BusinessSkill.Create', request, response, false);
             const record = await this._delegate.create(request.body);
-            const message = 'Business user hours added successfully!';
+            const message = 'Business skills added successfully!';
             ResponseHandler.success(request, response, message, 201, record);
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    createMany = async (request: express.Request, response: express.Response): Promise <void> => {
-        try {
-             await this.authorize('BusinessUserHour.CreateMany', request, response, false);
-            const DayWiseWorkingHours = await this._delegate.createMany(request.body.DayWiseWorkingHours);
-            const message = 'Business user hours added successfully!';
-            ResponseHandler.success(request, response, message, 201, DayWiseWorkingHours);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -42,20 +32,20 @@ export class BusinessUserHourController extends BaseController {
 
     getById = async (request:express.Request, response:express.Response): Promise <void>=>{
         try{
-            await this.authorize('BusinessUserHour.GetById', request, response, false);
+            await this.authorize('BusinessSkill.GetById', request, response,false);
             const record = await this._delegate.getById(request.params.id);
-            const message ="Business user hours retrieved successfully!";
+            const message ="Business skills retrieved successfully!";
             ResponseHandler.success(request, response, message, 200, record);
-        }catch(error){
+        } catch(error){
             ResponseHandler.handleError(request, response, error);
         }
     };
 
     search = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
-            await this.authorize('BusinessUserHour.Search', request, response, false);
+            await this.authorize('BusinessSkill.Search', request, response, false);
             const searchResults = await this._delegate.search(request.query);
-            const message = 'Business user hours records retrieved successfully!';
+            const message = 'Business skill records retrieved successfully!';
             ResponseHandler.success(request, response, message, 200, searchResults);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -64,9 +54,9 @@ export class BusinessUserHourController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
-            await this.authorize('BusinessUserHour.Update', request, response, false);
+            await this.authorize('BusinessSkill.Update', request, response, false);
             const updatedRecord = await this._delegate.update(request.params.id, request.body);
-            const message = 'Business user hours updated successfully!';
+            const message = 'Business skills updated successfully!';
             ResponseHandler.success(request, response, message, 200, updatedRecord);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -75,15 +65,13 @@ export class BusinessUserHourController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
-            await this.authorize('BusinessUserHour.Delete', request, response, false);
-            const result = await this._delegate.delete(request.params.id, request.params.updateModel);
-            const message = 'Business user hours deleted successfully!';
+            await this.authorize('BusinessSkill.Delete', request, response,false);
+            const result = await this._delegate.delete(request.params.id);
+            const message = 'Business skills deleted successfully!';
             ResponseHandler.success(request, response, message, 200, result);
-
-        }catch (error) {
+        } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
-    
 }
