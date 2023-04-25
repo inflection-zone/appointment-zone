@@ -41,23 +41,19 @@ export class BusinessUserServiceService{
         }
     };
 
-    // exists = async (requestBody): Promise < boolean > => { 
-    //     try {
-    //         const search : Prisma.business_user_servicesFindManyArgs = {};
-
-    //         var businessServiceId = requestBody.BusinessServiceId;
-    //         var businessUserId = requestBody.BusinessUserId;
-
-    //         search.where = {
-    //             BusinessServiceId : businessServiceId,
-    //             BusinessUserId : businessUserId,           
-    //         }
-    //         const records = await this.prisma.business_user_services.findMany(search);
-    //         return records !== null;
-    //     } catch (error) {
-    //         ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve business user service!', error);
-    //     }
-    // };
+    exists = async (businessServiceId, businessUserId) => {
+        try {
+            const search : Prisma.business_user_servicesFindManyArgs = {};
+            search.where = {
+                BusinessServiceId : businessServiceId,
+                BusinessUserId : businessUserId
+            }
+            const result = await this.prisma.business_user_services.findMany(search);
+            return result.length > 0;
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve business user services!', error);
+        }
+    };
 
     search = async (filters) => {
         try {

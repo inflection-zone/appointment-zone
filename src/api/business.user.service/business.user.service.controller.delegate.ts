@@ -41,14 +41,9 @@ export class BusinessUserServiceControllerDelegate {
         if (!businessService) {
             ErrorHandler.throwNotFoundError(`Business service id not found!`);
         }
-        var createModel: BusinessUserServiceCreateModel = this.getCreateModel(requestBody);
+        var createModel: BusinessUserServiceCreateModel = await this.getValidCreateModel(requestBody);
         const record = await this._service.create(createModel);
         if (record === null) {
-            // var existing = await this._service.getService(requestBody);
-            // if (existing) {
-            //     ErrorHandler.throwConflictError(`Business user service with ${requestBody.BusinessServiceId} and ${requestBody.BusinessUserId} already exists!`);
-
-            // }
             throw new ApiError('Unable to create business user service!', 400);
         }
         return this.getEnrichedDto(record);
@@ -56,7 +51,7 @@ export class BusinessUserServiceControllerDelegate {
 
     createMany = async (requestBody: any) => {
         await validator.validateCreateManyRequest(requestBody);
-        var createModels = await this.getCreateManyModel(requestBody);
+        var createModels = await this.getValidCreateManyModel(requestBody);
         {
             for (const createModel of createModels)
             {
@@ -104,6 +99,20 @@ export class BusinessUserServiceControllerDelegate {
         if (record === null) {
             ErrorHandler.throwNotFoundError("Business user service with id " + id.toString() + "cannot be found!");
         }
+        if (Helper.hasProperty(requestBody, 'BusinessUserId')) {
+            var businessUserId = requestBody.BusinessUserId;
+            var businessUser = await this._businessUserService.getById(businessUserId);
+            if(!businessUser) {
+                ErrorHandler.throwNotFoundError('Business user id ' + businessUserId.toString() + ' cannot be found!');
+            }
+        }
+        if(Helper.hasProperty(requestBody, 'BusinessServiceId')) {
+            var businessServiceId = requestBody.BusinessServiceId;
+            var businessService = await this._businessServiceService.getById(businessServiceId);
+            if(!businessService) {
+                ErrorHandler.throwNotFoundError('Business service id ' + businessServiceId.toString() + ' cannot be found!');
+            }
+        }
         const updateModel: BusinessUserServiceUpdateModel = this.getUpdateModel(requestBody);
         const updated = await this._service.update(id, updateModel);
         if (updated == null) {
@@ -131,6 +140,16 @@ export class BusinessUserServiceControllerDelegate {
         };     
     };
 
+    getValidCreateModel = async (requestBody) => {
+
+        const existing = await this._service.exists(requestBody.BusinessUserId, requestBody.BusinessServiceId);
+        if(existing) {
+            ErrorHandler.throwNotFoundError(`Business user service with BusinessUserId = ${requestBody.BusinessUserId} and BusinessServiceId = ${requestBody.BusinessServiceId} already exists!`);
+        }
+        var createModel : BusinessUserServiceCreateModel = await this.getCreateModel(requestBody);
+        return createModel;
+    };
+
     getCreateManyModel = (requestBody) => {
         const records: BusinessUserServiceCreateModel[] = [];
         for (const s of requestBody) {
@@ -142,6 +161,17 @@ export class BusinessUserServiceControllerDelegate {
             records.push(record);
         }
         return records
+    };
+
+    getValidCreateManyModel = async (requestBody) => {
+        for (const s of requestBody) {
+        const existing = await this._service.exists(s.BusinessServiceId, s.BusinessUserId);
+        if(existing){
+            ErrorHandler.throwNotFoundError(`Business user service with BusinessServiceId = ${s.BusinessServiceId} and BusinessUserId = ${s.BusinessUserId} already exists!`);
+        }
+        var createModels = await this.getCreateManyModel(requestBody);
+        }
+        return createModels;
     };
 
     getSearchFilters = (query) => {
