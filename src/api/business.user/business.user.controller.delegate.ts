@@ -30,7 +30,6 @@ export class BusinessUserControllerDelegate {
         const { userCreateModel } =
             await BusinessUsersValidator.getValidUserCreateModel(requestBody);
 
-        // eslint-DisplayPictureable-next-line @typescript-eslint/no-unused-vars
         var createModel: BusinessUserCreateModel = this.getCreateModel(requestBody);
         const record: BusinessUserDto = await this._service.create(userCreateModel);
         if (record === null) {
@@ -63,6 +62,20 @@ export class BusinessUserControllerDelegate {
         const record = await this._service.getById(id);
         if (record === null) {
             ErrorHandler.throwNotFoundError('Business node with id ' + id.toString() + ' cannot be found!');
+        }
+        if (Helper.hasProperty(requestBody, 'Mobile')) {
+            var mobile = requestBody.Mobile;
+            var otherEntity = await this._service.getBusinessUserWithMobile(mobile);
+            if(otherEntity != null && otherEntity.id != record.id) {
+                ErrorHandler.throwDuplicateUserError(`Business user with mobile ${requestBody.Mobile} already exists!`);
+            }
+        }
+        if (Helper.hasProperty(requestBody, 'Email')) {
+            var email = requestBody.Email;
+            var otherEntity = await this._service.getBusinessUserWithEmail(email);
+            if(otherEntity != null && otherEntity.id != record.id) {
+                ErrorHandler.throwDuplicateUserError(`Business user with email ${requestBody.Email} already exists!`);
+            }
         }
         const updateModel: BusinessUserUpdateModel = this.getUpdateModel(requestBody);
         const updated = await this._service.update(id, updateModel);
