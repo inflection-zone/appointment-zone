@@ -32,7 +32,7 @@ export interface CustomerUpdateModel {
 }
 
 export interface CustomerDto {
-   
+    id              : string;
     Prefix          : string;
     FirstName       : string;
     LastName        : string;
@@ -44,6 +44,10 @@ export interface CustomerDto {
     Address         : string; 
     InAppUser       : Boolean;  
     IsActive        : Boolean; 
+    CreatedAt       : Date;
+    UpdatedAt       : Date;
+    IsDeleted  ?    : boolean; 
+    DeletedAt       : Date;
 }
 
 export interface CustomerSearchFilters extends BaseSearchFilters {
