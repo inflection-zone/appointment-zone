@@ -38,7 +38,7 @@ export class BusinessUserSkillService{
                 BusinessUserId : businessUserId
             }
             const result = await this.prisma.business_user_skills.findMany(search);
-            return result;
+            return result.length > 0;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve business user skills!', error);
         }

@@ -29,9 +29,6 @@ export class BusinessUserSkillControllerDelegate {
     create = async (requestBody: any) => {
 
         await validator.validateCreateRequest(requestBody);
-        if(!requestBody.BusinessSkillId || !requestBody.BusinessUserId) {
-            ErrorHandler.throwNotFoundError('Missing required parameters');
-        }
         const createModel: BusinessUserSkillCreateModel = await this.getValidCreateModel(requestBody);
         const record: BusinessUserSkillDto = await this._service.create(createModel);
         if (record === null) {
@@ -42,7 +39,7 @@ export class BusinessUserSkillControllerDelegate {
 
     createMany = async (requestBody: any) => {
         await validator.validateCreateManyRequest(requestBody);
-        var createModels = await this.getCreateManyModel(requestBody);
+        var createModels = await this.getValidCreateManyModel(requestBody);
         {
             for (const createModel of createModels)
             {
@@ -62,7 +59,6 @@ export class BusinessUserSkillControllerDelegate {
             throw new ApiError('Unable to create business user skills!', 400);
         }
         return records;
-        //return this.getEnrichedDtos(records);
         }
     };
 
@@ -88,6 +84,20 @@ export class BusinessUserSkillControllerDelegate {
         const record = await this._service.getById(id);
         if (record === null) {
             ErrorHandler.throwNotFoundError('Business user skill with id ' + id.toString() + ' cannot be found!');
+        }
+        if (Helper.hasProperty(requestBody, 'BusinessUserId')) {
+            var businessUserId = requestBody.BusinessUserId;
+            var businessUser = await this._businessUserService.getById(businessUserId);
+            if(!businessUser) {
+                ErrorHandler.throwNotFoundError('Business user id ' + businessUserId.toString() + ' cannot be found!');
+            }
+        }
+        if(Helper.hasProperty(requestBody, 'BusinessSkillId')) {
+            var businessSkillId = requestBody.BusinessSkillId;
+            var businessSkill = await this._businessSkillService.getById(businessSkillId);
+            if(!businessSkill) {
+                ErrorHandler.throwNotFoundError('Business skill id ' + businessSkillId.toString() + ' cannot be found!');
+            }
         }
         const updateModel: BusinessUserSkillUpdateModel = this.getUpdateModel(requestBody);
         const updated = await this._service.update(id, updateModel);
@@ -141,6 +151,17 @@ export class BusinessUserSkillControllerDelegate {
         return records;
     };
 
+    getValidCreateManyModel = async (requestBody) => {
+        for (const s of requestBody) {
+        const existing = await this._service.exists(s.BusinessSkillId, s.BusinessUserId);
+        if(existing){
+            ErrorHandler.throwNotFoundError(`Business user skill with BusinessSkillId = ${s.BusinessSkillId} and BusinessUserId = ${s.BusinessUserId} already exists!`);
+        }
+        var createModels = await this.getCreateManyModel(requestBody);
+        }
+        return createModels;
+    };
+
     getSearchFilters = (query) => {
         var filters = {};
 
@@ -188,10 +209,10 @@ export class BusinessUserSkillControllerDelegate {
 	        return null;
 	    }
 	    return {
-		    id		: record.id,
+		    id		        : record.id,
 		    BusinessUserId	: record.BusinessUserId,
 		    BusinessSkillId	: record.BusinessSkillId,
-        	IsActive                	: record.IsActive
+        	IsActive        : record.IsActive
         }
     };
 
