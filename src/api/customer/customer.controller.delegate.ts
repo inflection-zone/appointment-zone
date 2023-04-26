@@ -34,11 +34,6 @@ export class CustomerControllerDelegate {
         if (record === null) {
             throw new ApiError('Unable to create Customer!', 400);
         }
-
-        // if (requestBody.CurrentCustomerId && dto.Email) {
-        //     sendOnboardingEmail(dto, password)
-        // }
-
         return this.getEnrichedDto(record);
     };
 
@@ -66,6 +61,20 @@ export class CustomerControllerDelegate {
         if (record === null) {
           ErrorHandler.throwNotFoundError(" Customer with id " + id.toString() + "cannot be found!");
         }
+        if (Helper.hasProperty(requestBody, 'Mobile')) {
+            var mobile = requestBody.Mobile;
+            var otherEntity = await this._service.getCustomerWithMobile(mobile);
+            if(otherEntity != null && otherEntity.id != record.id) {
+                ErrorHandler.throwDuplicateUserError(`Business customer with mobile ${requestBody.Mobile} already exists!`);
+            }
+        }
+        if (Helper.hasProperty(requestBody, 'Email')) {
+            var email = requestBody.Email;
+            var otherEntity = await this._service.getCustomerWithEmail(email);
+            if(otherEntity != null && otherEntity.id != record.id) {
+                ErrorHandler.throwDuplicateUserError(`Business customer with email ${requestBody.Email} already exists!`);
+            }
+        }
         const updateModel: CustomerUpdateModel = this.getUpdateModel(requestBody);
         const updated: CustomerDto = await this._service.update(id , updateModel);
         if (updated == null) {
@@ -88,13 +97,14 @@ export class CustomerControllerDelegate {
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     getCreateModel = (requestBody): CustomerCreateModel => {
+        const birthDate = requestBody.BirthDate ? Date.parse(requestBody.BirthDate) : null;
         return {
             Prefix          : requestBody.Prefix ? requestBody.Prefix : null,
             FirstName       : requestBody.FirstName? requestBody.FirstName: null,
             LastName        : requestBody.LastName ? requestBody.LastName : null,
             Mobile          : requestBody.Mobile? requestBody.Mobile: null,
             Email           : requestBody.Email ? requestBody.Email : null,
-            BirthDate       : requestBody.BirthDate? requestBody.BirthDate:new Date(),
+            BirthDate       : new Date(birthDate),
             Gender          : requestBody.Gender ? requestBody.Gender : null,
             DisplayPicture  : requestBody.DisplayPicture? requestBody.DisplayPicture: null,
             Address         : requestBody.Address ? requestBody.Address : null,
@@ -152,6 +162,10 @@ export class CustomerControllerDelegate {
             Address             : record.Address,
             IsActive            : record.IsActive,
             InAppUser           : record.InAppUser,
+            CreatedAt           : record.createdAt,
+            UpdatedAt           : record.updatedAt,
+            DeletedAt           : record.DeletedAt,
+            IsDeleted           : record.IsDeleted
         };
     };
 
@@ -176,7 +190,7 @@ export class CustomerControllerDelegate {
             InAppUser           : record.InAppUser,
             CreatedAt           : record.createdAt,
             UpdatedAt           : record.updatedAt,
-            DeletedOn           : record.DeletedOn,
+            DeletedAt           : record.DeletedAt,
             IsDeleted           : record.IsDeleted
         };
     };

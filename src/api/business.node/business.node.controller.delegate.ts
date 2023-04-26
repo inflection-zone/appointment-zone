@@ -30,7 +30,6 @@ export class BusinessNodeControllerDelegate {
         const { nodeCreateModel } =
             await BusinessNodesValidator.getValidNodeCreateModel(requestBody);
 
-        // eslint-DisplayPictureable-next-line @typescript-eslint/no-unused-vars
         var createModel: BusinessNodeCreateModel = this.getCreateModel(requestBody);
         const record: BusinessNodeDto = await this._service.create(nodeCreateModel);
         if (record === null) {
@@ -64,6 +63,20 @@ export class BusinessNodeControllerDelegate {
         if (record === null) {
             ErrorHandler.throwNotFoundError('Business node with id ' + id.toString() + ' cannot be found!');
         }
+        if (Helper.hasProperty(requestBody, 'Mobile')) {
+            var mobile = requestBody.Mobile;
+            var otherEntity = await this._service.getBusinessNodeWithMobile(mobile);
+            if(otherEntity != null && otherEntity.id != record.id) {
+                ErrorHandler.throwDuplicateUserError(`Business node with mobile ${requestBody.Mobile} already exists!`);
+            }
+        }
+        if (Helper.hasProperty(requestBody, 'Email')) {
+            var email = requestBody.Email;
+            var otherEntity = await this._service.getBusinessNodeWithEmail(email);
+            if(otherEntity != null && otherEntity.id != record.id) {
+                ErrorHandler.throwDuplicateUserError(`Business node with email ${requestBody.Email} already exists!`);
+            }
+        }
         const updateModel: BusinessNodeUpdateModel = this.getUpdateModel(requestBody);
         const updated = await this._service.update(id, updateModel);
         if (updated == null) {
@@ -83,8 +96,6 @@ export class BusinessNodeControllerDelegate {
         };
 
     }
-
-
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -130,9 +141,7 @@ export class BusinessNodeControllerDelegate {
             filters['Order'] = order;
         }
         return filters;
-    }
-
-
+    };
 
     getUpdateModel = (requestBody): BusinessNodeUpdateModel => {
 
@@ -200,6 +209,10 @@ export class BusinessNodeControllerDelegate {
             AllowWalkinAppointments   : record.AllowWalkinAppointments,
             AllowFutureBookingFor     : record.AllowFutureBookingFor,
             IsActive                  : record.IsActive,
+            CreatedAt                 : record.CreatedAt,
+            UpdatedAt                 : record.UpdatedAt,
+            IsDeleted                 : record.IsDeleted,
+            DeletedAt                 : record.DeletedAt
            
         };
     };
@@ -223,6 +236,10 @@ export class BusinessNodeControllerDelegate {
             AllowWalkinAppointments   : record.AllowWalkinAppointments,
             AllowFutureBookingFor     : record.AllowFutureBookingFor,
             IsActive                  : record.IsActive,
+            CreatedAt                 : record.CreatedAt,
+            UpdatedAt                 : record.UpdatedAt,
+            IsDeleted                 : record.IsDeleted,
+            DeletedAt                 : record.DeletedAt
            
         };
     };

@@ -55,7 +55,7 @@ export class BusinessUsersValidator {
             Experience                     : requestBody.Experience ? requestBody.Experience : null,
             OverallRating                  : requestBody.OverallRating? requestBody.OverallRating: null,
             Dob                            : requestBody.Dob? requestBody.Dob: null,
-            Gender                         : requestBody.Gender ? requestBody.Gender : undefined,
+            Gender                         : requestBody.Gender ? requestBody.Gender : null,
             IsAvailableForEmergency        : requestBody.IsAvailableForEmergency ? requestBody.IsAvailableForEmergency :true,
             Facebook                       : requestBody.Facebook? requestBody.Facebook: null,
             Linkedin                       : requestBody.Linkedin? requestBody.Linkedin: null,
@@ -70,23 +70,6 @@ export class BusinessUsersValidator {
 
         const userService = new BusinessUserService();
 
-        // var password = requestBody.Password;
-        // if (!password) {
-        //     password = Helper.generatePassword();
-        // }
-        // else {
-        //     userService.validatePasswordCriteria(password);
-        // }
-        // requestBody.Password = Helper.generateHashedPassword(password);
-
-        //NOTE: please note that we are keeping user-name same as that of biocube id
-        // var userName = requestBody.UserName;
-        // if (!userName) {
-        //     userName = await userService.generateUserNameIfDoesNotExist(requestBody.UserName);
-        // }
-        // requestBody.UserName = userName;
-
-        // requestBody.CountryCode = requestBody.CountryCode ?? "+91";
         var userWithPhone = await userService.getBusinessUserWithMobile( requestBody.Mobile);
         if (userWithPhone) {
             ErrorHandler.throwDuplicateUserError(`User with phone ${requestBody.Mobile} already exists!`);

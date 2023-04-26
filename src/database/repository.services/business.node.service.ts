@@ -122,20 +122,6 @@ delete = async (id) => {
     }
 };
 
-// getBusinessNodeWithName = async (Name) => {
-//     try {
-//         const record = await this.prisma.business_nodes.findUnique({ 
-//             where:
-//             { 
-//                 Name : Name, 
-//             }
-//         });
-//         return record;
-//     } catch (error) {
-//         ErrorHandler.throwDbAccessError('Unable to check if business node exists with name!', error);
-//     }
-// };
-
 getBusinessNodeWithEmail = async (email) => {
     try {
         const record = await this.prisma.business_nodes.findUnique({ where : {Email : email}

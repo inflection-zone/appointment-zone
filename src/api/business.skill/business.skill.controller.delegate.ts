@@ -8,6 +8,7 @@ import { BusinessSkillService } from '../../database/repository.services/busines
 import { ErrorHandler } from '../../common/error.handler';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { Helper } from "../../common/helper";
+import { BusinessNodeService } from "../../database/repository.services/business.node.service";
 
 export class BusinessSkillControllerDelegate {
 
@@ -15,8 +16,11 @@ export class BusinessSkillControllerDelegate {
 
     _service: BusinessSkillService = null;
 
+    _businessNodeService: BusinessNodeService = null;
+
     constructor() {
         this._service = new BusinessSkillService();
+        this._businessNodeService = new BusinessNodeService();
     }
 
     //#endregion
@@ -25,6 +29,11 @@ export class BusinessSkillControllerDelegate {
 
         await validator.validateCreateRequest(requestBody);
      
+        var businessNodeId = requestBody.BusinessNodeId;
+        const businessNode = await this._businessNodeService.getById(businessNodeId);
+        if (!businessNode) {
+            ErrorHandler.throwNotFoundError(`Business node id not found!`);
+        }
         var createModel: BusinessSkillCreateModel = this.getCreateModel(requestBody);
         const record: BusinessSkillDto = await this._service.create(createModel);
         if (record === null) {
@@ -55,6 +64,13 @@ export class BusinessSkillControllerDelegate {
         const record = await this._service.getById(id);
         if (record === null) {
             ErrorHandler.throwNotFoundError('Business skill with id ' + id.toString() + ' cannot be found!');
+        }
+        if (Helper.hasProperty(requestBody, 'BusinessNodeId')) {
+            var businessNodeId = requestBody.BusinessNodeId;
+            var businessNode = await this._businessNodeService.getById(businessNodeId);
+            if(!businessNode) {
+                ErrorHandler.throwNotFoundError('Business node id ' + businessNodeId.toString() + ' cannot be found!');
+            }
         }
         const updateModel: BusinessSkillUpdateModel = this.getUpdateModel(requestBody);
         const updated = await this._service.update(id, updateModel);

@@ -49,24 +49,6 @@ export class CustomerValidator {
     static getValidCustomerCreateModel = async (requestBody) => {
 
         const validCustomerService = new CustomerService();
-
-        // var password = requestBody.Password;
-        // if (!password) {
-        //     password = Helper.generatePassword();
-        // }
-        // else {
-        //     userService.validatePasswordCriteria(password);
-        // }
-        // requestBody.Password = Helper.generateHashedPassword(password);
-
-        //NOTE: please note that we are keeping user-name same as that of biocube id
-        // var userName = requestBody.UserName;
-        // if (!userName) {
-        //     userName = await userService.generateUserNameIfDoesNotExist(requestBody.UserName);
-        // }
-        // requestBody.UserName = userName;
-
-        // requestBody.CountryCode = requestBody.CountryCode ?? "+91";
         var customerWithMobile = await validCustomerService.getCustomerWithMobile( requestBody.Mobile);
         if (customerWithMobile) {
             ErrorHandler.throwDuplicateUserError(`User with phone ${requestBody.Mobile} already exists!`);

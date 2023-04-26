@@ -55,6 +55,10 @@ export interface BusinessNodeDto {
     AllowWalkinAppointments  : Boolean  
     AllowFutureBookingFor    : String  
     IsActive                 : Boolean 
+    CreatedAt                : Date
+    UpdatedAt                : Date
+    IsDeleted                : boolean
+    DeletedAt                : Date
       
 }
 
