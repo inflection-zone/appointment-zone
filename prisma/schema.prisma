@@ -87,11 +87,11 @@ model business_node_hours {
   CreatedAt      DateTime  @default(now())
   Date           DateTime? @db.DateTime(0)
   Day            Int
-  EndTime        DateTime  @default(dbgenerated("'21:00:00'")) @db.Time(0)
+  EndTime        String    @default(dbgenerated("'21:00:00'"))
   IsActive       Boolean   @default(true)
   IsOpen         Boolean   @default(true)
   Message        String?   @db.VarChar(255)
-  StartTime      DateTime  @default(dbgenerated("'10:00:00'")) @db.Time(0)
+  StartTime      String    @default(dbgenerated("'10:00:00'"))
   Type           String    @db.VarChar(255)
   UpdatedAt      DateTime  @updatedAt
   IsDeleted      Boolean   @default(false)

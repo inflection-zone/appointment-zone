@@ -1,6 +1,6 @@
 import express from 'express';
 import { ResponseHandler } from '../../common/response.handler';
-import { BusinessNodeHourControllerDelegate } from './business.node,hour.controller.delegate';
+import { BusinessNodeHourControllerDelegate } from './business.node.hour.controller.delegate';
 import { BaseController } from '../base.controller';
 
 export class BusinessNodeHourController extends BaseController {
@@ -21,8 +21,19 @@ export class BusinessNodeHourController extends BaseController {
              await this.authorize('BusinessNodeHour.Create', request, response, false);
              
             const record = await this._delegate.create(request.body);
-            const message = 'Business node hour added successfully!';
+            const message = 'Business node hours added successfully!';
             ResponseHandler.success(request, response, message, 201, record);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    createMany = async (request: express.Request, response: express.Response): Promise <void> => {
+        try {
+             await this.authorize('BusinessNodeHour.CreateMany', request, response, false);
+            const records = await this._delegate.createMany(request.body);
+            const message = 'Business node hours added successfully!';
+            ResponseHandler.success(request, response, message, 201, records);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -32,7 +43,7 @@ export class BusinessNodeHourController extends BaseController {
         try{
             await this.authorize('BusinessNodeHour.GetById', request, response, false);
             const record = await this._delegate.getById(request.params.id);
-            const message ="Business node hour retrieved successfully!";
+            const message ="Business node hours retrieved successfully!";
             ResponseHandler.success(request, response, message, 200, record);
             
 
@@ -67,7 +78,7 @@ export class BusinessNodeHourController extends BaseController {
         try {
             await this.authorize('BusinessNodeHour.Delete', request, response, false);
             const result = await this._delegate.delete(request.params.id);
-            const message = 'Business node hour deleted successfully!';
+            const message = 'Business node hours deleted successfully!';
             ResponseHandler.success(request, response, message, 200, result);
 
         }catch (error) {

@@ -69,6 +69,20 @@ export class BusinessControllerDelegate {
         if (record === null) {
             ErrorHandler.throwNotFoundError('Business with id ' + id.toString() + ' cannot be found!');
         }
+        if (Helper.hasProperty(requestBody, 'Mobile')) {
+            var mobile = requestBody.Mobile;
+            var otherEntity = await this._service.getBusinessWithMobile(mobile);
+            if(otherEntity != null && otherEntity.id != record.id) {
+                ErrorHandler.throwDuplicateUserError(`Business with mobile ${requestBody.Mobile} already exists!`);
+            }
+        }
+        if (Helper.hasProperty(requestBody, 'Email')) {
+            var email = requestBody.Email;
+            var otherEntity = await this._service.getBusinessWithEmail(email);
+            if(otherEntity != null && otherEntity.id != record.id) {
+                ErrorHandler.throwDuplicateUserError(`Business with email ${requestBody.Email} already exists!`);
+            }
+        }
         const updateModel: BusinessUpdateModel = this.getUpdateModel(requestBody);
         const updated = await this._service.update(id, updateModel);
         if (updated == null) {

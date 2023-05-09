@@ -151,12 +151,12 @@ export class BusinessUserHourService{
                   var nodeStartTime = nodeHoursForDay.StartTime
                   var nodeEndTime = nodeHoursForDay.EndTime
             }
-            if (TimeHelper.isBefore(wh.StartTime, nodeStartTime)) {
-                wh.StartTime = nodeStartTime;
-            }
-            if (TimeHelper.isAfter(wh.EndTime, nodeEndTime)) {
-                wh.EndTime = nodeEndTime;
-            }
+            // if (TimeHelper.isBefore(wh.StartTime, nodeStartTime)) {
+            //     wh.StartTime = nodeStartTime;
+            // }
+            // if (TimeHelper.isAfter(wh.EndTime, nodeEndTime)) {
+            //     wh.EndTime = nodeEndTime;
+            // }
             var updateIsOpen = wh.hasOwnProperty('IsOpen') ? wh.IsOpen :null;
             var type = "WORK-DAY"
         if (!updateIsOpen || nodeHoursForDay == null) {
@@ -203,12 +203,12 @@ export class BusinessUserHourService{
                     var nodeStartTime = nodeHoursDay.StartTime;
                     var nodeEndTime = nodeHoursDay.EndTime;
 
-                    if (TimeHelper.isBefore(requestBody.StartTime, nodeStartTime)) {
-                        requestBody.StartTime = nodeStartTime;
-                    }
-                    if (TimeHelper.isAfter(requestBody.EndTime, nodeEndTime)) {
-                        requestBody.EndTime = nodeEndTime;
-                    }
+                    // if (TimeHelper.isBefore(requestBody.StartTime, nodeStartTime)) {
+                    //     requestBody.StartTime = nodeStartTime;
+                    // }
+                    // if (TimeHelper.isAfter(requestBody.EndTime, nodeEndTime)) {
+                    //     requestBody.EndTime = nodeEndTime;
+                    // }
                 }
             } catch (error) {
                 ErrorHandler.throwDbAccessError('DB Error: Unable to search business node hours!', error);
