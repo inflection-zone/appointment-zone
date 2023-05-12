@@ -41,24 +41,21 @@ export class BusinessNodeHourControllerDelegate {
 
     createMany = async (requestBody: any) => {
         await validator.validateCreateManyRequest(requestBody);
-
         const businessNodeId = requestBody.BusinessNodeId;
         const businessNode = await this._businessNodeService.getById(businessNodeId);
         var dayWiseWorkingHours = requestBody.DayWiseWorkingHours;
         if (!businessNode) {
             ErrorHandler.throwNotFoundError(`Business node id not found!`);
         }
-        var createModel = this.getCreateManyModel(requestBody);
-        {
+
         for await (var wh of dayWiseWorkingHours)
         { 
             var nodeHoursList = await this.prisma.business_node_hours.findMany({
                 where : {
-                    
-                    AND: { BusinessNodeId : businessNodeId,  Day : wh.day,IsActive : true  },
+                    AND: { BusinessNodeId: businessNodeId,  Day: wh.Day, IsActive: true },
                 }
             });
-           // var nodeHoursList = await this._service.getBusinessNodeHours(businessNodeId, day);
+
             const updateIsOpen = Helper.hasProperty(wh ,'IsOpen') ? wh.IsOpen : true;
             var type = "WORK-DAY";
             if(!updateIsOpen) {
@@ -76,7 +73,7 @@ export class BusinessNodeHourControllerDelegate {
                 }
                 var updated = await this._service.update(nodeHoursList[0].id, record);
             } else {
-                const record = {
+                const createModel = {
                     BusinessNodeId  : businessNodeId,
                     Type            : type,
                     Day             : wh.Day,
@@ -87,20 +84,19 @@ export class BusinessNodeHourControllerDelegate {
                     EndTime         : wh.EndTime != null ? wh.EndTime : '',
                     IsActive        : true
                     }
-                    const records = await this._service.create(record);
-                    if (records === null) {
+                    const record = await this._service.create(createModel);
+                    if (record === null) {
                         throw new ApiError('Unable to create business node hour service!', 400);
                 }  
-                return records;
+                
                }
-            }
-            var nodeHours = await this.prisma.business_node_hours.findMany({
-                where : {
-                    BusinessNodeId : businessNodeId,
-                    IsActive : true
-                }});
-                return nodeHours;
-        }           
+        }
+        var nodeHours = await this.prisma.business_node_hours.findMany({
+            where : {
+                BusinessNodeId : businessNodeId,
+                IsActive : true
+            }});
+        return nodeHours;
     };
 
     getById = async (id: uuid) => {
