@@ -11,6 +11,8 @@ export const register = (app: express.Application): void => {
     const controller = new BusinessNodeHourController();
 
     router.post('', controller.create);
+    router.post('/add-multiple', controller.createMany);
+
      router.put('/:id', authenticator.authenticateClient,controller.update);
      router.delete('/:id', authenticator.authenticateClient, controller.delete);
 

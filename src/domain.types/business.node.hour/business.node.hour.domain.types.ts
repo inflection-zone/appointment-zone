@@ -1,20 +1,27 @@
 import { BaseSearchFilters, BaseSearchResults } from "../miscellaneous/base.search.types";
-import { Gender, uuid } from "../miscellaneous/system.types";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export interface BusinessNodeHourCreateModel {
   id?             :             String
-  BusinessNodeId :            String  
-  Type           :            String  
-  Day            :            Number
+  BusinessNodeId ?:            String  
+  Type ?          :            String  
+  Day  ?          :            Number
   Date?           :            Date
   IsOpen?         :            Boolean 
   Message?        :            String
-  StartTime?      :            Date
-  EndTime?        :            Date
+  StartTime?      :            String
+  EndTime ?       :            String
   IsActive?       :            Boolean 
   IsDeleted?      :            Boolean 
+  DayWiseWorkingHours? :       NodeHourCreateModel[]
+  }
+
+  export interface NodeHourCreateModel{
+    Day             : Number;
+    StartTime       : String;
+    EndTime         : String;
+
   }
   
 export interface BusinessNodeHourUpdateModel {
@@ -25,8 +32,8 @@ export interface BusinessNodeHourUpdateModel {
   Date?           :            Date
   IsOpen?         :            Boolean 
   Message?        :            String
-  StartTime?      :            Date
-  EndTime?        :            Date
+  StartTime?      :            String
+  EndTime?        :            String
   IsActive?       :            Boolean 
   IsDeleted?      :            Boolean  
 }
@@ -39,23 +46,23 @@ export interface BusinessNodeHourDto {
   Date           :            Date
   IsOpen         :            Boolean 
   Message        :            String
-  StartTime      :            Date
-  EndTime        :            Date
+  StartTime      :            String
+  EndTime        :            String
   IsActive       :            Boolean 
   IsDeleted      :            Boolean 
       
 }
 
 export interface BusinessNodeHourSearchFilters extends BaseSearchFilters {
-    id?             :             String
+  id?             :             String
   BusinessNodeId? :            String  
   Type?           :            String  
   Day?            :            Number
   Date?           :            Date
   IsOpen?         :            Boolean 
   Message?        :            String
-  StartTime?      :            Date
-  EndTime?        :            Date
+  StartTime?      :            String
+  EndTime?        :            String
   IsActive?       :            Boolean 
   IsDeleted?      :            Boolean   
 
