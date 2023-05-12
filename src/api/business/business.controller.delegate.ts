@@ -7,11 +7,12 @@ import { BusinessCreateModel, BusinessUpdateModel,
          from "../../domain.types/business/business.domain.types";
 import { BusinessValidator as validator } from './business.validator';
 import { BusinessService } from '../../database/repository.services/business.service';
+import { BusinessNodeService } from '../../database/repository.services/business.node.service';
+import { BusinessNodeHourService } from "../../database/repository.services/business.node.hour.service";
 import { ErrorHandler } from '../../common/error.handler';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { Helper } from "../../common/helper";
 import * as apikeyGenerator from 'uuid-apikey';
-import { query } from "express";
 
 export class BusinessControllerDelegate {
 
@@ -19,10 +20,14 @@ export class BusinessControllerDelegate {
 
     _service: BusinessService = null;
 
+    _businessNodeService: BusinessNodeService = null;
+
+    _businessNodeHourService : BusinessNodeHourService = null;
 
     constructor() {
         this._service = new BusinessService();
-       
+        this._businessNodeService = new BusinessNodeService();
+        this._businessNodeHourService = new BusinessNodeHourService(); 
     }
 
     //#endregion
@@ -43,6 +48,9 @@ export class BusinessControllerDelegate {
         if (record === null) {
             throw new ApiError('Unable to create Business!', 400);
         }
+        var defaultBusinessNode = await this._businessNodeService.createDefaultForBusiness(record);
+        //var defaultServiceHours = await this._businessNodeHourService.createDefaultHoursForNode(defaultBusinessNode);
+
         return this.getEnrichedDto(record);
     };
 
@@ -107,22 +115,22 @@ export class BusinessControllerDelegate {
 
     getCreateModel = (requestBody): BusinessCreateModel => {
         return {
-            ExternalId          : requestBody.ExternalId ? requestBody.ExternalId : null,
-            Name                : requestBody.Name? requestBody.Name: null,
-            Mobile              : requestBody.Mobile? requestBody.Mobile: null,
-            Email               : requestBody.Email ? requestBody.Email : null,
+            ExternalId          : requestBody.ExternalId,
+            Name                : requestBody.Name,
+            Mobile              : requestBody.Mobile,
+            Email               : requestBody.Email,
             AboutUs             : requestBody.AboutUs? requestBody.AboutUs: null,
             Logo                : requestBody.Logo ? requestBody.Logo : null,
             DisplayPicture      : requestBody.DisplayPicture? requestBody.DisplayPicture: null,
             OverallRating       : requestBody.OverallRating? requestBody.OverallRating: null,
             Address             : requestBody.Address ? requestBody.Address : null,
             ApiKey              : requestBody.ApiKey ? requestBody.ApiKey : apikeyGenerator.default.create().apiKey,
-            Facebook            :requestBody.Facebook ? requestBody.Facebook : null,
-            Linkedin            :requestBody.Linkedin ? requestBody.Linkedin : null,
-            Twitter             :requestBody.Twitter ? requestBody.Twitter : null,
-            Instagram           :requestBody.Instagram ? requestBody.Instagram : null,
-            Yelp                :requestBody.Yelp ? requestBody.Yelp : null,
-            IsActive            : requestBody.IsActive ? requestBody.IsActive : true,
+            Facebook            : requestBody.Facebook ? requestBody.Facebook : null,
+            Linkedin            : requestBody.Linkedin ? requestBody.Linkedin : null,
+            Twitter             : requestBody.Twitter ? requestBody.Twitter : null,
+            Instagram           : requestBody.Instagram ? requestBody.Instagram : null,
+            Yelp                : requestBody.Yelp ? requestBody.Yelp : null,
+            IsActive            : true,
            
         };
     };
