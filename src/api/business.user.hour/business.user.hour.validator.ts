@@ -11,12 +11,12 @@ export class BusinessUserHourValidator {
                 BusinessUserId      : joi.string().guid({version : ['uuidv4'] }).required(),
                 Type                : joi.string().required(),
                 Day                 : joi.number().integer().required(),
-                Date                : joi.date().iso().optional(),
+                Date                : joi.date().iso().optional().allow(null),
                 IsOpen              : joi.boolean().required(),
-                Message             : joi.string().max(255).optional(),
-                StartTime           : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).optional(),
-                EndTime             : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).optional(),
-                IsActive            : joi.boolean().required(), 
+                Message             : joi.string().max(255).optional().allow(null),
+                StartTime           : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).optional().allow(null),
+                EndTime             : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).optional().allow(null),
+                IsActive            : joi.boolean().optional(), 
             });
             return await schema.validateAsync(requestBody);
         } catch (error) {

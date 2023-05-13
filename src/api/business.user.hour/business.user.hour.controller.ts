@@ -29,10 +29,10 @@ export class BusinessUserHourController extends BaseController {
         }
     };
 
-    createMany = async (request: express.Request, response: express.Response): Promise <void> => {
+    createMultiple = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
-             await this.authorize('BusinessUserHour.CreateMany', request, response, false);
-            const records = await this._delegate.createMany(request.body);
+             await this.authorize('BusinessUserHour.CreateMultiple', request, response, false);
+            const records = await this._delegate.createMultiple(request.body);
             const message = 'Business user hours added successfully!';
             ResponseHandler.success(request, response, message, 201, records);
         } catch (error) {
