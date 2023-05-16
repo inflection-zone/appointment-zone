@@ -34,27 +34,18 @@ export class BusinessNodeHourValidator {
                 BusinessNodeId      : joi.string().max(255).optional(),
                 Type                : joi.string().max(255).optional(),
                 Day                 : joi.number().required(),
+                Date                : joi.date().iso().optional(),
                 IsOpen              : joi.boolean().optional(),
+                Message             : joi.string().max(255).optional(), 
                 IsActive            : joi.boolean().optional(),
                 StartTime           : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).required(),
-                EndTime             : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).required(), 
-            //         BusinessNodeId          : joi.string().max(255).optional(),
-            //         DayWiseWorkingHours     : joi.array().items(joi.object({
-            //                                     BusinessNodeId      : joi.string().max(255).optional(),
-            //                                     Type                : joi.string().max(255).optional(),
-            //                                     Day                 : joi.number().required(),
-            //                                     IsOpen              : joi.boolean().optional(),
-            //                                     IsActive            : joi.boolean().optional(),
-            //                                     StartTime           : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).required(),
-            //                                     EndTime             : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).required(),                                    
-            //                                     })).optional(),
-             });
+                EndTime             : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).required(),
+            });
             const records : BusinessNodeHourCreateModel[] = [];
                 for (const wh of requestBody.DayWiseWorkingHours) {
                     const request = await schema.validateAsync(wh);
                     records.push(request);
                 }
-            
                 return records;
         } catch (error) {
             ErrorHandler.handleValidationError(error);
@@ -103,6 +94,28 @@ export class BusinessNodeHourValidator {
         }
     }
 
-
-
+    static validateUpdateMultipleRequest = async (requestBody) => {
+        try {
+            const schema = joi.object({
+                BusinessNodeId                     : joi.string().max(255).optional(),
+                Type                               : joi.string().max(255).optional(),
+                Day                                : joi.number().optional(),
+                Date                               : joi.date().iso().optional(),
+                IsOpen                             : joi.boolean().optional().default('true'),
+                Message                            : joi.string().max(255).optional(),
+                StartTime                          : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).optional(),
+                EndTime                            : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).optional(),
+                IsActive                           : joi.boolean().optional().default('true'),
+                IsDeleted                          : joi.boolean().optional(),
+            });
+            const records : BusinessNodeHourCreateModel[] = [];
+                for (const wh of requestBody.DayWiseWorkingHours) {
+                    const request = await schema.validateAsync(wh);
+                    records.push(request);
+                }
+                return records;
+        } catch (error) {
+            ErrorHandler.handleValidationError(error);
+        }
+    };
 }

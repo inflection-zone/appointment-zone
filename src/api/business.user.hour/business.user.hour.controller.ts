@@ -29,12 +29,12 @@ export class BusinessUserHourController extends BaseController {
         }
     };
 
-    createMany = async (request: express.Request, response: express.Response): Promise <void> => {
+    createMultiple = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
-             await this.authorize('BusinessUserHour.CreateMany', request, response, false);
-            const DayWiseWorkingHours = await this._delegate.createMany(request.body.DayWiseWorkingHours);
+             await this.authorize('BusinessUserHour.CreateMultiple', request, response, false);
+            const records = await this._delegate.createMultiple(request.body);
             const message = 'Business user hours added successfully!';
-            ResponseHandler.success(request, response, message, 201, DayWiseWorkingHours);
+            ResponseHandler.success(request, response, message, 201, records);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -73,10 +73,21 @@ export class BusinessUserHourController extends BaseController {
         }
     };
 
+    updateMultiple = async (request: express.Request, response: express.Response): Promise < void > => {
+        try {
+            await this.authorize('BusinessUserHour.UpdateMultiple', request, response, false);
+            const updatedRecord = await this._delegate.updateMultiple(request.params.businessUserid, request.body);
+            const message = 'Business user hours updated successfully!';
+            ResponseHandler.success(request, response, message, 200, updatedRecord);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     delete = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
             await this.authorize('BusinessUserHour.Delete', request, response, false);
-            const result = await this._delegate.delete(request.params.id, request.params.updateModel);
+            const result = await this._delegate.delete(request.params.id);
             const message = 'Business user hours deleted successfully!';
             ResponseHandler.success(request, response, message, 200, result);
 

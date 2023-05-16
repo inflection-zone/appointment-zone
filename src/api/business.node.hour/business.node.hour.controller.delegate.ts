@@ -1,5 +1,5 @@
 import { ApiError } from "../../common/api.error";
-import { BusinessNodeHourCreateModel,NodeHourCreateModel, BusinessNodeHourUpdateModel, BusinessNodeHourDto,BusinessNodeHourSearchFilters, BusinessNodeHourSearchResults  } from "../../domain.types/business.node.hour/business.node.hour.domain.types";
+import { BusinessNodeHourCreateModel, BusinessNodeHourUpdateModel, BusinessNodeHourDto,BusinessNodeHourSearchFilters, BusinessNodeHourSearchResults  } from "../../domain.types/business.node.hour/business.node.hour.domain.types";
 import { BusinessNodeHourValidator as validator } from '../business.node.hour/business.node.hour.validator';
 import { BusinessNodeHourService } from '../../database/repository.services/business.node.hour.service';
 import { ErrorHandler } from '../../common/error.handler';
@@ -7,6 +7,7 @@ import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { Helper } from "../../common/helper";
 import { BusinessNodeService } from "../../database/repository.services/business.node.service";
 import { PrismaClientInit } from "../../startup/prisma.client.init";
+import dayjs from "dayjs";
 
 export class BusinessNodeHourControllerDelegate {
 
@@ -39,7 +40,7 @@ export class BusinessNodeHourControllerDelegate {
         return this.getEnrichedDto(record);
     };
 
-    createMany = async (requestBody: any) => {
+    createMultiple = async (requestBody: any) => {
         await validator.validateCreateManyRequest(requestBody);
         const businessNodeId = requestBody.BusinessNodeId;
         const businessNode = await this._businessNodeService.getById(businessNodeId);
@@ -47,7 +48,6 @@ export class BusinessNodeHourControllerDelegate {
         if (!businessNode) {
             ErrorHandler.throwNotFoundError(`Business node id not found!`);
         }
-
         for await (var wh of dayWiseWorkingHours)
         { 
             var nodeHoursList = await this.prisma.business_node_hours.findMany({
@@ -55,7 +55,6 @@ export class BusinessNodeHourControllerDelegate {
                     AND: { BusinessNodeId: businessNodeId,  Day: wh.Day, IsActive: true },
                 }
             });
-
             const updateIsOpen = Helper.hasProperty(wh ,'IsOpen') ? wh.IsOpen : true;
             var type = "WORK-DAY";
             if(!updateIsOpen) {
@@ -87,16 +86,15 @@ export class BusinessNodeHourControllerDelegate {
                     const record = await this._service.create(createModel);
                     if (record === null) {
                         throw new ApiError('Unable to create business node hour service!', 400);
-                }  
-                
-               }
-        }
-        var nodeHours = await this.prisma.business_node_hours.findMany({
-            where : {
-                BusinessNodeId : businessNodeId,
-                IsActive : true
-            }});
-        return nodeHours;
+                    }
+                }
+            }
+            var nodeHours = await this.prisma.business_node_hours.findMany({
+                where : {
+                    BusinessNodeId : businessNodeId,
+                    IsActive : true
+                }});
+            return nodeHours;
     };
 
     getById = async (id: uuid) => {
@@ -120,7 +118,7 @@ export class BusinessNodeHourControllerDelegate {
         await validator.validateUpdateRequest(requestBody);
         const record = await this._service.getById(id);
         if (record === null) {
-            ErrorHandler.throwNotFoundError('Business node with id ' + id.toString() + ' cannot be found!');
+            ErrorHandler.throwNotFoundError('Business node hour with id ' + id.toString() + ' cannot be found!');
         }
         const updateModel: BusinessNodeHourUpdateModel = this.getUpdateModel(requestBody);
         const updated = await this._service.update(id, updateModel);
@@ -128,6 +126,63 @@ export class BusinessNodeHourControllerDelegate {
             throw new ApiError('Unable to update business node hour!', 400);
         }
         return this.getEnrichedDto(updated);
+    };
+
+    updateMultiple = async (businessNodeId: uuid, requestBody: any) => {
+        await validator.validateUpdateMultipleRequest(requestBody);
+        var dayWiseWorkingHours = requestBody.DayWiseWorkingHours;
+
+        const businessNode = await this._businessNodeService.getById(businessNodeId);
+        if (!businessNode) {
+            ErrorHandler.throwNotFoundError('Business node with id ' + businessNodeId.toString() + ' cannot be found!');
+        }
+        for await (var wh of dayWiseWorkingHours)
+        { 
+            var nodeHoursList = await this.prisma.business_node_hours.findMany({
+                where : {
+                    AND: { BusinessNodeId: businessNodeId,  Day: wh.Day, IsActive: true },
+                }
+            });
+            const updateIsOpen = Helper.hasProperty(wh ,'IsOpen') ? wh.IsOpen : true;
+            var type = "WORK-DAY";
+            if(!updateIsOpen) {
+                type = "NON-WORKING-DAY";
+            }
+            if(nodeHoursList.length > 0 ) {
+                var record = {
+                    Type        : type,
+                    Date        : null,
+                    IsOpen      : updateIsOpen,
+                    Message     : null,
+                    StartTime   : wh.StartTime != null ? wh.StartTime : '',
+                    EndTime     : wh.EndTime != null ? wh.EndTime : '',
+                    IsActive    : true
+                }
+                var updated = await this._service.update(nodeHoursList[0].id, record);
+            } else {
+                const createModel = {
+                    BusinessNodeId  : businessNodeId,
+                    Type            : type,
+                    Day             : wh.Day,
+                    Date            : null,
+                    IsOpen          : updateIsOpen,
+                    Message         : null,
+                    StartTime       : wh.StartTime != null ? wh.StartTime : '',
+                    EndTime         : wh.EndTime != null ? wh.EndTime : '',
+                    IsActive        : true
+                    }
+                    const record = await this._service.create(createModel);
+                    if (record === null) {
+                        throw new ApiError('Unable to create business node hour service!', 400);
+                    }
+                }
+        }
+         var nodeHours = await this.prisma.business_node_hours.findMany({
+                where : {
+                    BusinessNodeId : businessNodeId,
+                    IsActive : true
+                }});
+            return nodeHours;
     };
 
     delete = async (id: uuid) => {
@@ -145,15 +200,14 @@ export class BusinessNodeHourControllerDelegate {
     getCreateModel = (requestBody): BusinessNodeHourCreateModel => {
         return {
             BusinessNodeId                 : requestBody.BusinessNodeId? requestBody.BusinessNodeId:null,
-            Type                           : requestBody.Type? requestBody.Type: null,
-            Day                            : requestBody.Day? requestBody.Day: null,
-            Date                           : requestBody.Date? requestBody.Date: null,
+            Type                           : requestBody.Type,
+            Day                            : requestBody.Day,
+            Date                           : requestBody.Date? dayjs(requestBody.Date).toDate(): null,
             IsOpen                         : requestBody.IsOpen? requestBody.IsOpen: true,
             Message                        : requestBody.Message ? requestBody.Message : null,
             StartTime                      : requestBody.StartTime? requestBody.StartTime: '10:00:00',
             EndTime                        : requestBody.EndTime ? requestBody.EndTime : '21:00:00',
             IsActive                       : requestBody.IsActive ? requestBody.IsActive : true,
-            IsDeleted                      : requestBody.IsDeleted ? requestBody.IsDeleted : null,
         };
     };
 
@@ -166,45 +220,6 @@ export class BusinessNodeHourControllerDelegate {
         var createModel : BusinessNodeHourCreateModel = await this.getCreateModel(requestBody);
         return createModel;
     };
-
-    getCreateManyModel = (requestBody) => {
-        var records = {
-            BusinessNodeId                 : requestBody.BusinessNodeId? requestBody.BusinessNodeId:null,
-            DayWiseWorkingHours            : []
-        };
-        if(requestBody.DayWiseWorkingHours && requestBody.DayWiseWorkingHours.length > 0) {
-
-            var dayWiseWorkingHours = [];
-                for(var wh of requestBody.DayWiseWorkingHours) {
-                    var record  = {
-                        Day         : wh.Day,
-                        StartTime   : wh.StartTime!= null ? wh.StartTime : '',
-                        EndTime     : wh.EndTime!= null ? wh.EndTime : ''
-                    }
-                    dayWiseWorkingHours.push(record);
-                }
-                records.DayWiseWorkingHours = dayWiseWorkingHours;
-            }
-           return records;
-     };
-        //       if(requestBody.DayWiseWorkingHours && requestBody.DayWiseWorkingHours.length > 0) {
-        //           var records: BusinessNodeHourCreateModel[] = [];
-        //           for(var wh of requestBody.DayWiseWorkingHours) {
-        //           var record = {
-        //               BusinessNodeId    : requestBody.BusinessNodeId ? requestBody.BusinessNodeId: null,
-        //               Type              : requestBody.Type? requestBody.Type: "WORK-DAY",
-        //               IsOpen            : requestBody.IsOpen? requestBody.IsOpen: false,
-        //               IsActive          : requestBody.IsActive ? requestBody.IsActive : true,
-        //               Day               : wh.Day ? wh.Day : null,
-        //               StartTime         : wh.StartTime!= null ? wh.StartTime : '10:00:00',
-        //               EndTime           : wh.EndTime!= null ? wh.EndTime : '21:00:00'
-        //           };
-        //           records.push(record);
-        //           }
-        //       }
-        //       return records;
-        //    };
-
   
     getSearchFilters = (query) => {
         var filters = {};

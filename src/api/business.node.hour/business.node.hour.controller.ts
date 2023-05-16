@@ -28,10 +28,10 @@ export class BusinessNodeHourController extends BaseController {
         }
     };
 
-    createMany = async (request: express.Request, response: express.Response): Promise <void> => {
+    createMultiple = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
-             await this.authorize('BusinessNodeHour.CreateMany', request, response, false);
-            const records = await this._delegate.createMany(request.body);
+             await this.authorize('BusinessNodeHour.CreateMultiple', request, response, false);
+            const records = await this._delegate.createMultiple(request.body);
             const message = 'Business node hours added successfully!';
             ResponseHandler.success(request, response, message, 201, records);
         } catch (error) {
@@ -50,7 +50,7 @@ export class BusinessNodeHourController extends BaseController {
         }catch(error){
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     search = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
@@ -61,7 +61,7 @@ export class BusinessNodeHourController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     update = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
@@ -72,7 +72,18 @@ export class BusinessNodeHourController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
+
+    updateMultiple = async (request: express.Request, response: express.Response): Promise < void > => {
+        try {
+            await this.authorize('BusinessNodeHour.UpdateMultiple', request, response, false);
+            const updatedRecord = await this._delegate.updateMultiple(request.params.businessNodeid, request.body);
+            const message = 'Business node hours updated successfully!';
+            ResponseHandler.success(request, response, message, 200, updatedRecord);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 
     delete = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
@@ -84,8 +95,5 @@ export class BusinessNodeHourController extends BaseController {
         }catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
-
-
-
-};
+    };
+}

@@ -3,7 +3,7 @@ import { BaseSearchFilters, BaseSearchResults } from "../miscellaneous/base.sear
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export interface BusinessNodeHourCreateModel {
-  id?             :             String
+  id?             :            String
   BusinessNodeId ?:            String  
   Type ?          :            String  
   Day  ?          :            Number
@@ -14,18 +14,10 @@ export interface BusinessNodeHourCreateModel {
   EndTime ?       :            String
   IsActive?       :            Boolean 
   IsDeleted?      :            Boolean 
-  DayWiseWorkingHours? :       NodeHourCreateModel[]
   }
 
-  export interface NodeHourCreateModel{
-    Day             : Number;
-    StartTime       : String;
-    EndTime         : String;
-
-  }
-  
 export interface BusinessNodeHourUpdateModel {
-  id?             :             String
+  id?             :            String
   BusinessNodeId? :            String  
   Type?           :            String  
   Day?            :            Number
@@ -39,7 +31,7 @@ export interface BusinessNodeHourUpdateModel {
 }
 
 export interface BusinessNodeHourDto {
-  id             :             String
+  id             :            String
   BusinessNodeId :            String  
   Type           :            String  
   Day            :            Number
@@ -54,7 +46,7 @@ export interface BusinessNodeHourDto {
 }
 
 export interface BusinessNodeHourSearchFilters extends BaseSearchFilters {
-  id?             :             String
+  id?             :            String
   BusinessNodeId? :            String  
   Type?           :            String  
   Day?            :            Number

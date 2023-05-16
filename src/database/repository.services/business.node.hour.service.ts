@@ -1,10 +1,6 @@
 import { ErrorHandler } from "../../common/error.handler";
 import { PrismaClientInit } from "../../startup/prisma.client.init";
 import { Prisma } from '@prisma/client';
-import { BusinessNodeHourCreateModel } from "../../domain.types/business.node.hour/business.node.hour.domain.types";
-import { resourceLimits } from "worker_threads";
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export class BusinessNodeHourService{
@@ -25,34 +21,6 @@ export class BusinessNodeHourService{
             ErrorHandler.throwDbAccessError('DB Error: Unable to create business node hour!',error);
         } 
     };
-
-    // createMany = async (createModels) => {
-    //     try{
-    //         var records = await this.prisma.business_node_hours.createMany({data:createModels});
-    //         return records;
-    //         }catch (error) {
-    //             ErrorHandler.throwDbAccessError('DB Error: Unable to create business node hour!', error)
-    //     } 
-    // };
-
-    // getBusinessNodeHours = async (businessNodeId, day) => {
-    //     try{
-    //         // const search : Prisma.business_node_hoursFindManyArgs = {};         
-    //         //     search.where = { 
-    //         //         BusinessNodeId : businessNodeId,
-    //         //         Day : day,
-    //         //      //   IsActive : true
-    //         //      }
-    //             const result = await this.prisma.business_node_hours.findMany({where : {BusinessNodeId : businessNodeId, Day : day, IsActive : true },
-    //         });
-    //             if(result.length > 0)
-    //             {
-    //               return result[0];
-    //             }
-    //     }catch (error) {
-    //         ErrorHandler.throwDbAccessError('DB Error: Unable to create business node hour!', error)
-    //     } 
-    // };
 
     getById = async (id) => {
         try {
@@ -161,6 +129,43 @@ delete = async (id) => {
 
     }
 };
+    // createDefaultHoursForNode = async(record) => {
+    //     var nodeHours = null;
+    //     var newBusinessNodeHours = {
+    //     BusinessNodeId : record.id
+    //     }
+    //     newBusinessNodeHours.Type ="WEEKDAY";
+    //     newBusinessNodeHours.IsOpen = true;
 
+    //     newBusinessNodeHours.Day = 1;
+    //     nodeHours = await this.prisma.business_node_hours.create({data:newBusinessNodeHours});        
+
+    //     newBusinessNodeHours.Day = 2;
+    //     nodeHours = await this.prisma.business_node_hours.create({data:newBusinessNodeHours});        
+    
+    //     newBusinessNodeHours.Day = 3;
+    //     nodeHours = await this.prisma.business_node_hours.create({data:newBusinessNodeHours});        
+    
+    //     newBusinessNodeHours.Day = 4;
+    //     nodeHours = await this.prisma.business_node_hours.create({data:newBusinessNodeHours});        
+    
+    //     newBusinessNodeHours.Day = 5;
+    //     nodeHours = await this.prisma.business_node_hours.create({data:newBusinessNodeHours});        
+
+    //     newBusinessNodeHours.Type ="WEEKEND";
+    //     newBusinessNodeHours.IsOpen = false;
+    //     newBusinessNodeHours.Day = 6;
+    //     nodeHours = await this.prisma.business_node_hours.create({data:newBusinessNodeHours});        
+    
+    //     newBusinessNodeHours.Type ="WEEKEND";
+    //     newBusinessNodeHours.IsOpen = false;
+    //     newBusinessNodeHours.Day = 7;
+    //     nodeHours = await this.prisma.business_node_hours.create({data:newBusinessNodeHours});        
+
+    //     var allNodeHours = await this.prisma.business_node_hours.findMany({where : {
+    //         BusinessNodeId : record.id
+    //     }});
+    //     return allNodeHours;
+    // }
 
 }
