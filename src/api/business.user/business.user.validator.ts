@@ -1,6 +1,5 @@
 import * as joi from 'joi';
 import { ErrorHandler } from '../../common/error.handler';
-import { Helper } from '../../common/helper';
 import { BusinessUserService } from '../../database/repository.services/business.user.service';
 import { BusinessUserCreateModel} from "../../domain.types/business.user/business.user.domain.types";
 
@@ -43,26 +42,26 @@ export class BusinessUsersValidator {
     static getUserCreateModel = (requestBody): BusinessUserCreateModel => {
 
         return {
-            BusinessNodeId                 : requestBody.BusinessNodeId? requestBody.BusinessNodeId:null,
-            FirstName                      : requestBody.FirstName? requestBody.FirstName: null,
-            LastName                       : requestBody.LastName? requestBody.LastName: null,
-            Prefix                         : requestBody.Prefix? requestBody.Prefix: null,
-            Mobile                         : requestBody.Mobile? requestBody.Mobile: null,
-            Email                          : requestBody.Email ? requestBody.Email : null,
+            BusinessNodeId                 : requestBody.BusinessNodeId,
+            FirstName                      : requestBody.FirstName,
+            LastName                       : requestBody.LastName,
+            Prefix                         : requestBody.Prefix,
+            Mobile                         : requestBody.Mobile,
+            Email                          : requestBody.Email,
+            Gender                         : requestBody.Gender,
             DisplayPicture                 : requestBody.DisplayPicture? requestBody.DisplayPicture: null,
             AboutMe                        : requestBody.AboutMe ? requestBody.AboutMe : null,
             Qualification                  : requestBody.Qualification ? requestBody.Qualification : null,
             Experience                     : requestBody.Experience ? requestBody.Experience : null,
-            OverallRating                  : requestBody.OverallRating? requestBody.OverallRating: null,
+            OverallRating                  : null,
             Dob                            : requestBody.Dob? requestBody.Dob: null,
-            Gender                         : requestBody.Gender ? requestBody.Gender : null,
-            IsAvailableForEmergency        : requestBody.IsAvailableForEmergency ? requestBody.IsAvailableForEmergency :true,
+            IsAvailableForEmergency        : requestBody.IsAvailableForEmergency ? requestBody.IsAvailableForEmergency : true,
             Facebook                       : requestBody.Facebook? requestBody.Facebook: null,
             Linkedin                       : requestBody.Linkedin? requestBody.Linkedin: null,
             Twitter                        : requestBody.Twitter? requestBody.Twitter: null,
             Instagram                      : requestBody.Instagram ? requestBody.Instagram : null,
             Yelp                           : requestBody.Yelp? requestBody.Yelp: null,
-            IsActive                       : requestBody.IsActive ? requestBody.IsActive : true
+            IsActive                       : true
         };
     }
 

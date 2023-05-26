@@ -44,14 +44,18 @@ export class BusinessControllerDelegate {
             ErrorHandler.throwDuplicateUserError(`Business with mobile ${requestBody.Mobile} already exists!`);
         }
         var createModel: BusinessCreateModel = this.getCreateModel(requestBody);
-        const record: BusinessDto = await this._service.create(createModel);
+        const record = await this._service.create(createModel);
         if (record === null) {
             throw new ApiError('Unable to create Business!', 400);
         }
-        var defaultBusinessNode = await this._businessNodeService.createDefaultForBusiness(record);
-        //var defaultServiceHours = await this._businessNodeHourService.createDefaultHoursForNode(defaultBusinessNode);
+        var defaultBusinessNode = await this._businessNodeService.createDefaultNodeForBusiness(record);
+      //  var defaultServiceHours = await this._businessNodeHourService.createDefaultHoursForNode(defaultBusinessNode);
 
-        return this.getEnrichedDto(record);
+        const business = {
+            DefaultBusinessNode : defaultBusinessNode,
+      //      DefaultServiceHours : defaultServiceHours,
+        }
+        return this.getEnrichedDto(business);
     };
 
     getById = async (id: uuid) => {

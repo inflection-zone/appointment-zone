@@ -1,7 +1,4 @@
-import { BusinessUserSearchResults, BusinessUserSearchFilters } from "../../domain.types/business.user/business.user.domain.types";
-//import instance from "tsyringe/dist/typings/dependency-container";
-import { Logger } from '../../common/logger';
-import { Helper } from "../../common/helper";
+
 import { ErrorHandler } from "../../common/error.handler";
 import { PrismaClientInit } from "../../startup/prisma.client.init";
 import { Prisma } from '@prisma/client';
@@ -44,26 +41,11 @@ export class BusinessUserService{
 search = async (filters) => {
     try {
         const search : Prisma.business_usersFindManyArgs = {};
-        if (filters.FirstName != null) {
-            search.where = {
-                FirstName : filters.FirstName
-            }
-        }
-        if (filters.LastName != null) {
-            search.where = {
-                LastName : filters.LastName
-            }
-        }
-        if (filters.Mobile != null) {
-            search.where =   {
-                Mobile : filters.Mobile
-                }
-        }
-        if (filters.Email != null) {
-            search.where =   {
-                Email : filters.Email
-                }
-        }
+        // if (filters.Name != null) {
+        //     search.where = {
+        //         Name : filters.Name
+        //     }
+        // }
         search.orderBy = {
                 CreatedAt : 'asc'
         }
@@ -117,10 +99,14 @@ update = async (id, updateModel) => {
 
 delete = async (id) => {
     try {
-        const result = await this.prisma.business_users.delete({ where: 
-            { id: id } 
-        });
-        //return result ===1;
+        // const result = await this.prisma.business_users.delete({ where: 
+        //     { id: id } 
+        // });
+        const deleted = await this.prisma.business_users.updateMany({
+            where : { id : id, IsActive : true },
+            data : { IsActive : false },
+        })
+        return deleted;
     } catch (error) {
         ErrorHandler.throwDbAccessError('DB Error: Unable to delete Business user!', error);
 

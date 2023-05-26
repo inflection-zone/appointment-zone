@@ -11,7 +11,7 @@ import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { ErrorHandler } from "../../common/error.handler";
 import { Helper } from "../../common/helper";
 import { BusinessNodesValidator } from "../business.node/business.node.validator";
-import { BusinessSearchFilters } from "../../domain.types/business/business.domain.types";
+import { BusinessDto, BusinessSearchFilters } from "../../domain.types/business/business.domain.types";
 
 export class BusinessServiceControllerDelegate {
 
@@ -62,7 +62,6 @@ export class BusinessServiceControllerDelegate {
     //     return this.getEnrichedDto(record);
 
     // };
-
     search = async (query) => {
         await validator.validateSearchRequest(query);
         var filters: BusinessServiceSearchFilters = this.getSearchFilters(query);

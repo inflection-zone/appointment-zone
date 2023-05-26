@@ -137,7 +137,7 @@ export class BusinessNodeService{
         }
     };
 
-    createDefaultForBusiness = async (record) => {
+    createDefaultNodeForBusiness = async (record) => {
         var newNode = {
             BusinessId              : record.id,
             Name                    : record.Name,
@@ -145,10 +145,10 @@ export class BusinessNodeService{
             Email                   : record.Email,
             DisplayPicture          : record.DisplayPicture,
             Address                 : record.Address,
-            AllowWalkinAppointment  : true,
+            AllowWalkinAppointments  : true,
             IsActive                : true
         }
-        const created = await this.prisma.business_nodes.create({data:newNode});
+        const created = await this.prisma.business_nodes.create({data : newNode});
         return created;
     
     };

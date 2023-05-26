@@ -1,25 +1,27 @@
 import { ApiError } from "../../common/api.error";
-import { BusinessUserCreateModel, BusinessUserUpdateModel, BusinessUserDto,BusinessUserSearchFilters, BusinessUserSearchResults  } from "../../domain.types/business.user/business.user.domain.types";
+import { BusinessUserUpdateModel, BusinessUserDto,BusinessUserSearchFilters, BusinessUserSearchResults  } from "../../domain.types/business.user/business.user.domain.types";
 import { BusinessUsersValidator, BusinessUsersValidator as validator } from '../business.user/business.user.validator';
 import { BusinessUserService } from '../../database/repository.services/business.user.service';
 import { ErrorHandler } from '../../common/error.handler';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { Helper } from "../../common/helper";
-import * as apikeyGenerator from 'uuid-apikey';
-import { query } from "express";
-
-
+import { PrismaClientInit } from "../../startup/prisma.client.init";
+import { BusinessNodeHourService } from "../../database/repository.services/business.node.hour.service";
+import { BusinessNodeService } from "../../database/repository.services/business.node.service";
 
 export class BusinessUserControllerDelegate {
 
     //#region member variables and constructors
+    prisma = PrismaClientInit.instance().prisma();
+    public static instance:BusinessNodeHourService=null;
 
     _service: BusinessUserService = null;
 
+    _businessNodeService: BusinessNodeService
 
     constructor() {
         this._service = new BusinessUserService();
-       
+        this._businessNodeService = new BusinessNodeService();
     }
 
     //#endregion
@@ -29,13 +31,10 @@ export class BusinessUserControllerDelegate {
         await validator.validateCreateRequest(requestBody);
         const { userCreateModel } =
             await BusinessUsersValidator.getValidUserCreateModel(requestBody);
-
-        var createModel: BusinessUserCreateModel = this.getCreateModel(requestBody);
         const record: BusinessUserDto = await this._service.create(userCreateModel);
         if (record === null) {
             throw new ApiError('Unable to create Business node!', 400);
         }
-
         return this.getEnrichedDto(record);
     };
 
@@ -48,9 +47,88 @@ export class BusinessUserControllerDelegate {
     };
 
     search = async (query) => {
-        await validator.validateSearchRequest(query);
-        var filters: BusinessUserSearchFilters = this.getSearchFilters(query);
-        var searchResults : BusinessUserSearchResults = await this._service.search(filters);
+       var res = await validator.validateSearchRequest(query);
+        var businessNodeId = query.businessNodeId != 'undefined' ? query.businessNodeId : null;
+        var businessId = query.businessId != 'undefined' ? query.businessId : null;
+        var businessServiceId = query.businessServiceId != 'undefined' ? query.businessServiceId : null;
+        var name = query.name ? query.name : null;
+
+        let users = [];
+        if (businessNodeId == null && businessId != null) {
+            var nodes = await this.prisma.business_nodes.findMany({
+                where : {
+                    IsActive : true,
+                    BusinessId : businessId,
+                },
+            });
+            for await (const node of nodes) {
+                var nodeUsers = await this.prisma.business_users.findMany({
+                where : {
+                        IsActive : true,
+                        BusinessNodeId : node.id,
+                    },
+                });
+                if (nodeUsers.length > 0) {
+                    users.push(...nodeUsers)
+                }
+            }
+        }
+        else if (businessNodeId != null) {
+            var node = await this._businessNodeService.getById(businessNodeId);
+            var nodeUsers = await this.prisma.business_users.findMany({
+                where : {
+                    IsActive : true,
+                    BusinessNodeId : node.id,
+                }
+            })
+            if (nodeUsers.length > 0) {
+                users.push(...nodeUsers)
+            }
+        }
+        else if (businessNodeId == null && businessId == null) {
+            users = await this.prisma.business_users.findMany({
+             where : { IsActive : true },
+            });
+        }
+
+        if (name != null) {
+            var usersWithMatchingNames = [];
+            for (var i = 0; i < users.length; i++) {
+                var user = users[i];
+                var nameTemp = name.toLowerCase();
+                var firstNameLower = user.FirstName.toLowerCase();
+                var lastNameLower = user.LastName.toLowerCase();
+                if (firstNameLower.includes(nameTemp) || 
+                    lastNameLower.includes(nameTemp) ||
+                    nameTemp.includes(firstNameLower) ||
+                    nameTemp.includes(lastNameLower) ||
+                    nameTemp == firstNameLower + ' ' + lastNameLower) {
+                    usersWithMatchingNames.push(user);
+                }
+            }
+            users = usersWithMatchingNames;
+        }
+
+        if (businessServiceId != null) {
+            var usersWithServices = [];
+            var userServices = await this.prisma.business_user_services.findMany({
+                where : { BusinessServiceId : businessServiceId },
+            });
+
+            if (userServices.length > 0) {
+                var userIds = userServices.map((el) => {
+                    return el.BusinessUserId;
+                });
+                for (var user of users) {
+                    if (userIds.includes(user.id)) {
+                        usersWithServices.push(user);
+                    }
+                }
+            }
+            users = usersWithServices;
+        }
+       // var filters: BusinessUserSearchFilters = this.getSearchFilters(query);
+        var searchResults : BusinessUserSearchResults = await this._service.search(users);
         var items = searchResults.Items.map(x => this.getPublicDto(x));
         searchResults.Items = items;
         return searchResults;
@@ -100,49 +178,24 @@ export class BusinessUserControllerDelegate {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    getCreateModel = (requestBody): BusinessUserCreateModel => {
-        return {
-            BusinessNodeId                 : requestBody.BusinessNodeId? requestBody.BusinessNodeId:null,
-            FirstName                      : requestBody.FirstName? requestBody.FirstName: null,
-            LastName                       : requestBody.LastName? requestBody.LastName: null,
-            Prefix                         : requestBody.Prefix? requestBody.Prefix: null,
-            Mobile                         : requestBody.Mobile? requestBody.Mobile: null,
-            Email                          : requestBody.Email ? requestBody.Email : null,
-            DisplayPicture                 : requestBody.DisplayPicture? requestBody.DisplayPicture: null,
-            AboutMe                        : requestBody.AboutMe ? requestBody.AboutMe : null,
-            Qualification                  : requestBody.Qualification ? requestBody.Qualification : null,
-            Experience                     : requestBody.Experience ? requestBody.Experience : null,
-            OverallRating                  : requestBody.OverallRating? requestBody.OverallRating: null,
-            Dob                            : requestBody.Dob? requestBody.Dob: null,
-            Gender                         : requestBody.Gender ? requestBody.Gender : undefined,
-            IsAvailableForEmergency        : requestBody.IsAvailableForEmergency ? requestBody.IsAvailableForEmergency :true,
-            Facebook                       : requestBody.Facebook? requestBody.Facebook: null,
-            Linkedin                       : requestBody.Linkedin? requestBody.Linkedin: null,
-            Twitter                        : requestBody.Twitter? requestBody.Twitter: null,
-            Instagram                      : requestBody.Instagram ? requestBody.Instagram : null,
-            Yelp                           : requestBody.Yelp? requestBody.Yelp: null,
-            IsActive                       : requestBody.IsActive ? requestBody.IsActive : true
-           
-        };
-    };
-
     getSearchFilters = (query) => {
         var filters = {};
-        var firstName = query.firstName ? query.firstName : null;
-        if (firstName != null) {
-            filters['FirstName'] = firstName;
-        }
-        var lastName = query.lastName ? query.lastName : null;
-        if (lastName != null) {
-            filters['LastName'] = lastName;
-        }
-        var mobile = query.mobile ? query.mobile : null;
-        if (mobile != null) {
-            filters['Mobile'] = mobile
-        }
-        var email = query.email ? query.email : null;
-        if (email != null) {
-            filters['Email'] = email;
+
+        var businessNodeId = query.businessNodeId != 'undefined' ? query.businessNodeId : null;
+        if (businessNodeId != null) {
+            filters['BusinessNodeId'] = businessNodeId;
+        } 
+        var businessId = query.businessId != 'undefined' ? query.businessId : null;
+        if (businessId != null) {
+            filters['BusinessId'] = businessId;
+        } 
+        var businessServiceId = query.businessServiceId != 'undefined' ? query.businessServiceId : null;
+        if (businessServiceId != null) {
+            filters['BusinessServiceId'] = businessServiceId;
+        } 
+        var name = query.name ? query.name : null;
+        if (name != null) {
+            filters['Name'] = name;
         }
         var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : null;
         if (itemsPerPage != null) {
@@ -190,9 +243,6 @@ export class BusinessUserControllerDelegate {
     }
     if (Helper.hasProperty(requestBody, 'Experience')) {
         updateModel.Experience = requestBody.Experience;
-    }
-    if (Helper.hasProperty(requestBody, 'OverallRating')) {
-        updateModel.OverallRating = requestBody.OverallRating;
     }
     if (Helper.hasProperty(requestBody, 'Dob')) {
         updateModel.Dob = requestBody.Dob;
