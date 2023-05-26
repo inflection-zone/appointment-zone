@@ -49,13 +49,13 @@ export class BusinessControllerDelegate {
             throw new ApiError('Unable to create Business!', 400);
         }
         var defaultBusinessNode = await this._businessNodeService.createDefaultNodeForBusiness(record);
-      //  var defaultServiceHours = await this._businessNodeHourService.createDefaultHoursForNode(defaultBusinessNode);
+       var defaultServiceHours = await this._businessNodeHourService.createDefaultHoursForNode(defaultBusinessNode);
 
         const business = {
             DefaultBusinessNode : defaultBusinessNode,
-      //      DefaultServiceHours : defaultServiceHours,
+            DefaultServiceHours : defaultServiceHours,
         }
-        return this.getEnrichedDto(business);
+        return business;
     };
 
     getById = async (id: uuid) => {

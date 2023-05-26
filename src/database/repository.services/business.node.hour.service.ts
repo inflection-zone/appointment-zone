@@ -129,43 +129,39 @@ delete = async (id) => {
 
     }
 };
-    // createDefaultHoursForNode = async(record) => {
-    //     var nodeHours = null;
-    //     var newBusinessNodeHours = {
-    //     BusinessNodeId : record.id
-    //     }
-    //     newBusinessNodeHours.Type ="WEEKDAY";
-    //     newBusinessNodeHours.IsOpen = true;
 
-    //     newBusinessNodeHours.Day = 1;
-    //     nodeHours = await this.prisma.business_node_hours.create({data:newBusinessNodeHours});        
+createDefaultHoursForNode = async(record) => {
+        var nodeHours = null;
+    // for week days
+     const weekday = [1, 2, 3, 4, 5];
+       for(const d of weekday){
+        var newBusinessNodeHours = 
+        {
+            BusinessNodeId : record.id,
+            Type           : "WEEKDAY",
+            IsOpen         : true,
+            Day            : d
+        }
+        nodeHours = await this.prisma.business_node_hours.create({data:newBusinessNodeHours});
+     }
 
-    //     newBusinessNodeHours.Day = 2;
-    //     nodeHours = await this.prisma.business_node_hours.create({data:newBusinessNodeHours});        
-    
-    //     newBusinessNodeHours.Day = 3;
-    //     nodeHours = await this.prisma.business_node_hours.create({data:newBusinessNodeHours});        
-    
-    //     newBusinessNodeHours.Day = 4;
-    //     nodeHours = await this.prisma.business_node_hours.create({data:newBusinessNodeHours});        
-    
-    //     newBusinessNodeHours.Day = 5;
-    //     nodeHours = await this.prisma.business_node_hours.create({data:newBusinessNodeHours});        
+     //for Weekend
+     const weekend = [6,7];
+     for(const d of weekend){
+        var newBusinessNodeHours = 
+        {
+            BusinessNodeId : record.id,
+            Type           : "WEEKEND",
+            IsOpen         : false,
+            Day            : d
+        }
+        nodeHours = await this.prisma.business_node_hours.create({data:newBusinessNodeHours});
+     }  
 
-    //     newBusinessNodeHours.Type ="WEEKEND";
-    //     newBusinessNodeHours.IsOpen = false;
-    //     newBusinessNodeHours.Day = 6;
-    //     nodeHours = await this.prisma.business_node_hours.create({data:newBusinessNodeHours});        
-    
-    //     newBusinessNodeHours.Type ="WEEKEND";
-    //     newBusinessNodeHours.IsOpen = false;
-    //     newBusinessNodeHours.Day = 7;
-    //     nodeHours = await this.prisma.business_node_hours.create({data:newBusinessNodeHours});        
-
-    //     var allNodeHours = await this.prisma.business_node_hours.findMany({where : {
-    //         BusinessNodeId : record.id
-    //     }});
-    //     return allNodeHours;
-    // }
+        var allNodeHours = await this.prisma.business_node_hours.findMany({where : {
+            BusinessNodeId : record.id
+        }});
+        return allNodeHours;
+    }
 
 }
