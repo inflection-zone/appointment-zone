@@ -23,7 +23,7 @@ export class BusinessValidator {
                 Twitter         : joi.string().max(255).optional(),
                 Instagram       : joi.string().max(255).optional(),
                 Yelp            : joi.string().max(255).optional(),
-                IsActive        : joi.boolean().required(),
+                IsActive        : joi.boolean().optional(),
             });
             return await schema.validateAsync(requestBody);
         } catch (error) {

@@ -1,10 +1,7 @@
-
-///////////////////////////////////////////////////////////////////////////////////////
-
 import { ApiError } from "../../common/api.error";
 import { BusinessCreateModel, BusinessUpdateModel,
-         BusinessDto,BusinessSearchFilters, BusinessSearchResults } 
-         from "../../domain.types/business/business.domain.types";
+        BusinessSearchFilters, BusinessSearchResults } 
+        from "../../domain.types/business/business.domain.types";
 import { BusinessValidator as validator } from './business.validator';
 import { BusinessService } from '../../database/repository.services/business.service';
 import { BusinessNodeService } from '../../database/repository.services/business.node.service';
@@ -33,8 +30,8 @@ export class BusinessControllerDelegate {
     //#endregion
 
     create = async (requestBody: any) => {
-
         await validator.validateCreateRequest(requestBody);
+        
         var businessWithEmail = await this._service.getBusinessWithEmail(requestBody.Email);
         if (businessWithEmail) {
             ErrorHandler.throwDuplicateUserError(`Business with email ${requestBody.Email} already exists!`);
@@ -49,9 +46,9 @@ export class BusinessControllerDelegate {
             throw new ApiError('Unable to create Business!', 400);
         }
         var defaultBusinessNode = await this._businessNodeService.createDefaultNodeForBusiness(record);
-       var defaultServiceHours = await this._businessNodeHourService.createDefaultHoursForNode(defaultBusinessNode);
-
+        var defaultServiceHours = await this._businessNodeHourService.createDefaultHoursForNode(defaultBusinessNode);
         const business = {
+            BusinessRecords     : record,
             DefaultBusinessNode : defaultBusinessNode,
             DefaultServiceHours : defaultServiceHours,
         }
@@ -101,7 +98,7 @@ export class BusinessControllerDelegate {
             throw new ApiError('Unable to update Business!', 400);
         }
         return this.getEnrichedDto(updated);
-    }
+    };
 
     delete = async (id: uuid) => {
         const record = await this._service.getById(id);
@@ -112,8 +109,7 @@ export class BusinessControllerDelegate {
         return {
             Deleted: businessDeleted
         };
-
-    }
+    };
     
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -125,7 +121,7 @@ export class BusinessControllerDelegate {
             Email               : requestBody.Email,
             AboutUs             : requestBody.AboutUs? requestBody.AboutUs: null,
             Logo                : requestBody.Logo ? requestBody.Logo : null,
-            DisplayPicture      : requestBody.DisplayPicture? requestBody.DisplayPicture: null,
+            DisplayPicture      : requestBody.DisplayPicture? requestBody.DisplayPicture: '',
             OverallRating       : requestBody.OverallRating? requestBody.OverallRating: null,
             Address             : requestBody.Address ? requestBody.Address : null,
             ApiKey              : requestBody.ApiKey ? requestBody.ApiKey : apikeyGenerator.default.create().apiKey,
@@ -142,24 +138,22 @@ export class BusinessControllerDelegate {
     getSearchFilters = (query) => {
         var filters = {};
         
-            var isActive = query.isActive ? query.isActive : true;
-            if (isActive == true) {
-                filters['IsActive'] = isActive;
-            }
-            var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : null;
-            if (itemsPerPage != null) {
-                filters['ItemsPerPage'] = itemsPerPage;
-            }
-            var order = query.order ? query.order : null;
-            if (order != null) {
-              filters['Order'] = order;
-            }
-            return filters;
-
+        var isActive = query.isActive ? query.isActive : true;
+        if (isActive == true) {
+            filters['IsActive'] = isActive;
+        }
+        var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : null;
+        if (itemsPerPage != null) {
+            filters['ItemsPerPage'] = itemsPerPage;
+        }
+        var order = query.order ? query.order : null;
+        if (order != null) {
+            filters['Order'] = order;
+        }
+        return filters;
     };
 
     getUpdateModel = (requestBody): BusinessUpdateModel => {
-
     let updateModel: BusinessUpdateModel = {};
 
     if (Helper.hasProperty(requestBody, 'ExternalId')) {
@@ -233,7 +227,10 @@ export class BusinessControllerDelegate {
             Instagram           : record.Instagram,
             Yelp                : record.Yelp,
             IsActive            : record.IsActive,
-           
+            CreatedAt           : record.CreatedAt,
+            UpdatedAt           : record.UpdatedAt,
+            IsDeleted           : record.IsDeleted,
+            DeletedAt           : record.DeletedAt 
         };
     };
 
@@ -261,6 +258,10 @@ export class BusinessControllerDelegate {
             Instagram           : record.Instagram,
             Yelp                : record.Yelp,
             IsActive            : record.IsActive,
+            CreatedAt           : record.CreatedAt,
+            UpdatedAt           : record.UpdatedAt,
+            IsDeleted           : record.IsDeleted,
+            DeletedAt           : record.DeletedAt
         };
     };
 

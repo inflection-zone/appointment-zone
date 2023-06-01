@@ -21,8 +21,6 @@ export interface BusinessServiceCreateModel {
     SendReminder            : boolean;   
     ServiceDuration         : string;  
     TaxRate                 : number;     
-  
-
 };
 
 export interface BusinessServiceUpdateModel {
@@ -46,8 +44,6 @@ export interface BusinessServiceUpdateModel {
     SendReminder           ? : boolean;   
     ServiceDuration        ? : string;  
     TaxRate                ? : number;     
-  
-
 };
 
 
@@ -71,7 +67,11 @@ export interface BusinessServiceDto {
     ReminderWindow         ? : string;   
     SendReminder           ? : boolean;   
     ServiceDuration        ? : string;  
-    TaxRate                ? : number;     
+    TaxRate                ? : number;
+    CreatedAt              ? : Date;
+    UpdatedAt              ? : Date;
+    IsDeleted              ? : boolean;
+    DeletedAt              ? : Date  
   
 };
 
@@ -95,9 +95,7 @@ export interface BusinessServiceSearchFilters extends BaseSearchFilters {
     ReminderWindow         ? : string;   
     SendReminder           ? : boolean;   
     ServiceDuration        ? : string;  
-    TaxRate                ? : number;    
-
-
+    TaxRate                ? : number
 };
 
 export interface BusinessServiceSearchResults extends BaseSearchResults {

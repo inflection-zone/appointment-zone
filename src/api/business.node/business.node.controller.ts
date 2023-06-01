@@ -18,8 +18,7 @@ export class BusinessNodeController extends BaseController {
 
      create = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
-             await this.authorize('BusinessNode.Create', request, response, false);
-             
+            await this.authorize('BusinessNode.Create', request, response, false);
             const record = await this._delegate.create(request.body);
             const message = 'Business node added successfully!';
             ResponseHandler.success(request, response, message, 201, record);
@@ -29,17 +28,15 @@ export class BusinessNodeController extends BaseController {
     };
 
     getById = async (request:express.Request, response:express.Response): Promise <void>=>{
-        try{
+        try {
             await this.authorize('BusinessNode.GetById', request, response, false);
             const record = await this._delegate.getById(request.params.id);
             const message ="Business node retrieved successfully!";
             ResponseHandler.success(request, response, message, 200, record);
-            
-
         }catch(error){
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     search = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
@@ -50,7 +47,7 @@ export class BusinessNodeController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     update = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
@@ -61,7 +58,7 @@ export class BusinessNodeController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     delete = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
@@ -69,12 +66,8 @@ export class BusinessNodeController extends BaseController {
             const result = await this._delegate.delete(request.params.id);
             const message = 'Business node deleted successfully!';
             ResponseHandler.success(request, response, message, 200, result);
-
         }catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
-
-
-
-};
+    };
+}

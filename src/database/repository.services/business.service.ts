@@ -1,7 +1,3 @@
-import { BusinessSearchResults, BusinessSearchFilters } from "../../domain.types/business/business.domain.types";
-//import instance from "tsyringe/dist/typings/dependency-container";
-import { Logger } from '../../common/logger';
-import { Helper } from "../../common/helper";
 import { ErrorHandler } from "../../common/error.handler";
 import { PrismaClientInit } from "../../startup/prisma.client.init";
 import { Prisma } from '@prisma/client';
@@ -25,7 +21,7 @@ export class BusinessService{
             ErrorHandler.throwDbAccessError('DB Error: Unable to create business!',error)
         } 
 
-    }
+    };
 
     getById = async (id) => {
             try {
@@ -37,7 +33,7 @@ export class BusinessService{
             ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve business!', error);
         }
 
-    }
+    };
 
     getBusinessWithEmail = async (email) => {
         try {
@@ -51,7 +47,7 @@ export class BusinessService{
         } catch (error) {
             ErrorHandler.throwDbAccessError('Unable to check if business exists with email!', error);
         }
-    }
+    };
 
     getBusinessWithMobile = async (mobile) => {
         try {
@@ -65,7 +61,7 @@ export class BusinessService{
         } catch (error) {
             ErrorHandler.throwDbAccessError('Unable to check if business exists with mobile!', error);
         }
-    }
+    };
 
     exists = async (id) => {
         try {
@@ -74,16 +70,14 @@ export class BusinessService{
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to determine existance of business!', error);
         }
-    }
+    };
 
     search = async (filters) => {
         try {
-                const search : Prisma.businessesFindManyArgs = {};
-            
-            if (filters.IsActive != null) {
-                search.where =   {
-                    IsActive : true,
-                    }
+            const search : Prisma.businessesFindManyArgs = {};
+
+            search.where = {
+                IsActive : true,
             }
             search.orderBy = {
                     CreatedAt : 'asc'
@@ -116,7 +110,7 @@ export class BusinessService{
             return searchResults;
         
         } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to search user records!', error);
+            ErrorHandler.throwDbAccessError('DB Error: Unable to search business records!', error);
         }
     };
     
@@ -124,52 +118,29 @@ export class BusinessService{
         try {
             if (Object.keys(updateModel).length > 0) {
                 var res = await this.prisma.businesses.updateMany({data:updateModel,
-                        where :{
-                        id : id
-                    }
-                 });  
+                        where : { 
+                            id : id,
+                        },
+                    });  
             }
             return await this.getById(id);
         } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to update Business!', error);
+            ErrorHandler.throwDbAccessError('DB Error: Unable to update business!', error);
         }
     };
 
     delete = async (id) => {
         try {
-            const result = await this.prisma.businesses.delete({ where: 
-                { id: id } 
-            });
+            // const result = await this.prisma.businesses.delete({ where: 
+            //     { id: id } 
+            // });
+            const deleted = await this.prisma.businesses.updateMany({
+                where : { id : id, IsActive : true },
+                data : { IsActive : false },
+            })
+            return deleted;
         } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to delete Business!', error);
-  
+            ErrorHandler.throwDbAccessError('DB Error: Unable to delete business!', error);
         }
     };
-    
-    getBusiness = async (
-        Name,
-        Mobile,
-        Email
-    ) => {
-
-        var filters = [];
-
-       if (Name !== null) {
-            filters.push({
-               Name : Name
-            });
-        }
-        else if (Mobile !== null ) {
-            filters.push({
-                Mobile :  Mobile,
-            });
-        }
-        else if (Email !== null) {
-            filters.push({
-                Email : Email,
-            });
-        }
-
-    }
-
 }

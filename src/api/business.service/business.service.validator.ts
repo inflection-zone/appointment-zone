@@ -8,25 +8,25 @@ export class BusinessServiceValidator {
     static validateCreateRequest = async (requestBody) => {
         try {
             const schema = joi.object({
-                BusinessNodeId               : joi.string().guid({version : ['uuidv4'] }).optional(),
+                BusinessNodeId               : joi.string().guid({version : ['uuidv4'] }).required(),
                 AllowCancellation            : joi.boolean().required(),
                 CancellationCharges          : joi.number().max(255).required(),
                 CancellationWindow           : joi.string().max(255).required(),
-                Description                  : joi.string().max(255).optional(),
-                DisplayServicePicture        : joi.string().optional().allow(null, ''),
-                EnableLoyalty                : joi.boolean().required(),
-                Fees                         : joi.number().max(255).required(),
-                IsActive                     : joi.boolean().required(),
-                IsTaxable                    : joi.boolean().required(),
+                Description                  : joi.string().max(255).required(),
+                DisplayServicePicture        : joi.string().optional(),
+                EnableLoyalty                : joi.boolean().optional(),
+                Fees                         : joi.number().max(255).optional(),
+                IsActive                     : joi.boolean().optional(),
+                IsTaxable                    : joi.boolean().optional(),
                 Name                         : joi.string().max(255).required(),
-                PaymentPercent               : joi.number().max(255).required(),
-                PaymentRequired              : joi.boolean().required(),
-                PriorBookingWindow           : joi.string().max(255).required(),
+                PaymentPercent               : joi.number().max(255).optional(),
+                PaymentRequired              : joi.boolean().optional(),
+                PriorBookingWindow           : joi.string().max(255).optional(),
                 ReminderType                 : joi.string().max(255).optional(),
                 ReminderWindow               : joi.string().max(255).optional(),
-                SendReminder                 : joi.boolean().required(),
-                ServiceDuration              : joi.string().max(255).required(),
-                TaxRate                      : joi.number().max(255).required(),
+                SendReminder                 : joi.boolean().optional(),
+                ServiceDuration              : joi.string().max(255).optional(),
+                TaxRate                      : joi.number().max(255).optional(),
            
             });
             return await schema.validateAsync(requestBody);
@@ -38,7 +38,7 @@ export class BusinessServiceValidator {
     static validateSearchRequest = async (requestBody) => {
         try {
             const schema = joi.object({
-                businessNodeId                : joi.string().guid({version : ['uuidv4'] }).optional(),
+                businessNodeId               : joi.string().guid({version : ['uuidv4'] }).optional(),
                 isActive                     : joi.boolean().optional(),
                 name                         : joi.string().max(255).optional()
             });
