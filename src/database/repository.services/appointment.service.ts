@@ -4,13 +4,14 @@ import { ApiError } from "../../common/api.error";
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import updateLocale from 'dayjs/plugin/updateLocale';
-import businessDaysAdd from 'dayjs-business-days';
-import { addBusinessDays } from 'date-fns';
+import dayjsBusinessDays from 'dayjs-business-days2';
 
  ///////////////////////////////////////////////////////////////////////////
+
 dayjs.extend(isSameOrBefore);
 dayjs.extend(updateLocale);
-dayjs.extend(businessDaysAdd);
+dayjs.extend(dayjsBusinessDays);
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export class AppointmentService{
@@ -372,7 +373,7 @@ export class AppointmentService{
     };    
 
     getAvailableSlots = async (timeZone, slotsByDate, businessNodeId, businessUserId, businessServiceId, numDaysForSlots:number) => {
-        var endDate = dayjs.utc().addBusinessDays(numDaysForSlots);
+        var endDate = dayjs.utc().businessDaysAdd(numDaysForSlots);
         var appointments = await this.prisma.appointments.findMany({
             where : {
                 BusinessNodeId      : businessNodeId,
