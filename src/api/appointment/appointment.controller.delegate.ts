@@ -13,7 +13,7 @@ import dayjs from 'dayjs';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { BusinessUserService } from "../../database/repository.services/business.user.service";
 import { CustomerService } from "../../database/repository.services/customer.service";
-import { BusinessUsersValidator } from "../business.user/business.user.validator";
+import { AppointmentValidator as validator} from "./appointment.validator";
 
 
 dayjs.extend(utc);
@@ -45,37 +45,28 @@ export class AppointmentControllerDelegate {
         this._customerService = new CustomerService();
     }
 
-    findAvailableSlots = async (query : any, businessId : uuid, businessNodeId : uuid, businessServiceId : uuid, businessUserId : uuid) => {
-       //await validator.validateSearchRequest(query);
+    findAvailableSlots = async (query : any, businessId : uuid, businessNodeId : uuid, businessServiceId : uuid) => {
+        await validator.validateSearchRequest(query);
         var filters = this.getSearchFilters(query);
-        var searchResults = await this._service.findAvailableSlots(filters, businessId, businessNodeId, businessServiceId, businessUserId);
+        var searchResults = await this._service.findAvailableSlots(filters, businessId, businessNodeId, businessServiceId);
         return searchResults;
     };
 
-    getById = async (id: uuid) => {
-        const record = await this._service.getById(id);
-        if (record === null) {
-            ErrorHandler.throwNotFoundError('Appointment with id ' + id.toString() + ' cannot be found!');
-        }
-        var app = await this.getAppointmentObject(record);
-        return this.getEnrichedDto(record);
-    };
-
-    getSearchFilters = async (query) => {
+    getSearchFilters = (query) => {
 
         var filters = {};
 
-        var fromDate = query.fromDate ? query.fromDate : null;
+        var fromDate = query.fromDate != 'undefined' ? query.fromDate : null;
         if (fromDate != null) {
             filters['FromDate'] = fromDate;
         }
-        var toDate = query.toDate ? query.toDate : null;
+        var toDate = query.toDate != 'undefined' ? query.toDate : null;
         if (toDate != null) {
             filters['ToDate'] = toDate;
         }
-        var userId = query.userId ? query.userId : null;
-        if (userId != null) {
-            filters['UserId'] = userId;
+        var businessUserId = query.businessUserId != 'undefined' ? query.businessUserId : null;
+        if (businessUserId != null) {
+            filters['BusinessUserId'] = businessUserId;
         }
         return filters;
     };
@@ -126,6 +117,7 @@ export class AppointmentControllerDelegate {
         }
         return { 
         }
-};
+    };
 
+           
 }

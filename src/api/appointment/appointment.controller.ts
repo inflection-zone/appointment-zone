@@ -18,8 +18,8 @@ export class AppointmentController extends BaseController {
     findAvailableSlots = async(request: express.Request, response: express.Response): Promise < void > => {
         try {
             await this.authorize('Appointment.Search', request, response, false);
-            const searchResults = await this._delegate.findAvailableSlots(request.query, request.params.businesId, request.params.businessNodeId, request.params.businessServiceId, request.params.businessUserId);
-            const message = 'Appointment status records retrieved successfully!';
+            const searchResults = await this._delegate.findAvailableSlots(request.query, request.params.businessId, request.params.businessNodeId, request.params.businessServiceId);
+            const message = 'Appointment records retrieved successfully!';
             ResponseHandler.success(request, response, message, 200, searchResults);
         }
         catch (error) {
