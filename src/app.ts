@@ -1,5 +1,6 @@
 import cors from 'cors';
 import express from 'express';
+const app = express();
 import fileUpload from 'express-fileupload';
 import helmet from 'helmet';
 import "reflect-metadata";
@@ -164,3 +165,5 @@ export default class Application {
     };
 
 }
+
+// module.exports.app = app;

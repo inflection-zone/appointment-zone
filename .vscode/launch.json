@@ -29,7 +29,27 @@
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",
-            "disableOptimisticBPs": true
-        }
+            // "disableOptimisticBPs": true
+        },
+        
+        {
+        "args": [
+            "-u",
+            "tdd",
+            "--timeout",
+            "999999",
+            "--colors",
+            "${workspaceFolder}/dist/tests"
+        ],
+        "internalConsoleOptions": "openOnSessionStart",
+        "name": "Mocha Tests",
+        "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+        "preLaunchTask": "tsc: build - tsconfig.json",
+        "request": "launch",
+        "skipFiles": [
+            "<node_internals>/**"
+        ],
+        "type": "node"
+    },
     ]
 }
