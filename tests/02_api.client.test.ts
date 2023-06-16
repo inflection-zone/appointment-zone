@@ -75,7 +75,6 @@ describe('Api client tests', function() {
                 expect(response.body.Data).to.have.property('Order');
                 expect(response.body.Data.TotalCount).to.greaterThan(0);
                 expect(response.body.Data.RetrievedCount).to.greaterThan(0);
-                // console.log(JSON.stringify(response.body.Data.Items))
                 expect(response.body.Data.Items.length).to.greaterThan(0);
             })
             .expect(200, done);
