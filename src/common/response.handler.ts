@@ -48,7 +48,7 @@ export class ResponseHandler {
             ServiceVersion : process.env.SERVICE_VERSION,
         };
         
-        if (process.env.NODE_ENV !== 'test') {
+        if (process.env.NODE_ENV !== 'local') {
             Logger.instance().log(JSON.stringify(responseObject, null, 2));
         }
 

@@ -14,11 +14,10 @@ describe('Login Test', function () {
 
   it('admin log-in', function (done) {
 
-    const AdminLoginModel = global.TestCache.AdminLoginModel;
+    const AdminLoginModel = getTestData("AdminLoginModel");
     agent
       .post('/api/v1/users/login-password')
       .set('Content-Type', 'application/json')
-      .set('x-api-key', 'ApiKey')
       .send(AdminLoginModel)
       .expect(response => {
         assert.exists(response.body.Data.AccessToken, 'Access token is returned.');
@@ -31,5 +30,7 @@ describe('Login Test', function () {
 
   });
 });
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////////

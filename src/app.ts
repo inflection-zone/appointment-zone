@@ -166,4 +166,3 @@ export default class Application {
 
 }
 
-// module.exports.app = app;
