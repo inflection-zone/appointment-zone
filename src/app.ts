@@ -68,11 +68,11 @@ export default class Application {
         const dbClient = new DbClient();
         await dbClient.createDatabase();
 
-        if (process.env.NODE_ENV === 'test') {
-            //Note: This is only for test environment
-            //Drop all tables in db
-            await dbClient.dropDatabase();
-        }
+        // if (process.env.NODE_ENV === 'test') {
+        //     //Note: This is only for test environment
+        //     //Drop all tables in db
+        //     await dbClient.dropDatabase();
+        // }
 
         await DatabaseModelManager.setupAssociations(); //set associations
 

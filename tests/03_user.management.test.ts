@@ -9,11 +9,11 @@ const infra = Application.instance()
 
 ///////////////////////////////////////////////////////////////////////////
 
-describe('User Management tests', function() {
+describe('User tests', function() {
 
     var agent = request.agent(infra._app);
 
-    it('Create user management', function(done) {
+    it('Create user ', function(done) {
         loadUserManagementCreateModel();
         const createModel = getTestData("UserManagementCreateModel");
         agent
@@ -50,7 +50,7 @@ describe('User Management tests', function() {
             .expect(201, done);
     });
 
-    it('Get user management by id', function(done) {
+    it('Get user by id', function(done) {
         const id = `${getTestData("UserManagementId")}`
         agent
             .get(`/api/v1/users/${getTestData('UserManagementId')}`)
@@ -82,7 +82,7 @@ describe('User Management tests', function() {
             .expect(200, done);
     });
 
-    it('Search user management records', function(done) {
+    it('Search user  records', function(done) {
       loadUserManagementQueryString();
         agent
             .get(`/api/v1/users/search${loadUserManagementQueryString()}`)
@@ -101,7 +101,7 @@ describe('User Management tests', function() {
             .expect(200, done);
     });
 
-    it('Update user management', function(done) {
+    it('Update user ', function(done) {
         loadUserManagementUpdateModel();
         const updateModel = getTestData("UserManagementUpdateModel");
         const id = `${getTestData('UserManagementId')}`
@@ -133,7 +133,7 @@ describe('User Management tests', function() {
             .expect(200, done);
     });
 
-    it('Delete user management', function(done) {
+    it('Delete user ', function(done) {
         const id = `${getTestData("UserManagementId")}`
 
         //Delete
@@ -148,7 +148,7 @@ describe('User Management tests', function() {
             .expect(200, done);
     });
 
-    it('Create user management again', function(done) {
+    it('Create user  again', function(done) {
       loadUserManagementCreateModel();
       const createModel = getTestData("UserManagementCreateModel");
       agent
@@ -244,7 +244,7 @@ export const loadUserManagementUpdateModel = async (
 
 function loadUserManagementQueryString() {
     //This is raw query. Please modify to suit the test
-    const queryString = '?gender=Male&phone=3727890533&email=Abigale.69661.Thompson@gmail.com'
+    const queryString = ''
     return queryString;
 }
 

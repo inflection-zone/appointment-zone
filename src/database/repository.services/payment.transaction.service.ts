@@ -14,7 +14,7 @@ export class PaymentTransactionService{
     create = async (createModel) => {
         try {
             var record=await this.prisma.payment_transactions.create({data:createModel});
-            console.log(record);
+            //console.log(record);
             return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create payment transactions!',error)

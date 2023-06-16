@@ -44,7 +44,7 @@ export class DbClient {
 
     public migrate = async () => {
         try {
-            const output = execSync('npx sequelize-cli db:migrate');
+            const output = execSync('npx prisma migrate depoly');
 
             const str = output.toString();
             Logger.instance().log('Database migrated successfully!');

@@ -14,7 +14,7 @@ export class NotificationService{
     create = async (createModel) => {
         try {
             var record=await this.prisma.notifications.create({data:createModel});
-            console.log(record);
+            //console.log(record);
             return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create notifications!',error)

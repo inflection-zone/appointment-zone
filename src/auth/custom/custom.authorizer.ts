@@ -71,8 +71,8 @@ export class CustomAuthorizer implements IAuthorizer {
 
     private hasConsent = async (currentRoleId: number, context: string): Promise<boolean> => {
 
-        Logger.instance().log('Current role id: ' + currentRoleId);
-        Logger.instance().log('Context: ' + context);
+        // Logger.instance().log('Current role id: ' + currentRoleId);
+        // Logger.instance().log('Context: ' + context);
 
         //for time being, return true always
         return true;

@@ -15,7 +15,7 @@ export class BusinessNodeHourService{
     create = async (createModel) => {
         try{
             var record=await this.prisma.business_node_hours.create({data:createModel});
-            console.log(record);
+            //console.log(record);
             return record;
         }catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create business node hour!',error);

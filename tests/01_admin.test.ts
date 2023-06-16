@@ -8,11 +8,11 @@ const infra = Application.instance()
 
 ///////////////////////////////////////////////////////////////////////////
 
-describe('Login Test', function () {
+describe('Admin tests', function() {
   
   var agent = request.agent(infra._app);
 
-  it('admin log-in', function (done) {
+  it('Admin login', function (done) {
 
     const AdminLoginModel = global.TestCache.AdminLoginModel;
     agent
@@ -30,6 +30,7 @@ describe('Login Test', function () {
       .expect(200, done);
 
   });
+  
 });
 
 /////////////////////////////////////////////////////////////////////////////////////////

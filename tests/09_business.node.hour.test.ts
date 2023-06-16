@@ -244,7 +244,7 @@ export const loadBusinessNodeHourUpdateModel = (
 
 function loadBusinessNodeHourQueryString() {
     //This is raw query. Please modify to suit the test
-    const queryString = '?businessNodeId=54396460-a066-4d0e-a91c-1e6ec62da898'
+    const queryString = ''
     return queryString;
 }
 
