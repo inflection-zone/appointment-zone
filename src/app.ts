@@ -27,6 +27,8 @@ export default class Application {
 
     private static _instance: Application = null;
 
+    public _server = null;
+
     prisma = PrismaClientInit.instance().prisma();
 
     //#endregion
@@ -68,11 +70,13 @@ export default class Application {
         const dbClient = new DbClient();
         await dbClient.createDatabase();
 
-        // if (process.env.NODE_ENV === 'test') {
-        //     //Note: This is only for test environment
-        //     //Drop all tables in db
-        //     await dbClient.dropDatabase();
-        // }
+        if (process.env.NODE_ENV === 'test') {
+            //Note: This is only for test environment
+            //Drop all tables in db
+            await dbClient.dropDatabase();
+            await dbClient.createDatabase();
+            await dbClient.migrate();
+        }
 
         await DatabaseModelManager.setupAssociations(); //set associations
 
@@ -155,7 +159,7 @@ export default class Application {
                     Logger.instance().log(serviceName + ' is up and listening on port ' + process.env.PORT.toString());
                     this._app.emit("server_started");
                 });
-                module.exports.server = server;
+                this._server = server;
                 resolve(this._app);
             }
             catch (error) {
