@@ -168,7 +168,7 @@ export const loadBusinessUserServiceUpdateModel = async (
 
 function loadBusinessUserServiceQueryString() {
     //This is raw query. Please modify to suit the test
-    const queryString = '?businessUserId=d06ab95b-293b-402f-93e3-ca2489b78fae&businessServiceId=2dc8aede-12ce-4703-8dfb-b5c33402b315'
+    const queryString = ''
     return queryString;
 }
 

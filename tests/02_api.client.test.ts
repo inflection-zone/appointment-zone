@@ -195,7 +195,7 @@ export const loadApiClientUpdateModel = async (
 
 function loadApiClientQueryString() {
     //This is raw query. Please modify to suit the test
-    const queryString = '?phone=6958742536&email=Tyler_Mayer92@yahoo.com'
+    const queryString = ''
     return queryString;
 }
 

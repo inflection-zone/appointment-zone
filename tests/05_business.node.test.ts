@@ -271,7 +271,7 @@ export const loadBusinessNodeUpdateModel = async (
 
 function loadBusinessNodeQueryString() {
     //This is raw query. Please modify to suit the test
-    const queryString = '?name=ABCD&email=client.175899@nodomain.com&mobile=6632887256'
+    const queryString = ''
     return queryString;
 }
 
