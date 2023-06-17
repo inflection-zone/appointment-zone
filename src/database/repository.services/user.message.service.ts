@@ -14,7 +14,7 @@ export class UserMessageService{
     create = async (createModel) => {
         try {
             var record=await this.prisma.user_messages.create({data:createModel});
-            console.log(record);
+            //console.log(record);
             return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create user messages!',error)

@@ -15,7 +15,7 @@ export class BusinessSkillService{
     create = async (createModel) => {
         try{
             var record=await this.prisma.business_skills.create({data:createModel});
-            console.log(record);
+            //console.log(record);
             return record;
         }catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create business skills!',error)
