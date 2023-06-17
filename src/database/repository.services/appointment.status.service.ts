@@ -3,7 +3,7 @@ import { PrismaClientInit } from "../../startup/prisma.client.init";
 import { Prisma } from '@prisma/client';
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export class AppointmentStatusService{
+export class AppointmentStatusService {
     prisma = PrismaClientInit.instance().prisma();
 
     public static instance:AppointmentStatusService=null;
@@ -14,7 +14,7 @@ export class AppointmentStatusService{
     create = async (createModel) => {
         try {
             var record=await this.prisma.appointment_statuses.create({data:createModel});
-            console.log(record);
+            // //console.log(record);
             return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create appointment status!',error)
@@ -23,8 +23,7 @@ export class AppointmentStatusService{
 
     getById = async (id) => {
         try {
-            var record = await this.prisma.appointment_statuses.findUnique({where : {id : id}
-            });
+            var record = await this.prisma.appointment_statuses.findUnique({where : {id : id,},});
             return record;
         } catch (error) {
         ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve appointment status!', error);
@@ -35,7 +34,7 @@ export class AppointmentStatusService{
         try {
             const search : Prisma.appointment_statusesFindManyArgs = {};
 
-                if (filters.businessNodeId != null) {
+                if (filters.BusinessNodeId != null) {
                     search.where =   {
                         BusinessNodeId : filters.BusinessNodeId,
                         }

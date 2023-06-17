@@ -1,7 +1,7 @@
 import { ErrorHandler } from "../../common/error.handler";
 import { PrismaClientInit } from "../../startup/prisma.client.init";
 import { Prisma } from '@prisma/client';
-import { TimeHelper } from "../../common/time.helper"; 
+
 export class BusinessUserHourService{
     prisma = PrismaClientInit.instance().prisma();
 
@@ -14,12 +14,11 @@ export class BusinessUserHourService{
     create = async (createModel) => {
         try {
             var record = await this.prisma.business_user_hours.create({data:createModel});
-            console.log(record);
+            //console.log(record);
             return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create business user hours!', error)
         } 
-
     };
 
     getById = async (id) => {
@@ -30,7 +29,6 @@ export class BusinessUserHourService{
         } catch (error) {
         ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve business user hours!', error);
         }
-
     };
 
     search = async (filters) => {
@@ -62,7 +60,6 @@ export class BusinessUserHourService{
                 pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
                 search.skip = pageIndex * search.take;
             }
-            
             const foundResults = await this.prisma.business_user_hours.findMany(search)
             const searchResults = {
                 TotalCount     : foundResults.length,
@@ -73,7 +70,6 @@ export class BusinessUserHourService{
                 Items          : foundResults,
             };
             return searchResults;
-        
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to search business user hours records!', error);
         }
@@ -100,7 +96,38 @@ export class BusinessUserHourService{
             return result;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to delete business user hours!', error);
-    
         }
+    };
+
+    createDefaultHoursForUser = async(record) => {
+        var userHours = null;
+        // for week days
+        const weekday = [1, 2, 3, 4, 5];
+        for (const d of weekday){
+            var newBusinessUserHours = {
+                BusinessUserId : record.id,
+                Type           : "WEEKDAY",
+                IsOpen         : true,
+                Day            : d
+            }
+            userHours = await this.prisma.business_user_hours.create({data:newBusinessUserHours});
+        }
+        //for Weekend
+        const weekend = [6,7];
+        for(const d of weekend){
+            var newBusinessUserHours = {
+                BusinessUserId : record.id,
+                Type           : "WEEKEND",
+                IsOpen         : false,
+                Day            : d
+            }
+            userHours = await this.prisma.business_user_hours.create({data:newBusinessUserHours});
+        }  
+        var allUserHours = await this.prisma.business_user_hours.findMany({
+            where : {
+                BusinessUserId : record.id,
+            },
+        });
+        return allUserHours;
     };
 }

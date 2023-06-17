@@ -48,7 +48,9 @@ export class ErrorHandler {
 
     static handleValidationError = (error) => {
         if (error.isJoi === true) {
-            Logger.instance().log(error.message);
+            if (process.env.NODE_ENV !== 'test') {
+                Logger.instance().log(error.message);
+            } 
             const errorMessages = error.details.map(x => x.message);
             ErrorHandler.throwInputValidationError(errorMessages);
         }

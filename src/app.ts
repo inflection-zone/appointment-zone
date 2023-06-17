@@ -1,5 +1,6 @@
 import cors from 'cors';
 import express from 'express';
+const app = express();
 import fileUpload from 'express-fileupload';
 import helmet from 'helmet';
 import "reflect-metadata";
@@ -25,6 +26,8 @@ export default class Application {
     private _router: Router = null;
 
     private static _instance: Application = null;
+
+    public _server = null;
 
     prisma = PrismaClientInit.instance().prisma();
 
@@ -62,8 +65,6 @@ export default class Application {
 
     setupDatabaseConnection = async () => {
 
-        const sequelize = db.default.sequelize;
-
         const dbClient = new DbClient();
         await dbClient.createDatabase();
 
@@ -71,12 +72,9 @@ export default class Application {
             //Note: This is only for test environment
             //Drop all tables in db
             await dbClient.dropDatabase();
+            await dbClient.createDatabase();
         }
-
-        await DatabaseModelManager.setupAssociations(); //set associations
-
-        await sequelize.sync({ alter: { drop: false } });
-
+        await dbClient.migrate();
     }
 
     public start = async(): Promise<void> => {
@@ -154,7 +152,7 @@ export default class Application {
                     Logger.instance().log(serviceName + ' is up and listening on port ' + process.env.PORT.toString());
                     this._app.emit("server_started");
                 });
-                module.exports.server = server;
+                this._server = server;
                 resolve(this._app);
             }
             catch (error) {
@@ -164,3 +162,4 @@ export default class Application {
     };
 
 }
+

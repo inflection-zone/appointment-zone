@@ -28,6 +28,17 @@ export class AppointmentStatusController extends BaseController {
         }
     };
 
+    createMultiple = async (request: express.Request, response: express.Response): Promise <void> => {
+        try {
+             await this.authorize('AppointmentStatus.CreateMultiple', request, response, false);
+            const records = await this._delegate.createMultiple(request.body);
+            const message = 'Appointment statuses added successfully!';
+            ResponseHandler.success(request, response, message, 201, records);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     getById = async (request:express.Request, response:express.Response): Promise <void>=>{
         try{
             await this.authorize('AppointmentStatus.GetById', request, response, false);

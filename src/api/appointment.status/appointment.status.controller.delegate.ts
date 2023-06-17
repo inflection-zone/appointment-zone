@@ -6,8 +6,10 @@ import { AppointmentStatusValidator as validator } from './appointment.status.va
 import { ErrorHandler } from '../../common/error.handler';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { Helper } from "../../common/helper";
+import { PrismaClientInit } from "../../startup/prisma.client.init";
 
 export class AppointmentStatusControllerDelegate {
+    prisma = PrismaClientInit.instance().prisma();
     //#region member variables and constructors
 
     _service : AppointmentStatusService = null;
@@ -25,15 +27,20 @@ export class AppointmentStatusControllerDelegate {
     //#endregion
 
     create = async (requestBody: any) => {
-
         await validator.validateCreateRequest(requestBody);
-        if (!requestBody.BusinessNodeId) {
-                ErrorHandler.throwNotFoundError('Missing required parameters!');
-            }
         var businessNodeId = requestBody.BusinessNodeId;
         const businessNode = await this._businessNodeService.getById(businessNodeId);
         if (!businessNode) {
             ErrorHandler.throwNotFoundError('Business node with id ' + businessNodeId.toString() + ' not found!');
+        }
+        var existingStatus = await this.prisma.appointment_statuses.findMany({
+            where : { 
+                Sequence        : requestBody.Sequence, 
+                BusinessNodeId  : businessNodeId,
+            },
+        });
+        if (existingStatus.length > 0) {
+            ErrorHandler.throwDuplicateUserError('Appointment status with the same sequence for the same business node exists!')
         }
         var createModel: AppointmentStatusCreateModel = this.getCreateModel(requestBody);
         const record: AppointmentStatusDto = await this._service.create(createModel);
@@ -41,6 +48,67 @@ export class AppointmentStatusControllerDelegate {
             throw new ApiError('Unable to create appointment status!', 400);
         }
         return this.getEnrichedDto(record);
+    };
+
+    createMultiple = async (requestBody : any) => {
+        await validator.validateCreateMultipleRequest(requestBody);
+        var statuses = requestBody.Statuses;
+        const businessNodeId = requestBody.BusinessNodeId;
+        const businessNode = await this._businessNodeService.getById(businessNodeId);
+        if (!businessNode) {
+            ErrorHandler.throwNotFoundError('Business node with id ' + businessNodeId.toString() + ' not found!');
+        }
+        for await (var s of statuses) 
+        {
+            var existing = await this.prisma.appointment_statuses.findMany({
+                where : {
+                    AND : {
+                        BusinessNodeId  : businessNodeId,
+                        StatusCode      : s.StatusCode,
+                        Sequence        : s.Sequence,
+                        IsActive        : true,
+                    },
+                },
+            });
+            if (existing.length > 0) {
+                var updates = this.getUpdateModel(s);
+                var updated = await this._service.update(existing[0].id, updates);
+            }
+            else {
+                const createModel = {
+                    BusinessNodeId          : businessNodeId,
+                    Status                  : s.Status,
+                    StatusCode              : s.StatusCode,
+                    StatusColor             : s.StatusColor,
+                    Sequence                : s.Sequence,
+                    SendNotification        : s.SendNotification ? s.SendNotification : true,
+                    NotificationText        : s.NotificationText ? s.NotificationText : null,
+                    SendSms                 : s.SendSms ? s.SendSms : true,
+                    SmsText                 : s.SmsText ? s.SmsText : null,
+                    IsCancellationStatus    : s.IsCancellationStatus ? s.IsCancellationStatus : false, 
+                    IsCompletedStatus       : s.IsCompletedStatus ? s.IsCompletedStatus : false,
+                    IsConfirmedStatus       : s.IsConfirmedStatus ? s.IsConfirmedStatus : false,
+                    IsDashboardStatus       : s.IsDashboardStatus ? s.IsDashboardStatus : true,
+                    IsWalkinEntryStatus     : s.IsWalkinEntryStatus ? s.IsWalkinEntryStatus : false,
+                    IsActive                : s.IsActive ? s.IsActive : true
+                }
+                const record = await this._service.create(createModel);
+                if (record === null) {
+                    throw new ApiError('Unable to create appointment statuses!', 400);
+                }
+            }
+        }
+        var appointmentStatuses = await this.prisma.appointment_statuses.findMany({
+            where : {
+                BusinessNodeId : businessNodeId,
+                IsActive : true
+            }});
+            appointmentStatuses.sort((a, b) => {
+            if(a.Sequence != null && b.Sequence != null)
+            return a.Sequence - b.Sequence;
+            return 0;
+            }) 
+            return appointmentStatuses;
     };
 
     getById = async (id: uuid) => {
@@ -66,12 +134,28 @@ export class AppointmentStatusControllerDelegate {
         if (record === null) {
             ErrorHandler.throwNotFoundError('Appointment status with id ' + id.toString() + ' cannot be found!');
         }
+        if (Helper.hasProperty(requestBody, 'Sequence')) {
+            var existingStatus = await this.prisma.appointment_statuses.findMany({
+                where : { 
+                    Sequence        : requestBody.Sequence, 
+                    BusinessNodeId  : record.BusinessNodeId,
+                },
+            });
+            if (existingStatus.length > 0) {
+                for (var s of existingStatus) {
+                    if (s.id != id) {
+                        ErrorHandler.throwDuplicateUserError('Appointment status with the same sequence for the same business node exists!');
+                    }
+                }
+            }
+        }
         const updateModel: AppointmentStatusUpdateModel = this.getUpdateModel(requestBody);
         const updated = await this._service.update(id, updateModel);
         if (updated == null) {
             throw new ApiError('Unable to update appointment status!', 400);
         }
-        return this.getEnrichedDto(updated);
+        const status = await this._service.getById(id);
+        return this.getEnrichedDto(status);
     };
 
     delete = async (id: uuid) => {
@@ -89,7 +173,11 @@ export class AppointmentStatusControllerDelegate {
 
     getCreateModel = (requestBody): AppointmentStatusCreateModel => {
         return {
-            BusinessNodeId          : requestBody.BusinessNodeId ? requestBody.BusinessNodeId : null,
+            BusinessNodeId          : requestBody.BusinessNodeId,
+            Status                  : requestBody.Status,
+            StatusCode              : requestBody.StatusCode,
+            StatusColor             : requestBody.StatusColor,
+            Sequence                : requestBody.Sequence,
             IsCancellationStatus    : requestBody.IsCancellationStatus ? requestBody.IsCancellationStatus : false, 
             IsCompletedStatus       : requestBody.IsCompletedStatus ? requestBody.IsCompletedStatus : false,
             IsConfirmedStatus       : requestBody.IsConfirmedStatus ? requestBody.IsConfirmedStatus : false,
@@ -98,11 +186,7 @@ export class AppointmentStatusControllerDelegate {
             NotificationText        : requestBody.NotificationText ? requestBody.NotificationText : null,
             SendNotification        : requestBody.SendNotification ? requestBody.SendNotification : true,
             SendSms                 : requestBody.SendSms ? requestBody.SendSms : true,
-            Sequence                : requestBody.Sequence ? requestBody.Sequence : 0,
             SmsText                 : requestBody.SmsText ? requestBody.SmsText : null,
-            Status                  : requestBody.Status ? requestBody.Status : "",
-            StatusCode              : requestBody.StatusCode ? requestBody.StatusCode : "",
-            StatusColor             : requestBody.StatusColor ? requestBody.StatusColor : "",
             IsActive                : requestBody.IsActive ? requestBody.IsActive : true
         };
     };
