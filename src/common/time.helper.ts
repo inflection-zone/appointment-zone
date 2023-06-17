@@ -173,69 +173,69 @@ export class TimeHelper {
         return durationInHours;
     };
 
-    static getTimezoneOffsets = (timezoneOffsetStr: string, durationType: DurationType): number => {
+    // static getTimezoneOffsets = (timezoneOffsetStr: string, durationType: DurationType): number => {
 
-        var offsetTmp = timezoneOffsetStr;
-        var offsetMinutes = 0;
+    //     var offsetTmp = timezoneOffsetStr;
+    //     var offsetMinutes = 0;
 
-        if (timezoneOffsetStr.includes('+')) {
-            offsetTmp = offsetTmp.replace('+', '-');
-        }
-        else if (!timezoneOffsetStr.includes('-')) {
-            offsetTmp = offsetTmp.replace(' ', '');
-            offsetTmp = '-' + offsetTmp;
-        }
-        else if (timezoneOffsetStr.includes('-')) {
-            offsetTmp = offsetTmp.replace('-', '+');
-        }
+    //     if (timezoneOffsetStr.includes('+')) {
+    //         offsetTmp = offsetTmp.replace('+', '-');
+    //     }
+    //     else if (!timezoneOffsetStr.includes('-')) {
+    //         offsetTmp = offsetTmp.replace(' ', '');
+    //         offsetTmp = '-' + offsetTmp;
+    //     }
+    //     else if (timezoneOffsetStr.includes('-')) {
+    //         offsetTmp = offsetTmp.replace('-', '+');
+    //     }
     
-        if (timezoneOffsetStr.includes(':')) {
-            var tokens = offsetTmp.split(":");
-            var offset_hours = parseInt(tokens[0]);
-            var offset_minutes = parseInt(tokens[1]);
-            if (offset_hours < 0) {
-                offset_minutes = -1 * offset_minutes;
-            }
-            offsetMinutes = (offset_hours * 60) + offset_minutes;
-        }
-        else {
-            var len = offsetTmp.length;
-            var min = offsetTmp.substring(len - 2, len);
-            var hr = offsetTmp.substring(0, len - 2);
-            var offset_hours = parseInt(hr);
-            var offset_minutes = parseInt(min);
-            if (offset_hours < 0) {
-                offset_minutes = -1 * offset_minutes;
-            }
-            offsetMinutes = (offset_hours * 60) + offset_minutes;
-        }
+    //     if (timezoneOffsetStr.includes(':')) {
+    //         var tokens = offsetTmp.split(":");
+    //         var offset_hours = parseInt(tokens[0]);
+    //         var offset_minutes = parseInt(tokens[1]);
+    //         if (offset_hours < 0) {
+    //             offset_minutes = -1 * offset_minutes;
+    //         }
+    //         offsetMinutes = (offset_hours * 60) + offset_minutes;
+    //     }
+    //     else {
+    //         var len = offsetTmp.length;
+    //         var min = offsetTmp.substring(len - 2, len);
+    //         var hr = offsetTmp.substring(0, len - 2);
+    //         var offset_hours = parseInt(hr);
+    //         var offset_minutes = parseInt(min);
+    //         if (offset_hours < 0) {
+    //             offset_minutes = -1 * offset_minutes;
+    //         }
+    //         offsetMinutes = (offset_hours * 60) + offset_minutes;
+    //     }
 
-        if (durationType === DurationType.Milisecond) {
-            return offsetMinutes * 60 * 1000;
-        }
-        if (durationType === DurationType.Second) {
-            return offsetMinutes * 60 ;
-        }
-        if (durationType === DurationType.Minute) {
-            return offsetMinutes;
-        }
-        if (durationType === DurationType.Hour) {
-            return offsetMinutes / 60.0;
-        }
-        if (durationType === DurationType.Day) {
-            return offsetMinutes / (24.0 * 60);
-        }
-        if (durationType === DurationType.Week) {
-            return offsetMinutes / (24.0 * 60 * 7);
-        }
-        if (durationType === DurationType.Month) {
-            return offsetMinutes / (24.0 * 60 * 30);
-        }
-        if (durationType === DurationType.Year) {
-            return offsetMinutes / (24.0 * 60 * 365);
-        }
-        return offsetMinutes;
-    };
+    //     if (durationType === DurationType.Milisecond) {
+    //         return offsetMinutes * 60 * 1000;
+    //     }
+    //     if (durationType === DurationType.Second) {
+    //         return offsetMinutes * 60 ;
+    //     }
+    //     if (durationType === DurationType.Minute) {
+    //         return offsetMinutes;
+    //     }
+    //     if (durationType === DurationType.Hour) {
+    //         return offsetMinutes / 60.0;
+    //     }
+    //     if (durationType === DurationType.Day) {
+    //         return offsetMinutes / (24.0 * 60);
+    //     }
+    //     if (durationType === DurationType.Week) {
+    //         return offsetMinutes / (24.0 * 60 * 7);
+    //     }
+    //     if (durationType === DurationType.Month) {
+    //         return offsetMinutes / (24.0 * 60 * 30);
+    //     }
+    //     if (durationType === DurationType.Year) {
+    //         return offsetMinutes / (24.0 * 60 * 365);
+    //     }
+    //     return offsetMinutes;
+    // };
 
     static strToUtc = (dateStr: string, timeZoneOffsetMinutes?: number): Date => {
 
@@ -340,11 +340,112 @@ export class TimeHelper {
         return dayjs(date).daysInMonth();
     };
 
-    static getDateWithTimezone = (dateStr: string, timezoneOffset: string) => {
-        var todayStr = new Date().toISOString();
-        var str = dateStr ? dateStr.split('T')[0] : todayStr.split('T')[0];
-        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minute);
-        return TimeHelper.strToUtc(str, offsetMinutes);
-    }
+    // static getDateWithTimezone = (dateStr: string, timezoneOffset: string) => {
+    //     var todayStr = new Date().toISOString();
+    //     var str = dateStr ? dateStr.split('T')[0] : todayStr.split('T')[0];
+    //     var offsetMinutes = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minute);
+    //     return TimeHelper.strToUtc(str, offsetMinutes);
+    // };
+
+    static parseDurationInDays = (str) => {
+        var durationDays = 0;
+        var tokens = str.toLowerCase().split(":");
+        for (var i = 0; i < tokens.length; i++) {
+    
+            var x = tokens[i];
+            if (x.includes("d")) {
+                x = x.replace("d", "");
+                var days = parseInt(x);
+                durationDays += days;
+            }
+            if (x.includes("w")) {
+                x = x.replace("w", "");
+                var weeks = parseInt(x);
+                durationDays += (weeks * 7);
+            }
+        }
+        return durationDays;
+    };
+
+    static parseDurationInMin = (str) => {
+        var durationMin = 0;
+        var tokens = str.toLowerCase().split(":");
+        for (var i = 0; i < tokens.length; i++) {
+    
+            var x = tokens[i];
+            if (x.includes("m")) {
+                x = x.replace("m", "");
+                var minutes = parseInt(x);
+                durationMin += minutes;
+            }
+            if (x.includes("h")) {
+                x = x.replace("h", "");
+                var hours = parseInt(x);
+                durationMin += (hours * 60);
+
+            }
+            if (x.includes("d")) {
+                x = x.replace("d", "");
+                var days = parseInt(x);
+                durationMin += (days * 60 * 24);
+            }
+            if (x.includes("w")) {
+                x = x.replace("w", "");
+                var weeks = parseInt(x);
+                durationMin += (weeks * 60 * 24 * 7);
+            }
+        }
+        return durationMin;
+    };
+
+    static getTimezoneOffsets = (timeZone) => {
+        var offset = timeZone;
+        if (timeZone.includes('+')) {
+            offset = offset.replace('+', '-');
+        }
+        else if(!timeZone.includes('-')) {
+            offset = offset.replace(' ', '')
+            offset = '-' + offset;
+        }
+        else if (timeZone.includes('-')) {
+            offset = offset.replace('-', '+');
+        }
+        if(timeZone.includes(':')){
+            var tokens = offset.split(":");
+            var offsetHours = parseInt(tokens[0]);
+            var offsetMinutes = parseInt(tokens[1]);
+            if(offsetHours < 0) {
+                offsetMinutes = -1 * offsetMinutes;
+            }
+            return { offsetHours, offsetMinutes }
+        }
+        else {
+            var len = offset.length;
+            var min = offset.substring(len-2, len);
+            var hr = offset.substring(0, len-2);
+            var offsetHours = parseInt(hr);
+            var offsetMinutes = parseInt(min);
+            if(offsetHours < 0) {
+                offsetMinutes = -1 * offsetMinutes;
+            }
+            return { offsetHours , offsetMinutes }
+        }
+    };
+
+    static getStartOfDayUtc = (date: Date) => {
+        return dayjs(date).utc().startOf('day').toDate();
+    };
+
+    static isSameOrBefore = (first: Date, second: Date): boolean => {
+        return dayjs(first).isSameOrBefore(dayjs(second));
+    };
+
+    static isSameOrAfter = (first: Date, second: Date): boolean => {
+        return dayjs(first).isSameOrAfter(dayjs(second));
+    };
+
+    static isSame = (first: Date, second: Date): boolean => {
+        return dayjs(first).isSame(dayjs(second));
+    };
 
 }
