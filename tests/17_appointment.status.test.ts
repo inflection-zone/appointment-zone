@@ -261,7 +261,7 @@ export const loadAppointmentStatusUpdateModel = async (
 
 function loadAppointmentStatusQueryString() {
     //This is raw query. Please modify to suit the test
-    const queryString = '?businessNodeId=d73ebeb6-c4f6-4a4b-9cc8-9d691de09246'
+    const queryString = ''
     return queryString;
 }
 

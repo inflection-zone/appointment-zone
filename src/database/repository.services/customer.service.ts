@@ -16,7 +16,7 @@ export class CustomerService {
     create = async (createModel) => {
         try {
             var record = await this.prisma.customers.create({data:createModel});
-            console.log (record);
+            // console.log (record);
             return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create customer!', error);

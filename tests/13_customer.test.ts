@@ -265,7 +265,7 @@ export const loadCustomerUpdateModel = async(
 
 function loadCustomerQueryString() {
     //This is raw query. Please modify to suit the test
-    const queryString = '?firstName=Art'
+    const queryString = ''
     return queryString;
 }
 

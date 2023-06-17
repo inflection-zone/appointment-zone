@@ -234,7 +234,7 @@ export const loadBusinessUserHourUpdateModel = (
 
 function loadBusinessUserHourQueryString() {
     //This is raw query. Please modify to suit the test
-    const queryString = '?isActive=true&businessUserId=c91a580f-3fde-4eae-af21-702ff0c7860c'
+    const queryString = ''
     return queryString;
 }
 
