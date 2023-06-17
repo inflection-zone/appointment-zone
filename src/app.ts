@@ -65,8 +65,6 @@ export default class Application {
 
     setupDatabaseConnection = async () => {
 
-        const sequelize = db.default.sequelize;
-
         const dbClient = new DbClient();
         await dbClient.createDatabase();
 
@@ -75,13 +73,8 @@ export default class Application {
             //Drop all tables in db
             await dbClient.dropDatabase();
             await dbClient.createDatabase();
-            await dbClient.migrate();
         }
-
-        await DatabaseModelManager.setupAssociations(); //set associations
-
-        await sequelize.sync({ alter: { drop: false } });
-
+        await dbClient.migrate();
     }
 
     public start = async(): Promise<void> => {
