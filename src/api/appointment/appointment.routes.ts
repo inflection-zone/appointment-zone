@@ -12,7 +12,7 @@ export const register = (app: express.Application): void => {
 
     //router.get('/:upcoming', authenticator.authenticateClient, controller.findAllUpcomingAppointmentsAtSpecificDuration);
     router.get('/business/:businessId/node/:businessNodeId/service/:businessServiceId/slots', authenticator.authenticateClient, controller.findAvailableSlots);
-    // router.get('/user/:userId/slots', authenticator.authenticateClient, controller.findAvailableSlotsForUser);
+    router.get('/businessUser/:businessUserId/slots', authenticator.authenticateClient, controller.findAvailableSlotsForUser);
     // router.get('/can-book', authenticator.authenticateClient, controller.canCustomerBookThisSlot);
 
     // router.post('/book', authenticator.authenticateClient, controller.bookAppointment);

@@ -2,6 +2,7 @@ import express from 'express';
 import { ResponseHandler } from '../../common/response.handler';
 import { AppointmentControllerDelegate } from './appointment.controller.delegate';
 import { BaseController } from '../base.controller';
+import { CustomerProfilesChannelEndpointAssignmentContextImpl } from 'twilio/lib/rest/trusthub/v1/customerProfiles/customerProfilesChannelEndpointAssignment';
 
 export class AppointmentController extends BaseController {
 
@@ -25,5 +26,18 @@ export class AppointmentController extends BaseController {
         catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
+
+    findAvailableSlotsForUser = async(request: express.Request, response: express.Response): Promise < void > => {
+        try {
+            await this.authorize('Appointment.FindAvailableSlotsForUser', request, response, false);
+            const searchResults = await this._delegate.findAvailableSlotsForUser(request.query, request.params.businessUserId);
+            const message = 'Appointments available slots for user retrieved successfully!';
+            ResponseHandler.success(request, response, message, 200, searchResults);
+        }
+        catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
 }
