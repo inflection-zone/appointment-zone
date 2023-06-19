@@ -452,4 +452,10 @@ export class TimeHelper {
         return dayjs(dayjs(date)).toDate();
     }
 
+    static dateDifference = (first: Date, second: Date) => {
+        const date1 = dayjs(first);
+        const date2 = dayjs(second);
+        return date1.diff(date2) 
+    }
+
 }

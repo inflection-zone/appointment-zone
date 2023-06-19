@@ -15,6 +15,9 @@ import { BusinessUserService } from "../../database/repository.services/business
 import { CustomerService } from "../../database/repository.services/customer.service";
 import { AppointmentValidator as validator} from "./appointment.validator";
 import { PrismaClientInit } from "../../startup/prisma.client.init";
+import { FindAvailableSlotsSearchFilters } from "../../domain.types/appointment/available.slot.search.filter";
+import { BusinessNodeHourDto } from "../../domain.types/business.node.hour/business.node.hour.domain.types";
+import { BusinessUserHourDto } from "../../domain.types/business/business.user.hour.domain.types";
 
 
 dayjs.extend(utc);
@@ -48,7 +51,7 @@ export class AppointmentControllerDelegate {
         this._customerService = new CustomerService();
     }
 
-    findAvailableSlots = async (query : any, businessId : uuid, businessNodeId : uuid, businessServiceId : uuid) => {
+    findAvailableSlots = async (query , businessId : uuid, businessNodeId : uuid, businessServiceId : uuid) => {
         await validator.validateSearchRequest(query);
         var filters = this.getSearchFilters(query);
         var business = await this._businessService.getById(businessId);
@@ -71,21 +74,21 @@ export class AppointmentControllerDelegate {
         var timeZone = node.TimeZone;
 
         var startDate = th.getStartOfDayUtc(startDate);
-        if(query.FromDate != null) {
-            var dt = new Date(query.FromDate);
+        if(filters.FromDate != null) {
+            var dt = new Date(filters.FromDate);
             startDate = th.getStartOfDayUtc(dt);
         }
         var maxAllowable =th.addDuration(startDate, numDaysForSlots, DurationType.Day)
         var endDate = th.addDuration(endDate, 7, DurationType.Day);
-        if(query.ToDate != null) {
-            var dt = new Date(query.ToDate);
+        if(filters.ToDate != null) {
+            var dt = new Date(filters.ToDate);
             endDate = th.getStartOfDayUtc(dt);
             if(th.isAfter(endDate, maxAllowable)) {
                 endDate = maxAllowable;
             }
         }
         var slots = [];
-        var businessUserId = query.BusinessUserId;
+        var businessUserId = filters.BusinessUserId;
         if(businessUserId != null) {
             var userHours = [];
             var user = await this._businessUserService.getById(businessUserId);
@@ -159,7 +162,7 @@ export class AppointmentControllerDelegate {
 
     getSearchFilters = (query) => {
 
-        var filters = {};
+        var filters : FindAvailableSlotsSearchFilters = {};
 
         var fromDate = query.fromDate != 'undefined' ? query.fromDate : null;
         if (fromDate != null) {
@@ -203,8 +206,8 @@ export class AppointmentControllerDelegate {
             var daySlots = [];
             for(var j = 0; j < temp.Slots.length; j++) {
                 daySlots.push({
-                    slotStart   : th.format(temp.Slots[j].slotStart, slotStart), //dayjs.utc(temp.Slots[j].slotStart).format(),
-                    slotEnd     : th.format(temp.Slots[j].slotEnd, slotEnd), //dayjs.utc(temp.Slots[j].slotEnd).format(),
+                    slotStart   : th.format(temp.Slots[j].slotStart, 'DD/MM/YYYY'), //dayjs.utc(temp.Slots[j].slotStart).format(),
+                    slotEnd     : th.format(temp.Slots[j].slotEnd, 'DD/MM/YYYY'), //dayjs.utc(temp.Slots[j].slotEnd).format(),
                     available   : temp.Slots[j].available
                 })
             }
@@ -276,7 +279,7 @@ export class AppointmentControllerDelegate {
         return weekDays;
     };
 
-    getAllSlots = (timeZone, startDate, endDate, slotDuration, priorBookingWindowMin, nodeHours, businessUserId, userHours) => {
+    getAllSlots = (timeZone: string, startDate: Date, endDate: Date, slotDuration: number, priorBookingWindowMin: number, nodeHours: BusinessNodeHourDto[], businessUserId: uuid, userHours: BusinessUserHourDto[]) => {
 
         var nodeWorkingDays = new Map()
 
@@ -308,9 +311,11 @@ export class AppointmentControllerDelegate {
             numberOfDays = 1
         }
         else {
-            var a = currMoment.clone();
-            var b = spanEnd.clone();
-            var diff = b.businessDiff(a);
+            var a = th.clone(currMoment);
+            var b = th.clone(spanEnd);
+            // var a = currMoment.clone();
+            // var b = spanEnd.clone();
+            var diff = th.dateDifference(a, b);
             numberOfDays = Math.ceil(diff) + 1;
         }
         var { offsetHours, offsetMinutes } = th.getTimezoneOffsets(timeZone);
