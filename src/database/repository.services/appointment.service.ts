@@ -115,6 +115,59 @@ export class AppointmentService{
         return slots;
     };
 
+    findAvailableSlotsForUser = async(filters, businessUserId: uuid) => {
+        var userHours = [];
+        var businessUser = await this.prisma.business_users.findUnique({where : {id : businessUserId},});
+        if(businessUser == null) {
+            ErrorHandler.throwNotFoundError('Invalid user id!');
+        }
+        var businessNodeId = businessUser.BusinessNodeId;
+        var node = await this.prisma.business_nodes.findUnique({where : {id : businessNodeId},});
+        if(node == null) {
+            ErrorHandler.throwNotFoundError('Invalid node id found for the user!');
+        }
+        var nodeHours = await this.prisma.business_node_hours.findMany({where : {BusinessNodeId : businessNodeId},});
+        if(nodeHours.length == 0) {
+            ErrorHandler.throwNotFoundError('Working hours are not specified for the business!');
+        }
+        userHours = await this.prisma.business_user_hours.findMany({where : {BusinessUserId : filters.BusinessUserId},});
+        if(userHours.length == 0) {
+            ErrorHandler.throwNotFoundError('Working hours are not specified for the business user!');
+        }
+        var userServices = await this.prisma.business_user_services.findMany({where: {BusinessUserId : businessUserId},});
+        if(userServices.length == 0) {
+            ErrorHandler.throwNotFoundError('No services found for the user!');
+        }
+        var userService = userServices[0];
+        var businessServiceId = userService.BusinessServiceId;
+        var service = await this.prisma.business_services.findUnique({where : {id : businessServiceId},});
+        if(service == null) {
+            ErrorHandler.throwNotFoundError('No services found for the user.');
+        }
+        var timeZone = node.TimeZone;
+        var numDaysForSlots = this.parseDurationInDays(node.AllowFutureBookingFor)
+        
+        var startDate = dayjs.utc().startOf('day');
+        if(filters.FromDate != null){
+            var dt = new Date(filters.FromDate);
+            startDate = dayjs.utc(dt).startOf('day');
+        }
+        var maxAllowable = dayjs.utc().startOf('day').add(numDaysForSlots, 'days');
+        var endDate = dayjs.utc().startOf('day').add(7, 'days');
+        if(filters.ToDate != null) {
+            var dt = new Date(filters.ToDate);
+            endDate = dayjs.utc(dt).startOf('day');
+            if(endDate.isAfter(maxAllowable)) {
+                endDate = maxAllowable;
+            }
+        }
+        var availableSlotsByDate = await this.findSlotAvailability(timeZone, numDaysForSlots, startDate, endDate, nodeHours, userHours, businessUserId, service, businessNodeId);
+        var slots = this.transform(timeZone, availableSlotsByDate);
+        return slots;
+    };
+
+    
+    
     parseDurationInDays = (str) => {
         var durationDays = 0;
         var tokens = str.toLowerCase().split(":");

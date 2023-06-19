@@ -448,4 +448,8 @@ export class TimeHelper {
         return dayjs(first).isSame(dayjs(second));
     };
 
+    static clone = (date: Date) => {
+        return dayjs(dayjs(date)).toDate();
+    }
+
 }
