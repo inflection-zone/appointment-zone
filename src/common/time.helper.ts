@@ -10,6 +10,7 @@ import utc from 'dayjs/plugin/utc';
 import weekday from 'dayjs/plugin/weekday';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import { DateStringFormat, DurationType } from "../domain.types/miscellaneous/time.types";
+import dayjsBusinessDays from 'dayjs-business-days2';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,6 +23,7 @@ dayjs.extend(dayOfYear);
 dayjs.extend(weekday);
 dayjs.extend(duration);
 dayjs.extend(calendar);
+dayjs.extend(dayjsBusinessDays);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -450,12 +452,50 @@ export class TimeHelper {
 
     static clone = (date: Date) => {
         return dayjs(dayjs(date)).toDate();
-    }
+    };
+
+    static cloneWithUtc = (date: Date) => {
+        return dayjs(dayjs(date)).utc().toDate();
+    };
+
+    static cloneFormat = (date: Date) => {
+        return dayjs(dayjs(date)).format();
+    };
 
     static dateDifference = (first: Date, second: Date) => {
         const date1 = dayjs(first);
         const date2 = dayjs(second);
         return date1.diff(date2) 
+    };
+
+    static isBusinessDay = (date: Date): boolean => {
+        return dayjs(date).isBusinessDay();
+    };
+
+    static nextBusinessDay = (date): Date => {
+        return dayjs(date).nextBusinessDay().startOf('day').toDate();
+    };
+
+    static businessDaysAdd = (number) => {
+        return dayjs().utc().businessDaysAdd(number);
+    };
+
+    static toUtc = (date: Date) => {
+        return dayjs(date).utc();
+    };
+
+    static day = (day) => {
+        return dayjs().day(day);
+    };
+    static utcDay = (day) => {
+        return dayjs().utc().day(day);
     }
 
+    static toDate = () => {
+        return dayjs.utc().toDate();
+    };
+
+    static utc = (date: Date) => {
+        return dayjs.utc(date);
+    }
 }

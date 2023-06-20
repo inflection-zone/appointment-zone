@@ -7,6 +7,7 @@ import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import dayjsBusinessDays from 'dayjs-business-days2';
+import { TimeHelper as th} from '../../common/time.helper';
 
  ///////////////////////////////////////////////////////////////////////////
 
@@ -25,7 +26,7 @@ export class AppointmentService{
         return this.instance || (this.instance=new this());
     }
 
-    findAvailableSlots = async (filters, businessId: uuid, businessNodeId: uuid, businessServiceId: uuid) => {
+    findAvailableSlot = async (filters, businessId: uuid, businessNodeId: uuid, businessServiceId: uuid) => {
         var business = await this.prisma.businesses.findUnique({where : { id : businessId }});
         if (business == null) {
             throw new ApiError('Invalid business id!', 400);
@@ -420,51 +421,6 @@ export class AppointmentService{
         return slotsByDate;
     };    
 
-    getAvailableSlots = async (timeZone, slotsByDate, businessNodeId, businessUserId, businessServiceId, numDaysForSlots) => {
-        var endDate = dayjs.utc().businessDaysAdd(numDaysForSlots);
-        var appointments = await this.prisma.appointments.findMany({
-            where : {
-                BusinessNodeId      : businessNodeId,
-                BusinessUserId      : businessUserId,
-                BusinessServiceId   : businessServiceId,
-                StartTime           : {
-                    gte : dayjs.utc().toDate()
-                },
-                EndTime             : {
-                    lte : dayjs.utc(endDate).toDate()
-                },
-                IsCancelled         : false,
-                IsActive            : true
-            },
-        });
-
-        for (var j = 0; j < slotsByDate.length; j++) {
-            var sd = slotsByDate[j];
-            var slotDay = sd.CurrentMoment;
-
-            for(var i = 0; i < appointments.length; i++) {
-                var appointment = appointments[i];
-                var appointmentDay = dayjs.utc(appointment.StartTime).startOf('day');
-                if(!appointmentDay.isSame(slotDay)) {
-                    continue;
-                }
-                var start = dayjs.utc(appointment.StartTime);
-                var end = dayjs.utc(appointment.EndTime)
-
-                for(var k = 0; k < sd.Slots.length; k++) 
-                {
-                    var slotStart = sd.Slots[k].slotStart;
-                    var slotEnd = sd.Slots[k].slotEnd;
-
-                    if(start.isSame(slotStart) && end.isSame(slotEnd)) {
-                        slotsByDate[j].Slots[k].available = false;
-                    }
-                }
-            }
-        }
-        return slotsByDate;
-    };
-
     calculateSlots = (timeZone, dateMoment, startTime, endTime, timeSlotDurationMin, priorBookingWindowMin) => {
         var { offsetHours, offsetMinutes } = this.getTimezoneOffsets(timeZone);
         //Filter the slots based on prior booking window (defined in minutes)
@@ -577,4 +533,58 @@ export class AppointmentService{
         ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve appointment!', error);
         }
     };   
+
+    findAvailableSlots = async(filters, businessId, businessNodeId, businessServiceId) => {
+        try {
+
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('DB Error: Unable to find available slots!', error);
+        }
+    };
+
+    getAvailableSlots = async (timeZone: string, slotsByDate, businessNodeId, businessUserId, businessServiceId, numDaysForSlots: number) => {
+        var endDate = th.businessDaysAdd(numDaysForSlots);
+        var appointments = await this.prisma.appointments.findMany({
+            where : {
+                BusinessNodeId      : businessNodeId,
+                BusinessUserId      : businessUserId,
+                BusinessServiceId   : businessServiceId,
+                StartTime           : {
+                    gte : dayjs.utc().toDate()
+                },
+                EndTime             : {
+                    lte : dayjs.utc(endDate).toDate()
+                },
+                IsCancelled         : false,
+                IsActive            : true
+            },
+        });
+
+        for (var j = 0; j < slotsByDate.length; j++) {
+            var sd = slotsByDate[j];
+            var slotDay = sd.CurrentMoment;
+
+            for(var i = 0; i < appointments.length; i++) {
+                var appointment = appointments[i];
+                var appointmentDay = th.getStartOfDayUtc(appointment.StartTime); //dayjs.utc(appointment.StartTime).startOf('day');
+                if(!th.isSame(appointmentDay, slotDay)) {
+                    continue;
+                }
+                var start = th.utc(appointment.StartTime);
+                var end = th.utc(appointment.EndTime);
+
+                for(var k = 0; k < sd.Slots.length; k++) 
+                {
+                    var slotStart = sd.Slots[k].slotStart;
+                    var slotEnd = sd.Slots[k].slotEnd;
+
+                    if(th.isSame(start, slotStart) && th.isSame(end, slotEnd)) {
+                        slotsByDate[j].Slots[k].available = false;
+                    }
+                }
+            }
+        }
+        return slotsByDate;
+    };
+
 }
