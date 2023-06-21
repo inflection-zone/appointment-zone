@@ -484,18 +484,36 @@ export class TimeHelper {
         return dayjs(date).utc();
     };
 
-    static day = (day) => {
-        return dayjs().day(day);
+    static day = (date : Date) : number => {
+        const dt = dayjs(date);
+        const dayNumber = dt.day()
+        return dayNumber;
     };
+    
     static utcDay = (day) => {
         return dayjs().utc().day(day);
-    }
+    };
 
     static toDate = () => {
         return dayjs.utc().toDate();
     };
 
-    static utc = (date: Date) => {
-        return dayjs.utc(date);
-    }
+    static utc = (date: Date) : Date => {
+       const utcDate = dayjs.utc(date)
+        return utcDate.toDate();
+    };
+
+    static addHoursMinutes = (date: Date, hours: number, minutes: number) : Date => {
+        const dt = dayjs(date);
+        const newDate = dt.add(hours, 'hour').add(minutes, 'minute');
+         return newDate.toDate();
+    };
+
+    
+    static addDurationWithOffset = (date: Date, hours: number, minutes: number , offsetHours: number, offsetMinutes : number) : Date => {
+        const dt = dayjs(date); 
+        const newDate = dt.add(hours, 'hour').add(minutes, 'minute').add(offsetHours, 'hour').add(offsetMinutes, 'minute');
+        return newDate.toDate();
+    };
+
 }

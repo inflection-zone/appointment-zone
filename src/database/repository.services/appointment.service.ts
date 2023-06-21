@@ -570,8 +570,9 @@ export class AppointmentService{
                 if(!th.isSame(appointmentDay, slotDay)) {
                     continue;
                 }
-                var start = th.utc(appointment.StartTime);
-                var end = th.utc(appointment.EndTime);
+                
+                const start  = th.utc(appointment.StartTime);
+                const end = th.utc(appointment.EndTime);
 
                 for(var k = 0; k < sd.Slots.length; k++) 
                 {
