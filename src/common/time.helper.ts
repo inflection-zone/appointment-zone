@@ -254,7 +254,7 @@ export class TimeHelper {
         }
     };
 
-    static format = (date: Date, formatTemplate: string): string => {
+    static format = (date: Date, formatTemplate?: string): string => {
         return dayjs(date).format(formatTemplate);
     };
 
@@ -462,10 +462,10 @@ export class TimeHelper {
         return dayjs(dayjs(date)).format();
     };
 
-    static dateDifference = (first: Date, second: Date) => {
+    static businessDiff = (first: Date, second: Date) => {
         const date1 = dayjs(first);
         const date2 = dayjs(second);
-        return date1.diff(date2) 
+        return date2.businessDiff(date1); 
     };
 
     static isBusinessDay = (date: Date): boolean => {
@@ -509,11 +509,14 @@ export class TimeHelper {
          return newDate.toDate();
     };
 
-    
     static addDurationWithOffset = (date: Date, hours: number, minutes: number , offsetHours: number, offsetMinutes : number) : Date => {
         const dt = dayjs(date); 
         const newDate = dt.add(hours, 'hour').add(minutes, 'minute').add(offsetHours, 'hour').add(offsetMinutes, 'minute');
         return newDate.toDate();
+    };
+
+    static utcFormat = (date: Date, formatTemplate? : string) => {
+        return dayjs.utc(date).format(formatTemplate);
     };
 
 }

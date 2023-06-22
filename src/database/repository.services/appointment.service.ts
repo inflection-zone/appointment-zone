@@ -542,7 +542,7 @@ export class AppointmentService{
         }
     };
 
-    getAvailableSlots = async (timeZone: string, slotsByDate, businessNodeId, businessUserId, businessServiceId, numDaysForSlots: number) => {
+    getAvailableSlots = async (timeZone: string, slotsByDate, businessNodeId: uuid, businessUserId: uuid , businessServiceId: uuid, numDaysForSlots: number) => {
         var endDate = th.businessDaysAdd(numDaysForSlots);
         var appointments = await this.prisma.appointments.findMany({
             where : {
@@ -570,7 +570,7 @@ export class AppointmentService{
                 if(!th.isSame(appointmentDay, slotDay)) {
                     continue;
                 }
-                
+
                 const start  = th.utc(appointment.StartTime);
                 const end = th.utc(appointment.EndTime);
 
