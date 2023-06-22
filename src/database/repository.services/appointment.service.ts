@@ -116,6 +116,85 @@ export class AppointmentService{
         return slots;
     };
 
+    canCustomerBookThisSlot = async(customerId, startTime, endTime) => {
+        try {
+            const start = th.toUtc(startTime);
+            const end = th.toUtc(endTime);
+            const record = await this.prisma.appointments.findMany({
+                where : {
+                    CustomerId      : customerId,
+                    IsCancelled     : false,
+                    IsActive        : true,
+                    OR : 
+                    [
+                        {
+                        StartTime   :
+                        {
+                            gte : start,
+                            lte : end
+                        }
+                    },
+                    {
+                        EndTime : {
+                            gte : start,
+                            lte : end
+                        }
+                    }
+                ]
+            }});
+            if(record.length > 0){
+                return {
+                    CanBook                 : false,
+                    ConflictingAppointment  : record[0]
+                }
+            }
+            const appointments = await this.prisma.appointments.findMany({
+                where : {
+                    CustomerId      : customerId,
+                    IsCancelled     : false,
+                    IsActive        : true,
+                    OR : [
+                        {
+                            StartTime : {
+                                lte : start,
+                            },
+                            EndTime : {
+                                gte : end,
+                            }
+                        },
+                        {
+                            StartTime : {
+                                gte : start,
+                            },
+                            EndTime : {
+                                lte : end,
+                            }
+                        },
+                    ]
+                },
+            });
+            if(appointments.length > 0) {
+                return {
+                    CanBook                 : false,
+                    ConflictingAppointment  : appointments[0]
+                };
+            }
+            return {
+                CanBook                 : true,
+                ConflictingAppointment  : null
+            };
+        }
+        catch (error) {
+           ErrorHandler.throwDbAccessError("Unable to check slot conflict!", error);
+        }
+    };
+
+
+
+
+
+
+
     findAvailableSlotsForUser = async(filters, businessUserId: uuid) => {
         var userHours = [];
         var businessUser = await this.prisma.business_users.findUnique({where : {id : businessUserId},});

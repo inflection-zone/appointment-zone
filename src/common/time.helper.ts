@@ -437,7 +437,7 @@ export class TimeHelper {
     static getStartOfDayUtc = (date: Date) => {
         return dayjs(date).utc().startOf('day').toDate();
     };
-
+    
     static isSameOrBefore = (first: Date, second: Date): boolean => {
         return dayjs(first).isSameOrBefore(dayjs(second));
     };
@@ -509,11 +509,20 @@ export class TimeHelper {
          return newDate.toDate();
     };
 
-    
     static addDurationWithOffset = (date: Date, hours: number, minutes: number , offsetHours: number, offsetMinutes : number) : Date => {
         const dt = dayjs(date); 
         const newDate = dt.add(hours, 'hour').add(minutes, 'minute').add(offsetHours, 'hour').add(offsetMinutes, 'minute');
         return newDate.toDate();
+    };
+
+    static businessDiff = (a: Date, b: Date): number => {
+        const date1 = dayjs(a);
+        const date2 = dayjs(b);
+        return date2.businessDiff(date1);
+    };
+
+    static utcFormat = (date: Date, formatTemplate? : string) => {
+        return dayjs.utc(date).format(formatTemplate);
     };
 
 }

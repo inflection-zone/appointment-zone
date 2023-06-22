@@ -73,13 +73,12 @@ export class AppointmentControllerDelegate {
         }
         var numDaysForSlots = th.parseDurationInDays(node.AllowFutureBookingFor)
         var timeZone = node.TimeZone;
-
         var startDate = th.getStartOfDayUtc(startDate);
         if(filters.FromDate != null) {
             var dt = new Date(filters.FromDate);
             startDate = th.getStartOfDayUtc(dt);
         }
-        var maxAllowable =th.addDuration(startDate, numDaysForSlots, DurationType.Day)
+        var maxAllowable = th.addDuration(startDate, numDaysForSlots, DurationType.Day)
         var endDate = th.addDuration(endDate, 7, DurationType.Day);
         if(filters.ToDate != null) {
             var dt = new Date(filters.ToDate);
@@ -94,7 +93,7 @@ export class AppointmentControllerDelegate {
             var userHours = [];
             var user = await this._businessUserService.getById(businessUserId);
             if(user == null) {
-                ErrorHandler.throwNotFoundError('Invalid business node id!');
+                ErrorHandler.throwNotFoundError('Invalid business user id!');
             }
             userHours = await this.prisma.business_user_hours.findMany({where : { BusinessUserId : businessUserId}});
             if(userHours.length == 0){
@@ -111,7 +110,8 @@ export class AppointmentControllerDelegate {
         else {
             //User is not specified, check all users performing this service
             var userServices = await this.prisma.business_user_services.findMany({where : { BusinessServiceId : businessServiceId}});
-            if(userServices.length == 0){
+            if(userServices.length == 0)
+            {
                 //Users for this service are not found, calculate slots based on only node hours
                 var userHours = [];
                 var availableSlotsByDate = await this.findSlotAvailability(timeZone, numDaysForSlots, startDate, endDate, nodeHours, userHours, null, businessService, businessNodeId)
@@ -128,7 +128,7 @@ export class AppointmentControllerDelegate {
                         ErrorHandler.throwNotFoundError('Invalid business user id!');
                     }
                     userHours = await this.prisma.business_user_hours.findMany({where : { BusinessUserId : businessUserId}});
-                    if(userHours.length == 0){
+                    if(userHours.length == 0) {
                         throw new Error('Working hours are not specified for the business!');
                     }
                     var availableSlotsByDate = await this.findSlotAvailability(timeZone, numDaysForSlots, startDate, endDate, nodeHours, userHours, businessUserId, businessService, businessNodeId)
@@ -141,18 +141,78 @@ export class AppointmentControllerDelegate {
                 }
             }
         }
-        var searchResults = await this._service.findAvailableSlots(filters, businessId, businessNodeId, businessServiceId);
-       // return searchResults;
         return slots;
-
     };
 
     findAvailableSlotsForUser = async (query : any, businessUserId : uuid) => {
         await validator.validateSearchRequest(query);
         var filters = this.getSearchFilters(query);
-        var searchResults = await this._service.findAvailableSlotsForUser(filters, businessUserId);
-        return searchResults;
+        var userHours = [];
+        const businessUser = await this._businessUserService.getById(businessUserId);
+        if(businessUser == null) {
+            ErrorHandler.throwNotFoundError('Invalid business user id!');
+        }
+        var businessNodeId = businessUser.BusinessNodeId;
+        const node = await this._businessNodeService.getById(businessNodeId);
+        if (node == null) {
+            ErrorHandler.throwNotFoundError('Invalid business node id!');
+        }
+        const nodeHours = await this.prisma.business_node_hours.findMany({where : { BusinessNodeId : businessNodeId}});
+        if (nodeHours.length == 0) {
+            ErrorHandler.throwNotFoundError('Working hours are not specified for the business!');
+        }
+        userHours = await this.prisma.business_user_hours.findMany({where : {BusinessUserId : filters.BusinessUserId},});
+        if (userHours.length == 0) {
+            ErrorHandler.throwNotFoundError('Working hours are not specified for the business user!');
+        }
+        const businessUserService = await this.prisma.business_user_services.findMany({where: {BusinessUserId : businessUserId},});
+        if(businessUserService.length == 0) {
+            ErrorHandler.throwNotFoundError('No services found for the user!');
+        }
+        var userService = businessUserService[0];
+        var businessServiceId = userService.BusinessServiceId;
+        const businessService = await this._businessServiceService.getById(businessServiceId);
+        if(businessService == null) {
+            ErrorHandler.throwNotFoundError('No services found for the user.');
+        }
+        var timeZone = node.TimeZone;
+        const numDaysForSlots = th.parseDurationInDays(node.AllowFutureBookingFor)
+        
+        var sd = new Date();
+        var startDate = th.getStartOfDayUtc(sd);
+        if(filters.FromDate != null){
+            var dt = new Date(filters.FromDate);
+                startDate = th.getStartOfDayUtc(dt);
+            }
+            const maxAllowable = th.addDuration(startDate, numDaysForSlots, DurationType.Day);
+            var endDate = th.addDuration(endDate, 7, DurationType.Day);
+            if(filters.ToDate != null) {
+                var dt = new Date(filters.ToDate);
+                endDate = th.getStartOfDayUtc(dt);
+                if(th.isAfter(endDate, maxAllowable)) {
+                    endDate = maxAllowable;
+            }
+        }
+        const availableSlotsByDate = await this.findSlotAvailability(timeZone, numDaysForSlots, startDate, endDate, nodeHours, userHours, businessUserId, businessService, businessNodeId);
+        var slots = this.transform(timeZone, availableSlotsByDate);
+        const appointment = {
+            Slots : slots
+        }
+        return appointment;
     };
+
+    canCustomerBookThisSlot = async(requestBody : any) => {
+        await validator.validateSearchRequest(requestBody);
+        const customer = await this._customerService.getById(requestBody.CustomerId);
+        if(customer == null){
+            ErrorHandler.throwNotFoundError('Customer not found!');
+        }
+        const startTime = requestBody.StartTime;
+        const endTime = requestBody.EndTime;
+        //const createModel = await this.getAppointmentObject(requestBody);
+        const result = await this._service.canCustomerBookThisSlot(requestBody.CustomerId, startTime, endTime);
+        return result;
+};
 
     getSearchFilters = (query) => {
 
@@ -173,7 +233,7 @@ export class AppointmentControllerDelegate {
         return filters;
     };
 
-    findSlotAvailability = async (timeZone: string, numDaysForSlots: number, startDate: Date, endDate: Date, nodeHours: BusinessNodeHourDto[], userHours:BusinessUserHourDto[], businessUserId: uuid, businessService : BusinessServiceDto, businessNodeId: uuid) => {
+    findSlotAvailability = async (timeZone: string, numDaysForSlots: number, startDate: Date, endDate: Date, nodeHours: BusinessNodeHourDto[], userHours: BusinessUserHourDto[], businessUserId: uuid, businessService: BusinessServiceDto, businessNodeId: uuid) => {
         var holidays = [];
         var businessHolidays = this.getHolidays(nodeHours, numDaysForSlots);
         var userHolidays = this.getHolidays(userHours, numDaysForSlots);
@@ -200,15 +260,15 @@ export class AppointmentControllerDelegate {
             var daySlots = [];
             for(var j = 0; j < temp.Slots.length; j++) {
                 daySlots.push({
-                    slotStart   : th.format(temp.Slots[j].slotStart, 'DD/MM/YYYY'), //dayjs.utc(temp.Slots[j].slotStart).format(),
-                    slotEnd     : th.format(temp.Slots[j].slotEnd, 'DD/MM/YYYY'), //dayjs.utc(temp.Slots[j].slotEnd).format(),
+                    slotStart   : th.utcFormat(temp.Slots[j].slotStart), //th.format(temp.Slots[j].slotStart, 'DD/MM/YYYY'),  //dayjs.utc(temp.Slots[j].slotStart).format(),
+                    slotEnd     : th.utcFormat(temp.Slots[j].slotEnd), // th.format(temp.Slots[j].slotEnd, 'DD/MM/YYYY'), //dayjs.utc(temp.Slots[j].slotEnd).format(),
                     available   : temp.Slots[j].available
                 })
             }
             var s = {
-                Date         : th.format(temp.CurrentMoment, 'YYYY-MM-DD'), // temp.CurrentMoment.utc().format("YYYY-MM-DD"),
+                Date         : th.utcFormat(temp.CurrentMoment, 'YYYY-MM-DD'), //th.format(temp.CurrentMoment, 'YYYY-MM-DD'), // temp.CurrentMoment.utc().format("YYYY-MM-DD"),
                 WeekDayId    : th.utcDay(temp.CurrentMoment),  //temp.CurrentMoment.utc().day(),
-                WeekDay      : th.format(temp.CurrentMoment, 'dddd'),  //temp.CurrentMoment.utc().format("dddd"),
+                WeekDay      : th.utcFormat(temp.CurrentMoment, 'dddd'),  //temp.CurrentMoment.utc().format("dddd"),
                 DayStartTime : temp.DayStartTime,
                 DayEndTime   : temp.DayEndTime,
                 Slots        : daySlots
@@ -218,6 +278,7 @@ export class AppointmentControllerDelegate {
         return slots;
     };
 
+    
     getHolidays = (workHours: BusinessNodeHourDto[] | BusinessUserHourDto[] , numDayForSlots : number) => {
         var date: Date = new Date();
         var uptoDate = th.addDuration(date, numDayForSlots, DurationType.Day)
@@ -309,7 +370,7 @@ export class AppointmentControllerDelegate {
             var b = th.clone(spanEnd);
             // var a = currMoment.clone();
             // var b = spanEnd.clone();
-            var diff = th.dateDifference(a, b);
+            var diff = th.businessDiff(a, b);
             numberOfDays = Math.ceil(diff) + 1;
         }
         var { offsetHours, offsetMinutes } = th.getTimezoneOffsets(timeZone);
@@ -379,9 +440,11 @@ export class AppointmentControllerDelegate {
                 //var userCurrentDayStart = nodeSlot.CurrentMoment.clone().startOf('day').utc();
                 var userSlotsForDay = [];
 
-                if(userWorkingDays.has(weekDay)) {
+                if(userWorkingDays.has(weekDay)) 
+                {
                     var userWorkingDay = userWorkingDays.get(weekDay);
-                    if(userWorkingDay.IsOpen) {
+                    if(userWorkingDay.IsOpen) 
+                    {
                         var startTime = userWorkingDay.startTime;
                         var endTime = userWorkingDay.endTime;
                         
