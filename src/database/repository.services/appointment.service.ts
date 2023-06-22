@@ -189,12 +189,6 @@ export class AppointmentService{
         }
     };
 
-
-
-
-
-
-
     findAvailableSlotsForUser = async(filters, businessUserId: uuid) => {
         var userHours = [];
         var businessUser = await this.prisma.business_users.findUnique({where : {id : businessUserId},});
@@ -245,8 +239,6 @@ export class AppointmentService{
         var slots = this.transform(timeZone, availableSlotsByDate);
         return slots;
     };
-
-    
     
     parseDurationInDays = (str) => {
         var durationDays = 0;

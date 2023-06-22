@@ -435,7 +435,7 @@ export class TimeHelper {
     };
 
     static getStartOfDayUtc = (date: Date) => {
-        return dayjs(date).utc().startOf('day').toDate();
+        return dayjs(date).startOf('day').utc().toDate();
     };
     
     static isSameOrBefore = (first: Date, second: Date): boolean => {
@@ -455,7 +455,7 @@ export class TimeHelper {
     };
 
     static cloneWithUtc = (date: Date) => {
-        return dayjs(dayjs(date)).utc().toDate();
+        return dayjs(dayjs(date)).utc(true).toDate();
     };
 
     static cloneFormat = (date: Date) => {
@@ -515,8 +515,11 @@ export class TimeHelper {
         return newDate.toDate();
     };
 
-    static utcFormat = (date: Date, formatTemplate? : string) => {
-        return dayjs.utc(date).format(formatTemplate);
+    static utcFormat = (date : Date , formatTemplate? : string) => {
+        return dayjs(date).utc(true).format(formatTemplate);
     };
 
+    static utcDateFormat = (date: Date) => {
+        return dayjs.utc(date).format();
+    }
 }
