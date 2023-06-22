@@ -437,7 +437,7 @@ export class TimeHelper {
     static getStartOfDayUtc = (date: Date) => {
         return dayjs(date).utc().startOf('day').toDate();
     };
-
+    
     static isSameOrBefore = (first: Date, second: Date): boolean => {
         return dayjs(first).isSameOrBefore(dayjs(second));
     };

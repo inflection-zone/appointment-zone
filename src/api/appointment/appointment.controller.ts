@@ -40,4 +40,15 @@ export class AppointmentController extends BaseController {
         }
     };
 
+    canCustomerBookThisSlot = async (request: express.Request, response: express.Response): Promise < void > => {
+        try {
+            await this.authorize('Appointment.CanCustomerBookThisSlot', request, response, false);
+            const record = await this._delegate.canCustomerBookThisSlot(request.body);
+            const message = 'Appointments available slots for user retrieved successfully!';
+            ResponseHandler.success(request, response, message, 200, record);
+        }
+        catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 }
