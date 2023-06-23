@@ -169,7 +169,7 @@ export const loadBusinessUserSkillUpdateModel = async (
 
 function loadBusinessUserSkillQueryString() {
     //This is raw query. Please modify to suit the test
-    const queryString = '?isActive=true&businessUserId=d02a10fd-d715-4dfd-b019-8daf76f95fce&businessSkillId=b97ead1b-4f5c-4a76-b9a5-29bd3efa6562'
+    const queryString = ''
     return queryString;
 }
 

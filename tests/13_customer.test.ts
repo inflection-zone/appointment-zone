@@ -110,7 +110,7 @@ describe('Customer tests', function() {
 
     it('Update customer', function(done) {
         loadCustomerUpdateModel();
-        const updateModel = global.TestCache.CustomerUpdateModel;
+        const updateModel = getTestData("CustomerUpdateModel");
         const id = `${getTestData("CustomerId")}`
         agent
             .put(`/api/v1/customers/${getTestData("CustomerId")}`)

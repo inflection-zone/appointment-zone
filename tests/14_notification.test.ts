@@ -248,7 +248,7 @@ export const loadNotificationUpdateModel = async (
 
 function loadNotificationQueryString() {
     //This is raw query. Please modify to suit the test
-    const queryString = '?isActive=true&businessNodeId=d73ebeb6-c4f6-4a4b-9cc8-9d691de09246&customerId=f593adf1-8ca6-4ede-849e-19e94b1fb926'
+    const queryString = ''
     return queryString;
 }
 

@@ -322,7 +322,7 @@ export const loadBusinessUpdateModel = async (
 
 function loadBusinessQueryString() {
     //This is raw query. Please modify to suit the test
-    const queryString = '?isActive=true'
+    const queryString = ''
     return queryString;
 }
 

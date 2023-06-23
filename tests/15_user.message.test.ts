@@ -225,7 +225,7 @@ export const loadUserMessageUpdateModel = async (
 
 function loadUserMessageQueryString() {
     //This is raw query. Please modify to suit the test
-    const queryString = '?businessNodeId=d73ebeb6-c4f6-4a4b-9cc8-9d691de09246&customerId=b802b622-92ae-47d7-a10f-06adba2c6eac&isActive=true'
+    const queryString = ''
     return queryString;
 }
 

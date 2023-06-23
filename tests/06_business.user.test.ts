@@ -45,7 +45,7 @@ describe('Business user tests', function() {
 
                 setTestData( response.body.Data.UserRecords.id, 'BusinessUserId')
 
-                expect(response.body.Data.UserRecords.BusinessNodeId).to.equal(global.TestCache.BusinessUserCreateModel.BusinessNodeId);
+                expect(response.body.Data.UserRecords.BusinessNodeId).to.equal(getTestData("BusinessUserCreateModel").BusinessNodeId);
                 expect(response.body.Data.UserRecords.FirstName).to.equal(getTestData("BusinessUserCreateModel").FirstName);
                 expect(response.body.Data.UserRecords.LastName).to.equal(getTestData("BusinessUserCreateModel").LastName);
                 expect(response.body.Data.UserRecords.Prefix).to.equal(getTestData("BusinessUserCreateModel").Prefix);
@@ -170,7 +170,6 @@ describe('Business user tests', function() {
               expect(response.body.Data).to.have.property('Yelp');
               expect(response.body.Data).to.have.property('IsActive');
 
-              // expect(response.body.Data.id).to.equal(global.TestCache.BusinessUserCreateModel.id);
               expect(response.body.Data.BusinessNodeId).to.equal(getTestData("BusinessUserUpdateModel").BusinessNodeId);
               expect(response.body.Data.FirstName).to.equal(getTestData("BusinessUserUpdateModel").FirstName);
               expect(response.body.Data.LastName).to.equal(getTestData("BusinessUserUpdateModel").LastName);

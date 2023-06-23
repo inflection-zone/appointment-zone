@@ -185,7 +185,7 @@ export const loadBusinessSkillUpdateModel = async (
 
 function loadBusinessSkillQueryString() {
     //This is raw query. Please modify to suit the test
-    const queryString = '?isActive=true'
+    const queryString = ''
     return queryString;
 }
 

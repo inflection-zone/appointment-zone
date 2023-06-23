@@ -179,7 +179,7 @@ export const loadBusinessNodeCustomerUpdateModel = async (
 
 function loadBusinessNodeCustomerQueryString() {
     //This is raw query. Please modify to suit the test
-    const queryString = '?businessNodeId=05b3749b-4160-4cf4-8b48-438d11ec9de1&customerId=ef130f8d-6efc-48b6-b5fc-a639aa924f75&isActive=true'
+    const queryString = ''
     return queryString;
 }
 
