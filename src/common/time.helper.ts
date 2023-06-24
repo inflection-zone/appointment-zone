@@ -522,4 +522,16 @@ export class TimeHelper {
     static utcDateFormat = (date: Date) => {
         return dayjs.utc(date).format();
     }
+
+    static StartOfUtcDay = (date: Date): Date => {
+        return dayjs.utc(date).startOf('day').toDate();
+    };
+
+    static utcTOUtc = (date: Date) => {
+        return dayjs.utc(date).utc();
+    };
+
+    static localFormat = (date: Date, formatTemplate? : string) => {
+        return dayjs(date).local().format(formatTemplate);
+    };
 }

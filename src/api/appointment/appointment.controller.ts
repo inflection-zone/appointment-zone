@@ -51,4 +51,16 @@ export class AppointmentController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    bookAppointment = async (request: express.Request, response: express.Response): Promise < void > => {
+        try {
+            await this.authorize('Appointment.BookAppointment', request, response, false);
+            const record = await this._delegate.bookAppointment(request.body);
+            const message = 'Appointment is booked successfully!';
+            ResponseHandler.success(request, response, message, 200, record);
+        }
+        catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
 }
