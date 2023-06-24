@@ -1,6 +1,10 @@
 import { ApiError } from "../../common/api.error";
 import { AppointmentService } from "../../database/repository.services/appointment.service";
-//import { AppointmentCreateModel, AppointmentDto, AppointmentSearchFilters, AppointmentSearchResults, AppointmentUpdateModel } from "../../domain.types/appointment/appointment.domain.types";
+import { AppointmentCreateModel, 
+        AppointmentDto, 
+        AppointmentSearchFilters, 
+        AppointmentSearchResults, 
+        AppointmentUpdateModel } from "../../domain.types/appointment/appointment.domain.types";
 import { BusinessNodeService } from "../../database/repository.services/business.node.service";
 import { BusinessService } from "../../database/repository.services/business.service";
 import { BusinessServiceService } from "../../database/repository.services/business.service.service";
@@ -19,7 +23,8 @@ import { FindAvailableSlotsSearchFilters } from "../../domain.types/appointment/
 import { BusinessNodeHourDto } from "../../domain.types/business.node.hour/business.node.hour.domain.types";
 import { BusinessUserHourDto } from "../../domain.types/business/business.user.hour.domain.types";
 import { BusinessServiceDto } from "../../domain.types/business/business.service.domain.types";
-
+import { BusinessNodeCustomerService } from "../../database/repository.services/business.node.customer.service";
+import { Helper } from "../../common/helper";
 
 dayjs.extend(utc);
 
@@ -39,6 +44,8 @@ export class AppointmentControllerDelegate {
     _businessUserService : BusinessUserService = null;
 
     _customerService : CustomerService = null;
+    
+    _businessNodeCustomerService : BusinessNodeCustomerService = null;
 
     prisma = PrismaClientInit.instance().prisma();
 
@@ -50,6 +57,7 @@ export class AppointmentControllerDelegate {
         this._businessNodeHourService = new BusinessNodeHourService();
         this._businessUserService = new BusinessUserService();
         this._customerService = new CustomerService();
+        this._businessNodeCustomerService = new BusinessNodeCustomerService();
     }
 
     findAvailableSlots = async (query , businessId : uuid, businessNodeId : uuid, businessServiceId : uuid) => {
@@ -209,10 +217,130 @@ export class AppointmentControllerDelegate {
         }
         const startTime = requestBody.StartTime;
         const endTime = requestBody.EndTime;
-        //const createModel = await this.getAppointmentObject(requestBody);
         const result = await this._service.canCustomerBookThisSlot(requestBody.CustomerId, startTime, endTime);
         return result;
-};
+    };
+
+    bookAppointment = async(requestBody) => {
+        await validator.validateCreateRequest(requestBody);
+
+        const et = th.utc(requestBody.EndTime);
+        const dt = th.utc(new Date());
+        if(th.isBefore(et, dt)) {
+            ErrorHandler.throwFailedPreconditionError('Cannot book appointment for the past duration!');
+        }
+
+        const businessNodeId = requestBody.BusinessNodeId;
+        const node = await this._businessNodeService.getById(businessNodeId);
+        if(node == null) {
+            ErrorHandler.throwNotFoundError('Invalid node id!');
+        }
+
+        const businessServiceId = requestBody.BusinessServiceId;
+        const businessService = await this._businessServiceService.getById(businessServiceId);
+        if(businessService == null) {
+            ErrorHandler.throwNotFoundError('Invalid business service id!');
+        }
+        //update the work-days
+        const nodeHours = await this.prisma.business_node_hours.findMany({
+            where : {
+                BusinessNodeId : businessNodeId,
+            },
+        });
+        if(nodeHours.length == 0) {
+            ErrorHandler.throwNotFoundError('Working hours are not specified for the business!');
+        }
+
+        let userHours = [];
+        const businessUserId = requestBody.BusinessUserId;
+        if(businessUserId != null) {
+            userHours = await this.prisma.business_user_hours.findMany({where : {BusinessUserId : businessUserId},});
+            if(userHours.length == 0) {
+                ErrorHandler.throwNotFoundError('Working hours are not specified for the business user!');
+            }
+        }
+        const businessUser = await this._businessUserService.getById(businessUserId);
+        if(businessUser == null){
+            ErrorHandler.throwNotFoundError('Business user not found!');
+        }
+        const customer = await this._customerService.getById(requestBody.CustomerId);
+        if(customer == null) {
+            ErrorHandler.throwNotFoundError('Customer not found!');
+        }
+        const numDayForSlots = th.parseDurationInDays(node.AllowFutureBookingFor);
+        const startTime = requestBody.StartTime;
+        const endTime = requestBody.EndTime;
+        const isConflicting = await this._service.checkConflictWithCustomerAppointments(requestBody.CustomerId, startTime, endTime);
+        if(isConflicting) {
+            throw new ApiError('Appointment conflicts with your other appointment!', 500);
+        }
+        const startDate = th.StartOfUtcDay(startTime);
+        const endDate = th.StartOfUtcDay(endTime);
+        const timeZone = node.TimeZone;
+        const availableSlotsByDate = await this.findSlotAvailability(timeZone, numDayForSlots, startDate, endDate, nodeHours, userHours, businessUserId, businessService, businessNodeId);
+
+        const appointmentDay = th.StartOfUtcDay(startTime);
+        const appointmentStart = th.utcTOUtc(startTime);
+        const appointmentEnd = th.utcTOUtc(endTime);
+
+        const availableSlotsForDay = this.getSlotsForDay(availableSlotsByDate, appointmentDay);
+        if(availableSlotsForDay == null) {
+            ErrorHandler.throwNotFoundError('Appointment slot is not available for the given day!');
+        }
+        const isAvailable = this.isSlotAvailable(availableSlotsForDay, appointmentStart, appointmentEnd);
+        if(!isAvailable) {
+            ErrorHandler.throwNotFoundError('Appointment slot is not available!');
+        }
+        const appointmentStatuses = await this.prisma.appointment_statuses.findMany({
+            where : {
+                AND : {
+                    BusinessNodeId  : requestBody.BusinessNodeId,
+                    Sequence        : 1,
+                },
+            },
+        })
+        if(appointmentStatuses.length == 0) {
+            ErrorHandler.throwNotFoundError('Appointment status information is not updated for the business!');
+        }
+        var appointmentStatus = appointmentStatuses[0];
+
+        var timeStr = new Date().getTime().toString();
+        timeStr = timeStr.substring(5, timeStr.length);
+        var d = new Date();
+        var dateStr = Helper.formatDate(d);
+        var displayId ='App- ' + dateStr + '-' + timeStr; 
+
+        const customerId = requestBody.CustomerId;
+        var createModel = await this.getAppointmentCreateModel(requestBody, appointmentStart, appointmentEnd, appointmentStatus, displayId);
+        var appointment = await this._service.create(createModel);
+        if (appointment === null) {
+            throw new ApiError('An error occurred while booking an apoointment!', 400);
+        }
+        if(appointmentStatus.SendNotification == true){
+            //TODO: Send here the notification
+        }
+        if(appointmentStatus.SendSms == true){
+            //TODO: Send here the sms
+        }
+        var nodeCustomers = await this.prisma.business_node_customers.findMany({
+            where : {
+                AND : {
+                    BusinessNodeId      : businessNodeId,
+                    CustomerId          : customerId,
+                    IsActive            : true,
+                },
+            },
+        });
+        if(nodeCustomers.length == 0) {
+            var nodeCustomer = await this._businessNodeCustomerService.create({
+                businessNodeId      : businessNodeId,
+                customerId          : customerId,
+                IsActive            : true,
+            });
+        }
+        var app = await this.getAppointmentObject(appointment);
+    };
+
 
     getSearchFilters = (query) => {
 
@@ -548,6 +676,58 @@ export class AppointmentControllerDelegate {
         }
         return slots;
     };
+    
+    getSlotsForDay = (slotsByDate, day) => {
+        for(var i = 0; i < slotsByDate.length; i++) {
+            var d = slotsByDate[i].CurrentMoment;
+            if(th.isSame(d, day)){
+                return slotsByDate[i].Slots;
+            } 
+        }
+        return null;
+    };
+
+    isSlotAvailable = (slots, appointmentStart, appointmentEnd) => {
+
+        const aStart = th.cloneWithUtc(appointmentStart);
+        const aEnd = th.cloneWithUtc(appointmentEnd);
+
+        for(var i = 0; i < slots.length; i++){
+            const slotStart = th.cloneWithUtc(slots[i].slotEnd);
+            const slotEnd = th.cloneWithUtc(slots[i].slotEnd);
+            const available = slots[i].available;
+
+            if(th.isSame(aStart, slotStart) && th.isSame(aEnd, slotEnd)  && available){
+                return true;
+            }
+        }
+        return false;
+    };
+
+    getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentStart, appointmentEnd, appointmentStatus, displayId) => {
+
+        return {
+                DisplayId           : displayId,
+                BusinessNodeId      : requestBody.BusinessNodeId,
+                CustomerId          : requestBody.CustomerId,
+                BusinessUserId      : requestBody.BusinessUserId,
+                BusinessServiceId   : requestBody.BusinessServiceId,
+                StartTime           : appointmentStart.toDate(),
+                EndTime             : appointmentEnd.toDate(),
+                Type                : requestBody.Type ? requestBody.Type : 'IN-PERSON',
+                Note                : requestBody.Note ? requestBody.Note : null,
+                Status              : appointmentStatus.Status ? appointmentStatus.Status : '',
+                StatusCode          : appointmentStatus.StatusCode ? appointmentStatus.StatusCode : '',
+                Fees                : requestBody.Fees ? requestBody.Fees : 0.0,
+                Tax                 : requestBody.Tax ? requestBody.Tax : 0.0,
+                Tip                 : requestBody.Tip ? requestBody.Tip : 0.0,
+                Discount            : requestBody.Discount ? requestBody.Discount : 0.0,
+                CouponCode          : requestBody.CouponCode ? requestBody.CouponCode : null,
+                Total               : requestBody.Total ? requestBody.Total : 0.0,
+                IsPaid              : requestBody.IsPaid ? requestBody.IsPaid : false,
+                TransactionId       : requestBody.TransactionId ? requestBody.TransactionId : null,
+            };
+    };
 
     getAppointmentObject = async (record) => {
         var user = await this._businessUserService.getById(record.BusinessUserId);
@@ -569,9 +749,9 @@ export class AppointmentControllerDelegate {
             CustomerDob             : customer.BirthDate,
             CustomerGender          : customer.Gender,
             CustomerDisplayPicture  : customer.DisplayPicture,
-            Date                    : dayjs(record.Date).local().format("YYYY-MM--DD"),
-            StartTime               : dayjs(record.StartTime).local().format("HH:mm:ss"),
-            EndTime                 : dayjs(record.EndTime).local().format("HH:mm:ss"),
+            Date                    : th.localFormat(record.Date, 'YYYY-MM--DD'), //dayjs(record.Date).local().format("YYYY-MM--DD"),
+            StartTime               : th.localFormat(record.StartTime, 'HH:mm:ss'), //dayjs(record.StartTime).local().format("HH:mm:ss"),
+            EndTime                 : th.localFormat(record.EndTime, 'HH:mm:ss'),//dayjs(record.EndTime).local().format("HH:mm:ss"),
             StartTimeUtc            : record.StartTimeUtc,
             EndTimeUtc              : record.EndTimeUtc,
             Type                    : record.Type,

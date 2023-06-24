@@ -494,8 +494,8 @@ export class TimeHelper {
         return dayjs().utc().day(day);
     };
 
-    static toDate = () => {
-        return dayjs.utc().toDate();
+    static toUtcDate = (date: Date) => {
+        return dayjs.utc(date).toDate();
     };
 
     static utc = (date: Date) : Date => {
@@ -525,4 +525,15 @@ export class TimeHelper {
         return dayjs.utc(date).format(formatTemplate);
     };
 
+    static StartOfUtcDay = (date: Date): Date => {
+        return dayjs.utc(date).startOf('day').toDate();
+    };
+
+    static utcTOUtc = (date: Date) => {
+        return dayjs.utc(date).utc();
+    };
+
+    static localFormat = (date: Date, formatTemplate? : string) => {
+        return dayjs(date).local().format(formatTemplate);
+    };
 }
