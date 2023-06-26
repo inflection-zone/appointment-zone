@@ -86,4 +86,15 @@ export class AppointmentController extends BaseController {
         }
     };
 
+    getByNode = async (request:express.Request, response:express.Response): Promise <void>=>{
+        try{
+            await this.authorize('Appointment.GetByNode', request, response, false);
+            const record = await this._delegate.getByNode(request.params.businessNodeId, request.query);
+            const message ="Appointments for business node retrieved successfully!";
+            ResponseHandler.success(request, response, message, 200, record);
+        }catch(error){
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
 }

@@ -424,6 +424,29 @@ bookAppointment = async(requestBody) => {
         };
     };
 
+    getByNode = async(businessNodeId: uuid, query) => {
+        const record = await this._businessNodeService.getById(businessNodeId);
+        if (record === null) {
+            ErrorHandler.throwNotFoundError('Appointment with business node id ' + businessNodeId.toString() + ' cannot be found!');
+        }
+
+        const appointments = await this.prisma.appointments.findMany({
+            where: {
+                BusinessNodeId : businessNodeId,
+            },
+        });
+        this.updateAppointmentSelector(query, appointments);
+        let apps = [];
+        for await(const appointment of appointments) {
+            const app = await this.getAppointmentObject(appointment);
+            apps.push(app);
+        }
+        return {
+            appointments : apps
+        };
+    };
+
+
 /////////////////////////////////////////////////////////////////////////////
 
 getSlotsForDay = (slotsByDate, day) => {
