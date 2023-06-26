@@ -446,6 +446,28 @@ bookAppointment = async(requestBody) => {
         };
     };
 
+    getByCustomer = async(customerId: uuid, query) => {
+        const record = await this._customerService.getById(customerId);
+        if (record === null) {
+            ErrorHandler.throwNotFoundError('Appointment with customer id ' + customerId.toString() + ' cannot be found!');
+        }
+
+        const appointments = await this.prisma.appointments.findMany({
+            where: {
+                CustomerId : customerId,
+            },
+        });
+        this.updateAppointmentSelector(query, appointments);
+        let apps = [];
+        for await(const appointment of appointments) {
+            const app = await this.getAppointmentObject(appointment);
+            apps.push(app);
+        }
+        return {
+            appointments : apps
+        };
+    };
+
 
 /////////////////////////////////////////////////////////////////////////////
 
