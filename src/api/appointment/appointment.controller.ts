@@ -62,5 +62,17 @@ export class AppointmentController extends BaseController {
         catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
+
+    getById = async (request:express.Request, response:express.Response): Promise <void>=>{
+        try{
+            await this.authorize('Appointment.GetById', request, response, false);
+            const record = await this._delegate.getById(request.params.id);
+            const message ="Appointment retrieved successfully!";
+            ResponseHandler.success(request, response, message, 200, record);
+        }catch(error){
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+    
 }

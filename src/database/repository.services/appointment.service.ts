@@ -33,6 +33,15 @@ export class AppointmentService{
             ErrorHandler.throwDbAccessError('DB Error: Unable to book appointment!',error);
         } 
     };
+
+    getById = async (id) => {
+        try {
+            var record = await this.prisma.appointments.findUnique({where : {id : id,},});
+            return record;
+        } catch (error) {
+        ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve appointment!', error);
+        }
+    };
 ​
     canCustomerBookThisSlot = async(customerId, startTime, endTime) => {
         try {

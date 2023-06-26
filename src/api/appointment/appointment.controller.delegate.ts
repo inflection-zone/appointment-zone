@@ -393,6 +393,15 @@ bookAppointment = async(requestBody) => {
   return app;
 };
 
+    getById = async (id: uuid) => {
+        const record = await this._service.getById(id);
+        if (record === null) {
+            ErrorHandler.throwNotFoundError('Appointment with id ' + id.toString() + ' cannot be found!');
+        }
+        return this.getEnrichedDto(record);
+    };
+ 
+
 /////////////////////////////////////////////////////////////////////////////
 
 getSlotsForDay = (slotsByDate, day) => {
