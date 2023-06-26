@@ -411,7 +411,7 @@ isSlotAvailable = (slots, appointmentStart, appointmentEnd) => {
   const aEnd = th.cloneWithUtc(appointmentEnd);
 
   for(var i = 0; i < slots.length; i++){
-      const slotStart = th.cloneWithUtc(slots[i].slotEnd);
+      const slotStart = th.cloneWithUtc(slots[i].slotStart);
       const slotEnd = th.cloneWithUtc(slots[i].slotEnd);
       const available = slots[i].available;
 
@@ -820,12 +820,6 @@ getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentSta
         slotEnd: slotEnd,
         available: available,
       });
-      slotStart = th.clone(slotEnd);
-      slotEnd = th.addDuration(
-        th.clone(slotStart),
-        timeSlotDurationMin,
-        DurationType.Minute
-      );
       slotStart = th.clone(slotEnd);
       slotEnd = th.addDuration(
         th.clone(slotStart),
