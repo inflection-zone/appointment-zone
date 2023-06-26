@@ -75,4 +75,15 @@ export class AppointmentController extends BaseController {
         }
     };
     
+    getByUser = async (request:express.Request, response:express.Response): Promise <void>=>{
+        try{
+            await this.authorize('Appointment.GetByUser', request, response, false);
+            const record = await this._delegate.getByUser(request.params.businessUserId, request.query);
+            const message ="Appointments for user retrieved successfully!";
+            ResponseHandler.success(request, response, message, 200, record);
+        }catch(error){
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
 }

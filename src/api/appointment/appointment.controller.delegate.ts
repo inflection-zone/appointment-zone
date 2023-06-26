@@ -22,6 +22,7 @@ import { BusinessNodeCustomerService } from "../../database/repository.services/
 import { ApiError } from "../../common/api.error";
 import { Helper } from "../../common/helper";
 import { AppointmentCreateModel } from "../../domain.types/appointment/appointment.domain.types";
+import _ from "lodash";
 
 dayjs.extend(utc);
 
@@ -401,6 +402,27 @@ bookAppointment = async(requestBody) => {
         return this.getEnrichedDto(record);
     };
  
+    getByUser = async (businessUserId: uuid, query) => {
+        const record = await this._businessUserService.getById(businessUserId);
+        if (record === null) {
+            ErrorHandler.throwNotFoundError('Appointment with business user id ' + businessUserId.toString() + ' cannot be found!');
+        }
+
+        const appointments = await this.prisma.appointments.findMany({
+            where: {
+                BusinessUserId : businessUserId,
+            },
+        });
+        this.updateAppointmentSelector(query, appointments);
+        let apps = [];
+        for await(const appointment of appointments) {
+            const app = await this.getAppointmentObject(appointment);
+            apps.push(app);
+        }
+        return {
+            appointments : apps
+        };
+    };
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -844,6 +866,54 @@ getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentSta
     }
     return slots;
   };
+
+    updateAppointmentSelector = (query, appointment) => {
+        const fromDate = query.fromDate != 'undefined' ? query.fromDate : null;
+        const toDate = query.toDate != 'undefined' ? query.toDate : null;
+        const timeZone = query.timeZone != 'undefined' ? query.timeZone : null;
+        const show = query.show != 'undefined' ? query.show : null;
+
+        _.set(appointment, 'isCancelled', false);
+        _.set(appointment, 'IsActive', true);
+
+        if(show) {
+            if(show == 'Cancelled') {
+                _.set(appointment, 'isCancelled', true);
+                _.set(appointment, 'IsActive', false);
+            }
+            else if(show == 'Completed') {
+                _.set(appointment, 'isCompleted', true);
+                _.set(appointment, 'IsActive', false);
+            }
+            else if(show == 'Confirmed') {
+                _.set(appointment, 'isCompleted', true);
+                _.set(appointment, 'IsActive', true);
+            }
+        }
+
+        if (fromDate != null && toDate != null && timeZone != null) {
+            const { offsetHours, offsetMinutes } = th.getTimezoneOffsets(timeZone);
+            const start = th.getUtcDate(fromDate, offsetHours, offsetMinutes, false);
+            const end = th.getUtcDate(toDate, offsetHours, offsetMinutes, true);
+    
+            _.set(appointment, 'StartTime', {
+                gte : start
+            });
+            _.set(appointment, 'EndTime', {
+                lte : end
+            });
+        }
+        else {
+            const current = th.getCurrentUtcDate();
+            _.set(appointment, 'EndTime', {
+                gte : current
+            })
+            const to = th.getDayUtc(30);
+            _.set(appointment, 'EndTime', {
+                lte : to
+            })
+        }
+    };
 
   getAppointmentObject = async (record) => {
     var user = await this._businessUserService.getById(record.BusinessUserId);

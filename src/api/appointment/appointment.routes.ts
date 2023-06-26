@@ -20,7 +20,7 @@ export const register = (app: express.Application): void => {
     // router.get('/by-display-id/:displayId', authenticator.authenticateClient, controller.getByDisplayId);
     router.get('/:id', authenticator.authenticateClient, controller.getById);
 
-    // router.get('/business-user/businessUserId', authenticator.authenticateClient, controller.getByUser);
+    router.get('/business-user/:businessUserId', authenticator.authenticateClient, controller.getByUser);
     // router.get('/business-node/businessNodeId', authenticator.authenticateClient, controller.getByNode);
     // router.get('/customer/customerId', authenticator.authenticateClient, controller.getByCustomer);
     // router.put('/cancel/:id', authenticator.authenticateClient, controller.cancel);

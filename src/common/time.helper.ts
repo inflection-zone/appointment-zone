@@ -534,4 +534,33 @@ export class TimeHelper {
     static localFormat = (date: Date, formatTemplate? : string) => {
         return dayjs(date).local().format(formatTemplate);
     };
+
+    static getUtcDate = (date, offsetHours: number, offsetMinutes: number, endOfDay: boolean) => {
+        var tokens = date.split('-');
+        var x = new Date(Date.UTC(tokens[0], tokens[1] - 1, tokens[2]));
+        var d = dayjs(x.toUTCString())
+        if(endOfDay) {
+           // d = TimeHelper.addDuration(d, 1, DurationType.Day);
+            d = d.add(1, 'day');
+        }
+
+        var minutes = offsetMinutes + (60 * offsetHours);
+        if(minutes < 0) {
+            var a = d.clone().subtract(-1 * minutes, 'minutes');
+            return a.toDate();
+        }
+        var b = d.clone().add(minutes, 'minutes')
+        return b.toDate();
+    };
+
+    static getCurrentUtcDate = () => {
+        var x = new Date(Date.now());
+        var d = dayjs.utc(x.toUTCString());
+        return d.toDate();
+    };
+
+    static getDayUtc = (date: number) => {
+        return dayjs.utc().add(date, 'day').toDate();
+    };
+
 }
