@@ -16,8 +16,8 @@ export const register = (app: express.Application): void => {
     // router.get('/can-book', authenticator.authenticateClient, controller.canCustomerBookThisSlot);
 
     router.post('/book', authenticator.authenticateClient, controller.bookAppointment);
-    // router.put('/:id', authenticator.authenticateClient, controller.update);
-    // router.get('/by-display-id/:displayId', authenticator.authenticateClient, controller.getByDisplayId);
+    router.put('/:id', authenticator.authenticateClient, controller.update);
+    router.get('/by-display-id/:displayId', authenticator.authenticateClient, controller.getByDisplayId);
     router.get('/:id', authenticator.authenticateClient, controller.getById);
 
     router.get('/business-user/:businessUserId', authenticator.authenticateClient, controller.getByUser);

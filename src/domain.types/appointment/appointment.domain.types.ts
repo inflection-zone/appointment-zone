@@ -35,7 +35,24 @@ export interface AppointmentCreateModel {
 }
 
 export interface AppointmentUpdateModel {
-
+    BusinessNodeId        ?      : string;
+    BusinessServiceId     ?      : string;
+    BusinessUserId        ?      : string;
+    CustomerId            ?      : string;
+    StartTime             ?      : number;
+    EndTime               ?      : Date;
+    Type                  ?      : string;
+    Note                  ?      : string;
+    Status                ?      : string;
+    StatusCode            ?      : string;
+    Fees                  ?      : float;
+    Tax		              ?      : float;
+    Tip		              ?      : float;
+    Discount              ?      : float;
+    CouponCode            ?      : string;
+    Total		          ?      : float;
+    IsPaid                ?      : boolean;
+    TransactionId         ?      : string;   
 }
 
 export interface AppointmentDto {

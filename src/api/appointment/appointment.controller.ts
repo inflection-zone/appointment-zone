@@ -2,7 +2,6 @@ import express from 'express';
 import { ResponseHandler } from '../../common/response.handler';
 import { AppointmentControllerDelegate } from './appointment.controller.delegate';
 import { BaseController } from '../base.controller';
-import { CustomerProfilesChannelEndpointAssignmentContextImpl } from 'twilio/lib/rest/trusthub/v1/customerProfiles/customerProfilesChannelEndpointAssignment';
 
 export class AppointmentController extends BaseController {
 
@@ -74,6 +73,17 @@ export class AppointmentController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    getByDisplayId = async (request:express.Request, response:express.Response): Promise <void>=>{
+        try{
+            await this.authorize('Appointment.GetByDisplayId', request, response, false);
+            const record = await this._delegate.getByDisplayId(request.params.displayId);
+            const message ="Appointment retrieved successfully!";
+            ResponseHandler.success(request, response, message, 200, record);
+        }catch(error){
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
     
     getByUser = async (request:express.Request, response:express.Response): Promise <void>=>{
         try{
@@ -104,6 +114,17 @@ export class AppointmentController extends BaseController {
             const message ="Appointments for customer retrieved successfully!";
             ResponseHandler.success(request, response, message, 200, record);
         }catch(error){
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    update = async (request: express.Request, response: express.Response): Promise < void > => {
+        try {
+            await this.authorize('Appointment.Update', request, response, false);
+            const updatedRecord = await this._delegate.update(request.params.id, request.body);
+            const message = 'Appointment updated successfully!';
+            ResponseHandler.success(request, response, message, 200, updatedRecord);
+        } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };

@@ -1,5 +1,4 @@
 import { AppointmentService } from "../../database/repository.services/appointment.service";
-//import { AppointmentCreateModel, AppointmentDto, AppointmentSearchFilters, AppointmentSearchResults, AppointmentUpdateModel } from "../../domain.types/appointment/appointment.domain.types";
 import { BusinessNodeService } from "../../database/repository.services/business.node.service";
 import { BusinessService } from "../../database/repository.services/business.service";
 import { BusinessServiceService } from "../../database/repository.services/business.service.service";
@@ -21,7 +20,7 @@ import { BusinessServiceDto } from "../../domain.types/business/business.service
 import { BusinessNodeCustomerService } from "../../database/repository.services/business.node.customer.service";
 import { ApiError } from "../../common/api.error";
 import { Helper } from "../../common/helper";
-import { AppointmentCreateModel } from "../../domain.types/appointment/appointment.domain.types";
+import { AppointmentCreateModel, AppointmentUpdateModel } from "../../domain.types/appointment/appointment.domain.types";
 import _ from "lodash";
 
 dayjs.extend(utc);
@@ -401,6 +400,14 @@ bookAppointment = async(requestBody) => {
         }
         return this.getEnrichedDto(record);
     };
+
+    getByDisplayId = async (displayId: string) => {
+        const appointment = await this._service.getByDisplayId(displayId);
+        const app = await this.getAppointmentObject(appointment);
+        return {
+            Appointments : app
+        };
+    };
  
     getByUser = async (businessUserId: uuid, query) => {
         const record = await this._businessUserService.getById(businessUserId);
@@ -468,6 +475,88 @@ bookAppointment = async(requestBody) => {
         };
     };
 
+    update = async(id: uuid, requestBody: any) => {
+        await validator.validateUpdateRequest(requestBody);
+        const record = await this._service.getById(id);
+        if (record == null) {
+            ErrorHandler.throwNotFoundError('Appointment with id ' + id.toString() + ' cannot be found!');
+        }
+
+        const updateModel: AppointmentUpdateModel = this.getUpdateModel(requestBody);
+        const res = await this._service.update(id, updateModel);
+        const appointment = await this._service.getById(id);
+        
+        if(Helper.hasProperty(requestBody, 'StatusCode')) {
+            const appointmentStatuses = await this.prisma.appointment_statuses.findMany({
+                where : {
+                    AND : {
+                        BusinessNodeId  : appointment.BusinessNodeId,
+                        StatusCode      : requestBody.StatusCode,
+                    },
+                },
+            });
+            if(appointmentStatuses.length > 0) {
+                let appointmentStatus = appointmentStatuses[0];
+
+                if(appointmentStatus.IsCancellationStatus){
+                    const updated = await this.prisma.appointments.update({
+                        data : {
+                            IsCancelled : true,
+                            IsActive    : false,
+                            Status      : appointmentStatus.Status,
+                            StatusCode  : appointmentStatus.StatusCode,
+                            CancelledOn : dayjs().toDate(), //th.daysToDate
+                        },
+                        where : {
+                            id : id,
+                        },
+                });
+                }
+                if(appointmentStatus.IsConfirmedStatus){
+                    const updated = await this.prisma.appointments.update({
+                        data : {
+                            IsConfirmed : true,
+                            IsCancelled : false,
+                            IsActive    : true,
+                            Status      : appointmentStatus.Status,
+                            StatusCode  : appointmentStatus.StatusCode,
+                            ConfirmedOn : dayjs().toDate(),
+                        },
+                        where : {
+                            id : id,
+                        },
+                    })
+                }
+                if(appointmentStatus.IsCompletedStatus){
+                    const updated = await this.prisma.appointments.update({
+                        data : {
+                            IsCompleted : true,
+                            IsCancelled : false,
+                            IsActive    : true,
+                            Status      : appointmentStatus.Status,
+                            StatusCode  : appointmentStatus.StatusCode,
+                            ConfirmedOn : dayjs().toDate(),
+                        },
+                        where : {
+                            id : id,
+                        },
+                    });
+                }
+
+                if (appointmentStatus.SendNotification == true) {
+                    //TODO: Send here the notification
+                }
+                if (appointmentStatus.SendSms == true) {
+                    //TODO: Send here the sms
+                }
+            }
+        }
+
+        const app = await this.getAppointmentObject(appointment);
+        return {
+            appointment : app
+        };
+    };
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -958,6 +1047,67 @@ getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentSta
                 lte : to
             })
         }
+    };
+
+    getUpdateModel = (requestBody): AppointmentUpdateModel => {
+
+        let updateModel : AppointmentUpdateModel = {};
+
+        if (Helper.hasProperty(requestBody, 'BusinessNodeId')) {
+            updateModel.BusinessNodeId = requestBody.BusinessNodeId;
+        }
+        if (Helper.hasProperty(requestBody, 'BusinessServiceId')) {
+            updateModel.BusinessServiceId = requestBody.BusinessServiceId;
+        }
+        if (Helper.hasProperty(requestBody, 'BusinessUserId')) {
+            updateModel.BusinessUserId = requestBody.BusinessUserId;
+        }
+        if (Helper.hasProperty(requestBody, 'CustomerId')) {
+            updateModel.CustomerId = requestBody.CustomerId;
+        }
+        if (Helper.hasProperty(requestBody, 'StartTime')) {
+            updateModel.StartTime = requestBody.StartTime;
+        }
+        if (Helper.hasProperty(requestBody, 'EndTime')) {
+            updateModel.EndTime = requestBody.EndTime;
+        }
+        if (Helper.hasProperty(requestBody, 'Status')) {
+            updateModel.Status = requestBody.Status;
+        }
+        if (Helper.hasProperty(requestBody, 'StatusCode')) {
+            updateModel.StatusCode = requestBody.StatusCode;
+        }
+        if (Helper.hasProperty(requestBody, 'Note')) {
+            updateModel.Note = requestBody.Note;
+        }
+        if (Helper.hasProperty(requestBody, 'Type')) {
+            updateModel.Type = requestBody.Type;
+        }
+        if (Helper.hasProperty(requestBody, 'Fees')) {
+            updateModel.Fees = requestBody.Fees;
+        }
+        if (Helper.hasProperty(requestBody, 'Tax')) {
+            updateModel.Tax = requestBody.Tax;
+        }
+        if (Helper.hasProperty(requestBody, 'Tip')) {
+            updateModel.Tip = requestBody.Tip;
+        }
+        if (Helper.hasProperty(requestBody, 'Discount')) {
+            updateModel.Discount = requestBody.Discount;
+        }
+        if (Helper.hasProperty(requestBody, 'CouponCode')) {
+            updateModel.CouponCode = requestBody.CouponCode;
+        }
+        if (Helper.hasProperty(requestBody, 'Total')) {
+            updateModel.Total = requestBody.Total;
+        }
+        if (Helper.hasProperty(requestBody, 'IsPaid')) {
+            updateModel.IsPaid = requestBody.IsPaid;
+        }
+        if (Helper.hasProperty(requestBody, 'TransactionId')) {
+            updateModel.TransactionId = requestBody.TransactionId;
+        }
+        return updateModel;
     };
 
   getAppointmentObject = async (record) => {
