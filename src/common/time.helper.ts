@@ -523,15 +523,15 @@ export class TimeHelper {
         return dayjs.utc(date).format();
     }
 
-    static StartOfUtcDay = (date: Date): Date => {
-        return dayjs.utc(date).startOf('day').toDate();
+    static StartOfUtcDay = (date) => {
+        return dayjs.utc(date).startOf('day');
     };
 
     static utcTOUtc = (date: Date) => {
         return dayjs.utc(date).utc();
     };
 
-    static localFormat = (date: Date, formatTemplate? : string) => {
+    static localFormat = (date, formatTemplate? : string) => {
         return dayjs(date).local().format(formatTemplate);
     };
 
@@ -563,4 +563,21 @@ export class TimeHelper {
         return dayjs.utc().add(date, 'day').toDate();
     };
 
+    static getUtc = (date) => {
+        return dayjs(date).utc();
+    };
+
+    static formatDate = (date) => {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+
+        return [year, month, day].join('-');
+    };
 }

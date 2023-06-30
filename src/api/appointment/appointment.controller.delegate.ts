@@ -329,7 +329,7 @@ bookAppointment = async(requestBody) => {
   const timeZone = node.TimeZone;
   const availableSlotsByDate = await this.findSlotAvailability(timeZone, numDayForSlots, startDate, endDate, nodeHours, userHours, businessUserId, businessService, businessNodeId);
 
-  const appointmentDay = th.StartOfUtcDay(startTime);
+  const appointmentDay = th.getStartOfDayUtc(startTime);
   const appointmentStart = th.utcTOUtc(startTime);
   const appointmentEnd = th.utcTOUtc(endTime);
 
@@ -357,8 +357,8 @@ bookAppointment = async(requestBody) => {
   var timeStr = new Date().getTime().toString();
   timeStr = timeStr.substring(5, timeStr.length);
   var d = new Date();
-  var dateStr = Helper.formatDate(d);
-  var displayId ='App- ' + dateStr + '-' + timeStr; 
+  var dateStr = th.formatDate(d);
+  var displayId ='App-' + dateStr + '-' + timeStr; 
 
   const customerId = requestBody.CustomerId;
   var createModel = await this.getAppointmentCreateModel(requestBody, appointmentStart, appointmentEnd, appointmentStatus, displayId);
@@ -398,7 +398,7 @@ bookAppointment = async(requestBody) => {
         if (record === null) {
             ErrorHandler.throwNotFoundError('Appointment with id ' + id.toString() + ' cannot be found!');
         }
-        return this.getEnrichedDto(record);
+        return this.getAppointmentObject(record);
     };
 
     getByDisplayId = async (displayId: string) => {
@@ -554,7 +554,52 @@ bookAppointment = async(requestBody) => {
 
         const app = await this.getAppointmentObject(appointment);
         return {
-            appointment : app
+            Appointment : app
+        };
+    };
+
+    cancelAppointment = async(id: uuid) => {
+        const appointment = await this._service.getById(id);
+        if(appointment == null) {
+            ErrorHandler.throwNotFoundError('Appointment not found!');
+        }
+
+        const appointmentStatuses = await this.prisma.appointment_statuses.findMany({
+            where : {
+                AND : {
+                    BusinessNodeId          : appointment.BusinessNodeId,
+                    IsCancellationStatus    : true,
+                },
+            },
+        });
+        if(appointmentStatuses.length == 0) {
+            ErrorHandler.throwNotFoundError('No equivalent cancellation status found for business node!');
+        }
+        let appointmentStatus = appointmentStatuses[0];
+
+        const updated = await this.prisma.appointments.update({
+            data : {
+                IsCancelled : true,
+                IsActive    : false,
+                Status      : appointmentStatus.Status,
+                StatusCode  : appointmentStatus.StatusCode,
+                CancelledOn : dayjs().toDate(), //th.daysToDate
+            },
+            where : {
+                id : id,
+            },
+        });
+
+        const record = await this._service.getById(id);
+        if (appointmentStatus.SendNotification == true) {
+            //TODO: Send here the notification
+        }
+        if (appointmentStatus.SendSms == true) {
+            //TODO: Send here the sms
+        }
+        const app = await this.getAppointmentObject(record);
+        return {
+            Appointment : app
         };
     };
 
@@ -572,12 +617,12 @@ getSlotsForDay = (slotsByDate, day) => {
 
 isSlotAvailable = (slots, appointmentStart, appointmentEnd) => {
 
-  const aStart = th.cloneWithUtc(appointmentStart);
-  const aEnd = th.cloneWithUtc(appointmentEnd);
+  const aStart = th.utc(appointmentStart);
+  const aEnd = th.utc(appointmentEnd);
 
   for(var i = 0; i < slots.length; i++){
-      const slotStart = th.cloneWithUtc(slots[i].slotEnd);
-      const slotEnd = th.cloneWithUtc(slots[i].slotEnd);
+      const slotStart =th.utc(slots[i].slotStart); //th.cloneWithUtc(slots[i].slotStart);
+      const slotEnd = th.utc(slots[i].slotEnd); //th.cloneWithUtc(slots[i].slotEnd);
       const available = slots[i].available;
 
       if(th.isSame(aStart, slotStart) && th.isSame(aEnd, slotEnd)  && available){
@@ -634,8 +679,8 @@ getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentSta
   findSlotAvailability = async (
     timeZone: string,
     numDaysForSlots: number,
-    startDate: Date,
-    endDate: Date,
+    startDate,
+    endDate,
     nodeHours: BusinessNodeHourDto[],
     userHours: BusinessUserHourDto[],
     businessUserId: uuid,
@@ -789,16 +834,16 @@ getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentSta
     }
     let nodeSlotsByDate = [];
     let numberOfDays = 0;
-    let currMoment = th.cloneWithUtc(startDate);
-    const spanStart = th.cloneWithUtc(startDate);
-    const spanEnd = th.cloneWithUtc(endDate);
-    const spanStartOfDay =  th.startOf(spanStart, DurationType.Day);
+    let currMoment = th.utc(startDate); //th.cloneWithUtc(startDate);
+    const spanStart = th.utc(startDate); //th.cloneWithUtc(startDate);
+    const spanEnd = th.utc(endDate); //th.cloneWithUtc(endDate);
+    const spanStartOfDay = th.startOf(spanStart, DurationType.Day);
 
     if (th.isSame(spanStartOfDay, spanEnd)) {
       numberOfDays = 1;
     } else {
-      const a = th.clone(currMoment);
-      const b = th.clone(spanEnd);
+      const a = currMoment; //th.clone(currMoment);
+      const b = spanEnd; //th.clone(spanEnd);
       const diff = th.businessDiff(a, b);
       numberOfDays = Math.ceil(diff) + 1;
     }
@@ -811,8 +856,9 @@ getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentSta
         const wd = nodeWorkingDays.get(currentDay);
         const startTime = wd.startTime;
         const endTime = wd.endTime;
-        let currDayClone = th.clone(currMoment);
-        let currDayStart = th.getStartOfDayUtc(currDayClone);
+        const currDayStart = th.getStartOfDayUtc(currMoment);
+        // let currDayClone = th.clone(currMoment);
+        // let currDayStart = th.getStartOfDayUtc(currDayClone);
         const startTokens = startTime.split(":");
         const startHours = parseInt(startTokens[0]);
         const startMinutes = parseInt(startTokens[1]);
@@ -820,17 +866,20 @@ getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentSta
         const endHours = parseInt(endTokens[0]);
         const endMinutes = parseInt(endTokens[1]);
 
-        const currDay = th.cloneWithUtc(currDayStart);
-        let dayStartTime = th.addDurationWithOffset(currDay,startHours, startMinutes, offsetHours, offsetMinutes);
-        let dayEndTime = th.addDurationWithOffset(currDay, endHours, endMinutes, offsetHours, offsetMinutes);
+        let start = th.addDurationWithOffset(currDayStart,startHours, startMinutes, offsetHours, offsetMinutes);
+        let end = th.addDurationWithOffset(currDayStart, endHours, endMinutes, offsetHours, offsetMinutes);
+        //const currDay = th.cloneWithUtc(currDayStart);
+        // let dayStartTime = th.addDurationWithOffset(currDay,startHours, startMinutes, offsetHours, offsetMinutes);
+        // let dayEndTime = th.addDurationWithOffset(currDay, endHours, endMinutes, offsetHours, offsetMinutes);
                 
             nodeSlotsByDate.push({
-                CurrentMoment   : th.clone(currDayStart),
-                Date            : th.cloneFormat(currDayStart),
-                WeekDay         : th.day(th.clone(currDayStart)),
-                DayStartTime    : dayStartTime,
-                DayEndTime      : dayEndTime,
-                Slots           : this.calculateSlots(timeZone, th.clone(currDayStart), startTime, endTime, slotDuration, priorBookingWindowMin),
+                CurrentMoment   : currDayStart, //th.clone(currDayStart),
+                Date            : th.format(currDayStart), //th.cloneFormat(currDayStart),
+                WeekDay         : th.day(currDayStart),  //th.day(th.clone(currDayStart)),
+                DayStartTime    : start, //dayStartTime
+                DayEndTime      : end,  //dayEndTime
+                Slots           : this.calculateSlots(timeZone, currDayStart, startTime, endTime, slotDuration, priorBookingWindowMin),
+               // Slots           : this.calculateSlots(timeZone, th.clone(currDayStart).......
             });
      }
         currMoment = th.nextBusinessDay(currMoment);
@@ -858,7 +907,7 @@ getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentSta
         const nodeSlot = nodeSlotsByDate[k];
         const weekDay = nodeSlot.WeekDay;
         const cm = nodeSlot.CurrentMoment;
-        const userCurrentDayStart = th.getStartOfDayUtc(th.clone(cm));
+        const userCurrentDayStart = th.getStartOfDayUtc(cm);//th.getStartOfDayUtc(th.clone(cm));
         let userSlotsForDay = [];
 
         if (userWorkingDays.has(weekDay)) {
@@ -873,7 +922,8 @@ getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentSta
             const endTokens = endTime.split(":");
             const endHours = parseInt(endTokens[0]);
             const endMinutes = parseInt(endTokens[1]);
-            const userCurrentDS = th.cloneWithUtc(userCurrentDayStart);
+            const userCurrentDS = th.utc(userCurrentDayStart);
+            //const userCurrentDS = th.cloneWithUtc(userCurrentDayStart);
           
             const start = th.addDurationWithOffset(
               userCurrentDS,
@@ -902,24 +952,24 @@ getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentSta
               }
             }
             const userSlot = {
-              CurrentMoment: th.clone(userCurrentDayStart),
-              Date: th.cloneFormat(userCurrentDayStart),
-              WeekDay: th.day(th.clone(userCurrentDayStart)),
-              DayStartTime: start,
-              DayEndTime: end,
-              userOffDay: false,
-              Slots: userSlotsForDay,
+              CurrentMoment     : userCurrentDayStart, //th.clone(userCurrentDayStart),
+              Date              : th.format(userCurrentDayStart),//th.cloneFormat(userCurrentDayStart),
+              WeekDay           : th.day(userCurrentDayStart),//th.day(th.clone(userCurrentDayStart)),
+              DayStartTime      : start,
+              DayEndTime        : end,
+              userOffDay        : false,
+              Slots             : userSlotsForDay,
             };
             userSlotsByDate.push(userSlot);
           } else {
             const userSlot = {
-              CurrentMoment: th.clone(userCurrentDayStart),
-              Date: th.cloneFormat(userCurrentDayStart),
-              WeekDay: th.day(th.clone(userCurrentDayStart)),
-              DayStartTime: null,
-              DayEndTime: null,
-              userOffDay: true,
-              Slots: [],
+              CurrentMoment     : userCurrentDayStart, //th.clone(userCurrentDayStart),
+              Date              : th.format(userCurrentDayStart), //th.cloneFormat(userCurrentDayStart),
+              WeekDay           : th.day(userCurrentDayStart), //th.day(th.clone(userCurrentDayStart)),
+              DayStartTime      : null,
+              DayEndTime        : null,
+              userOffDay        : true,
+              Slots             : [],
             };
             userSlotsByDate.push(userSlot);
           }
@@ -952,7 +1002,7 @@ getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentSta
     const endTokens = endTime.split(":");
     const endHours = parseInt(endTokens[0]);
     const endMinutes = parseInt(endTokens[1]);
-    const st = th.cloneWithUtc(dateMoment);
+    const st = th.utc(dateMoment); //th.cloneWithUtc(dateMoment);
     const start = th.addDurationWithOffset(
       st,
       startHours,
@@ -968,9 +1018,10 @@ getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentSta
       offsetMinutes
     );
 
-    let slotStart = th.clone(start);
+    let slotStart = start;//th.clone(start);
     let slotEnd = th.addDuration(
-      th.clone(start),
+      //th.clone(start),
+      start,
       timeSlotDurationMin,
       DurationType.Minute
     );
@@ -985,15 +1036,10 @@ getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentSta
         slotEnd: slotEnd,
         available: available,
       });
-      slotStart = th.clone(slotEnd);
+      slotStart = slotEnd; //th.clone(slotEnd);
       slotEnd = th.addDuration(
-        th.clone(slotStart),
-        timeSlotDurationMin,
-        DurationType.Minute
-      );
-      slotStart = th.clone(slotEnd);
-      slotEnd = th.addDuration(
-        th.clone(slotStart),
+        slotStart,
+        //th.clone(slotStart),
         timeSlotDurationMin,
         DurationType.Minute
       );
@@ -1134,11 +1180,11 @@ getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentSta
       CustomerDob: customer.BirthDate,
       CustomerGender: customer.Gender,
       CustomerDisplayPicture: customer.DisplayPicture,
-      Date: dayjs(record.Date).local().format("YYYY-MM--DD"),
-      StartTime: dayjs(record.StartTime).local().format("HH:mm:ss"),
-      EndTime: dayjs(record.EndTime).local().format("HH:mm:ss"),
-      StartTimeUtc: record.StartTimeUtc,
-      EndTimeUtc: record.EndTimeUtc,
+      Date: th.localFormat(record.Date, "YYYY-MM-DD"), //dayjs(record.Date).local().format("YYYY-MM-DD"),
+      StartTime: th.localFormat(record.StartTime, "HH:mm:ss"), //dayjs(record.StartTime).local().format("HH:mm:ss"),
+      EndTime: th.localFormat(record.EndTime, "HH:mm:ss"), //dayjs(record.EndTime).local().format("HH:mm:ss"),
+      StartTimeUtc: record.StartTime,
+      EndTimeUtc: record.EndTime,
       Type: record.Type,
       Note: record.Note,
       Status: record.Status,
@@ -1152,12 +1198,5 @@ getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentSta
       IsPaid: record.IsPaid,
       TransactionId: record.TransactionId,
     };
-  };
-
-  getEnrichedDto = (record) => {
-    if (record == null) {
-      return null;
-    }
-    return {};
   };
 }
