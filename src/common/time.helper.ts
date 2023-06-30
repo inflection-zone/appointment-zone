@@ -564,7 +564,7 @@ export class TimeHelper {
     };
 
     static getUtc = (date) => {
-        return dayjs(date).utc();
+        return dayjs.utc(date);
     };
 
     static formatDate = (date) => {

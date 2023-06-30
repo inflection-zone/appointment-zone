@@ -330,8 +330,8 @@ bookAppointment = async(requestBody) => {
   const availableSlotsByDate = await this.findSlotAvailability(timeZone, numDayForSlots, startDate, endDate, nodeHours, userHours, businessUserId, businessService, businessNodeId);
 
   const appointmentDay = th.getStartOfDayUtc(startTime);
-  const appointmentStart = th.utcTOUtc(startTime);
-  const appointmentEnd = th.utcTOUtc(endTime);
+  const appointmentStart = th.getUtc(startTime);
+  const appointmentEnd = th.getUtc(endTime);
 
   const availableSlotsForDay = this.getSlotsForDay(availableSlotsByDate, appointmentDay);
   if(availableSlotsForDay == null) {
@@ -361,8 +361,8 @@ bookAppointment = async(requestBody) => {
   var displayId ='App-' + dateStr + '-' + timeStr; 
 
   const customerId = requestBody.CustomerId;
-  var createModel = await this.getAppointmentCreateModel(requestBody, appointmentStart, appointmentEnd, appointmentStatus, displayId);
-  var appointment = await this._service.create(createModel);
+  const createModel = await this.getAppointmentCreateModel(requestBody, appointmentStart, appointmentEnd, appointmentStatus, displayId);
+  const appointment = await this._service.create(createModel);
   if (appointment === null) {
       throw new ApiError('An error occurred while booking an apoointment!', 400);
   }
@@ -382,11 +382,8 @@ bookAppointment = async(requestBody) => {
       },
   });
   if(nodeCustomers.length == 0) {
-      var nodeCustomer = await this._businessNodeCustomerService.create({
-          businessNodeId      : businessNodeId,
-          customerId          : customerId,
-          IsActive            : true,
-      });
+    const createModel = this.getNodeCustumerCreateModel(businessNodeId, customerId);
+    const nodeCustomer = await this._businessNodeCustomerService.create(createModel);
   }
   var app = await this.getAppointmentObject(appointment);
 
@@ -654,6 +651,14 @@ getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentSta
           Total               : requestBody.Total ? requestBody.Total : 0.0,
           IsPaid              : requestBody.IsPaid ? requestBody.IsPaid : false,
           TransactionId       : requestBody.TransactionId ? requestBody.TransactionId : null,
+      };
+};
+
+getNodeCustumerCreateModel = (businessNodeId: uuid, customerId: uuid) => {
+  return {
+          BusinessNodeId      : businessNodeId,
+          CustomerId          : customerId,
+          IsActive : true
       };
 };
 
