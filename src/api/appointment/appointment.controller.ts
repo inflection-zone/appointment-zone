@@ -129,4 +129,14 @@ export class AppointmentController extends BaseController {
         }
     };
 
+    cancelAppointment = async (request: express.Request, response: express.Response): Promise < void > => {
+        try {
+            await this.authorize('Appointment.Cancel', request, response, false);
+            const updatedRecord = await this._delegate.cancelAppointment(request.params.id);
+            const message = 'Appointment cancelled successfully!';
+            ResponseHandler.success(request, response, message, 200, updatedRecord);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 }

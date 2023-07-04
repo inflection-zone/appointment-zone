@@ -90,21 +90,25 @@ export class AppointmentControllerDelegate {
     const numDaysForSlots = th.parseDurationInDays(node.AllowFutureBookingFor);
     const timeZone = node.TimeZone;
 
-    const currrentDate = new Date();
-    let startDate = th.getStartOfDayUtc(currrentDate);
+    const currentDate = new Date();
+    let startDate = th.startOfDayUtc(currentDate);  //th.getStartOfDayUtc(currrentDate);
     if (filters.FromDate != null) {
       var dt = new Date(filters.FromDate);
-      startDate = th.getStartOfDayUtc(dt);
+      startDate = th.startOfDayUtc(dt);  //th.getStartOfDayUtc(currrentDate);
     }
-    let maxAllowable = th.addDuration(
-      startDate,
-      numDaysForSlots,
-      DurationType.Day
-    );
-    let endDate = th.addDuration(currrentDate, 7, DurationType.Day);
+    const newDate = th.startOfDayUtc(currentDate);
+    let maxAllowable = th.add(newDate, numDaysForSlots);
+    // let maxAllowable = th.addDuration(
+    //   startDate,
+    //   numDaysForSlots, 
+    //   DurationType.Day
+    // );
+    //let endDate = th.addDuration(currrentDate, 7, DurationType.Day);
+    let endDate = th.add(newDate, 7);
     if (filters.ToDate != null) {
       const dt = new Date(filters.ToDate);
-      endDate = th.getStartOfDayUtc(dt);
+      endDate = th.startOfDayUtc(dt);
+      //endDate = th.getStartOfDayUtc(dt);
       if (th.isAfter(endDate, maxAllowable)) {
         endDate = maxAllowable;
       }
@@ -400,10 +404,10 @@ bookAppointment = async(requestBody) => {
 
     getByDisplayId = async (displayId: string) => {
         const appointment = await this._service.getByDisplayId(displayId);
-        const app = await this.getAppointmentObject(appointment);
-        return {
-            Appointments : app
-        };
+        if (appointment === null) {
+          ErrorHandler.throwNotFoundError('Appointment with display id ' + displayId.toString() + ' cannot be found!');
+      }
+      return this.getAppointmentObject(appointment);
     };
  
     getByUser = async (businessUserId: uuid, query) => {
@@ -817,8 +821,8 @@ getNodeCustumerCreateModel = (businessNodeId: uuid, customerId: uuid) => {
 
   getAllSlots = (
     timeZone: string,
-    startDate: Date,
-    endDate: Date,
+    startDate,
+    endDate,
     slotDuration: number,
     priorBookingWindowMin: number,
     nodeHours: BusinessNodeHourDto[],
@@ -839,10 +843,10 @@ getNodeCustumerCreateModel = (businessNodeId: uuid, customerId: uuid) => {
     }
     let nodeSlotsByDate = [];
     let numberOfDays = 0;
-    let currMoment = th.utc(startDate); //th.cloneWithUtc(startDate);
-    const spanStart = th.utc(startDate); //th.cloneWithUtc(startDate);
-    const spanEnd = th.utc(endDate); //th.cloneWithUtc(endDate);
-    const spanStartOfDay = th.startOf(spanStart, DurationType.Day);
+    let currMoment = startDate; //th.cloneWithUtc(startDate);
+    const spanStart = startDate; //th.utc(startDate); //th.cloneWithUtc(startDate);
+    const spanEnd = endDate; //th.utc(endDate); //th.cloneWithUtc(endDate);
+    const spanStartOfDay = th.spanStartOf(spanStart);
 
     if (th.isSame(spanStartOfDay, spanEnd)) {
       numberOfDays = 1;
@@ -861,30 +865,28 @@ getNodeCustumerCreateModel = (businessNodeId: uuid, customerId: uuid) => {
         const wd = nodeWorkingDays.get(currentDay);
         const startTime = wd.startTime;
         const endTime = wd.endTime;
-        const currDayStart = th.getStartOfDayUtc(currMoment);
-        // let currDayClone = th.clone(currMoment);
-        // let currDayStart = th.getStartOfDayUtc(currDayClone);
+        const currDayStart = currMoment//th.getStartOfDayUtc(currMoment);
+        
         const startTokens = startTime.split(":");
         const startHours = parseInt(startTokens[0]);
         const startMinutes = parseInt(startTokens[1]);
         const endTokens = endTime.split(":");
-        const endHours = parseInt(endTokens[0]);
+        const endHours = parseInt(endTokens[0]);j
         const endMinutes = parseInt(endTokens[1]);
 
-        let start = th.addDurationWithOffset(currDayStart,startHours, startMinutes, offsetHours, offsetMinutes);
-        let end = th.addDurationWithOffset(currDayStart, endHours, endMinutes, offsetHours, offsetMinutes);
-        //const currDay = th.cloneWithUtc(currDayStart);
-        // let dayStartTime = th.addDurationWithOffset(currDay,startHours, startMinutes, offsetHours, offsetMinutes);
-        // let dayEndTime = th.addDurationWithOffset(currDay, endHours, endMinutes, offsetHours, offsetMinutes);
+        let start = th.addHoursMinutes(currDayStart, startHours, startMinutes);
+        let end = th.addHoursMinutes(currDayStart, endHours, endMinutes);
+        
+        // let start = th.addDurationWithOffset(currDayStart,startHours, startMinutes, offsetHours, offsetMinutes);
+        // let end = th.addDurationWithOffset(currDayStart, endHours, endMinutes, offsetHours, offsetMinutes);
                 
             nodeSlotsByDate.push({
                 CurrentMoment   : currDayStart, //th.clone(currDayStart),
-                Date            : th.format(currDayStart), //th.cloneFormat(currDayStart),
-                WeekDay         : th.day(currDayStart),  //th.day(th.clone(currDayStart)),
-                DayStartTime    : start, //dayStartTime
-                DayEndTime      : end,  //dayEndTime
+                Date            : th.format(currDayStart),
+                WeekDay         : th.day(currDayStart),
+                DayStartTime    : start,
+                DayEndTime      : end,
                 Slots           : this.calculateSlots(timeZone, currDayStart, startTime, endTime, slotDuration, priorBookingWindowMin),
-               // Slots           : this.calculateSlots(timeZone, th.clone(currDayStart).......
             });
      }
         currMoment = th.nextBusinessDay(currMoment);
@@ -912,7 +914,7 @@ getNodeCustumerCreateModel = (businessNodeId: uuid, customerId: uuid) => {
         const nodeSlot = nodeSlotsByDate[k];
         const weekDay = nodeSlot.WeekDay;
         const cm = nodeSlot.CurrentMoment;
-        const userCurrentDayStart = th.getStartOfDayUtc(cm);//th.getStartOfDayUtc(th.clone(cm));
+        const userCurrentDayStart = th.getStartOfDayUtc(cm);
         let userSlotsForDay = [];
 
         if (userWorkingDays.has(weekDay)) {
@@ -928,7 +930,6 @@ getNodeCustumerCreateModel = (businessNodeId: uuid, customerId: uuid) => {
             const endHours = parseInt(endTokens[0]);
             const endMinutes = parseInt(endTokens[1]);
             const userCurrentDS = th.utc(userCurrentDayStart);
-            //const userCurrentDS = th.cloneWithUtc(userCurrentDayStart);
           
             const start = th.addDurationWithOffset(
               userCurrentDS,
@@ -957,9 +958,9 @@ getNodeCustumerCreateModel = (businessNodeId: uuid, customerId: uuid) => {
               }
             }
             const userSlot = {
-              CurrentMoment     : userCurrentDayStart, //th.clone(userCurrentDayStart),
-              Date              : th.format(userCurrentDayStart),//th.cloneFormat(userCurrentDayStart),
-              WeekDay           : th.day(userCurrentDayStart),//th.day(th.clone(userCurrentDayStart)),
+              CurrentMoment     : userCurrentDayStart,
+              Date              : th.format(userCurrentDayStart),
+              WeekDay           : th.day(userCurrentDayStart),
               DayStartTime      : start,
               DayEndTime        : end,
               userOffDay        : false,
@@ -968,9 +969,9 @@ getNodeCustumerCreateModel = (businessNodeId: uuid, customerId: uuid) => {
             userSlotsByDate.push(userSlot);
           } else {
             const userSlot = {
-              CurrentMoment     : userCurrentDayStart, //th.clone(userCurrentDayStart),
-              Date              : th.format(userCurrentDayStart), //th.cloneFormat(userCurrentDayStart),
-              WeekDay           : th.day(userCurrentDayStart), //th.day(th.clone(userCurrentDayStart)),
+              CurrentMoment     : userCurrentDayStart, 
+              Date              : th.format(userCurrentDayStart),
+              WeekDay           : th.day(userCurrentDayStart),
               DayStartTime      : null,
               DayEndTime        : null,
               userOffDay        : true,
