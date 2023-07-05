@@ -33,6 +33,30 @@ export class AppointmentService{
             ErrorHandler.throwDbAccessError('DB Error: Unable to book appointment!',error);
         } 
     };
+
+    getById = async (id) => {
+        try {
+            var record = await this.prisma.appointments.findUnique({where : {id : id,},});
+            return record;
+        } catch (error) {
+        ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve appointment!', error);
+        }
+    };
+
+    update = async (id, updateModel) => {
+        try {
+            if (Object.keys(updateModel).length > 0) {
+            var res = await this.prisma.appointments.update({data:updateModel,
+                    where : {
+                    id : id,
+                },
+            }); 
+        }
+        return await this.getById(id);
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('DB Error: Unable to update appointment!', error);
+        }
+    };
 ​
     canCustomerBookThisSlot = async(customerId, startTime, endTime) => {
         try {
@@ -166,9 +190,9 @@ export class AppointmentService{
         return false;
     };
 ​
-    getByDisplayId = async (Displayid) => {
+    getByDisplayId = async(displayId) => {
         try {
-            var record = await this.prisma.appointments.findUnique({where : {id : Displayid}
+            var record = await this.prisma.appointments.findMany({where : {DisplayId : displayId}
             });
             return record;
         } catch (error) {
@@ -176,7 +200,7 @@ export class AppointmentService{
         }
     };   
 ​
-    getAvailableSlots = async (timeZone: string, slotsByDate, businessNodeId, businessUserId, businessServiceId, numDaysForSlots: number) => {
+    getAvailableSlots = async (timeZone: string, slotsByDate, businessNodeId: uuid, businessUserId: uuid, businessServiceId: uuid, numDaysForSlots: number) => {
         var endDate = th.businessDaysAdd(numDaysForSlots);
         var appointments = await this.prisma.appointments.findMany({
             where : {

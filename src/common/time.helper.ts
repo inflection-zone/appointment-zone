@@ -109,11 +109,11 @@ export class TimeHelper {
         return new Date(str);
     };
 
-    static isBefore = (first: Date, second: Date): boolean => {
+    static isBefore = (first, second): boolean => {
         return dayjs(first).isBefore(dayjs(second));
     };
 
-    static isAfter = (first: Date, second: Date): boolean => {
+    static isAfter = (first, second): boolean => {
         return dayjs(first).isAfter(dayjs(second));
     };
 
@@ -434,6 +434,15 @@ export class TimeHelper {
         }
     };
 
+    // static add = (date, durationValue: number) => {
+    //     const dt = dayjs(date);
+    //     return dt.add(durationValue, 'days')
+    // };
+
+    static startOfDayUtc = (date: Date): Date => {
+        return dayjs(date).utc().startOf('day').toDate();
+    };
+
     static getStartOfDayUtc = (date: Date) => {
         return dayjs(date).startOf('day').utc().toDate();
     };
@@ -448,18 +457,6 @@ export class TimeHelper {
 
     static isSame = (first: Date, second: Date): boolean => {
         return dayjs(first).isSame(dayjs(second));
-    };
-
-    static clone = (date: Date) => {
-        return dayjs(dayjs(date)).toDate();
-    };
-
-    static cloneWithUtc = (date: Date) => {
-        return dayjs(dayjs(date)).utc(true).toDate();
-    };
-
-    static cloneFormat = (date: Date) => {
-        return dayjs(dayjs(date)).format();
     };
 
     static businessDiff = (first: Date, second: Date) => {
@@ -480,28 +477,20 @@ export class TimeHelper {
         return dayjs().utc().businessDaysAdd(number);
     };
 
-    static toUtc = (date: Date) => {
-        return dayjs(date).utc();
-    };
-
     static day = (date : Date) : number => {
         const dt = dayjs(date);
         const dayNumber = dt.day()
         return dayNumber;
     };
     
-    static utcDay = (day) => {
-        return dayjs().utc().day(day);
-    };
-
-    static toDate = () => {
-        return dayjs.utc().toDate();
-    };
+    // static utcDay = (day) => {
+    //     return dayjs().utc().day(day);
+    // };
 
     static utc = (date: Date) : Date => {
-       const utcDate = dayjs.utc(date)
+        const utcDate = dayjs(date).utc();
         return utcDate.toDate();
-    };
+     };
 
     static addHoursMinutes = (date: Date, hours: number, minutes: number) : Date => {
         const dt = dayjs(date);
@@ -509,7 +498,7 @@ export class TimeHelper {
          return newDate.toDate();
     };
 
-    static addDurationWithOffset = (date: Date, hours: number, minutes: number , offsetHours: number, offsetMinutes : number) : Date => {
+    static addDurationWithOffset = (date: Date, hours: number, minutes: number, offsetHours: number, offsetMinutes : number): Date => {
         const dt = dayjs(date); 
         const newDate = dt.add(hours, 'hour').add(minutes, 'minute').add(offsetHours, 'hour').add(offsetMinutes, 'minute');
         return newDate.toDate();
@@ -527,11 +516,64 @@ export class TimeHelper {
         return dayjs.utc(date).startOf('day').toDate();
     };
 
-    static utcTOUtc = (date: Date) => {
-        return dayjs.utc(date).utc();
+    // static utcTOUtc = (date: Date) => {
+    //     return dayjs.utc(date).utc();
+    // };
+
+    static localFormat = (date, formatTemplate? : string) => {
+        return dayjs(date).local().format(formatTemplate);
     };
 
-    static localFormat = (date: Date, formatTemplate? : string) => {
-        return dayjs(date).local().format(formatTemplate);
+    static getUtcDate = (date, offsetHours: number, offsetMinutes: number, endOfDay: boolean) => {
+        var tokens = date.split('-');
+        var x = new Date(Date.UTC(tokens[0], tokens[1] - 1, tokens[2]));
+        var d = dayjs(x.toUTCString())
+        if(endOfDay) {
+            d = d.add(1, 'day');
+        }
+
+        var minutes = offsetMinutes + (60 * offsetHours);
+        if(minutes < 0) {
+            var a = d.clone().subtract(-1 * minutes, 'minutes');
+            return a.toDate();
+        }
+        var b = d.clone().add(minutes, 'minutes')
+        return b.toDate();
+    };
+
+    static getCurrentUtcDate = () => {
+        var x = new Date(Date.now());
+        var d = dayjs.utc(x.toUTCString());
+        return d.toDate();
+    };
+
+    static getDayUtc = (date: number) => {
+        return dayjs.utc().add(date, 'day').toDate();
+    };
+
+    static getUtc = (date) => {
+        return dayjs.utc(date);
+    };
+
+    static formatDate = (date) => {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+
+        return [year, month, day].join('-');
+    };
+
+    static spanStartOf = (date: Date): Date => {
+        return dayjs(date).startOf('day').toDate();
+    };
+
+    static getDate = (date: Date): Date => {
+        return dayjs(date).toDate();
     };
 }
