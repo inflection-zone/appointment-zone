@@ -24,8 +24,8 @@ export const register = (app: express.Application): void => {
     router.get('/business-node/:businessNodeId', authenticator.authenticateClient, controller.getByNode);
     router.get('/customer/:customerId', authenticator.authenticateClient, controller.getByCustomer);
     router.put('/cancel/:id', authenticator.authenticateClient, controller.cancelAppointment);
-    // router.put('/complete/:id', authenticator.authenticateClient, controller.complete);
-    // router.put('/confirm/:id', authenticator.authenticateClient, controller.confirm);
+    router.put('/complete/:id', authenticator.authenticateClient, controller.complete);
+    router.put('/confirm/:id', authenticator.authenticateClient, controller.confirm);
 
     app.use('/api/v1/appointments', router);
 };

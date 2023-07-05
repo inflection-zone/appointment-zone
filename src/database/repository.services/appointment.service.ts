@@ -200,7 +200,7 @@ export class AppointmentService{
         }
     };   
 ​
-    getAvailableSlots = async (timeZone: string, slotsByDate, businessNodeId, businessUserId, businessServiceId, numDaysForSlots: number) => {
+    getAvailableSlots = async (timeZone: string, slotsByDate, businessNodeId: uuid, businessUserId: uuid, businessServiceId: uuid, numDaysForSlots: number) => {
         var endDate = th.businessDaysAdd(numDaysForSlots);
         var appointments = await this.prisma.appointments.findMany({
             where : {

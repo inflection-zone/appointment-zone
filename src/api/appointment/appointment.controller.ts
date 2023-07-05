@@ -133,7 +133,29 @@ export class AppointmentController extends BaseController {
         try {
             await this.authorize('Appointment.Cancel', request, response, false);
             const updatedRecord = await this._delegate.cancelAppointment(request.params.id);
-            const message = 'Appointment cancelled successfully!';
+            const message = 'Appointment cancelled!';
+            ResponseHandler.success(request, response, message, 200, updatedRecord);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    complete = async (request: express.Request, response: express.Response): Promise < void > => {
+        try {
+            await this.authorize('Appointment.Complete', request, response, false);
+            const updatedRecord = await this._delegate.completeAppointment(request.params.id);
+            const message = 'Appointment completed!';
+            ResponseHandler.success(request, response, message, 200, updatedRecord);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    confirm = async (request: express.Request, response: express.Response): Promise < void > => {
+        try {
+            await this.authorize('Appointment.Confirm', request, response, false);
+            const updatedRecord = await this._delegate.confirmAppointment(request.params.id);
+            const message = 'Appointment confirmed!';
             ResponseHandler.success(request, response, message, 200, updatedRecord);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

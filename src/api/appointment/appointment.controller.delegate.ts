@@ -26,132 +26,128 @@ import _ from "lodash";
 dayjs.extend(utc);
 
 export class AppointmentControllerDelegate {
-  //#region member variables and constructors
+    //#region member variables and constructors
 
-  _service: AppointmentService = null;
+    _service: AppointmentService = null;
 
-  _businessService: BusinessService = null;
+    _businessService: BusinessService = null;
 
-  _businessNodeService: BusinessNodeService = null;
+    _businessNodeService: BusinessNodeService = null;
 
-  _businessServiceService: BusinessServiceService = null;
+    _businessServiceService: BusinessServiceService = null;
 
-  _businessNodeHourService: BusinessNodeHourService = null;
+    _businessNodeHourService: BusinessNodeHourService = null;
 
-  _businessUserService: BusinessUserService = null;
+    _businessUserService: BusinessUserService = null;
 
-  _customerService: CustomerService = null;
+    _customerService: CustomerService = null;
 
-  _businessNodeCustomerService : BusinessNodeCustomerService = null;
+    _businessNodeCustomerService : BusinessNodeCustomerService = null;
 
-  prisma = PrismaClientInit.instance().prisma();
+    prisma = PrismaClientInit.instance().prisma();
 
-  constructor() {
-    this._service = new AppointmentService();
-    this._businessService = new BusinessService();
-    this._businessNodeService = new BusinessNodeService();
-    this._businessServiceService = new BusinessServiceService();
-    this._businessNodeHourService = new BusinessNodeHourService();
-    this._businessUserService = new BusinessUserService();
-    this._customerService = new CustomerService();
-    this._businessNodeCustomerService = new BusinessNodeCustomerService();
-  }
+    constructor() {
+		this._service = new AppointmentService();
+		this._businessService = new BusinessService();
+		this._businessNodeService = new BusinessNodeService();
+		this._businessServiceService = new BusinessServiceService();
+		this._businessNodeHourService = new BusinessNodeHourService();
+		this._businessUserService = new BusinessUserService();
+		this._customerService = new CustomerService();
+		this._businessNodeCustomerService = new BusinessNodeCustomerService();
+	}
 
-  findAvailableSlots = async (
-    query,
-    businessId: uuid,
-    businessNodeId: uuid,
-    businessServiceId: uuid
-  ) => {
-    await validator.validateSearchRequest(query);
-    const filters = this.getSearchFilters(query);
-    const business = await this._businessService.getById(businessId);
-    if (business == null) {
-      ErrorHandler.throwNotFoundError("Invalid business id!");
-    }
-    const node = await this._businessNodeService.getById(businessNodeId);
-    if (node == null) {
-      ErrorHandler.throwNotFoundError("Invalid business node id!");
-    }
-    const businessService = await this._businessServiceService.getById(
-      businessServiceId
-    );
-    if (businessService == null) {
-      ErrorHandler.throwNotFoundError("Invalid business service id!");
-    }
-    const nodeHours = await this.prisma.business_node_hours.findMany({
-      where: { BusinessNodeId: businessNodeId },
-    });
-    if (nodeHours.length == 0) {
-      ErrorHandler.throwNotFoundError(
-        "Working hours are not specified for the business!"
-      );
-    }
-    const numDaysForSlots = th.parseDurationInDays(node.AllowFutureBookingFor);
-    const timeZone = node.TimeZone;
+	findAvailableSlots = async (
+		query,
+    	businessId: uuid,
+    	businessNodeId: uuid,
+    	businessServiceId: uuid
+		) => {
+			await validator.validateSearchRequest(query);
+			const filters = this.getSearchFilters(query);
+    		const business = await this._businessService.getById(businessId);
+    		if (business == null) {
+				ErrorHandler.throwNotFoundError("Invalid business id!");
+			}
+    		const node = await this._businessNodeService.getById(businessNodeId);
+    		if (node == null) {
+      			ErrorHandler.throwNotFoundError("Invalid business node id!");
+    		}
+    		const businessService = await this._businessServiceService.getById(businessServiceId);
+    		if (businessService == null) {
+      			ErrorHandler.throwNotFoundError("Invalid business service id!");
+    		}
+    		const nodeHours = await this.prisma.business_node_hours.findMany({
+      			where: { BusinessNodeId: businessNodeId },
+    		});
+    		if (nodeHours.length == 0) {
+     			ErrorHandler.throwNotFoundError("Working hours are not specified for the business!");
+    		}
+    
+    		const numDaysForSlots = th.parseDurationInDays(node.AllowFutureBookingFor);
+    		const timeZone = node.TimeZone;
 
-    const currentDate = new Date();
-    let startDate = th.startOfDayUtc(currentDate);  //th.getStartOfDayUtc(currrentDate);
-    if (filters.FromDate != null) {
-      var dt = new Date(filters.FromDate);
-      startDate = th.startOfDayUtc(dt);  //th.getStartOfDayUtc(currrentDate);
-    }
-    const newDate = th.startOfDayUtc(currentDate);
-    let maxAllowable = th.add(newDate, numDaysForSlots);
-    // let maxAllowable = th.addDuration(
-    //   startDate,
-    //   numDaysForSlots, 
-    //   DurationType.Day
-    // );
-    //let endDate = th.addDuration(currrentDate, 7, DurationType.Day);
-    let endDate = th.add(newDate, 7);
-    if (filters.ToDate != null) {
-      const dt = new Date(filters.ToDate);
-      endDate = th.startOfDayUtc(dt);
-      //endDate = th.getStartOfDayUtc(dt);
-      if (th.isAfter(endDate, maxAllowable)) {
-        endDate = maxAllowable;
-      }
-    }
-    let slots = [];
-    let businessUserId = filters.BusinessUserId;
-    if (businessUserId != null) {
-      let userHours = [];
-      const user = await this._businessUserService.getById(businessUserId);
-      if (user == null) {
-        ErrorHandler.throwNotFoundError("Invalid business node id!");
-      }
-      userHours = await this.prisma.business_user_hours.findMany({
-        where: { BusinessUserId: businessUserId },
-      });
-      if (userHours.length == 0) {
-        ErrorHandler.throwNotFoundError(
-          "Working hours are not specified for the business!"
-        );
-      }
-      const availableSlotsByDate = await this.findSlotAvailability(
-        timeZone,
-        numDaysForSlots,
-        startDate,
-        endDate,
-        nodeHours,
-        userHours,
-        businessUserId,
-        businessService,
-        businessNodeId
-      );
-      const userSlots = this.transform(availableSlotsByDate);
-      const obj = {
-        User: user,
-        AvailableSlots: userSlots,
-      };
-      slots.push(obj);
-    } else {
-      //User is not specified, check all users performing this service
-      const userServices = await this.prisma.business_user_services.findMany({
-        where: { BusinessServiceId: businessServiceId },
-      });
-      if (userServices.length == 0) {
+    		const currentDate = new Date();
+    		let startDate = th.startOfDayUtc(currentDate);  //th.getStartOfDayUtc(currrentDate);
+    		if (filters.FromDate != null) {
+      		var dt = new Date(filters.FromDate);
+      		startDate = th.startOfDayUtc(dt);  //th.getStartOfDayUtc(currrentDate);
+    		}
+    		const newDate = th.startOfDayUtc(currentDate);
+    		//let maxAllowable = th.add(newDate, numDaysForSlots);
+    		let maxAllowable = th.addDuration(
+    		  startDate,
+    		  numDaysForSlots, 
+    		  DurationType.Day
+    		);
+    		let endDate = th.addDuration(currentDate, 7, DurationType.Day);
+    		//let endDate = th.add(newDate, 7);
+    		if (filters.ToDate != null) {
+      			const dt = new Date(filters.ToDate);
+      			//endDate = th.startOfDayUtc(dt);
+      			endDate = th.getStartOfDayUtc(dt);
+      		if (th.isAfter(endDate, maxAllowable)) {
+        		endDate = maxAllowable;
+      		}
+			}
+    		let slots = [];
+    		let businessUserId = filters.BusinessUserId;
+    		if (businessUserId != null) {
+				let userHours = [];
+      			const user = await this._businessUserService.getById(businessUserId);
+      		if (user == null) {
+        		ErrorHandler.throwNotFoundError("Invalid business node id!");
+      		}
+      		userHours = await this.prisma.business_user_hours.findMany({
+				where: { BusinessUserId: businessUserId },
+			});
+      		if (userHours.length == 0) {
+        		ErrorHandler.throwNotFoundError("Working hours are not specified for the business!");
+      		}
+      		const availableSlotsByDate = await this.findSlotAvailability(
+        		timeZone,
+        		numDaysForSlots,
+        		startDate,
+        		endDate,
+				nodeHours,
+        		userHours,
+        		businessUserId,
+        		businessService,
+        		businessNodeId
+			);
+        
+      		const userSlots = this.transform(availableSlotsByDate);
+      		const obj = {
+        	User: user,
+        	AvailableSlots: userSlots,
+		};
+      	slots.push(obj);
+    	} else {
+      	//User is not specified, check all users performing this service
+      	const userServices = await this.prisma.business_user_services.findMany({
+			where: { BusinessServiceId: businessServiceId },
+		});
+      	if (userServices.length == 0) {
         //Users for this service are not found, calculate slots based on only node hours
         let userHours = [];
         let availableSlotsByDate = await this.findSlotAvailability(
@@ -166,7 +162,7 @@ export class AppointmentControllerDelegate {
           businessNodeId
         );
         slots = this.transform(availableSlotsByDate);
-      } else {
+	} else {
         for await (var s of userServices) {
           businessUserId = s.BusinessUserId;
           let userHours = [];
@@ -178,9 +174,7 @@ export class AppointmentControllerDelegate {
             where: { BusinessUserId: businessUserId },
           });
           if (userHours.length == 0) {
-            throw new Error(
-              "Working hours are not specified for the business!"
-            );
+            throw new Error("Working hours are not specified for the business!");
           }
           const availableSlotsByDate = await this.findSlotAvailability(
             timeZone,
@@ -199,50 +193,50 @@ export class AppointmentControllerDelegate {
             AvailableSlots: userSlots,
           };
           slots.push(obj);
-        }
+		}
       }
     }
     return slots;
-  };
+  	};
 
-  findAvailableSlotsForUser = async (query : any, businessUserId : uuid) => {
-    await validator.validateSearchRequest(query);
-    var filters = this.getSearchFilters(query);
-    var userHours = [];
-    const businessUser = await this._businessUserService.getById(businessUserId);
-    if(businessUser == null) {
-        ErrorHandler.throwNotFoundError('Invalid business user id!');
-    }
-    var businessNodeId = businessUser.BusinessNodeId;
-    const node = await this._businessNodeService.getById(businessNodeId);
-    if (node == null) {
-        ErrorHandler.throwNotFoundError('Invalid business node id!');
-    }
-    const nodeHours = await this.prisma.business_node_hours.findMany({where : { BusinessNodeId : businessNodeId}});
-    if (nodeHours.length == 0) {
-        ErrorHandler.throwNotFoundError('Working hours are not specified for the business!');
-    }
-    userHours = await this.prisma.business_user_hours.findMany({where : {BusinessUserId : filters.BusinessUserId},});
-    if (userHours.length == 0) {
-        ErrorHandler.throwNotFoundError('Working hours are not specified for the business user!');
-    }
-    const businessUserService = await this.prisma.business_user_services.findMany({where: {BusinessUserId : businessUserId},});
-    if(businessUserService.length == 0) {
-        ErrorHandler.throwNotFoundError('No services found for the user!');
-    }
-    var userService = businessUserService[0];
-    var businessServiceId = userService.BusinessServiceId;
-    const businessService = await this._businessServiceService.getById(businessServiceId);
-    if(businessService == null) {
-        ErrorHandler.throwNotFoundError('No services found for the user.');
-    }
-    var timeZone = node.TimeZone;
-    const numDaysForSlots = th.parseDurationInDays(node.AllowFutureBookingFor)
+	findAvailableSlotsForUser = async (query : any, businessUserId : uuid) => {
+    	await validator.validateSearchRequest(query);
+    	var filters = this.getSearchFilters(query);
+    	var userHours = [];
+    	const businessUser = await this._businessUserService.getById(businessUserId);
+    	if(businessUser == null) {
+        	ErrorHandler.throwNotFoundError('Invalid business user id!');
+    	}
+    	var businessNodeId = businessUser.BusinessNodeId;
+    	const node = await this._businessNodeService.getById(businessNodeId);
+    	if (node == null) {
+        	ErrorHandler.throwNotFoundError('Invalid business node id!');
+    	}
+    	const nodeHours = await this.prisma.business_node_hours.findMany({where : { BusinessNodeId : businessNodeId}});
+    	if (nodeHours.length == 0) {
+        	ErrorHandler.throwNotFoundError('Working hours are not specified for the business!');
+    	}
+    	userHours = await this.prisma.business_user_hours.findMany({where : {BusinessUserId : filters.BusinessUserId},});
+    	if (userHours.length == 0) {
+        	ErrorHandler.throwNotFoundError('Working hours are not specified for the business user!');
+    	}
+    	const businessUserService = await this.prisma.business_user_services.findMany({where: {BusinessUserId : businessUserId},});
+    	if(businessUserService.length == 0) {
+        	ErrorHandler.throwNotFoundError('No services found for the user!');
+    	}
+    	var userService = businessUserService[0];
+    	var businessServiceId = userService.BusinessServiceId;
+    	const businessService = await this._businessServiceService.getById(businessServiceId);
+    	if(businessService == null) {
+        	ErrorHandler.throwNotFoundError('No services found for the user.');
+		}
+    	var timeZone = node.TimeZone;
+    	const numDaysForSlots = th.parseDurationInDays(node.AllowFutureBookingFor)
     
-    var sd = new Date();
-    var startDate = th.getStartOfDayUtc(sd);
-    if(filters.FromDate != null){
-        var dt = new Date(filters.FromDate);
+    	var sd = new Date();
+    	var startDate = th.getStartOfDayUtc(sd);
+    	if(filters.FromDate != null){
+        	var dt = new Date(filters.FromDate);
             startDate = th.getStartOfDayUtc(dt);
         }
         const maxAllowable = th.addDuration(startDate, numDaysForSlots, DurationType.Day);
@@ -253,146 +247,146 @@ export class AppointmentControllerDelegate {
             if(th.isAfter(endDate, maxAllowable)) {
                 endDate = maxAllowable;
         }
-    }
-    const availableSlotsByDate = await this.findSlotAvailability(timeZone, numDaysForSlots, startDate, endDate, nodeHours, userHours, businessUserId, businessService, businessNodeId);
-    const slots = this.transform(availableSlotsByDate);
-    const appointment = {
-        Slots : slots
-    }
-    return appointment;
-};
+    	}
+    	const availableSlotsByDate = await this.findSlotAvailability(timeZone, numDaysForSlots, startDate, endDate, nodeHours, userHours, businessUserId, businessService, businessNodeId);
+    	const slots = this.transform(availableSlotsByDate);
+    	const appointment = {
+        	Slots : slots
+    	}
+    	return appointment;
+	};
 
-canCustomerBookThisSlot = async(requestBody : any) => {
-    await validator.validateSearchRequest(requestBody);
-    const customer = await this._customerService.getById(requestBody.CustomerId);
-    if(customer == null){
-        ErrorHandler.throwNotFoundError('Customer not found!');
-    }
-    const startTime = requestBody.StartTime;
-    const endTime = requestBody.EndTime;
-    //const createModel = await this.getAppointmentObject(requestBody);
-    const result = await this._service.canCustomerBookThisSlot(requestBody.CustomerId, startTime, endTime);
-    return result;
-};
+	canCustomerBookThisSlot = async(requestBody : any) => {
+		await validator.validateSearchRequest(requestBody);
+		const customer = await this._customerService.getById(requestBody.CustomerId);
+		if(customer == null){
+			ErrorHandler.throwNotFoundError('Customer not found!');
+		}
+		const startTime = requestBody.StartTime;
+		const endTime = requestBody.EndTime;
+		//const createModel = await this.getAppointmentObject(requestBody);
+		const result = await this._service.canCustomerBookThisSlot(requestBody.CustomerId, startTime, endTime);
+		return result;
+	};
 
-bookAppointment = async(requestBody) => {
-  await validator.validateCreateRequest(requestBody);
+	bookAppointment = async(requestBody) => {
+		await validator.validateCreateRequest(requestBody);
 
-  const et = th.utc(requestBody.EndTime);
-  const dt = th.utc(new Date());
-  if(th.isBefore(et, dt)) {
-      ErrorHandler.throwFailedPreconditionError('Cannot book appointment for the past duration!');
-  }
+		const et = th.utc(requestBody.EndTime);
+		const dt = th.utc(new Date());
+		if(th.isBefore(et, dt)) {
+			ErrorHandler.throwFailedPreconditionError('Cannot book appointment for the past duration!');
+		}
 
-  const businessNodeId = requestBody.BusinessNodeId;
-  const node = await this._businessNodeService.getById(businessNodeId);
-  if(node == null) {
-      ErrorHandler.throwNotFoundError('Invalid node id!');
-  }
+		const businessNodeId = requestBody.BusinessNodeId;
+		const node = await this._businessNodeService.getById(businessNodeId);
+		if(node == null) {
+			ErrorHandler.throwNotFoundError('Invalid node id!');
+		}
 
-  const businessServiceId = requestBody.BusinessServiceId;
-  const businessService = await this._businessServiceService.getById(businessServiceId);
-  if(businessService == null) {
-      ErrorHandler.throwNotFoundError('Invalid business service id!');
-  }
-  //update the work-days
-  const nodeHours = await this.prisma.business_node_hours.findMany({
-      where : {
-          BusinessNodeId : businessNodeId,
-      },
-  });
-  if(nodeHours.length == 0) {
-      ErrorHandler.throwNotFoundError('Working hours are not specified for the business!');
-  }
+		const businessServiceId = requestBody.BusinessServiceId;
+		const businessService = await this._businessServiceService.getById(businessServiceId);
+		if(businessService == null) {
+			ErrorHandler.throwNotFoundError('Invalid business service id!');
+		}
+		//update the work-days
+		const nodeHours = await this.prisma.business_node_hours.findMany({
+			where : {
+				BusinessNodeId : businessNodeId,
+			},
+		});
+		if(nodeHours.length == 0) {
+			ErrorHandler.throwNotFoundError('Working hours are not specified for the business!');
+		}
 
-  let userHours = [];
-  const businessUserId = requestBody.BusinessUserId;
-  if(businessUserId != null) {
-      userHours = await this.prisma.business_user_hours.findMany({where : {BusinessUserId : businessUserId},});
-      if(userHours.length == 0) {
-          ErrorHandler.throwNotFoundError('Working hours are not specified for the business user!');
-      }
-  }
-  const businessUser = await this._businessUserService.getById(businessUserId);
-  if(businessUser == null){
-      ErrorHandler.throwNotFoundError('Business user not found!');
-  }
-  const customer = await this._customerService.getById(requestBody.CustomerId);
-  if(customer == null) {
-      ErrorHandler.throwNotFoundError('Customer not found!');
-  }
-  const numDayForSlots = th.parseDurationInDays(node.AllowFutureBookingFor);
-  const startTime = requestBody.StartTime;
-  const endTime = requestBody.EndTime;
-  const isConflicting = await this._service.checkConflictWithCustomerAppointments(requestBody.CustomerId, startTime, endTime);
-  if(isConflicting) {
-      throw new ApiError('Appointment conflicts with your other appointment!', 500);
-  }
-  const startDate = th.StartOfUtcDay(startTime);
-  const endDate = th.StartOfUtcDay(endTime);
-  const timeZone = node.TimeZone;
-  const availableSlotsByDate = await this.findSlotAvailability(timeZone, numDayForSlots, startDate, endDate, nodeHours, userHours, businessUserId, businessService, businessNodeId);
+		let userHours = [];
+		const businessUserId = requestBody.BusinessUserId;
+		if(businessUserId != null) {
+			userHours = await this.prisma.business_user_hours.findMany({where : {BusinessUserId : businessUserId},});
+			if(userHours.length == 0) {
+				ErrorHandler.throwNotFoundError('Working hours are not specified for the business user!');
+			}
+		}
+		const businessUser = await this._businessUserService.getById(businessUserId);
+		if(businessUser == null){
+			ErrorHandler.throwNotFoundError('Business user not found!');
+		}
+		const customer = await this._customerService.getById(requestBody.CustomerId);
+		if(customer == null) {
+			ErrorHandler.throwNotFoundError('Customer not found!');
+		}
+		const numDayForSlots = th.parseDurationInDays(node.AllowFutureBookingFor);
+		const startTime = requestBody.StartTime;
+		const endTime = requestBody.EndTime;
+		const isConflicting = await this._service.checkConflictWithCustomerAppointments(requestBody.CustomerId, startTime, endTime);
+		if(isConflicting) {
+			throw new ApiError('Appointment conflicts with your other appointment!', 500);
+		}
+		const startDate = th.StartOfUtcDay(startTime);
+		const endDate = th.StartOfUtcDay(endTime);
+		const timeZone = node.TimeZone;
+		const availableSlotsByDate = await this.findSlotAvailability(timeZone, numDayForSlots, startDate, endDate, nodeHours, userHours, businessUserId, businessService, businessNodeId);
 
-  const appointmentDay = th.getStartOfDayUtc(startTime);
-  const appointmentStart = th.getUtc(startTime);
-  const appointmentEnd = th.getUtc(endTime);
+		const appointmentDay = th.getStartOfDayUtc(startTime);
+		const appointmentStart = th.getUtc(startTime);
+		const appointmentEnd = th.getUtc(endTime);
 
-  const availableSlotsForDay = this.getSlotsForDay(availableSlotsByDate, appointmentDay);
-  if(availableSlotsForDay == null) {
-      ErrorHandler.throwNotFoundError('Appointment slot is not available for the given day!');
-  }
-  const isAvailable = this.isSlotAvailable(availableSlotsForDay, appointmentStart, appointmentEnd);
-  if(!isAvailable) {
-      ErrorHandler.throwNotFoundError('Appointment slot is not available!');
-  }
-  const appointmentStatuses = await this.prisma.appointment_statuses.findMany({
-      where : {
-          AND : {
-              BusinessNodeId  : requestBody.BusinessNodeId,
-              Sequence        : 1,
-          },
-      },
-  })
-  if(appointmentStatuses.length == 0) {
-      ErrorHandler.throwNotFoundError('Appointment status information is not updated for the business!');
-  }
-  var appointmentStatus = appointmentStatuses[0];
+		const availableSlotsForDay = this.getSlotsForDay(availableSlotsByDate, appointmentDay);
+		if(availableSlotsForDay == null) {
+			ErrorHandler.throwNotFoundError('Appointment slot is not available for the given day!');
+		}
+		const isAvailable = this.isSlotAvailable(availableSlotsForDay, appointmentStart, appointmentEnd);
+		if(!isAvailable) {
+			ErrorHandler.throwNotFoundError('Appointment slot is not available!');
+		}
+		const appointmentStatuses = await this.prisma.appointment_statuses.findMany({
+			where : {
+				AND : {
+					BusinessNodeId  : requestBody.BusinessNodeId,
+					Sequence        : 1,
+				},
+			},
+		})
+		if(appointmentStatuses.length == 0) {
+			ErrorHandler.throwNotFoundError('Appointment status information is not updated for the business!');
+		}
+		var appointmentStatus = appointmentStatuses[0];
 
-  var timeStr = new Date().getTime().toString();
-  timeStr = timeStr.substring(5, timeStr.length);
-  var d = new Date();
-  var dateStr = th.formatDate(d);
-  var displayId ='App-' + dateStr + '-' + timeStr; 
+		var timeStr = new Date().getTime().toString();
+		timeStr = timeStr.substring(5, timeStr.length);
+		var d = new Date();
+		var dateStr = th.formatDate(d);
+		var displayId ='App-' + dateStr + '-' + timeStr; 
 
-  const customerId = requestBody.CustomerId;
-  const createModel = await this.getAppointmentCreateModel(requestBody, appointmentStart, appointmentEnd, appointmentStatus, displayId);
-  const appointment = await this._service.create(createModel);
-  if (appointment === null) {
-      throw new ApiError('An error occurred while booking an apoointment!', 400);
-  }
-  if(appointmentStatus.SendNotification == true){
-      //TODO: Send here the notification
-  }
-  if(appointmentStatus.SendSms == true){
-      //TODO: Send here the sms
-  }
-  var nodeCustomers = await this.prisma.business_node_customers.findMany({
-      where : {
-          AND : {
-              BusinessNodeId      : businessNodeId,
-              CustomerId          : customerId,
-              IsActive            : true,
-          },
-      },
-  });
-  if(nodeCustomers.length == 0) {
-    const createModel = this.getNodeCustumerCreateModel(businessNodeId, customerId);
-    const nodeCustomer = await this._businessNodeCustomerService.create(createModel);
-  }
-  var app = await this.getAppointmentObject(appointment);
+		const customerId = requestBody.CustomerId;
+		const createModel = await this.getAppointmentCreateModel(requestBody, appointmentStart, appointmentEnd, appointmentStatus, displayId);
+		const appointment = await this._service.create(createModel);
+		if (appointment === null) {
+			throw new ApiError('An error occurred while booking an apoointment!', 400);
+		}
+		if(appointmentStatus.SendNotification == true){
+			//TODO: Send here the notification
+		}
+		if(appointmentStatus.SendSms == true){
+			//TODO: Send here the sms
+		}
+		var nodeCustomers = await this.prisma.business_node_customers.findMany({
+			where : {
+				AND : {
+					BusinessNodeId      : businessNodeId,
+					CustomerId          : customerId,
+					IsActive            : true,
+				},
+			},
+		});
+		if(nodeCustomers.length == 0) {
+			const createModel = this.getNodeCustumerCreateModel(businessNodeId, customerId);
+			const nodeCustomer = await this._businessNodeCustomerService.create(createModel);
+		}
+		var app = await this.getAppointmentObject(appointment);
 
-  return app;
-};
+		return app;
+		};
 
     getById = async (id: uuid) => {
         const record = await this._service.getById(id);
@@ -578,13 +572,14 @@ bookAppointment = async(requestBody) => {
         }
         let appointmentStatus = appointmentStatuses[0];
 
+        let dt = th.getDate(new Date());
         const updated = await this.prisma.appointments.update({
             data : {
                 IsCancelled : true,
                 IsActive    : false,
                 Status      : appointmentStatus.Status,
                 StatusCode  : appointmentStatus.StatusCode,
-                CancelledOn : dayjs().toDate(), //th.daysToDate
+                CancelledOn : dt,
             },
             where : {
                 id : id,
@@ -604,454 +599,546 @@ bookAppointment = async(requestBody) => {
         };
     };
 
+    completeAppointment = async(id: uuid) => {
+    	const appointment = await this._service.getById(id);
+      	if(appointment == null) {
+        	ErrorHandler.throwNotFoundError('Appointment not found!');
+      	}
+
+      	const appointmentStatuses = await this.prisma.appointment_statuses.findMany({
+          	where : {
+              	AND : {
+                	BusinessNodeId      : appointment.BusinessNodeId,
+                  	IsCompletedStatus   : true,
+              	},
+          	},
+      	});
+      	if(appointmentStatuses.length == 0) {
+          	ErrorHandler.throwNotFoundError('No equivalent completed status found for business node!');
+      	}
+      	let appointmentStatus = appointmentStatuses[0];
+
+      	let dt = th.getDate(new Date());
+      	const updated = await this.prisma.appointments.update({
+          	data : {
+              	IsCompleted : true,
+              	IsActive    : false,
+              	Status      : appointmentStatus.Status,
+				StatusCode  : appointmentStatus.StatusCode,
+				CompletedOn : dt,
+          	},
+			where : {
+				id : id,
+			},
+		});
+
+		const record = await this._service.getById(id);
+		if (appointmentStatus.SendNotification == true) {
+			//TODO: Send here the notification
+		}
+		if (appointmentStatus.SendSms == true) {
+			//TODO: Send here the sms
+		}
+		const app = await this.getAppointmentObject(record);
+		return {
+			Appointment : app
+		};
+	};
+
+	confirmAppointment = async(id: uuid) => {
+		const appointment = await this._service.getById(id);
+		if(appointment == null) {
+			ErrorHandler.throwNotFoundError('Appointment not found!');
+		}
+
+		const appointmentStatuses = await this.prisma.appointment_statuses.findMany({
+			where : {
+				AND : {
+					BusinessNodeId      : appointment.BusinessNodeId,
+					IsConfirmedStatus   : true,
+				},
+			},
+		});
+		if(appointmentStatuses.length == 0) {
+			ErrorHandler.throwNotFoundError('No equivalent confirmed status found for business node!');
+		}
+		let appointmentStatus = appointmentStatuses[0];
+
+		let dt = th.getDate(new Date());
+		const updated = await this.prisma.appointments.update({
+			data : {
+				IsCompleted : true,
+				IsActive    : false,
+				Status      : appointmentStatus.Status,
+				StatusCode  : appointmentStatus.StatusCode,
+				ConfirmedOn : dt,
+			},
+			where : {
+				id : id,
+			},
+		});
+
+		const record = await this._service.getById(id);
+		if (appointmentStatus.SendNotification == true) {
+			//TODO: Send here the notification
+		}
+		if (appointmentStatus.SendSms == true) {
+			//TODO: Send here the sms
+		}
+		const app = await this.getAppointmentObject(record);
+		return {
+			Appointment : app
+		};
+	};
+
 /////////////////////////////////////////////////////////////////////////////
 
-getSlotsForDay = (slotsByDate, day) => {
-  for(var i = 0; i < slotsByDate.length; i++) {
-      var d = slotsByDate[i].CurrentMoment;
-      if(th.isSame(d, day)){
-          return slotsByDate[i].Slots;
-      } 
-  }
-  return null;
-};
+	getSlotsForDay = (slotsByDate, day) => {
+	for(var i = 0; i < slotsByDate.length; i++) {
+		var d = slotsByDate[i].CurrentMoment;
+		if(th.isSame(d, day)){
+			return slotsByDate[i].Slots;
+		} 
+	}
+	return null;
+	};
 
-isSlotAvailable = (slots, appointmentStart, appointmentEnd) => {
+	isSlotAvailable = (slots, appointmentStart, appointmentEnd) => {
 
-  const aStart = th.utc(appointmentStart);
-  const aEnd = th.utc(appointmentEnd);
+	const aStart = th.utc(appointmentStart);
+	const aEnd = th.utc(appointmentEnd);
 
-  for(var i = 0; i < slots.length; i++){
-      const slotStart =th.utc(slots[i].slotStart); //th.cloneWithUtc(slots[i].slotStart);
-      const slotEnd = th.utc(slots[i].slotEnd); //th.cloneWithUtc(slots[i].slotEnd);
-      const available = slots[i].available;
+	for(var i = 0; i < slots.length; i++){
+		const slotStart =th.utc(slots[i].slotStart); //th.cloneWithUtc(slots[i].slotStart);
+		const slotEnd = th.utc(slots[i].slotEnd); //th.cloneWithUtc(slots[i].slotEnd);
+		const available = slots[i].available;
 
-      if(th.isSame(aStart, slotStart) && th.isSame(aEnd, slotEnd)  && available){
-          return true;
-      }
-  }
-  return false;
-};
+		if(th.isSame(aStart, slotStart) && th.isSame(aEnd, slotEnd)  && available){
+			return true;
+		}
+	}
+	return false;
+	};
 
-getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentStart, appointmentEnd, appointmentStatus, displayId) => {
+	getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentStart, appointmentEnd, appointmentStatus, displayId) => {
 
-  return {
-          DisplayId           : displayId,
-          BusinessNodeId      : requestBody.BusinessNodeId,
-          CustomerId          : requestBody.CustomerId,
-          BusinessUserId      : requestBody.BusinessUserId,
-          BusinessServiceId   : requestBody.BusinessServiceId,
-          StartTime           : appointmentStart.toDate(),
-          EndTime             : appointmentEnd.toDate(),
-          Type                : requestBody.Type ? requestBody.Type : 'IN-PERSON',
-          Note                : requestBody.Note ? requestBody.Note : null,
-          Status              : appointmentStatus.Status ? appointmentStatus.Status : '',
-          StatusCode          : appointmentStatus.StatusCode ? appointmentStatus.StatusCode : '',
-          Fees                : requestBody.Fees ? requestBody.Fees : 0.0,
-          Tax                 : requestBody.Tax ? requestBody.Tax : 0.0,
-          Tip                 : requestBody.Tip ? requestBody.Tip : 0.0,
-          Discount            : requestBody.Discount ? requestBody.Discount : 0.0,
-          CouponCode          : requestBody.CouponCode ? requestBody.CouponCode : null,
-          Total               : requestBody.Total ? requestBody.Total : 0.0,
-          IsPaid              : requestBody.IsPaid ? requestBody.IsPaid : false,
-          TransactionId       : requestBody.TransactionId ? requestBody.TransactionId : null,
-      };
-};
+	return {
+			DisplayId           : displayId,
+			BusinessNodeId      : requestBody.BusinessNodeId,
+			CustomerId          : requestBody.CustomerId,
+			BusinessUserId      : requestBody.BusinessUserId,
+			BusinessServiceId   : requestBody.BusinessServiceId,
+			StartTime           : appointmentStart.toDate(),
+			EndTime             : appointmentEnd.toDate(),
+			Type                : requestBody.Type ? requestBody.Type : 'IN-PERSON',
+			Note                : requestBody.Note ? requestBody.Note : null,
+			Status              : appointmentStatus.Status ? appointmentStatus.Status : '',
+			StatusCode          : appointmentStatus.StatusCode ? appointmentStatus.StatusCode : '',
+			Fees                : requestBody.Fees ? requestBody.Fees : 0.0,
+			Tax                 : requestBody.Tax ? requestBody.Tax : 0.0,
+			Tip                 : requestBody.Tip ? requestBody.Tip : 0.0,
+			Discount            : requestBody.Discount ? requestBody.Discount : 0.0,
+			CouponCode          : requestBody.CouponCode ? requestBody.CouponCode : null,
+			Total               : requestBody.Total ? requestBody.Total : 0.0,
+			IsPaid              : requestBody.IsPaid ? requestBody.IsPaid : false,
+			TransactionId       : requestBody.TransactionId ? requestBody.TransactionId : null,
+		};
+	};
 
-getNodeCustumerCreateModel = (businessNodeId: uuid, customerId: uuid) => {
-  return {
-          BusinessNodeId      : businessNodeId,
-          CustomerId          : customerId,
-          IsActive : true
-      };
-};
+	getNodeCustumerCreateModel = (businessNodeId: uuid, customerId: uuid) => {
+	return {
+			BusinessNodeId      : businessNodeId,
+			CustomerId          : customerId,
+			IsActive : true
+		};
+	};
 
-  getSearchFilters = (query) => {
-    const filters: FindAvailableSlotsSearchFilters = {};
+	getSearchFilters = (query) => {
+		const filters: FindAvailableSlotsSearchFilters = {};
 
-    let fromDate = query.fromDate != "undefined" ? query.fromDate : null;
-    if (fromDate != null) {
-      filters["FromDate"] = fromDate;
-    }
-    let toDate = query.toDate != "undefined" ? query.toDate : null;
-    if (toDate != null) {
-      filters["ToDate"] = toDate;
-    }
-    let businessUserId =
-      query.businessUserId != "undefined" ? query.businessUserId : null;
-    if (businessUserId != null) {
-      filters["BusinessUserId"] = businessUserId;
-    }
-    return filters;
-  };
+		let fromDate = query.fromDate != "undefined" ? query.fromDate : null;
+		if (fromDate != null) {
+		filters["FromDate"] = fromDate;
+		}
+		let toDate = query.toDate != "undefined" ? query.toDate : null;
+		if (toDate != null) {
+		filters["ToDate"] = toDate;
+		}
+		let businessUserId =
+		query.businessUserId != "undefined" ? query.businessUserId : null;
+		if (businessUserId != null) {
+		filters["BusinessUserId"] = businessUserId;
+		}
+		return filters;
+	};
 
-  findSlotAvailability = async (
-    timeZone: string,
-    numDaysForSlots: number,
-    startDate,
-    endDate,
-    nodeHours: BusinessNodeHourDto[],
-    userHours: BusinessUserHourDto[],
-    businessUserId: uuid,
-    businessService: BusinessServiceDto,
-    businessNodeId: uuid
-  ) => {
-    let holidays = [];
-    const businessHolidays = this.getHolidays(nodeHours, numDaysForSlots);
-    const userHolidays = this.getHolidays(userHours, numDaysForSlots);
-    holidays.push(...businessHolidays);
-    holidays.push(...userHolidays);
+	findSlotAvailability = async (
+		timeZone: string,
+		numDaysForSlots: number,
+		startDate: Date,
+		endDate: Date,
+		nodeHours: BusinessNodeHourDto[],
+		userHours: BusinessUserHourDto[],
+		businessUserId: uuid,
+		businessService: BusinessServiceDto,
+		businessNodeId: uuid
+	) => {
+		let holidays = [];
+		const businessHolidays = this.getHolidays(nodeHours, numDaysForSlots);
+		const userHolidays = this.getHolidays(userHours, numDaysForSlots);
+		holidays.push(...businessHolidays);
+		holidays.push(...userHolidays);
 
-    const weeklyWorkDays = this.getWorkingWeekDays(nodeHours, businessUserId, userHours);
-    
-    dayjs.updateLocale('us', {
-        holidays        : holidays,
-        holidayFormat   : 'DD-MM-YYYY',
-        workingWeekDays : weeklyWorkDays
-    })
+		const weeklyWorkDays = this.getWorkingWeekDays(nodeHours, businessUserId, userHours);
+		
+		dayjs.updateLocale('us', {
+			holidays        : holidays,
+			holidayFormat   : 'DD-MM-YYYY',
+			workingWeekDays : weeklyWorkDays
+		})
 
-    const slotDuration = th.parseDurationInMin(businessService.ServiceDuration);
-    const priorBookingWindowMin = th.parseDurationInMin(
-      businessService.PriorBookingWindow
-    );
+		const slotDuration = th.parseDurationInMin(businessService.ServiceDuration);
+		const priorBookingWindowMin = th.parseDurationInMin(
+		businessService.PriorBookingWindow
+		);
 
-    const slotsByDate = this.getAllSlots(
-      timeZone,
-      startDate,
-      endDate,
-      slotDuration,
-      priorBookingWindowMin,
-      nodeHours,
-      businessUserId,
-      userHours
-    );
+		const slotsByDate = this.getAllSlots(
+		timeZone,
+		startDate,
+		endDate,
+		slotDuration,
+		priorBookingWindowMin,
+		nodeHours,
+		businessUserId,
+		userHours
+		);
 
-    const availableSlotsByDate = await this._service.getAvailableSlots(
-      timeZone,
-      slotsByDate,
-      businessNodeId,
-      businessUserId,
-      businessService.id,
-      numDaysForSlots
-    );
-    return availableSlotsByDate;
-  };
+		const availableSlotsByDate = await this._service.getAvailableSlots(
+		timeZone,
+		slotsByDate,
+		businessNodeId,
+		businessUserId,
+		businessService.id,
+		numDaysForSlots
+		);
+		return availableSlotsByDate;
+	};
 
-  transform = (slotsByDate) => {
-    let slots = [];
-    for (var i = 0; i < slotsByDate.length; i++) {
-      let temp = slotsByDate[i];
-      let daySlots = [];
-      for (var j = 0; j < temp.Slots.length; j++) {
-        daySlots.push({
-          slotStart: th.utcDateFormat(temp.Slots[j].slotStart), 
-          slotEnd: th.utcDateFormat(temp.Slots[j].slotEnd),
-          available: temp.Slots[j].available,
-        });
-      }
-      const s = {
-        Date: th.utcFormat(temp.CurrentMoment, "YYYY-MM-DD"),
-        WeekDayId: th.day(temp.CurrentMoment),
-        WeekDay: th.utcFormat(temp.CurrentMoment, "dddd"),
-        DayStartTime: temp.DayStartTime,
-        DayEndTime: temp.DayEndTime,
-        Slots: daySlots,
-      };
-      slots.push(s);
-    }
-    return slots;
-  };
+	transform = (slotsByDate) => {
+		let slots = [];
+		for (var i = 0; i < slotsByDate.length; i++) {
+		let temp = slotsByDate[i];
+		let daySlots = [];
+		for (var j = 0; j < temp.Slots.length; j++) {
+			daySlots.push({
+			slotStart: th.utcDateFormat(temp.Slots[j].slotStart), 
+			slotEnd: th.utcDateFormat(temp.Slots[j].slotEnd),
+			available: temp.Slots[j].available,
+			});
+		}
+		const s = {
+			Date: th.utcFormat(temp.CurrentMoment, "YYYY-MM-DD"),
+			WeekDayId: th.day(temp.CurrentMoment),
+			WeekDay: th.utcFormat(temp.CurrentMoment, "dddd"),
+			DayStartTime: temp.DayStartTime,
+			DayEndTime: temp.DayEndTime,
+			Slots: daySlots,
+		};
+		slots.push(s);
+		}
+		return slots;
+	};
 
-  getHolidays = (
-    workHours: BusinessNodeHourDto[] | BusinessUserHourDto[],
-    numDayForSlots: number
-  ) => {
-    const dt: Date = new Date();
-    const uptoDate = th.addDuration(dt, numDayForSlots, DurationType.Day);
-    let holidays = [];
-    for (let i = 0; i < workHours.length; i++) {
-      let nd = workHours[i];
-      if (nd.Type != "WEEKDAY" && nd.Type != "WEEKEND") {
-        //It is a special day / holiday
-        if (nd.Date != null && nd.IsOpen == false) {
-          //No working hours and defined by date-not by day
-          const date = new Date(nd.Date);
-          if (th.isSameOrBefore(date, uptoDate)) {
-            const dateStr = th.format(date, "DD-MM-YYYY");
-            holidays.push(dateStr);
-          }
-        }
-      }
-    }
-    return holidays;
-  };
+	getHolidays = (
+		workHours: BusinessNodeHourDto[] | BusinessUserHourDto[],
+		numDayForSlots: number
+	) => {
+		const dt: Date = new Date();
+		const uptoDate = th.addDuration(dt, numDayForSlots, DurationType.Day);
+		let holidays = [];
+		for (let i = 0; i < workHours.length; i++) {
+		let nd = workHours[i];
+		if (nd.Type != "WEEKDAY" && nd.Type != "WEEKEND") {
+			//It is a special day / holiday
+			if (nd.Date != null && nd.IsOpen == false) {
+			//No working hours and defined by date-not by day
+			const date = new Date(nd.Date);
+			if (th.isSameOrBefore(date, uptoDate)) {
+				const dateStr = th.format(date, "DD-MM-YYYY");
+				holidays.push(dateStr);
+			}
+			}
+		}
+		}
+		return holidays;
+	};
 
-  getWorkingWeekDays = (
-    nodeHours: BusinessNodeHourDto[],
-    businessUserId: uuid,
-    userHours: BusinessUserHourDto[]
-  ) => {
-    let weeklyWorkDays = [];
-    const businessWeekDays = this.getWeekDays(nodeHours);
+	getWorkingWeekDays = (
+		nodeHours: BusinessNodeHourDto[],
+		businessUserId: uuid,
+		userHours: BusinessUserHourDto[]
+	) => {
+		let weeklyWorkDays = [];
+		const businessWeekDays = this.getWeekDays(nodeHours);
 
-    if (businessUserId != null) {
-      const userWeekDays = this.getWeekDays(userHours);
-      for (let i = 0; i < userWeekDays.length; i++) {
-        let x = userWeekDays[i];
-        if (businessWeekDays.includes(x)) {
-          weeklyWorkDays.push(userWeekDays[i]);
-        }
-      }
-    } else {
-      weeklyWorkDays = businessWeekDays;
-    }
-    return weeklyWorkDays;
-  };
+		if (businessUserId != null) {
+		const userWeekDays = this.getWeekDays(userHours);
+		for (let i = 0; i < userWeekDays.length; i++) {
+			let x = userWeekDays[i];
+			if (businessWeekDays.includes(x)) {
+			weeklyWorkDays.push(userWeekDays[i]);
+			}
+		}
+		} else {
+		weeklyWorkDays = businessWeekDays;
+		}
+		return weeklyWorkDays;
+	};
 
-  getWeekDays = (workHours) => {
-    var weekDays = [];
-    for (var j = 0; j < workHours.length; j++) {
-      var wh = workHours[j];
-      if (wh.IsOpen && wh.Date == null && wh.IsActive) {
-        weekDays.push(workHours[j].Day);
-      }
-    }
-    return weekDays;
-  };
+	getWeekDays = (workHours) => {
+		var weekDays = [];
+		for (var j = 0; j < workHours.length; j++) {
+		var wh = workHours[j];
+		if (wh.IsOpen && wh.Date == null && wh.IsActive) {
+			weekDays.push(workHours[j].Day);
+		}
+		}
+		return weekDays;
+	};
 
-  getAllSlots = (
-    timeZone: string,
-    startDate,
-    endDate,
-    slotDuration: number,
-    priorBookingWindowMin: number,
-    nodeHours: BusinessNodeHourDto[],
-    businessUserId: uuid,
-    userHours: BusinessUserHourDto[]
-  ) => {
-    var nodeWorkingDays = new Map();
+	getAllSlots = (
+		timeZone: string,
+		startDate: Date,
+		endDate: Date,
+		slotDuration: number,
+		priorBookingWindowMin: number,
+		nodeHours: BusinessNodeHourDto[],
+		businessUserId: uuid,
+		userHours: BusinessUserHourDto[]
+	) => {
+		var nodeWorkingDays = new Map();
 
-    for (var j = 0; j < nodeHours.length; j++) {
-      var nh = nodeHours[j];
-      if (nh.Date === null) {
-        nodeWorkingDays.set(nh.Day, {
-          startTime: nh.StartTime,
-          endTime: nh.EndTime,
-          IsOpen: nh.IsOpen,
-        });
-      }
-    }
-    let nodeSlotsByDate = [];
-    let numberOfDays = 0;
-    let currMoment = startDate; //th.cloneWithUtc(startDate);
-    const spanStart = startDate; //th.utc(startDate); //th.cloneWithUtc(startDate);
-    const spanEnd = endDate; //th.utc(endDate); //th.cloneWithUtc(endDate);
-    const spanStartOfDay = th.spanStartOf(spanStart);
+		for (var j = 0; j < nodeHours.length; j++) {
+		var nh = nodeHours[j];
+		if (nh.Date === null) {
+			nodeWorkingDays.set(nh.Day, {
+			startTime: nh.StartTime,
+			endTime: nh.EndTime,
+			IsOpen: nh.IsOpen,
+			});
+		}
+		}
+		let nodeSlotsByDate = [];
+		let numberOfDays = 0;
+		let currMoment = th.utc(startDate); //th.cloneWithUtc(startDate);
+		const spanStart = th.utc(startDate); //th.cloneWithUtc(startDate);
+		const spanEnd = th.utc(endDate); //th.cloneWithUtc(endDate);
+		const spanStartOfDay = th.spanStartOf(spanStart);
 
-    if (th.isSame(spanStartOfDay, spanEnd)) {
-      numberOfDays = 1;
-    } else {
-      const a = currMoment; //th.clone(currMoment);
-      const b = spanEnd; //th.clone(spanEnd);
-      const diff = th.businessDiff(a, b);
-      numberOfDays = Math.ceil(diff) + 1;
-    }
+		if (th.isSame(spanStartOfDay, spanEnd)) {
+		numberOfDays = 1;
+		} else {
+		const a = currMoment; //th.clone(currMoment);
+		const b = spanEnd; //th.clone(spanEnd);
+		const diff = th.businessDiff(a, b);
+		numberOfDays = Math.ceil(diff) + 1;
+		}
 
-    const { offsetHours, offsetMinutes } = th.getTimezoneOffsets(timeZone);
+		const { offsetHours, offsetMinutes } = th.getTimezoneOffsets(timeZone);
 
-    for (var i = 0; i < numberOfDays; i++) {
-      if (th.isBusinessDay(currMoment)) {
-        const currentDay = th.day(currMoment);
-        const wd = nodeWorkingDays.get(currentDay);
-        const startTime = wd.startTime;
-        const endTime = wd.endTime;
-        const currDayStart = currMoment//th.getStartOfDayUtc(currMoment);
-        
-        const startTokens = startTime.split(":");
-        const startHours = parseInt(startTokens[0]);
-        const startMinutes = parseInt(startTokens[1]);
-        const endTokens = endTime.split(":");
-        const endHours = parseInt(endTokens[0]);j
-        const endMinutes = parseInt(endTokens[1]);
+		for (var i = 0; i < numberOfDays; i++) {
+		if (th.isBusinessDay(currMoment)) {
+			const currentDay = th.day(currMoment);
+			const wd = nodeWorkingDays.get(currentDay);
+			const startTime = wd.startTime;
+			const endTime = wd.endTime;
+			const currDayStart = th.getStartOfDayUtc(currMoment); //currMoment
+			
+			const startTokens = startTime.split(":");
+			const startHours = parseInt(startTokens[0]);
+			const startMinutes = parseInt(startTokens[1]);
+			const endTokens = endTime.split(":");
+			const endHours = parseInt(endTokens[0]);j
+			const endMinutes = parseInt(endTokens[1]);
 
-        let start = th.addHoursMinutes(currDayStart, startHours, startMinutes);
-        let end = th.addHoursMinutes(currDayStart, endHours, endMinutes);
-        
-        // let start = th.addDurationWithOffset(currDayStart,startHours, startMinutes, offsetHours, offsetMinutes);
-        // let end = th.addDurationWithOffset(currDayStart, endHours, endMinutes, offsetHours, offsetMinutes);
-                
-            nodeSlotsByDate.push({
-                CurrentMoment   : currDayStart, //th.clone(currDayStart),
-                Date            : th.format(currDayStart),
-                WeekDay         : th.day(currDayStart),
-                DayStartTime    : start,
-                DayEndTime      : end,
-                Slots           : this.calculateSlots(timeZone, currDayStart, startTime, endTime, slotDuration, priorBookingWindowMin),
-            });
-     }
-        currMoment = th.nextBusinessDay(currMoment);
-    }
+			let start = th.addHoursMinutes(currDayStart, startHours, startMinutes);
+			let end = th.addHoursMinutes(currDayStart, endHours, endMinutes);
+			
+			// let start = th.addDurationWithOffset(currDayStart,startHours, startMinutes, offsetHours, offsetMinutes);
+			// let end = th.addDurationWithOffset(currDayStart, endHours, endMinutes, offsetHours, offsetMinutes);
+					
+				nodeSlotsByDate.push({
+					CurrentMoment   : currDayStart, //th.clone(currDayStart),
+					Date            : th.format(currDayStart),
+					WeekDay         : th.day(currDayStart),
+					DayStartTime    : start,
+					DayEndTime      : end,
+					Slots           : this.calculateSlots(timeZone, currDayStart, startTime, endTime, slotDuration, priorBookingWindowMin),
+				});
+		}
+			currMoment = th.nextBusinessDay(currMoment);
+		}
 
-    let slotsByDate = nodeSlotsByDate;
-        //Filter the slots based on user's hours
-    if (businessUserId != null) {
-      let userWorkingDays = new Map();
+		let slotsByDate = nodeSlotsByDate;
+			//Filter the slots based on user's hours
+		if (businessUserId != null) {
+		let userWorkingDays = new Map();
 
-      for (let j = 0; j < userHours.length; j++) {
-        let uh = userHours[j];
-        if (uh.Date != null) {
-          continue;
-        }
-        userWorkingDays.set(uh.Day, {
-          startTime: uh.StartTime,
-          endTime: uh.EndTime,
-          IsOpen: uh.IsOpen,
-        });
-      }
+		for (let j = 0; j < userHours.length; j++) {
+			let uh = userHours[j];
+			if (uh.Date != null) {
+			continue;
+			}
+			userWorkingDays.set(uh.Day, {
+			startTime: uh.StartTime,
+			endTime: uh.EndTime,
+			IsOpen: uh.IsOpen,
+			});
+		}
 
-      let userSlotsByDate = [];
-      for (let k = 0; k < nodeSlotsByDate.length; k++) {
-        const nodeSlot = nodeSlotsByDate[k];
-        const weekDay = nodeSlot.WeekDay;
-        const cm = nodeSlot.CurrentMoment;
-        const userCurrentDayStart = th.getStartOfDayUtc(cm);
-        let userSlotsForDay = [];
+		let userSlotsByDate = [];
+		for (let k = 0; k < nodeSlotsByDate.length; k++) {
+			const nodeSlot = nodeSlotsByDate[k];
+			const weekDay = nodeSlot.WeekDay;
+			const cm = nodeSlot.CurrentMoment;
+			const userCurrentDayStart = th.getStartOfDayUtc(cm);
+			let userSlotsForDay = [];
 
-        if (userWorkingDays.has(weekDay)) {
-          var userWorkingDay = userWorkingDays.get(weekDay);
-          if (userWorkingDay.IsOpen) {
-            const startTime = userWorkingDay.startTime;
-            const endTime = userWorkingDay.endTime;
+			if (userWorkingDays.has(weekDay)) {
+			var userWorkingDay = userWorkingDays.get(weekDay);
+			if (userWorkingDay.IsOpen) {
+				const startTime = userWorkingDay.startTime;
+				const endTime = userWorkingDay.endTime;
 
-            const startTokens = startTime.split(":");
-            const startHours = parseInt(startTokens[0]);
-            const startMinutes = parseInt(startTokens[1]);
-            const endTokens = endTime.split(":");
-            const endHours = parseInt(endTokens[0]);
-            const endMinutes = parseInt(endTokens[1]);
-            const userCurrentDS = th.utc(userCurrentDayStart);
-          
-            const start = th.addDurationWithOffset(
-              userCurrentDS,
-              startHours,
-              startMinutes,
-              offsetHours,
-              offsetMinutes
-            );
-            const end = th.addDurationWithOffset(
-              userCurrentDS,
-              endHours,
-              endMinutes,
-              offsetHours,
-              offsetMinutes
-            );
+				const startTokens = startTime.split(":");
+				const startHours = parseInt(startTokens[0]);
+				const startMinutes = parseInt(startTokens[1]);
+				const endTokens = endTime.split(":");
+				const endHours = parseInt(endTokens[0]);
+				const endMinutes = parseInt(endTokens[1]);
+				const userCurrentDS = th.utc(userCurrentDayStart);
+			
+				const start = th.addDurationWithOffset(
+				userCurrentDS,
+				startHours,
+				startMinutes,
+				offsetHours,
+				offsetMinutes
+				);
+				const end = th.addDurationWithOffset(
+				userCurrentDS,
+				endHours,
+				endMinutes,
+				offsetHours,
+				offsetMinutes
+				);
 
-            for (var p = 0; p < nodeSlot.Slots.length; p++) {
-              var s = nodeSlot.Slots[p];
-              var slotS = s.slotStart;
-              var slotE = s.slotEnd;
-              if (
-                th.isSameOrAfter(slotS, start) &&
-                th.isSameOrBefore(slotE, end)
-              ) {
-                userSlotsForDay.push(s);
-              }
-            }
-            const userSlot = {
-              CurrentMoment     : userCurrentDayStart,
-              Date              : th.format(userCurrentDayStart),
-              WeekDay           : th.day(userCurrentDayStart),
-              DayStartTime      : start,
-              DayEndTime        : end,
-              userOffDay        : false,
-              Slots             : userSlotsForDay,
-            };
-            userSlotsByDate.push(userSlot);
-          } else {
-            const userSlot = {
-              CurrentMoment     : userCurrentDayStart, 
-              Date              : th.format(userCurrentDayStart),
-              WeekDay           : th.day(userCurrentDayStart),
-              DayStartTime      : null,
-              DayEndTime        : null,
-              userOffDay        : true,
-              Slots             : [],
-            };
-            userSlotsByDate.push(userSlot);
-          }
-        }
-      }
-      slotsByDate = userSlotsByDate;
-    }
-    return slotsByDate;
-  };
+				for (var p = 0; p < nodeSlot.Slots.length; p++) {
+				var s = nodeSlot.Slots[p];
+				var slotS = s.slotStart;
+				var slotE = s.slotEnd;
+				if (
+					th.isSameOrAfter(slotS, start) &&
+					th.isSameOrBefore(slotE, end)
+				) {
+					userSlotsForDay.push(s);
+				}
+				}
+				const userSlot = {
+				CurrentMoment     : userCurrentDayStart,
+				Date              : th.format(userCurrentDayStart),
+				WeekDay           : th.day(userCurrentDayStart),
+				DayStartTime      : start,
+				DayEndTime        : end,
+				userOffDay        : false,
+				Slots             : userSlotsForDay,
+				};
+				userSlotsByDate.push(userSlot);
+			} else {
+				const userSlot = {
+				CurrentMoment     : userCurrentDayStart, 
+				Date              : th.format(userCurrentDayStart),
+				WeekDay           : th.day(userCurrentDayStart),
+				DayStartTime      : null,
+				DayEndTime        : null,
+				userOffDay        : true,
+				Slots             : [],
+				};
+				userSlotsByDate.push(userSlot);
+			}
+			}
+		}
+		slotsByDate = userSlotsByDate;
+		}
+		return slotsByDate;
+	};
 
-  calculateSlots = (
-    timeZone: string,
-    dateMoment: Date,
-    startTime: string,
-    endTime: string,
-    timeSlotDurationMin: number,
-    priorBookingWindowMin: number
-  ) => {
-    const { offsetHours, offsetMinutes } = th.getTimezoneOffsets(timeZone);
-    const date = new Date();
-    const bookingWindowMoment = th.addDuration(
-      date,
-      priorBookingWindowMin,
-      DurationType.Minute
-    );
-    let slots = [];
-    const startTokens = startTime.split(":");
-    const startHours = parseInt(startTokens[0]);
-    const startMinutes = parseInt(startTokens[1]);
-    const endTokens = endTime.split(":");
-    const endHours = parseInt(endTokens[0]);
-    const endMinutes = parseInt(endTokens[1]);
-    const st = th.utc(dateMoment); //th.cloneWithUtc(dateMoment);
-    const start = th.addDurationWithOffset(
-      st,
-      startHours,
-      startMinutes,
-      offsetHours,
-      offsetMinutes
-    );
-    const end = th.addDurationWithOffset(
-      st,
-      endHours,
-      endMinutes,
-      offsetHours,
-      offsetMinutes
-    );
+	calculateSlots = (
+		timeZone: string,
+		dateMoment: Date,
+		startTime: string,
+		endTime: string,
+		timeSlotDurationMin: number,
+		priorBookingWindowMin: number
+	) => {
+		const { offsetHours, offsetMinutes } = th.getTimezoneOffsets(timeZone);
+		const date = new Date();
+		const bookingWindowMoment = th.addDuration(
+		date,
+		priorBookingWindowMin,
+		DurationType.Minute
+		);
+		let slots = [];
+		const startTokens = startTime.split(":");
+		const startHours = parseInt(startTokens[0]);
+		const startMinutes = parseInt(startTokens[1]);
+		const endTokens = endTime.split(":");
+		const endHours = parseInt(endTokens[0]);
+		const endMinutes = parseInt(endTokens[1]);
+		const st = th.utc(dateMoment); //th.cloneWithUtc(dateMoment);
+		const start = th.addDurationWithOffset(
+		st,
+		startHours,
+		startMinutes,
+		offsetHours,
+		offsetMinutes
+		);
+		const end = th.addDurationWithOffset(
+		st,
+		endHours,
+		endMinutes,
+		offsetHours,
+		offsetMinutes
+		);
 
-    let slotStart = start;//th.clone(start);
-    let slotEnd = th.addDuration(
-      //th.clone(start),
-      start,
-      timeSlotDurationMin,
-      DurationType.Minute
-    );
-    
-    while (th.isSameOrBefore(slotEnd, end)) {
-      let available = true;
-      if (th.isBefore(slotStart, bookingWindowMoment)) {
-        available = false;
-      }
-      slots.push({
-        slotStart: slotStart,
-        slotEnd: slotEnd,
-        available: available,
-      });
-      slotStart = slotEnd; //th.clone(slotEnd);
-      slotEnd = th.addDuration(
-        slotStart,
-        //th.clone(slotStart),
-        timeSlotDurationMin,
-        DurationType.Minute
-      );
-    }
-    return slots;
-  };
+		let slotStart = start;//th.clone(start);
+		let slotEnd = th.addDuration(
+		//th.clone(start),
+		start,
+		timeSlotDurationMin,
+		DurationType.Minute
+		);
+		
+		while (th.isSameOrBefore(slotEnd, end)) {
+		let available = true;
+		if (th.isBefore(slotStart, bookingWindowMoment)) {
+			available = false;
+		}
+		slots.push({
+			slotStart: slotStart,
+			slotEnd: slotEnd,
+			available: available,
+		});
+		slotStart = slotEnd; //th.clone(slotEnd);
+		slotEnd = th.addDuration(
+			slotStart,
+			//th.clone(slotStart),
+			timeSlotDurationMin,
+			DurationType.Minute
+		);
+		}
+		return slots;
+	};
 
     updateAppointmentSelector = (query, appointment) => {
         const fromDate = query.fromDate != 'undefined' ? query.fromDate : null;
@@ -1072,7 +1159,7 @@ getNodeCustumerCreateModel = (businessNodeId: uuid, customerId: uuid) => {
                 _.set(appointment, 'IsActive', false);
             }
             else if(show == 'Confirmed') {
-                _.set(appointment, 'isCompleted', true);
+                _.set(appointment, 'isConfirmed', true);
                 _.set(appointment, 'IsActive', true);
             }
         }
@@ -1091,7 +1178,7 @@ getNodeCustumerCreateModel = (businessNodeId: uuid, customerId: uuid) => {
         }
         else {
             const current = th.getCurrentUtcDate();
-            _.set(appointment, 'EndTime', {
+            _.set(appointment, 'StartTime', {
                 gte : current
             })
             const to = th.getDayUtc(30);
@@ -1162,47 +1249,43 @@ getNodeCustumerCreateModel = (businessNodeId: uuid, customerId: uuid) => {
         return updateModel;
     };
 
-  getAppointmentObject = async (record) => {
-    var user = await this._businessUserService.getById(record.BusinessUserId);
-    var customer = await this._customerService.getById(record.CustomerId);
-    var node = await this._businessNodeService.getById(record.BusinessNodeId);
-    var businessService = await this._businessServiceService.getById(
-      record.BusinessServiceId
-    );
+	getAppointmentObject = async (record) => {
+		const user = await this._businessUserService.getById(record.BusinessUserId);
+		const customer = await this._customerService.getById(record.CustomerId);
+		const node = await this._businessNodeService.getById(record.BusinessNodeId);
+		const businessService = await this._businessServiceService.getById(record.BusinessServiceId);
 
-    return {
-      id: record.id,
-      DisplayId: record.DisplayId,
-      BusinessNodeId: record.BusinessNodeId,
-      CustomerId: record.CustomerId,
-      BusinessUserId: record.BusinessUserId,
-      BusinessServiceId: record.BusinessServiceId,
-      BusinessNodeName: node.Name,
-      BusinessServiceName: businessService.Name,
-      BusinessUserName:
-        user.Prefix + " " + user.FirstName + " " + user.LastName,
-      CustomerName:
-        customer.Prefix + " " + customer.FirstName + " " + customer.LastName,
-      CustomerDob: customer.BirthDate,
-      CustomerGender: customer.Gender,
-      CustomerDisplayPicture: customer.DisplayPicture,
-      Date: th.localFormat(record.Date, "YYYY-MM-DD"), //dayjs(record.Date).local().format("YYYY-MM-DD"),
-      StartTime: th.localFormat(record.StartTime, "HH:mm:ss"), //dayjs(record.StartTime).local().format("HH:mm:ss"),
-      EndTime: th.localFormat(record.EndTime, "HH:mm:ss"), //dayjs(record.EndTime).local().format("HH:mm:ss"),
-      StartTimeUtc: record.StartTime,
-      EndTimeUtc: record.EndTime,
-      Type: record.Type,
-      Note: record.Note,
-      Status: record.Status,
-      StatusCode: record.StatusCode,
-      Fees: record.Fees,
-      Tax: record.Tax,
-      Tip: record.Tip,
-      Discount: record.Discount,
-      CouponCode: record.CouponCode,
-      Total: record.Total,
-      IsPaid: record.IsPaid,
-      TransactionId: record.TransactionId,
-    };
-  };
+		return {
+			id                        : record.id,
+			DisplayId                 : record.DisplayId,
+			BusinessNodeId            : record.BusinessNodeId,
+			CustomerId                : record.CustomerId,
+			BusinessUserId            : record.BusinessUserId,
+			BusinessServiceId         : record.BusinessServiceId,
+			BusinessNodeName          : node.Name,
+			BusinessServiceName       : businessService.Name,
+			BusinessUserName          : user.Prefix + " " + user.FirstName + " " + user.LastName,
+			CustomerName              : customer.Prefix + " " + customer.FirstName + " " + customer.LastName,
+			CustomerDob               : customer.BirthDate,
+			CustomerGender            : customer.Gender,
+			CustomerDisplayPicture    : customer.DisplayPicture,
+			Date                      : th.localFormat(record.Date, "YYYY-MM-DD"),
+			StartTime                 : th.localFormat(record.StartTime, "HH:mm:ss"),
+			EndTime                   : th.localFormat(record.EndTime, "HH:mm:ss"),
+			StartTimeUtc              : record.StartTime,
+			EndTimeUtc                : record.EndTime,
+			Type                      : record.Type,
+			Note                      : record.Note,
+			Status                    : record.Status,
+			StatusCode                : record.StatusCode,
+			Fees                      : record.Fees,
+			Tax                       : record.Tax,
+			Tip                       : record.Tip,
+			Discount                  : record.Discount,
+			CouponCode                : record.CouponCode,
+			Total                     : record.Total,
+			IsPaid                    : record.IsPaid,
+			TransactionId             : record.TransactionId,
+		};
+	};
 }
