@@ -397,11 +397,16 @@ export class AppointmentControllerDelegate {
     };
 
     getByDisplayId = async (displayId: string) => {
-        const appointment = await this._service.getByDisplayId(displayId);
-        if (appointment === null) {
+        const appointments = await this._service.getByDisplayId(displayId);
+        if (appointments === null) {
           ErrorHandler.throwNotFoundError('Appointment with display id ' + displayId.toString() + ' cannot be found!');
       }
-      return this.getAppointmentObject(appointment);
+			let appointmentDto = {}
+			for (const appointment of appointments){
+				appointmentDto = this.getAppointmentObject(appointment);
+			}
+			
+		return appointmentDto;
     };
  
     getByUser = async (businessUserId: uuid, query) => {
