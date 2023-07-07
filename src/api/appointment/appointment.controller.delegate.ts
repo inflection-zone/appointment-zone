@@ -1274,7 +1274,7 @@ export class AppointmentControllerDelegate {
 			CustomerDob               : customer.BirthDate,
 			CustomerGender            : customer.Gender,
 			CustomerDisplayPicture    : customer.DisplayPicture,
-			Date                      : th.localFormat(record.Date, "YYYY-MM-DD"),
+			Date                      : th.localFormat(record.StartTime, "YYYY-MM-DD"),
 			StartTime                 : th.localFormat(record.StartTime, "HH:mm:ss"),
 			EndTime                   : th.localFormat(record.EndTime, "HH:mm:ss"),
 			StartTimeUtc              : record.StartTime,
