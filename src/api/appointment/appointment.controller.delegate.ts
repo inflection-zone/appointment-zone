@@ -201,7 +201,7 @@ export class AppointmentControllerDelegate {
 	findAvailableSlotsForUser = async (query : any, businessUserId : uuid) => {
     	await validator.validateSearchRequest(query);
     	var filters: AppointmentSearchFilters = this.getSearchFilters(query);
-    	var userHours = [];
+    	// var userHours = [];
     	const businessUser = await this._businessUserService.getById(businessUserId);
     	if(businessUser == null) {
         	ErrorHandler.throwNotFoundError('Invalid business user id!');
@@ -215,7 +215,7 @@ export class AppointmentControllerDelegate {
     	if (nodeHours.length == 0) {
         	ErrorHandler.throwNotFoundError('Working hours are not specified for the business!');
     	}
-    	userHours = await this.prisma.business_user_hours.findMany({where : {BusinessUserId : filters.BusinessUserId},});
+    	const userHours = await this.prisma.business_user_hours.findMany({where : {BusinessUserId : businessUserId},});
     	if (userHours.length == 0) {
         	ErrorHandler.throwNotFoundError('Working hours are not specified for the business user!');
     	}
@@ -233,16 +233,16 @@ export class AppointmentControllerDelegate {
     	const numDaysForSlots = th.parseDurationInDays(node.AllowFutureBookingFor)
     
     	var sd = new Date();
-    	var startDate = th.getStartOfDayUtc(sd);
+    	var startDate = th.startOfDayUtc(sd);
     	if(filters.FromDate != null){
         	var dt = new Date(filters.FromDate);
-            startDate = th.getStartOfDayUtc(dt);
+            startDate = th.startOfDayUtc(dt);
         }
         const maxAllowable = th.addDuration(startDate, numDaysForSlots, DurationType.Day);
         var endDate = th.addDuration(endDate, 7, DurationType.Day);
         if(filters.ToDate != null) {
             var dt = new Date(filters.ToDate);
-            endDate = th.getStartOfDayUtc(dt);
+            endDate = th.startOfDayUtc(dt);
             if(th.isAfter(endDate, maxAllowable)) {
                 endDate = maxAllowable;
         }
@@ -326,7 +326,7 @@ export class AppointmentControllerDelegate {
 		const timeZone = node.TimeZone;
 		const availableSlotsByDate = await this.findSlotAvailability(timeZone, numDayForSlots, startDate, endDate, nodeHours, userHours, businessUserId, businessService, businessNodeId);
 
-		const appointmentDay = th.getStartOfDayUtc(startTime);
+		const appointmentDay = th.startOfDayUtc(startTime);
 		const appointmentStart = th.getUtc(startTime);
 		const appointmentEnd = th.getUtc(endTime);
 
@@ -732,8 +732,8 @@ export class AppointmentControllerDelegate {
 			CustomerId          : requestBody.CustomerId,
 			BusinessUserId      : requestBody.BusinessUserId,
 			BusinessServiceId   : requestBody.BusinessServiceId,
-			StartTime           : appointmentStart.toDate(),
-			EndTime             : appointmentEnd.toDate(),
+			StartTime           : appointmentStart,
+			EndTime             : appointmentEnd,
 			Type                : requestBody.Type ? requestBody.Type : 'IN-PERSON',
 			Note                : requestBody.Note ? requestBody.Note : null,
 			Status              : appointmentStatus.Status ? appointmentStatus.Status : '',
