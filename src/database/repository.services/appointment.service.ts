@@ -7,6 +7,7 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import dayjsBusinessDays from 'dayjs-business-days2';
 import { TimeHelper as th} from '../../common/time.helper';
+import { AppointmentCreateModel } from "../../domain.types/appointment/appointment.domain.types";
 ​
  ///////////////////////////////////////////////////////////////////////////
 ​
@@ -25,7 +26,7 @@ export class AppointmentService{
         return this.instance || (this.instance=new this());
     }
 ​
-    create = async (createModel) => {
+    create = async (createModel: AppointmentCreateModel) => {
         try {
             var record = await this.prisma.appointments.create({data:createModel});
             return record;
@@ -34,7 +35,7 @@ export class AppointmentService{
         } 
     };
 
-    getById = async (id) => {
+    getById = async (id: uuid) => {
         try {
             var record = await this.prisma.appointments.findUnique({where : {id : id,},});
             return record;
@@ -43,7 +44,7 @@ export class AppointmentService{
         }
     };
 
-    update = async (id, updateModel) => {
+    update = async (id:uuid, updateModel: any) => {
         try {
             if (Object.keys(updateModel).length > 0) {
             var res = await this.prisma.appointments.update({data:updateModel,
@@ -58,7 +59,7 @@ export class AppointmentService{
         }
     };
 ​
-    canCustomerBookThisSlot = async(customerId, startTime, endTime) => {
+    canCustomerBookThisSlot = async(customerId: uuid, startTime: Date, endTime: Date) => {
         try {
             const start = th.utc(startTime);
             const end = th.utc(endTime);
@@ -132,7 +133,7 @@ export class AppointmentService{
         }
     };
 ​
-    checkConflictWithCustomerAppointments = async(customerId: uuid, startTime, endTime) => {
+    checkConflictWithCustomerAppointments = async(customerId: uuid, startTime: Date, endTime: Date) => {
         const start = th.utc(startTime); //dayjs.utc(startTime)
         const end = th.utc(endTime); //dayjs.utc(endTime)
         const record = await this.prisma.appointments.findMany({
@@ -190,7 +191,7 @@ export class AppointmentService{
         return false;
     };
 ​
-    getByDisplayId = async(displayId) => {
+    getByDisplayId = async(displayId: string) => {
         try {
             var record = await this.prisma.appointments.findMany({where : {DisplayId : displayId}
             });

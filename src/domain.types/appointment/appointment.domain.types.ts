@@ -1,35 +1,36 @@
 import { float } from "aws-sdk/clients/cloudfront";
 import { BaseSearchFilters, BaseSearchResults } from "../miscellaneous/base.search.types";
+import { uuid } from "../miscellaneous/system.types";
 
 export interface AppointmentCreateModel {
-    id ?	                    : string;
+    id                       ?	: string;
     BusinessNodeId              : string;
     BusinessServiceId           : string;
     BusinessUserId              : string;
     CustomerId                  : string;
-    CancelledOn ?               : Date;
-    CompletedOn ?               : Date;
-    ConfirmedOn ?               : Date;
-    CouponCode  ?               : string;
+    CancelledOn              ?  : Date;
+    CompletedOn              ?  : Date;
+    ConfirmedOn              ?  : Date;
+    CouponCode               ?  : string;
     DisplayId                   : string;
     Discount                    : float;
-    EndTime     ?               : Date;
+    EndTime                  ?  : Date;
     Fees                        : float;
     IsCancelled                 : boolean;
     IsCompleted		            : boolean;
     IsConfirmed                 : boolean;
     IsPaid                      : boolean;
     IsRescheduled               : boolean;
-    Note ?                      : string;
+    Note                     ?  : string;
     RescheduledAppointmentId ?  : number;
-    RescheduledOn  ?            : Date;
-    StartTime                   : number;
+    RescheduledOn            ?  : Date;
+    StartTime                ?  : Date;
     Status                      : string;
     StatusCode                  : string;
     Tax		                    : float;
     Tip		                    : float;
     Total		                : float;
-    TransactionId ?             : string;
+    TransactionId           ?   : string;
     Type                        : string;
     IsActive		            : boolean;
 }
@@ -56,40 +57,61 @@ export interface AppointmentUpdateModel {
 }
 
 export interface AppointmentDto {
-    id ?	                    : string;
+    id                      ?	: string;
     BusinessNodeId              : string;
     BusinessServiceId           : string;
     BusinessUserId              : string;
     CustomerId                  : string;
-    CancelledOn ?               : Date;
-    CompletedOn ?               : Date;
-    ConfirmedOn ?               : Date;
-    CouponCode  ?               : string;
+    CancelledOn             ?   : Date;
+    CompletedOn             ?   : Date;
+    ConfirmedOn             ?   : Date;
+    CouponCode              ?   : string;
     DisplayId                   : string;
     Discount                    : float;
-    EndTime     ?               : Date;
+    EndTime                 ?   : Date;
     Fees                        : float;
     IsCancelled                 : boolean;
     IsCompleted		            : boolean;
     IsConfirmed                 : boolean;
     IsPaid                      : boolean;
     IsRescheduled               : boolean;
-    Note ?                      : string;
+    Note                     ?  : string;
     RescheduledAppointmentId ?  : number;
-    RescheduledOn  ?            : Date;
-    StartTime                   : number;
+    RescheduledOn            ?  : Date;
+    StartTime                ?  : Date;
     Status                      : string;
     StatusCode                  : string;
     Tax		                    : float;
     Tip		                    : float;
     Total		                : float;
-    TransactionId ?             : string;
+    TransactionId            ?  : string;
     Type                        : string;
     IsActive		            : boolean;
+    Date                     ?  : Date;
 }
 
+export interface SlotsByDateDto {
+    CurrentMoment       : Date;
+    Date                : Date;
+    DayStartTime        : Date;
+    DayEndTime          : Date;
+    WeekDay             : number;
+    userOffDay          : boolean; 
+    Slots               : SlotsDto[];
+}
+
+export interface SlotsDto {
+    slotStart      : Date;
+    slotEnd         : Date;
+    available       : boolean;
+}
+
+
 export interface AppointmentSearchFilters extends BaseSearchFilters {
-    BusinessNodeId ?        : string;
+    FromDate        ? : Date;
+    ToDate          ? : Date;
+    BusinessUserId  ? : uuid;
+    Minutes         ? : string;  
 }
 
 export interface AppointmentSearchResults extends BaseSearchResults {

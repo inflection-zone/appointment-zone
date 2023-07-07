@@ -56,7 +56,7 @@ export class AppointmentController extends BaseController {
             await this.authorize('Appointment.BookAppointment', request, response, false);
             const record = await this._delegate.bookAppointment(request.body);
             const message = 'Appointment is booked successfully!';
-            ResponseHandler.success(request, response, message, 200, record);
+            ResponseHandler.success(request, response, message, 201, record);
         }
         catch (error) {
             ResponseHandler.handleError(request, response, error);

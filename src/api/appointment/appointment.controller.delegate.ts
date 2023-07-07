@@ -13,14 +13,13 @@ import { BusinessUserService } from "../../database/repository.services/business
 import { CustomerService } from "../../database/repository.services/customer.service";
 import { AppointmentValidator as validator } from "./appointment.validator";
 import { PrismaClientInit } from "../../startup/prisma.client.init";
-import { FindAvailableSlotsSearchFilters } from "../../domain.types/appointment/available.slot.search.filter";
 import { BusinessNodeHourDto } from "../../domain.types/business.node.hour/business.node.hour.domain.types";
 import { BusinessUserHourDto } from "../../domain.types/business/business.user.hour.domain.types";
 import { BusinessServiceDto } from "../../domain.types/business/business.service.domain.types";
 import { BusinessNodeCustomerService } from "../../database/repository.services/business.node.customer.service";
 import { ApiError } from "../../common/api.error";
 import { Helper } from "../../common/helper";
-import { AppointmentCreateModel, AppointmentUpdateModel } from "../../domain.types/appointment/appointment.domain.types";
+import { AppointmentCreateModel, AppointmentDto, AppointmentSearchFilters, AppointmentUpdateModel, SlotsByDateDto } from "../../domain.types/appointment/appointment.domain.types";
 import _ from "lodash";
 
 dayjs.extend(utc);
@@ -58,13 +57,13 @@ export class AppointmentControllerDelegate {
 	}
 
 	findAvailableSlots = async (
-		query,
+		query: any,
     	businessId: uuid,
     	businessNodeId: uuid,
     	businessServiceId: uuid
 		) => {
 			await validator.validateSearchRequest(query);
-			const filters = this.getSearchFilters(query);
+			const filters: AppointmentSearchFilters = this.getSearchFilters(query);
     		const business = await this._businessService.getById(businessId);
     		if (business == null) {
 				ErrorHandler.throwNotFoundError("Invalid business id!");
@@ -96,16 +95,16 @@ export class AppointmentControllerDelegate {
     		const newDate = th.startOfDayUtc(currentDate);
     		//let maxAllowable = th.add(newDate, numDaysForSlots);
     		let maxAllowable = th.addDuration(
-    		  startDate,
+			  newDate,
     		  numDaysForSlots, 
     		  DurationType.Day
     		);
-    		let endDate = th.addDuration(currentDate, 7, DurationType.Day);
+    		let endDate = th.addDuration(newDate, 7, DurationType.Day);
     		//let endDate = th.add(newDate, 7);
     		if (filters.ToDate != null) {
       			const dt = new Date(filters.ToDate);
-      			//endDate = th.startOfDayUtc(dt);
-      			endDate = th.getStartOfDayUtc(dt);
+      			endDate = th.startOfDayUtc(dt);
+      			//endDate = th.getStartOfDayUtc(dt);
       		if (th.isAfter(endDate, maxAllowable)) {
         		endDate = maxAllowable;
       		}
@@ -201,7 +200,7 @@ export class AppointmentControllerDelegate {
 
 	findAvailableSlotsForUser = async (query : any, businessUserId : uuid) => {
     	await validator.validateSearchRequest(query);
-    	var filters = this.getSearchFilters(query);
+    	var filters: AppointmentSearchFilters = this.getSearchFilters(query);
     	var userHours = [];
     	const businessUser = await this._businessUserService.getById(businessUserId);
     	if(businessUser == null) {
@@ -269,7 +268,7 @@ export class AppointmentControllerDelegate {
 		return result;
 	};
 
-	bookAppointment = async(requestBody) => {
+	bookAppointment = async(requestBody: any) => {
 		await validator.validateCreateRequest(requestBody);
 
 		const et = th.utc(requestBody.EndTime);
@@ -359,8 +358,8 @@ export class AppointmentControllerDelegate {
 		var displayId ='App-' + dateStr + '-' + timeStr; 
 
 		const customerId = requestBody.CustomerId;
-		const createModel = await this.getAppointmentCreateModel(requestBody, appointmentStart, appointmentEnd, appointmentStatus, displayId);
-		const appointment = await this._service.create(createModel);
+		const createModel: AppointmentCreateModel = await this.getAppointmentCreateModel(requestBody, appointmentStart, appointmentEnd, appointmentStatus, displayId);
+		const appointment: AppointmentDto = await this._service.create(createModel);
 		if (appointment === null) {
 			throw new ApiError('An error occurred while booking an apoointment!', 400);
 		}
@@ -397,14 +396,18 @@ export class AppointmentControllerDelegate {
     };
 
     getByDisplayId = async (displayId: string) => {
-        const appointment = await this._service.getByDisplayId(displayId);
-        if (appointment === null) {
+        const appointments = await this._service.getByDisplayId(displayId);
+        if (appointments === null) {
           ErrorHandler.throwNotFoundError('Appointment with display id ' + displayId.toString() + ' cannot be found!');
       }
-      return this.getAppointmentObject(appointment);
+      let appointmentDto = {}
+      for (const appointment of appointments){
+        appointmentDto = this.getAppointmentObject(appointment);
+      }
+    return appointmentDto;
     };
  
-    getByUser = async (businessUserId: uuid, query) => {
+    getByUser = async (businessUserId: uuid, query: any) => {
         const record = await this._businessUserService.getById(businessUserId);
         if (record === null) {
             ErrorHandler.throwNotFoundError('Appointment with business user id ' + businessUserId.toString() + ' cannot be found!');
@@ -426,7 +429,7 @@ export class AppointmentControllerDelegate {
         };
     };
 
-    getByNode = async(businessNodeId: uuid, query) => {
+    getByNode = async(businessNodeId: uuid, query: any) => {
         const record = await this._businessNodeService.getById(businessNodeId);
         if (record === null) {
             ErrorHandler.throwNotFoundError('Appointment with business node id ' + businessNodeId.toString() + ' cannot be found!');
@@ -448,7 +451,7 @@ export class AppointmentControllerDelegate {
         };
     };
 
-    getByCustomer = async(customerId: uuid, query) => {
+    getByCustomer = async(customerId: uuid, query: any) => {
         const record = await this._customerService.getById(customerId);
         if (record === null) {
             ErrorHandler.throwNotFoundError('Appointment with customer id ' + customerId.toString() + ' cannot be found!');
@@ -493,6 +496,7 @@ export class AppointmentControllerDelegate {
             if(appointmentStatuses.length > 0) {
                 let appointmentStatus = appointmentStatuses[0];
 
+				let dt = th.getDate(new Date());
                 if(appointmentStatus.IsCancellationStatus){
                     const updated = await this.prisma.appointments.update({
                         data : {
@@ -500,7 +504,7 @@ export class AppointmentControllerDelegate {
                             IsActive    : false,
                             Status      : appointmentStatus.Status,
                             StatusCode  : appointmentStatus.StatusCode,
-                            CancelledOn : dayjs().toDate(), //th.daysToDate
+                            CancelledOn : dt, //th.daysToDate
                         },
                         where : {
                             id : id,
@@ -515,7 +519,7 @@ export class AppointmentControllerDelegate {
                             IsActive    : true,
                             Status      : appointmentStatus.Status,
                             StatusCode  : appointmentStatus.StatusCode,
-                            ConfirmedOn : dayjs().toDate(),
+                            ConfirmedOn : dt,
                         },
                         where : {
                             id : id,
@@ -530,7 +534,7 @@ export class AppointmentControllerDelegate {
                             IsActive    : true,
                             Status      : appointmentStatus.Status,
                             StatusCode  : appointmentStatus.StatusCode,
-                            ConfirmedOn : dayjs().toDate(),
+                            ConfirmedOn : dt,
                         },
                         where : {
                             id : id,
@@ -693,7 +697,7 @@ export class AppointmentControllerDelegate {
 
 /////////////////////////////////////////////////////////////////////////////
 
-	getSlotsForDay = (slotsByDate, day) => {
+	getSlotsForDay = (slotsByDate, day: Date) => {
 	for(var i = 0; i < slotsByDate.length; i++) {
 		var d = slotsByDate[i].CurrentMoment;
 		if(th.isSame(d, day)){
@@ -703,14 +707,14 @@ export class AppointmentControllerDelegate {
 	return null;
 	};
 
-	isSlotAvailable = (slots, appointmentStart, appointmentEnd) => {
+	isSlotAvailable = (slots, appointmentStart: Date, appointmentEnd: Date) => {
 
 	const aStart = th.utc(appointmentStart);
 	const aEnd = th.utc(appointmentEnd);
 
 	for(var i = 0; i < slots.length; i++){
-		const slotStart =th.utc(slots[i].slotStart); //th.cloneWithUtc(slots[i].slotStart);
-		const slotEnd = th.utc(slots[i].slotEnd); //th.cloneWithUtc(slots[i].slotEnd);
+		const slotStart =th.utc(slots[i].slotStart);
+		const slotEnd = th.utc(slots[i].slotEnd);
 		const available = slots[i].available;
 
 		if(th.isSame(aStart, slotStart) && th.isSame(aEnd, slotEnd)  && available){
@@ -720,7 +724,7 @@ export class AppointmentControllerDelegate {
 	return false;
 	};
 
-	getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentStart, appointmentEnd, appointmentStatus, displayId) => {
+	getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentStart, appointmentEnd, appointmentStatus, displayId: string) => {
 
 	return {
 			DisplayId           : displayId,
@@ -742,6 +746,11 @@ export class AppointmentControllerDelegate {
 			Total               : requestBody.Total ? requestBody.Total : 0.0,
 			IsPaid              : requestBody.IsPaid ? requestBody.IsPaid : false,
 			TransactionId       : requestBody.TransactionId ? requestBody.TransactionId : null,
+			IsCancelled			: requestBody.IsCancelled ? requestBody.IsCancelled : false,
+			IsCompleted			: requestBody.IsCompleted ? requestBody.IsCompleted : false,
+			IsConfirmed			: requestBody.IsConfirmed ? requestBody.IsConfirmed : false,
+			IsRescheduled		: requestBody.IsRescheduled ? requestBody.IsRescheduled : false,
+			IsActive			: requestBody.IsActive ? requestBody.IsActive : true,
 		};
 	};
 
@@ -753,21 +762,24 @@ export class AppointmentControllerDelegate {
 		};
 	};
 
-	getSearchFilters = (query) => {
-		const filters: FindAvailableSlotsSearchFilters = {};
+	getSearchFilters = (query: any) => {
+		const filters: AppointmentSearchFilters = {};
 
-		let fromDate = query.fromDate != "undefined" ? query.fromDate : null;
+		let fromDate = (typeof query.fromDate != "undefined") ? query.fromDate : null;
 		if (fromDate != null) {
-		filters["FromDate"] = fromDate;
+			filters["FromDate"] = fromDate;
 		}
-		let toDate = query.toDate != "undefined" ? query.toDate : null;
+		let toDate = (typeof query.toDate != "undefined") ? query.toDate : null;
 		if (toDate != null) {
-		filters["ToDate"] = toDate;
+			filters["ToDate"] = toDate;
 		}
-		let businessUserId =
-		query.businessUserId != "undefined" ? query.businessUserId : null;
+		let businessUserId = (typeof query.businessUserId != "undefined") ? query.businessUserId : null;
 		if (businessUserId != null) {
-		filters["BusinessUserId"] = businessUserId;
+			filters["BusinessUserId"] = businessUserId;
+		}
+		let minutes = (typeof query.minutes != "undefined") ? query.minutes : null;
+		if (minutes != null) {
+			filters["Minutes"] = minutes;
 		}
 		return filters;
 	};
@@ -798,9 +810,7 @@ export class AppointmentControllerDelegate {
 		})
 
 		const slotDuration = th.parseDurationInMin(businessService.ServiceDuration);
-		const priorBookingWindowMin = th.parseDurationInMin(
-		businessService.PriorBookingWindow
-		);
+		const priorBookingWindowMin = th.parseDurationInMin(businessService.PriorBookingWindow);
 
 		const slotsByDate = this.getAllSlots(
 		timeZone,
@@ -824,7 +834,7 @@ export class AppointmentControllerDelegate {
 		return availableSlotsByDate;
 	};
 
-	transform = (slotsByDate) => {
+	transform = (slotsByDate: SlotsByDateDto[]) => {
 		let slots = [];
 		for (var i = 0; i < slotsByDate.length; i++) {
 		let temp = slotsByDate[i];
@@ -895,7 +905,7 @@ export class AppointmentControllerDelegate {
 		return weeklyWorkDays;
 	};
 
-	getWeekDays = (workHours) => {
+	getWeekDays = (workHours: BusinessNodeHourDto[] | BusinessUserHourDto[]) => {
 		var weekDays = [];
 		for (var j = 0; j < workHours.length; j++) {
 		var wh = workHours[j];
@@ -930,16 +940,16 @@ export class AppointmentControllerDelegate {
 		}
 		let nodeSlotsByDate = [];
 		let numberOfDays = 0;
-		let currMoment = th.utc(startDate); //th.cloneWithUtc(startDate);
-		const spanStart = th.utc(startDate); //th.cloneWithUtc(startDate);
-		const spanEnd = th.utc(endDate); //th.cloneWithUtc(endDate);
-		const spanStartOfDay = th.spanStartOf(spanStart);
+		let currMoment = th.utc(startDate);
+		const spanStart = th.utc(startDate);
+		const spanEnd = th.utc(endDate);
+		const spanStartOfDay = th.startOf(spanStart, DurationType.Day);
 
 		if (th.isSame(spanStartOfDay, spanEnd)) {
 		numberOfDays = 1;
 		} else {
-		const a = currMoment; //th.clone(currMoment);
-		const b = spanEnd; //th.clone(spanEnd);
+		const a = currMoment;
+		const b = spanEnd;
 		const diff = th.businessDiff(a, b);
 		numberOfDays = Math.ceil(diff) + 1;
 		}
@@ -952,7 +962,7 @@ export class AppointmentControllerDelegate {
 			const wd = nodeWorkingDays.get(currentDay);
 			const startTime = wd.startTime;
 			const endTime = wd.endTime;
-			const currDayStart = th.getStartOfDayUtc(currMoment); //currMoment
+			const currDayStart = th.startOfDayUtc(currMoment); //th.getStartOfDayUtc(currMoment); //currMoment
 			
 			const startTokens = startTime.split(":");
 			const startHours = parseInt(startTokens[0]);
@@ -961,14 +971,11 @@ export class AppointmentControllerDelegate {
 			const endHours = parseInt(endTokens[0]);j
 			const endMinutes = parseInt(endTokens[1]);
 
-			let start = th.addHoursMinutes(currDayStart, startHours, startMinutes);
-			let end = th.addHoursMinutes(currDayStart, endHours, endMinutes);
-			
-			// let start = th.addDurationWithOffset(currDayStart,startHours, startMinutes, offsetHours, offsetMinutes);
-			// let end = th.addDurationWithOffset(currDayStart, endHours, endMinutes, offsetHours, offsetMinutes);
+			let start = th.addDurationWithOffset(currDayStart,startHours, startMinutes, offsetHours, offsetMinutes);
+			let end = th.addDurationWithOffset(currDayStart, endHours, endMinutes, offsetHours, offsetMinutes);
 					
 				nodeSlotsByDate.push({
-					CurrentMoment   : currDayStart, //th.clone(currDayStart),
+					CurrentMoment   : currDayStart,
 					Date            : th.format(currDayStart),
 					WeekDay         : th.day(currDayStart),
 					DayStartTime    : start,
@@ -1001,7 +1008,7 @@ export class AppointmentControllerDelegate {
 			const nodeSlot = nodeSlotsByDate[k];
 			const weekDay = nodeSlot.WeekDay;
 			const cm = nodeSlot.CurrentMoment;
-			const userCurrentDayStart = th.getStartOfDayUtc(cm);
+			const userCurrentDayStart = th.startOfDayUtc(cm);
 			let userSlotsForDay = [];
 
 			if (userWorkingDays.has(weekDay)) {
@@ -1095,7 +1102,7 @@ export class AppointmentControllerDelegate {
 		const endTokens = endTime.split(":");
 		const endHours = parseInt(endTokens[0]);
 		const endMinutes = parseInt(endTokens[1]);
-		const st = th.utc(dateMoment); //th.cloneWithUtc(dateMoment);
+		const st = th.utc(dateMoment);
 		const start = th.addDurationWithOffset(
 		st,
 		startHours,
@@ -1111,9 +1118,8 @@ export class AppointmentControllerDelegate {
 		offsetMinutes
 		);
 
-		let slotStart = start;//th.clone(start);
+		let slotStart = start;
 		let slotEnd = th.addDuration(
-		//th.clone(start),
 		start,
 		timeSlotDurationMin,
 		DurationType.Minute
@@ -1129,10 +1135,9 @@ export class AppointmentControllerDelegate {
 			slotEnd: slotEnd,
 			available: available,
 		});
-		slotStart = slotEnd; //th.clone(slotEnd);
+		slotStart = slotEnd;
 		slotEnd = th.addDuration(
 			slotStart,
-			//th.clone(slotStart),
 			timeSlotDurationMin,
 			DurationType.Minute
 		);
@@ -1140,7 +1145,7 @@ export class AppointmentControllerDelegate {
 		return slots;
 	};
 
-    updateAppointmentSelector = (query, appointment) => {
+    updateAppointmentSelector = (query: any, appointment: any) => {
         const fromDate = query.fromDate != 'undefined' ? query.fromDate : null;
         const toDate = query.toDate != 'undefined' ? query.toDate : null;
         const timeZone = query.timeZone != 'undefined' ? query.timeZone : null;
@@ -1188,7 +1193,7 @@ export class AppointmentControllerDelegate {
         }
     };
 
-    getUpdateModel = (requestBody): AppointmentUpdateModel => {
+    getUpdateModel = (requestBody: any): AppointmentUpdateModel => {
 
         let updateModel : AppointmentUpdateModel = {};
 
@@ -1249,7 +1254,7 @@ export class AppointmentControllerDelegate {
         return updateModel;
     };
 
-	getAppointmentObject = async (record) => {
+	getAppointmentObject = async (record: AppointmentDto) => {
 		const user = await this._businessUserService.getById(record.BusinessUserId);
 		const customer = await this._customerService.getById(record.CustomerId);
 		const node = await this._businessNodeService.getById(record.BusinessNodeId);
@@ -1286,6 +1291,39 @@ export class AppointmentControllerDelegate {
 			Total                     : record.Total,
 			IsPaid                    : record.IsPaid,
 			TransactionId             : record.TransactionId,
+			IsCompleted				  : record.IsCompleted,
+			IsConfirmed				  : record.IsConfirmed,
+			IsCancelled				  : record.IsCancelled,
+			CancelledOn				  : record.CancelledOn,
+			CompletedOn				  : record.CompletedOn,
+			ConfirmedOn				  : record.ConfirmedOn,
+			IsRescheduled			  : record.IsRescheduled,
+			RescheduledAppointmentId  : record.RescheduledAppointmentId,
+			RescheduledOn			  : record.RescheduledOn,
+			IsActive				  : record.IsActive,
 		};
 	};
+
+	// findAllUpcomingAppointmentsAtSpecificDuration = async(query: any) => {
+	// 	let reminderWindowMinutes = 60;
+	// 	const filters = this.getSearchFilters(query);
+	// 	if (filters.Minutes != null) {
+	// 		reminderWindowMinutes = parseInt(filters.Minutes);
+	// 	}
+	// 	let from = th.getUtcDateBefore(5);
+	// 	let to = th.getUtcDateAfter(reminderWindowMinutes + 5);
+
+	// 	let selector = {}
+	// 	_.set(selector, 'StartTime', {
+	// 		between : [from, to],
+	// 	});
+	// 	_.set(selector, 'IsActive', true)
+
+	// 	const appointments = await this.prisma.appointments.findMany(selector);
+	// 	let apps = [];	
+	// 	for await(let appointment of appointments) {
+	// 		let app = await this.getAppointmentObject(appointment);
+	// 		apps.push(app);
+	// 	}
+	// };
 }

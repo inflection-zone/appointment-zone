@@ -443,7 +443,7 @@ export class TimeHelper {
         return dayjs(date).utc().startOf('day').toDate();
     };
 
-    static getStartOfDayUtc = (date: Date) => {
+    static getStartOfDayUtc = (date: Date): Date => {
         return dayjs(date).startOf('day').utc().toDate();
     };
     
@@ -551,8 +551,8 @@ export class TimeHelper {
         return dayjs.utc().add(date, 'day').toDate();
     };
 
-    static getUtc = (date) => {
-        return dayjs.utc(date);
+    static getUtc = (date: Date): Date => {
+        return dayjs.utc(date).toDate();
     };
 
     static formatDate = (date) => {
@@ -570,10 +570,25 @@ export class TimeHelper {
     };
 
     static spanStartOf = (date: Date): Date => {
-        return dayjs(date).startOf('day').toDate();
+        const dt = dayjs(date);
+        return dt.startOf('day').toDate();
     };
 
     static getDate = (date: Date): Date => {
         return dayjs(date).toDate();
+    };
+
+    static getUtcDateBefore = (minutes: number) => {
+        let x = new Date(Date.now());
+        let m = dayjs.utc(x.toUTCString());
+        let d = m.clone().subtract(minutes, 'minutes');
+        return d.toDate();
+    };
+
+    static getUtcDateAfter = (minutes: number) => {
+        let x = new Date(Date.now());
+        let m = dayjs.utc(x.toUTCString());
+        let d = m.clone().add(minutes, 'minutes');
+        return d.toDate();
     };
 }
