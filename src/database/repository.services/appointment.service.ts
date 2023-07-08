@@ -7,6 +7,7 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import dayjsBusinessDays from 'dayjs-business-days2';
 import { TimeHelper as th} from '../../common/time.helper';
+import { AppointmentCreateModel } from "../../domain.types/appointment/appointment.domain.types";
 ​
  ///////////////////////////////////////////////////////////////////////////
 ​
@@ -25,7 +26,7 @@ export class AppointmentService{
         return this.instance || (this.instance=new this());
     }
 ​
-    create = async (createModel) => {
+    create = async (createModel: AppointmentCreateModel) => {
         try {
             var record = await this.prisma.appointments.create({data:createModel});
             return record;
@@ -33,8 +34,32 @@ export class AppointmentService{
             ErrorHandler.throwDbAccessError('DB Error: Unable to book appointment!',error);
         } 
     };
+
+    getById = async (id: uuid) => {
+        try {
+            var record = await this.prisma.appointments.findUnique({where : {id : id,},});
+            return record;
+        } catch (error) {
+        ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve appointment!', error);
+        }
+    };
+
+    update = async (id:uuid, updateModel: any) => {
+        try {
+            if (Object.keys(updateModel).length > 0) {
+            var res = await this.prisma.appointments.update({data:updateModel,
+                    where : {
+                    id : id,
+                },
+            }); 
+        }
+        return await this.getById(id);
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('DB Error: Unable to update appointment!', error);
+        }
+    };
 ​
-    canCustomerBookThisSlot = async(customerId, startTime, endTime) => {
+    canCustomerBookThisSlot = async(customerId: uuid, startTime: Date, endTime: Date) => {
         try {
             const start = th.utc(startTime);
             const end = th.utc(endTime);
@@ -108,7 +133,7 @@ export class AppointmentService{
         }
     };
 ​
-    checkConflictWithCustomerAppointments = async(customerId: uuid, startTime, endTime) => {
+    checkConflictWithCustomerAppointments = async(customerId: uuid, startTime: Date, endTime: Date) => {
         const start = th.utc(startTime); //dayjs.utc(startTime)
         const end = th.utc(endTime); //dayjs.utc(endTime)
         const record = await this.prisma.appointments.findMany({
@@ -166,9 +191,9 @@ export class AppointmentService{
         return false;
     };
 ​
-    getByDisplayId = async (Displayid) => {
+    getByDisplayId = async(displayId: string) => {
         try {
-            var record = await this.prisma.appointments.findUnique({where : {id : Displayid}
+            var record = await this.prisma.appointments.findMany({where : {DisplayId : displayId}
             });
             return record;
         } catch (error) {
@@ -176,7 +201,7 @@ export class AppointmentService{
         }
     };   
 ​
-    getAvailableSlots = async (timeZone: string, slotsByDate, businessNodeId, businessUserId, businessServiceId, numDaysForSlots: number) => {
+    getAvailableSlots = async (timeZone: string, slotsByDate, businessNodeId: uuid, businessUserId: uuid, businessServiceId: uuid, numDaysForSlots: number) => {
         var endDate = th.businessDaysAdd(numDaysForSlots);
         var appointments = await this.prisma.appointments.findMany({
             where : {
