@@ -17,7 +17,7 @@ describe('Api client tests', function() {
         loadApiClientCreateModel();
         const createModel = getTestData("ApiClientCreateModel");
         agent
-            .post(`/api/v1/api_clients/`)
+            .post(`/api/v1/api-clients/`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)          
@@ -43,7 +43,7 @@ describe('Api client tests', function() {
     it('Get api client by id', function(done) {
         const id = `${getTestData('ApiClientId')}`
         agent
-            .get(`/api/v1/api_clients/${getTestData('ApiClientId')}`)
+            .get(`/api/v1/api-clients/${getTestData('ApiClientId')}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
@@ -64,7 +64,7 @@ describe('Api client tests', function() {
     it('Search api client records', function(done) {
       loadApiClientQueryString();
         agent
-            .get(`/api/v1/api_clients/search${loadApiClientQueryString()}`)
+            .get(`/api/v1/api-clients/search${loadApiClientQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
@@ -85,7 +85,7 @@ describe('Api client tests', function() {
         const updateModel = getTestData("ApiClientUpdateModel");
         const id = `${getTestData('ApiClientId')}`
         agent
-            .put(`/api/v1/api_clients/${getTestData('ApiClientId')}`)
+            .put(`/api/v1/api-clients/${getTestData('ApiClientId')}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
@@ -110,7 +110,7 @@ describe('Api client tests', function() {
         
         //Delete
         agent
-            .delete(`/api/v1/api_clients/${getTestData('ApiClientId')}`)
+            .delete(`/api/v1/api-clients/${getTestData('ApiClientId')}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
@@ -124,7 +124,7 @@ describe('Api client tests', function() {
         loadApiClientCreateModel();
         const createModel = getTestData("ApiClientCreateModel");
         agent
-            .post(`/api/v1/api_clients/`)
+            .post(`/api/v1/api-clients/`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)          
