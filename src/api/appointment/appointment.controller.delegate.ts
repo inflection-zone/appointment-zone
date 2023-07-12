@@ -6,7 +6,6 @@ import { BusinessNodeHourService } from "../../database/repository.services/busi
 import { ErrorHandler } from "../../common/error.handler";
 import { TimeHelper as th } from "../../common/time.helper";
 import { DurationType } from "../../domain.types/miscellaneous/time.types";
-import utc from "dayjs/plugin/utc";
 import dayjs from "dayjs";
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { BusinessUserService } from "../../database/repository.services/business.user.service";
@@ -19,10 +18,14 @@ import { BusinessServiceDto } from "../../domain.types/business/business.service
 import { BusinessNodeCustomerService } from "../../database/repository.services/business.node.customer.service";
 import { ApiError } from "../../common/api.error";
 import { Helper } from "../../common/helper";
-import { AppointmentCreateModel, AppointmentDto, AppointmentSearchFilters, AppointmentUpdateModel, SlotsByDateDto } from "../../domain.types/appointment/appointment.domain.types";
+import { AppointmentCreateModel, 
+	AppointmentDto, 
+	AppointmentSearchFilters, 
+	AppointmentUpdateModel, 
+	SlotsByDateDto } 
+	from "../../domain.types/appointment/appointment.domain.types";
 import _ from "lodash";
-
-dayjs.extend(utc);
+import { AppointmentStatusDto } from "../../domain.types/appointment.status/appointment.status.domain.types";
 
 export class AppointmentControllerDelegate {
     //#region member variables and constructors
@@ -87,24 +90,21 @@ export class AppointmentControllerDelegate {
     		const timeZone = node.TimeZone;
 
     		const currentDate = new Date();
-    		let startDate = th.startOfDayUtc(currentDate);  //th.getStartOfDayUtc(currrentDate);
+    		let startDate = th.startOfDayUtc(currentDate);
     		if (filters.FromDate != null) {
-      		var dt = new Date(filters.FromDate);
-      		startDate = th.startOfDayUtc(dt);  //th.getStartOfDayUtc(currrentDate);
+      		let dt = new Date(filters.FromDate);
+      		startDate = th.startOfDayUtc(dt);
     		}
     		const newDate = th.startOfDayUtc(currentDate);
-    		//let maxAllowable = th.add(newDate, numDaysForSlots);
     		let maxAllowable = th.addDuration(
 			  newDate,
     		  numDaysForSlots, 
     		  DurationType.Day
     		);
     		let endDate = th.addDuration(newDate, 7, DurationType.Day);
-    		//let endDate = th.add(newDate, 7);
     		if (filters.ToDate != null) {
       			const dt = new Date(filters.ToDate);
       			endDate = th.startOfDayUtc(dt);
-      			//endDate = th.getStartOfDayUtc(dt);
       		if (th.isAfter(endDate, maxAllowable)) {
         		endDate = maxAllowable;
       		}
@@ -200,13 +200,12 @@ export class AppointmentControllerDelegate {
 
 	findAvailableSlotsForUser = async (query : any, businessUserId : uuid) => {
     	await validator.validateSearchRequest(query);
-    	var filters: AppointmentSearchFilters = this.getSearchFilters(query);
-    	// var userHours = [];
+    	const filters: AppointmentSearchFilters = this.getSearchFilters(query);
     	const businessUser = await this._businessUserService.getById(businessUserId);
     	if(businessUser == null) {
         	ErrorHandler.throwNotFoundError('Invalid business user id!');
     	}
-    	var businessNodeId = businessUser.BusinessNodeId;
+    	const businessNodeId = businessUser.BusinessNodeId;
     	const node = await this._businessNodeService.getById(businessNodeId);
     	if (node == null) {
         	ErrorHandler.throwNotFoundError('Invalid business node id!');
@@ -223,25 +222,26 @@ export class AppointmentControllerDelegate {
     	if(businessUserService.length == 0) {
         	ErrorHandler.throwNotFoundError('No services found for the user!');
     	}
-    	var userService = businessUserService[0];
-    	var businessServiceId = userService.BusinessServiceId;
+    	let userService = businessUserService[0];
+    	const businessServiceId = userService.BusinessServiceId;
     	const businessService = await this._businessServiceService.getById(businessServiceId);
     	if(businessService == null) {
         	ErrorHandler.throwNotFoundError('No services found for the user.');
 		}
-    	var timeZone = node.TimeZone;
+    	const timeZone = node.TimeZone;
     	const numDaysForSlots = th.parseDurationInDays(node.AllowFutureBookingFor)
     
-    	var sd = new Date();
-    	var startDate = th.startOfDayUtc(sd);
+    	const sd = new Date();
+    	let startDate = th.startOfDayUtc(sd);
     	if(filters.FromDate != null){
-        	var dt = new Date(filters.FromDate);
+        	let dt = new Date(filters.FromDate);
             startDate = th.startOfDayUtc(dt);
         }
+        const newDate = th.startOfDayUtc(sd);
         const maxAllowable = th.addDuration(startDate, numDaysForSlots, DurationType.Day);
-        var endDate = th.addDuration(endDate, 7, DurationType.Day);
+        var endDate = th.addDuration(newDate, 7, DurationType.Day);
         if(filters.ToDate != null) {
-            var dt = new Date(filters.ToDate);
+            const dt = new Date(filters.ToDate);
             endDate = th.startOfDayUtc(dt);
             if(th.isAfter(endDate, maxAllowable)) {
                 endDate = maxAllowable;
@@ -485,6 +485,7 @@ export class AppointmentControllerDelegate {
         const appointment = await this._service.getById(id);
         
         if(Helper.hasProperty(requestBody, 'StatusCode')) {
+			    //If status is updated, ... notify user if configure
             const appointmentStatuses = await this.prisma.appointment_statuses.findMany({
                 where : {
                     AND : {
@@ -504,7 +505,7 @@ export class AppointmentControllerDelegate {
                             IsActive    : false,
                             Status      : appointmentStatus.Status,
                             StatusCode  : appointmentStatus.StatusCode,
-                            CancelledOn : dt, //th.daysToDate
+                            CancelledOn : dt,
                         },
                         where : {
                             id : id,
@@ -531,7 +532,7 @@ export class AppointmentControllerDelegate {
                         data : {
                             IsCompleted : true,
                             IsCancelled : false,
-                            IsActive    : true,
+                            IsActive    : false,
                             Status      : appointmentStatus.Status,
                             StatusCode  : appointmentStatus.StatusCode,
                             ConfirmedOn : dt,
@@ -671,8 +672,8 @@ export class AppointmentControllerDelegate {
 		let dt = th.getDate(new Date());
 		const updated = await this.prisma.appointments.update({
 			data : {
-				IsCompleted : true,
-				IsActive    : false,
+				IsConfirmed : true,
+				IsActive    : true,
 				Status      : appointmentStatus.Status,
 				StatusCode  : appointmentStatus.StatusCode,
 				ConfirmedOn : dt,
@@ -697,7 +698,7 @@ export class AppointmentControllerDelegate {
 
 /////////////////////////////////////////////////////////////////////////////
 
-	getSlotsForDay = (slotsByDate, day: Date) => {
+	getSlotsForDay = (slotsByDate: SlotsByDateDto[], day: Date) => {
 	for(var i = 0; i < slotsByDate.length; i++) {
 		var d = slotsByDate[i].CurrentMoment;
 		if(th.isSame(d, day)){
@@ -724,7 +725,7 @@ export class AppointmentControllerDelegate {
 	return false;
 	};
 
-	getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentStart, appointmentEnd, appointmentStatus, displayId: string) => {
+	getAppointmentCreateModel = (requestBody: AppointmentCreateModel, appointmentStart: Date, appointmentEnd: Date, appointmentStatus: AppointmentStatusDto, displayId: string) => {
 
 	return {
 			DisplayId           : displayId,
@@ -962,7 +963,7 @@ export class AppointmentControllerDelegate {
 			const wd = nodeWorkingDays.get(currentDay);
 			const startTime = wd.startTime;
 			const endTime = wd.endTime;
-			const currDayStart = th.startOfDayUtc(currMoment); //th.getStartOfDayUtc(currMoment); //currMoment
+			const currDayStart = th.startOfDayUtc(currMoment);
 			
 			const startTokens = startTime.split(":");
 			const startHours = parseInt(startTokens[0]);
@@ -1301,6 +1302,10 @@ export class AppointmentControllerDelegate {
 			RescheduledAppointmentId  : record.RescheduledAppointmentId,
 			RescheduledOn			  : record.RescheduledOn,
 			IsActive				  : record.IsActive,
+			CreatedAt                 : record.CreatedAt,
+            UpdatedAt				  : record.UpdatedAt,
+            IsDeleted                 : record.IsDeleted,
+            DeletedAt                 : record.DeletedAt
 		};
 	};
 
