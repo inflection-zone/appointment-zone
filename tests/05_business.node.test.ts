@@ -235,7 +235,7 @@ export const loadBusinessNodeCreateModel = async (
       Longitude: Longitude,
       OverallRating: 3.5,
       AllowWalkinAppointments: true,
-      AllowFutureBookingFor: AllowFutureBookingFor,
+      AllowFutureBookingFor: "30d",
       IsActive: true
     };
     setTestData(model, "BusinessNodeCreateModel");
@@ -263,7 +263,7 @@ export const loadBusinessNodeUpdateModel = async (
       Longitude: Longitude,
       OverallRating: 3.5,
       AllowWalkinAppointments: true,
-      AllowFutureBookingFor: AllowFutureBookingFor,
+      AllowFutureBookingFor: "30d",
       IsActive: true
 };
     global.TestCache.BusinessNodeUpdateModel = model;

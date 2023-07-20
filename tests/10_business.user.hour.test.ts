@@ -254,8 +254,8 @@ export const loadBusinessUserHourCreateMultipleModel = async (
 		  {
 			  Day: 2,
 			  IsOpen: false,
-			  StartTime: "11:00:00",
-			  EndTime: "17:00:00"
+			  StartTime: "00:00:00",
+			  EndTime: "00:00:00"
 		  },
 		  {
 			  Day: 3,
