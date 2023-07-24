@@ -492,6 +492,10 @@ export class TimeHelper {
     // static utcMoment = (date): Date => {
     //     return dayjs(dayjs(date)).utc().toDate();
     // };
+    static addDurationHoursMinutes = (date: Date, hours: number, minutes: number): Date => {
+        const newDate = dayjs(date).add(hours, 'hour').add(minutes, 'minute');
+        return newDate.toDate();
+    };
 
     static addDurationWithOffset = (date: Date, hours: number, minutes: number, offsetHours: number, offsetMinutes : number): Date => {
         const dt = dayjs(date); 
@@ -560,11 +564,6 @@ export class TimeHelper {
         return [year, month, day].join('-');
     };
 
-    // static spanStartOf = (date: Date): Date => {
-    //     const dt = dayjs(date);
-    //     return dt.startOf('day').toDate();
-    // };
-
     static getDate = (date: Date): Date => {
         return dayjs(date).toDate();
     };
@@ -572,14 +571,19 @@ export class TimeHelper {
     static getUtcDateBefore = (minutes: number) => {
         let x = new Date(Date.now());
         let m = dayjs.utc(x.toUTCString());
-        let d = m.clone().subtract(minutes, 'minutes');
+        let d = m.clone().subtract(minutes, 'minute');
         return d.toDate();
     };
 
     static getUtcDateAfter = (minutes: number) => {
         let x = new Date(Date.now());
         let m = dayjs.utc(x.toUTCString());
-        let d = m.clone().add(minutes, 'minutes');
+        let d = m.clone().add(minutes, 'minute');
         return d.toDate();
     };
+
+    static startOfUtc = (date: Date): Date => {
+        return dayjs(date).clone().startOf('day').utc().toDate();
+    };
+
 }

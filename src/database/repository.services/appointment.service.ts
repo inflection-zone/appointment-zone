@@ -132,8 +132,8 @@ export class AppointmentService{
     };
 ​
     checkConflictWithCustomerAppointments = async(customerId: uuid, startTime: Date, endTime: Date) => {
-        const start = th.utcDate(startTime);
-        const end = th.utcDate(endTime);
+        let start = th.utcDate(startTime);
+        let end = th.utcDate(endTime);
 
         const record = await this.prisma.appointments.findMany({
             where : {
@@ -248,5 +248,43 @@ export class AppointmentService{
         }
         return slotsByDate;
     };
+
+    getByUser = async(businessUserId: string) => {
+        try {
+            const search : Prisma.appointmentsFindManyArgs = {};
+            search.where = {
+                BusinessUserId : businessUserId,
+            }
+            let foundResults = await this.prisma.appointments.findMany(search);
+            return foundResults;
+        } catch (error) {
+            ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve appointment!', error);
+        }   
+    };
 ​
+    getByNode = async(businessNodeId: string) => {
+        try {
+            const search : Prisma.appointmentsFindManyArgs = {};
+            search.where = {
+                BusinessNodeId : businessNodeId,
+                }
+            let foundResults = await this.prisma.appointments.findMany(search);
+            return foundResults;
+        } catch (error) {
+        ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve appointment!', error);
+        }   
+    };
+​
+    getByCustomer = async(customerId: string) => {
+        try {
+            const search : Prisma.appointmentsFindManyArgs = {};
+            search.where = {
+                    CustomerId : customerId,
+                }
+            let foundResults = await this.prisma.appointments.findMany(search);
+            return foundResults;
+        } catch (error) {
+        ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve appointment!', error);
+        }
+    };   
 }
