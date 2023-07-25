@@ -142,16 +142,10 @@ export class AppointmentService{
                 IsActive       : true,
                 OR : [
                     {
-                        StartTime : {
-                            gte : startTime,
-                            lte : endTime
-                        }
+                        StartTime : start,
                     },
                     {
-                        EndTime : {
-                            gte : startTime,
-                            lte : endTime
-                        }
+                        EndTime : end,
                     },
                 ],
             },
