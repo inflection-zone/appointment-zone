@@ -154,6 +154,31 @@ describe('Business user hour tests', function() {
             .expect(200, done);
     });
 
+    it('Create multiple business user hour', function(done) {
+      loadBusinessUserHourCreateMultipleModel();
+      const createModel = getTestData("BusinessUserHourCreateMultipleModel");
+      agent
+          .post(`/api/v1/business-user-hours/create-multiple`)
+          .set('Content-Type', 'application/json')
+          .send(createModel)
+          .expect(response => {
+            for(const res of response.body.Data){
+              setTestData(res.id, 'BusinessUserHourIds')
+                expect(res).to.have.property('id');
+                expect(res).to.have.property('BusinessUserId');
+                expect(res).to.have.property('Type');
+                expect(res).to.have.property('Day');
+                expect(res).to.have.property('Date');
+                expect(res).to.have.property('IsOpen');
+                expect(res).to.have.property('Message');
+                expect(res).to.have.property('StartTime');
+                expect(res).to.have.property('EndTime');
+                expect(res).to.have.property('IsActive');
+            }
+            })
+        .expect(201, done);
+    })
+    
     it('Create business user hour again', function(done) {
       loadBusinessUserHourCreateModel();
       const createModel = getTestData("BusinessUserHourCreateModel");
@@ -211,6 +236,50 @@ export const loadBusinessUserHourCreateModel = async (
       IsActive: true,
     };
     setTestData(model, "BusinessUserHourCreateModel");
+}
+
+export const loadBusinessUserHourCreateMultipleModel = async (
+  Type = faker.lorem.word(),
+  Day = faker.number.int({ min: 10 }),
+  Message = faker.lorem.word(),
+) => {
+    const model = {
+      BusinessUserId: getTestData("BusinessUserId"),
+	    DayWiseWorkingHours: [
+		  {
+			  Day: 1,
+			  StartTime: "08:00:00",
+			  EndTime: "22:00:00"
+		  },
+		  {
+			  Day: 2,
+			  IsOpen: false,
+			  StartTime: "00:00:00",
+			  EndTime: "00:00:00"
+		  },
+		  {
+			  Day: 3,
+			  StartTime: "09:00:00",
+			  EndTime: "22:00:00"
+		  },
+		  {
+			  Day: 4,
+			  StartTime: "14:00:00",
+			  EndTime: "22:00:00"
+		  },
+		  {
+			  Day: 5,
+			  StartTime: "16:00:00",
+			  EndTime: "22:00:00"
+		  },
+		  {
+			  Day: 6,
+			  StartTime: "16:00:00",
+			  EndTime: "22:00:00"
+		  }
+	  ]
+  };
+  setTestData(model, "BusinessUserHourCreateMultipleModel");
 }
 
 export const loadBusinessUserHourUpdateModel = (
