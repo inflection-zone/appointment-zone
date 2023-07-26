@@ -59,8 +59,8 @@ export class AppointmentService{
 ​
     canCustomerBookThisSlot = async(customerId: uuid, startTime: Date, endTime: Date) => {
         try {
-            const start = th.utc(startTime);
-            const end = th.utc(endTime);
+            let start = th.utc(startTime);
+            let end = th.utc(endTime);
             const record = await this.prisma.appointments.findMany({
                 where : {
                     CustomerId      : customerId,

@@ -263,7 +263,6 @@ export class AppointmentControllerDelegate {
 		}
 		const startTime = requestBody.StartTime;
 		const endTime = requestBody.EndTime;
-		//const createModel = await this.getAppointmentObject(requestBody);
 		const result = await this._service.canCustomerBookThisSlot(requestBody.CustomerId, startTime, endTime);
 		return result;
 	};
@@ -321,8 +320,8 @@ export class AppointmentControllerDelegate {
 		if(isConflicting) {
 			throw new ApiError('Appointment conflicts with your other appointment!', 500);
 		}
-		const startDate = th.StartOfUtcDay(startTime);
-		const endDate = th.StartOfUtcDay(endTime);
+		const startDate = th.startOfDayUtc(startTime);
+		const endDate = th.startOfDayUtc(endTime);
 		const timeZone = node.TimeZone;
 		const availableSlotsByDate = await this.findSlotAvailability(timeZone, numDayForSlots, startDate, endDate, nodeHours, userHours, businessUserId, businessService, businessNodeId);
 
@@ -953,7 +952,7 @@ export class AppointmentControllerDelegate {
 			const wd = nodeWorkingDays.get(currentDay);
 			const startTime = wd.startTime;
 			const endTime = wd.endTime;
-			const currDayStart = th.startOfDayUtc(currMoment); //th.startOf(currMoment, DurationType.Day); // th.startOfUtc(currMoment);
+			const currDayStart = th.startOfDayUtc(currMoment);
 			
 			const startTokens = startTime.split(":");
 			const startHours = parseInt(startTokens[0]);
@@ -962,8 +961,6 @@ export class AppointmentControllerDelegate {
 			const endHours = parseInt(endTokens[0]);
 			const endMinutes = parseInt(endTokens[1]);
 
-			// let start = th.addDurationHoursMinutes(currDayStart, startHours, startMinutes);
-			// let end = th.addDurationHoursMinutes(currDayStart, endHours, endMinutes);
 			let start = th.addDurationWithOffset(currDayStart,startHours, startMinutes, offsetHours, offsetMinutes);
 			let end = th.addDurationWithOffset(currDayStart, endHours, endMinutes, offsetHours, offsetMinutes);
 					
@@ -971,8 +968,8 @@ export class AppointmentControllerDelegate {
 					CurrentMoment   : currDayStart,
 					Date            : th.format(currDayStart),
 					WeekDay         : th.day(currDayStart),
-					DayStartTime    : start, //th.addDurationHoursMinutes(start, offsetHours, offsetMinutes),
-					DayEndTime      : end, //th.addDurationHoursMinutes(end, offsetHours, offsetMinutes),
+					DayStartTime    : start,
+					DayEndTime      : end,
 					Slots           : this.calculateSlots(timeZone, currDayStart, startTime, endTime, slotDuration, priorBookingWindowMin),
 				});
 		}
@@ -1001,7 +998,7 @@ export class AppointmentControllerDelegate {
 			const nodeSlot = nodeSlotsByDate[k];
 			const weekDay = nodeSlot.WeekDay;
 			const cm = nodeSlot.CurrentMoment;
-			const userCurrentDayStart = th.startOfDayUtc(cm); // th.startOf(cm, DurationType.Day);
+			const userCurrentDayStart = th.startOfDayUtc(cm);
 			let userSlotsForDay = [];
 
 			if (userWorkingDays.has(weekDay)) {

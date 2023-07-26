@@ -438,10 +438,6 @@ export class TimeHelper {
         return dayjs(date).utc().startOf('day').toDate();
     };
 
-    // static getStartOfDayUtc = (date: Date): Date => {
-    //     return dayjs(date).startOf('day').utc().toDate();
-    // };
-    
     static isSameOrBefore = (first: Date, second: Date): boolean => {
         return dayjs(first).isSameOrBefore(dayjs(second));
     };
@@ -465,7 +461,7 @@ export class TimeHelper {
     };
 
     static nextBusinessDay = (date: Date): Date => {
-        return dayjs(date).nextBusinessDay().startOf('day').toDate();
+        return dayjs(date).nextBusinessDay().toDate();
     };
 
     static businessDaysAdd = (number: number): Date => {
@@ -489,9 +485,6 @@ export class TimeHelper {
         return utcDate.toDate();
      };
 
-    // static utcMoment = (date): Date => {
-    //     return dayjs(dayjs(date)).utc().toDate();
-    // };
     static addDurationHoursMinutes = (date: Date, hours: number, minutes: number): Date => {
         const newDate = dayjs(date).add(hours, 'hour').add(minutes, 'minute');
         return newDate.toDate();
