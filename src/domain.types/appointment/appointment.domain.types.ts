@@ -17,7 +17,7 @@ export interface AppointmentCreateModel {
     EndTime?                    : Date;
     Fees                        : float;
     IsCancelled                 : boolean;
-    IsCompleted		            : boolean;
+    IsCompleted                 : boolean;
     IsConfirmed                 : boolean;
     IsPaid                      : boolean;
     IsRescheduled               : boolean;
@@ -27,12 +27,12 @@ export interface AppointmentCreateModel {
     StartTime?                  : Date;
     Status                      : string;
     StatusCode                  : string;
-    Tax		                    : float;
-    Tip		                    : float;
-    Total		                : float;
+    Tax                         : float;
+    Tip                         : float;
+    Total                       : float;
     TransactionId?              : string;
     Type                        : string;
-    IsActive		            : boolean;
+    IsActive                    : boolean;
 }
 
 export interface AppointmentUpdateModel {
@@ -71,7 +71,7 @@ export interface AppointmentDto {
     EndTime?                    : Date;
     Fees                        : float;
     IsCancelled                 : boolean;
-    IsCompleted		            : boolean;
+    IsCompleted                 : boolean;
     IsConfirmed                 : boolean;
     IsPaid                      : boolean;
     IsRescheduled               : boolean;
@@ -81,12 +81,12 @@ export interface AppointmentDto {
     StartTime?                  : Date;
     Status                      : string;
     StatusCode                  : string;
-    Tax		                    : float;
-    Tip		                    : float;
-    Total		                : float;
+    Tax                         : float;
+    Tip                         : float;
+    Total                       : float;
     TransactionId?              : string;
     Type                        : string;
-    IsActive		            : boolean;
+    IsActive                    : boolean;
     Date?                       : Date;
     CreatedAt                   : Date;
     UpdatedAt                   : Date;
