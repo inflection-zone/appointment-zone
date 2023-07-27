@@ -183,6 +183,66 @@ describe('Appointment status tests', function() {
             .expect(200, done);
     });
 
+    it('Create multiple appointment status', function(done) {
+      loadAppointmentStatusMultipleModel();
+      const createModel = getTestData("AppointmentStatusCreateMultipleModel");
+      agent
+          .post(`/api/v1/appointment-statuses/add-multiple`)
+          .set('Content-Type', 'application/json')
+          .send(createModel)
+          .expect(response => {
+            expect(response.body).to.have.property('Status');
+            expect(response.body.Status).to.equal('success');
+          })
+          .expect(201, done);
+  });
+
+    it('Create appointment status again', function(done) {
+      loadAppointmentStatusCreateModel();
+      const createModel = getTestData("AppointmentStatusCreateModel");
+      agent
+          .post(`/api/v1/appointment-statuses/`)
+          .set('Content-Type', 'application/json')
+          .send(createModel)
+          .expect(response => {
+              setTestData( response.body.Data.id, 'AppointmentStatusId');
+              expect(response.body.Data).to.have.property('id');
+              expect(response.body.Data).to.have.property('BusinessNodeId');
+              expect(response.body.Data).to.have.property('Status');
+              expect(response.body.Data).to.have.property('StatusColor');
+              expect(response.body.Data).to.have.property('Sequence');
+              expect(response.body.Data).to.have.property('IsCancellationStatus');
+              expect(response.body.Data).to.have.property('IsConfirmedStatus');
+              expect(response.body.Data).to.have.property('SendNotification');
+              expect(response.body.Data).to.have.property('NotificationText');
+              expect(response.body.Data).to.have.property('SendSms');
+              expect(response.body.Data).to.have.property('SmsText');
+              expect(response.body.Data).to.have.property('IsDashboardStatus');
+              expect(response.body.Data).to.have.property('IsCompletedStatus');
+              expect(response.body.Data).to.have.property('IsWalkinEntryStatus');         
+              expect(response.body.Data).to.have.property('IsActive');
+
+              setTestData( response.body.Data.id, 'AppointmentStatusId');
+
+              expect(response.body.Data.BusinessNodeId).to.equal(getTestData("AppointmentStatusCreateModel").BusinessNodeId);
+              expect(response.body.Data.Status).to.equal(getTestData("AppointmentStatusCreateModel").Status);
+              expect(response.body.Data.StatusColor).to.equal(getTestData("AppointmentStatusCreateModel").StatusColor);
+              expect(response.body.Data.Sequence).to.equal(getTestData("AppointmentStatusCreateModel").Sequence);
+              expect(response.body.Data.IsCancellationStatus).to.equal(getTestData("AppointmentStatusCreateModel").IsCancellationStatus);
+              expect(response.body.Data.IsConfirmedStatus).to.equal(getTestData("AppointmentStatusCreateModel").IsConfirmedStatus);
+              expect(response.body.Data.SendNotification).to.equal(getTestData("AppointmentStatusCreateModel").SendNotification);
+              expect(response.body.Data.NotificationText).to.equal(getTestData("AppointmentStatusCreateModel").NotificationText);
+              expect(response.body.Data.SendSms).to.equal(getTestData("AppointmentStatusCreateModel").SendSms);
+              expect(response.body.Data.SmsText).to.equal(getTestData("AppointmentStatusCreateModel").SmsText);
+              expect(response.body.Data.IsDashboardStatus).to.equal(getTestData("AppointmentStatusCreateModel").IsDashboardStatus);
+              expect(response.body.Data.IsCompletedStatus).to.equal(getTestData("AppointmentStatusCreateModel").IsCompletedStatus);
+              expect(response.body.Data.IsWalkinEntryStatus).to.equal(getTestData("AppointmentStatusCreateModel").IsWalkinEntryStatus);
+              expect(response.body.Data.IsActive).to.equal(getTestData("AppointmentStatusCreateModel").IsActive);
+
+          })
+          .expect(201, done);
+  });
+
 });
 
 ///////////////////////////////////////////////////////////////////////////
@@ -222,6 +282,115 @@ export const loadAppointmentStatusCreateModel = async (
     };
     setTestData(model, "AppointmentStatusCreateModel");
 }
+
+export const loadAppointmentStatusMultipleModel = async (
+) => {
+  const model = {
+      BusinessNodeId: getTestData("BusinessNodeId"),
+      Statuses: [
+          {
+              Status: "PAID/CONFIRMATION PENDING",
+              StatusCode: "1",
+              Sequence: 1,
+              StatusColor: "#f9d232",
+              SendNotification: true,
+              NotificationText: "Confirmation is pending. (Payment for appointment is received)",
+              SendSms: true,
+              SmsText: "Appointment confirmation is pending.",
+              IsDashboardStatus: true,
+              IsCompletedStatus: false,
+              IsCancellationStatus: false,
+              IsWalkinEntryStatus: false,
+              IsActive: true
+          },
+          {
+              Status: "CONFIRMED",
+              StatusCode: "2",
+              Sequence: 2,
+              StatusColor: "#f9d232",
+              SendNotification: true,
+              NotificationText: "Confirmed",
+              SendSms: true,
+              SmsText: "Appointment confirmed.",
+              IsDashboardStatus: true,
+              IsCompletedStatus: false,
+              IsCancellationStatus: false,
+              IsWalkinEntryStatus: false,
+              IsConfirmedStatus: true
+          },
+          {
+              Status: "IN-PROGRESS",
+              StatusCode: "3",
+              Sequence: 3,
+              StatusColor: "#f9d242",
+              SendNotification: false,
+              NotificationText: "In progress",
+              SendSms: false,
+              SmsText: "Appointment in progress.",
+              IsDashboardStatus: true,
+              IsCompletedStatus: false,
+              IsCancellationStatus: false,
+              IsWalkinEntryStatus: false
+          },
+          {
+              Status: "COMPLETED",
+              StatusCode: "4",
+              Sequence: 4,
+              StatusColor: "#f9d242",
+              SendNotification: false,
+              NotificationText: "Completed",
+              SendSms: false,
+              SmsText: "Appointment is complete.",
+              IsDashboardStatus: true,
+              IsCompletedStatus: true,
+              IsCancellationStatus: false,
+              IsWalkinEntryStatus: false
+          },
+          {
+              Status: "CANCELLED",
+              StatusCode: "5",
+              Sequence: 5,
+              StatusColor: "#f9d242",
+              SendNotification: false,
+              NotificationText: "Cancelled",
+              SendSms: false,
+              SmsText: "Appointment is Cancelled.",
+              IsDashboardStatus: true,
+              IsCompletedStatus: false,
+              IsCancellationStatus: true,
+              IsWalkinEntryStatus: false
+          },
+          {
+              Status: "POSTPONED",
+              StatusCode: "6",
+              Sequence: 6,
+              StatusColor: "#f9d242",
+              SendNotification: true,
+              NotificationText: "Appointment postponed",
+              SendSms: false,
+              SmsText: "Appointment is postponed.",
+              IsDashboardStatus: true,
+              IsCompletedStatus: false,
+              IsCancellationStatus: true,
+              IsWalkinEntryStatus: false
+          },
+          {
+              Status: "WALK-IN",
+              StatusCode: "7",
+              Sequence: 7,
+              StatusColor: "#f9d242",
+              SendNotification: true,
+              NotificationText: "Walk-in apppointment started",
+              SendSms: false,
+              SmsText: "Walk-in apppointment started.",
+              IsDashboardStatus: true,
+              IsCompletedStatus: false,
+              IsCancellationStatus: false
+          }
+      ]
+  }
+  setTestData(model, "AppointmentStatusCreateMultipleModel");
+  }
 
 export const loadAppointmentStatusUpdateModel = async (
   Status = faker.lorem.word(),

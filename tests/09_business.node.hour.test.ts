@@ -22,7 +22,7 @@ describe('Business node hour tests', function() {
             .set('Content-Type', 'application/json')
             .send(createModel)
             .expect(response => {
-                setTestData( response.body.Data.id, 'BusinessNodeHourId')
+                setTestData(response.body.Data.id, 'BusinessNodeHourId')
                 expect(response.body.Data).to.have.property('id');
                 expect(response.body.Data).to.have.property('BusinessNodeId');
                 expect(response.body.Data).to.have.property('Type');
@@ -47,7 +47,6 @@ describe('Business node hour tests', function() {
                 expect(response.body.Data.EndTime).to.equal(getTestData("BusinessNodeHourCreateModel").EndTime);
                 expect(response.body.Data.IsActive).to.equal(getTestData("BusinessNodeHourCreateModel").IsActive);
                 expect(response.body.Data.IsDeleted).to.equal(getTestData("BusinessNodeHourCreateModel").IsDeleted);
-
             })
             .expect(201, done);
     });
@@ -160,6 +159,32 @@ describe('Business node hour tests', function() {
             .expect(200, done);
     });
 
+    it('Create multiple business node hour', function(done) {
+      loadBusinessNodeHourCreateMultipleModel();
+      const createModel = getTestData("BusinessNodeHourCreateMultipleModel");
+      agent
+          .post(`/api/v1/business-node-hours/add-multiple`)
+          .set('Content-Type', 'application/json')
+          .send(createModel)
+          .expect(response => {
+            for(const res of response.body.Data){
+              setTestData(res.id, 'BusinessNodeHourIds')
+                expect(res).to.have.property('id');
+                expect(res).to.have.property('BusinessNodeId');
+                expect(res).to.have.property('Type');
+                expect(res).to.have.property('Day');
+                expect(res).to.have.property('Date');
+                expect(res).to.have.property('IsOpen');
+                expect(res).to.have.property('Message');
+                expect(res).to.have.property('StartTime');
+                expect(res).to.have.property('EndTime');
+                expect(res).to.have.property('IsActive');
+                expect(res).to.have.property('IsDeleted');
+            }
+            })
+        .expect(201, done);
+    })
+    
     it('Create business node hour again', function(done) {
       loadBusinessNodeHourCreateModel();
       const createModel = getTestData("BusinessNodeHourCreateModel");
@@ -209,7 +234,7 @@ export const loadBusinessNodeHourCreateModel = async (
 ) => {
     const model = {
       BusinessNodeId: getTestData("BusinessNodeId"),
-      Type: Type,
+      Type: 'WORK-DAY',
       Day: 6,
       Date: '2020-07-15T16:43:41.000Z',
       IsOpen: true,
@@ -220,6 +245,49 @@ export const loadBusinessNodeHourCreateModel = async (
       IsDeleted: false
     };
     setTestData(model, "BusinessNodeHourCreateModel");
+}
+
+export const loadBusinessNodeHourCreateMultipleModel = async (
+  Type = faker.lorem.word(),
+  Day = faker.number.int({ min: 10 }),
+  Message = faker.lorem.word(),
+) => {
+    const model = {
+      BusinessNodeId: getTestData("BusinessNodeId"),
+      DayWiseWorkingHours: [
+        {
+          Day: 1,
+          StartTime: "09:00:00",
+          EndTime: "22:00:00"
+        },
+        {
+          Day: 2,
+          StartTime: "09:00:00",
+          EndTime: "22:00:00"
+        },
+        {
+          Day: 3,
+          StartTime: "09:00:00",
+          EndTime: "22:00:00"
+        },
+        {
+          Day: 4,
+          StartTime: "14:00:00",
+          EndTime: "22:00:00"
+        },
+        {
+          Day: 5,
+          StartTime: "16:00:00",
+          EndTime: "22:00:00"
+        },
+        {
+          Day: 6,
+          StartTime: "16:00:00",
+          EndTime: "22:00:00"
+        }
+      ]
+    };
+    setTestData(model, "BusinessNodeHourCreateMultipleModel");
 }
 
 export const loadBusinessNodeHourUpdateModel = (
