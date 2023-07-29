@@ -14,19 +14,23 @@ export class BusinessNodeService{
     }
 
     create = async (createModel) => {
-        try{
-            var record=await this.prisma.business_nodes.create({data:createModel});
-            //console.log(record);
+        try {
+            var record = await this.prisma.business_nodes.create({
+                data: createModel,
+            })
             return record;
-        }catch (error) {
+        } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create business node!',error);
         } 
     };
 
     getById = async (id) => {
         try {
-            var record = await this.prisma.business_nodes.findUnique({where : {id : id}
-            });
+            var record = await this.prisma.business_nodes.findUnique({
+                where: {
+                    id : id,
+                },
+            })
             return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve business node!', error);
@@ -46,7 +50,7 @@ export class BusinessNodeService{
                 }
             }
             if (filters.BusinessId != null) {
-                search.where =   {
+                search.where = {
                     BusinessId : filters.BusinessId
                 }
             }
@@ -86,13 +90,15 @@ export class BusinessNodeService{
     update = async (id, updateModel) => {
         try {
             if (Object.keys(updateModel).length > 0) {
-                var res = await this.prisma.business_nodes.updateMany({data:updateModel,
-                    where :{
-                    id : id
-                }
-             });   
-        }
-        return await this.getById(id);
+                var res = await this.prisma.business_nodes.updateMany({
+                    where:
+                    {
+                        id : id,
+                    },
+                    data: updateModel,
+                });
+            }
+            return await this.getById(id);
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to update Business node!', error);
         }
@@ -104,8 +110,13 @@ export class BusinessNodeService{
             //     { id: id } 
             // });
             const deleted = await this.prisma.business_nodes.updateMany({
-                where : { id : id, IsActive : true },
-                data : { IsActive : false },
+                where: {
+                    id : id, 
+                    IsActive : true,
+                },
+                data : {
+                    IsActive : false
+                },
             })
             return deleted;
         } catch (error) {
@@ -115,9 +126,12 @@ export class BusinessNodeService{
 
     getBusinessNodeWithEmail = async (email) => {
         try {
-            const record = await this.prisma.business_nodes.findUnique({ where : {Email : email}
-        });
-        return record;
+            const record = await this.prisma.business_nodes.findUnique({
+                where: {
+                    Email : email,
+                },
+            })
+            return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('Unable to check if business node exists with email!', error);
         }
@@ -125,8 +139,11 @@ export class BusinessNodeService{
 
     getBusinessNodeWithMobile = async (mobile) => {
         try {
-            const record = await this.prisma.business_nodes.findUnique({ where : { Mobile: mobile }
-            });
+            const record = await this.prisma.business_nodes.findUnique({
+                where: {
+                    Mobile: mobile,
+                },
+            })
             return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('Unable to check if business node exists with mobile!', error);
@@ -144,7 +161,7 @@ export class BusinessNodeService{
             AllowWalkinAppointments : true,
             IsActive                : true
         }
-        const created = await this.prisma.business_nodes.create({data : newNode});
+        const created = await this.prisma.business_nodes.create({data: newNode});
         return created;
     };
 

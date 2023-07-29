@@ -1,10 +1,11 @@
 import { ApiError } from "../../common/api.error";
-import { BusinessNodeUpdateModel, BusinessNodeDto,BusinessNodeSearchFilters, BusinessNodeSearchResults  } from "../../domain.types/business.node/business.node.domain.types";
-import { BusinessNodesValidator, BusinessNodesValidator as validator } from './business.node.validator';
+import { BusinessNodeUpdateModel, BusinessNodeDto,BusinessNodeSearchFilters, BusinessNodeSearchResults, BusinessNodeCreateModel  } from "../../domain.types/business.node/business.node.domain.types";
+import { BusinessNodeValidator as validator } from './business.node.validator';
 import { BusinessNodeService } from '../../database/repository.services/business.node.service';
 import { ErrorHandler } from '../../common/error.handler';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { Helper } from "../../common/helper";
+import { BusinessNodeHourService } from "../../database/repository.services/business.node.hour.service";
 
 export class BusinessNodeControllerDelegate {
 
@@ -12,8 +13,11 @@ export class BusinessNodeControllerDelegate {
 
     _service: BusinessNodeService = null;
 
+    _businessNodeHourService : BusinessNodeHourService = null;
+
     constructor() {
         this._service = new BusinessNodeService();
+        this._businessNodeHourService = new BusinessNodeHourService();
     }
 
     //#endregion
@@ -21,12 +25,17 @@ export class BusinessNodeControllerDelegate {
     create = async (requestBody: any) => {
         await validator.validateCreateRequest(requestBody);
         const { nodeCreateModel } =
-            await BusinessNodesValidator.getValidNodeCreateModel(requestBody);
+            await this.getValidNodeCreateModel(requestBody);
         const record: BusinessNodeDto = await this._service.create(nodeCreateModel);
         if (record === null) {
             throw new ApiError('Unable to create Business node!', 400);
         }
-        return this.getEnrichedDto(record);
+        const defaultServiceHours = await this._businessNodeHourService.createDefaultHoursForNode(record);
+        const businessNode = {
+            Node                : record,
+            DefaultServiceHours : defaultServiceHours
+        }
+        return businessNode;
     };
 
     getById = async (id: uuid) => {
@@ -37,7 +46,7 @@ export class BusinessNodeControllerDelegate {
         return this.getEnrichedDto(record);
     };
 
-    search = async (query) => {
+    search = async (query: any) => {
         await validator.validateSearchRequest(query);
         var filters: BusinessNodeSearchFilters = this.getSearchFilters(query);
         var searchResults : BusinessNodeSearchResults = await this._service.search(filters);
@@ -86,6 +95,42 @@ export class BusinessNodeControllerDelegate {
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    getValidNodeCreateModel = async (requestBody) => {
+
+        const nodeService = new BusinessNodeService();
+
+        var nodeWithPhone = await nodeService.getBusinessNodeWithMobile( requestBody.Mobile);
+        if (nodeWithPhone) {
+            ErrorHandler.throwDuplicateUserError(`User with phone ${requestBody.Mobile} already exists!`);
+        }
+
+        var nodeWithEmail = await nodeService.getBusinessNodeWithEmail(requestBody.Email);
+        if (nodeWithEmail) {
+            ErrorHandler.throwDuplicateUserError(`User with email ${requestBody.Email} already exists!`);
+        }
+
+        var nodeCreateModel: BusinessNodeCreateModel = await this.getNodeCreateModel(requestBody);
+        return { nodeCreateModel};
+    };
+
+    getNodeCreateModel = (requestBody): BusinessNodeCreateModel => {
+        return {
+            BusinessId                : requestBody.BusinessId,
+            Name                      : requestBody.Name,
+            Mobile                    : requestBody.Mobile,
+            Email                     : requestBody.Email,
+            Address                   : requestBody.Address,
+            DisplayPicture            : requestBody.DisplayPicture? requestBody.DisplayPicture: null,
+            Longitude                 : requestBody.Longitude ? requestBody.Longitude : null,
+            Lattitude                 : requestBody.Lattitude ? requestBody.Lattitude : null,
+            OverallRating             : requestBody.OverallRating? requestBody.OverallRating : null,
+            TimeZone                  : requestBody.TimeZone ? requestBody.TimeZone : "+05:30",
+            AllowWalkinAppointments   : requestBody.AllowWalkinAppointments ? requestBody.AllowWalkinAppointments : true,
+            AllowFutureBookingFor     : requestBody.AllowFutureBookingFor ? requestBody.AllowFutureBookingFor : '30d',
+            IsActive                  : true,
+        };
+    };
 
     getSearchFilters = (query) => {
 
