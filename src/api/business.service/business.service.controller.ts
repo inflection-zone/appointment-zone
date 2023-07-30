@@ -24,6 +24,7 @@ export class BusinessServiceController extends BaseController {
             const record = await this._delegate.create(request.body);
             const message = 'Business service added successfully!';
             ResponseHandler.success(request, response, message, 201, record);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -35,6 +36,7 @@ export class BusinessServiceController extends BaseController {
             const record = await this._delegate.getById(request.params.id);
             const message ="Business service retrieved successfully!";
             ResponseHandler.success(request, response, message, 200, record);
+
         } catch(error){
             ResponseHandler.handleError(request, response, error);
         }
@@ -46,6 +48,7 @@ export class BusinessServiceController extends BaseController {
             const searchResults = await this._delegate.getByBusiness(request.params.id, request.query);
             const message = 'Business service records retrieved successfully!';
             ResponseHandler.success(request, response, message, 200, searchResults);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -57,6 +60,7 @@ export class BusinessServiceController extends BaseController {
             const searchResults = await this._delegate.search(request.query);
             const message = 'Business service records retrieved successfully!';
             ResponseHandler.success(request, response, message, 200, searchResults);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -68,6 +72,7 @@ export class BusinessServiceController extends BaseController {
             const updatedRecord = await this._delegate.update(request.params.id, request.body);
             const message = 'Business service updated successfully!';
             ResponseHandler.success(request, response, message, 200, updatedRecord);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -79,6 +84,7 @@ export class BusinessServiceController extends BaseController {
             const result = await this._delegate.delete(request.params.id);
             const message = 'Business service deleted successfully!';
             ResponseHandler.success(request, response, message, 200, result);
+            
         }catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

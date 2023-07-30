@@ -13,8 +13,9 @@ export class BusinessServiceService{
 
     create = async (createModel) => {
         try {
-            var record = await this.prisma.business_services.create({data:createModel});
-            //console.log(record);
+            var record = await this.prisma.business_services.create({
+                data: createModel
+            });
             return record;
         }catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create business service!',error);
@@ -23,7 +24,10 @@ export class BusinessServiceService{
 
     getById = async (id) => {
             try {
-                var record = await this.prisma.business_services.findUnique({where : {id : id}
+                var record = await this.prisma.business_services.findUnique({
+                    where : {
+                        id : id,
+                    },
                 });
 
                 return record;
@@ -58,7 +62,7 @@ export class BusinessServiceService{
             else {
                 let node = await this.prisma.business_nodes.findUnique({where : {id: filters.BusinessNodeId},});
                 nodeServices = await this.prisma.business_services.findMany({
-                    where : {
+                    where: {
                         IsActive : true,
                         BusinessNodeId : node.id,
                         Name : filters.Name,
@@ -85,7 +89,11 @@ export class BusinessServiceService{
    
     exists = async (id) => {
         try {
-            const record = await this.prisma.business_services.findUnique({where:{id:id}});
+            const record = await this.prisma.business_services.findUnique({
+                where: {
+                    id:id,
+                },
+            });
             return record !== null;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to determine existance of business services!', error);
@@ -146,11 +154,12 @@ export class BusinessServiceService{
     update = async (id, updateModel) => {
         try {
             if (Object.keys(updateModel).length > 0) {
-                var res = await this.prisma.business_services.updateMany({data:updateModel,
-                        where :{
-                        id : id
-                    }
-                 });                
+                var res = await this.prisma.business_services.updateMany({
+                    data:updateModel,
+                    where : {
+                        id : id,
+                    },
+                });                
             }
             return await this.getById(id);
         } catch (error) {
@@ -164,8 +173,13 @@ export class BusinessServiceService{
             //     { id: id } 
             // })
             const deleted = await this.prisma.business_services.updateMany({
-                where : { id : id, IsActive : true },
-                data : { IsActive : false },
+                where : {
+                    id : id,
+                    IsActive : true,
+                },
+                data : {
+                    IsActive : false,
+                },
             })
             return deleted;
         } catch (error) {
