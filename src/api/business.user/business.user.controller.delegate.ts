@@ -1,6 +1,6 @@
 import { ApiError } from "../../common/api.error";
-import { BusinessUserUpdateModel, BusinessUserDto,BusinessUserSearchFilters, BusinessUserSearchResults  } from "../../domain.types/business.user/business.user.domain.types";
-import { BusinessUsersValidator, BusinessUsersValidator as validator } from '../business.user/business.user.validator';
+import { BusinessUserCreateModel, BusinessUserUpdateModel, BusinessUserDto, BusinessUserSearchFilters } from "../../domain.types/business.user/business.user.domain.types";
+import { BusinessUsersValidator as validator } from '../business.user/business.user.validator';
 import { BusinessUserService } from '../../database/repository.services/business.user.service';
 import { ErrorHandler } from '../../common/error.handler';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
@@ -33,7 +33,7 @@ export class BusinessUserControllerDelegate {
     create = async (requestBody: any) => {
         await validator.validateCreateRequest(requestBody);
         const { userCreateModel } =
-            await BusinessUsersValidator.getValidUserCreateModel(requestBody);
+            await this.getValidUserCreateModel(requestBody);
         const record: BusinessUserDto = await this._service.create(userCreateModel);
         if (record === null) {
             throw new ApiError('Unable to create business user!', 400);
@@ -54,9 +54,9 @@ export class BusinessUserControllerDelegate {
         return this.getEnrichedDto(record);
     };
 
-    search = async (query) => {
+    search = async (query: any) => {
         await validator.validateSearchRequest(query);
-        var filters = this.getSearchFilters(query);
+        var filters: BusinessUserSearchFilters = this.getSearchFilters(query);
         var searchResults = await this._service.search(filters);
         var items = searchResults.Items.map(x => this.getSearchDto(x));
         searchResults.Items = items;
@@ -69,6 +69,7 @@ export class BusinessUserControllerDelegate {
         if (record === null) {
             ErrorHandler.throwNotFoundError('Business user with id ' + id.toString() + ' cannot be found!');
         }
+
         if (Helper.hasProperty(requestBody, 'Mobile')) {
             var mobile = requestBody.Mobile;
             var otherEntity = await this._service.getBusinessUserWithMobile(mobile);
@@ -76,6 +77,7 @@ export class BusinessUserControllerDelegate {
                 ErrorHandler.throwDuplicateUserError(`Business user with mobile ${requestBody.Mobile} already exists!`);
             }
         }
+
         if (Helper.hasProperty(requestBody, 'Email')) {
             var email = requestBody.Email;
             var otherEntity = await this._service.getBusinessUserWithEmail(email);
@@ -83,6 +85,7 @@ export class BusinessUserControllerDelegate {
                 ErrorHandler.throwDuplicateUserError(`Business user with email ${requestBody.Email} already exists!`);
             }
         }
+
         const updateModel: BusinessUserUpdateModel = this.getUpdateModel(requestBody);
         const updated = await this._service.update(id, updateModel);
         if (updated == null) {
@@ -103,23 +106,67 @@ export class BusinessUserControllerDelegate {
     };
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    getUserCreateModel = (requestBody): BusinessUserCreateModel => {
+
+        const dob = requestBody.BirthDate ? Date.parse(requestBody.BirthDate) : null;
+
+        return {
+            BusinessNodeId                 : requestBody.BusinessNodeId,
+            FirstName                      : requestBody.FirstName,
+            LastName                       : requestBody.LastName,
+            Prefix                         : requestBody.Prefix,
+            Mobile                         : requestBody.Mobile,
+            Email                          : requestBody.Email,
+            Gender                         : requestBody.Gender,
+            DisplayPicture                 : requestBody.DisplayPicture? requestBody.DisplayPicture : null,
+            AboutMe                        : requestBody.AboutMe ? requestBody.AboutMe : null,
+            Qualification                  : requestBody.Qualification ? requestBody.Qualification : null,
+            Experience                     : requestBody.Experience ? requestBody.Experience : null,
+            OverallRating                  : null,
+            Dob                            : new Date(dob),
+            IsAvailableForEmergency        : requestBody.IsAvailableForEmergency ? requestBody.IsAvailableForEmergency : true,
+            Facebook                       : requestBody.Facebook? requestBody.Facebook : null,
+            Linkedin                       : requestBody.Linkedin? requestBody.Linkedin : null,
+            Twitter                        : requestBody.Twitter? requestBody.Twitter : null,
+            Instagram                      : requestBody.Instagram ? requestBody.Instagram : null,
+            Yelp                           : requestBody.Yelp? requestBody.Yelp : null,
+            IsActive                       : true
+        };
+    };
+
+    getValidUserCreateModel = async (requestBody) => {
+
+        const userService = new BusinessUserService();
+
+        var userWithPhone = await userService.getBusinessUserWithMobile( requestBody.Mobile);
+        if (userWithPhone) {
+            ErrorHandler.throwDuplicateUserError(`Business user with phone ${requestBody.Mobile} already exists!`);
+        }
+        var userWithEmail = await userService.getBusinessUserWithEmail(requestBody.Email);
+        if (userWithEmail) {
+            ErrorHandler.throwDuplicateUserError(`Business user with email ${requestBody.Email} already exists!`);
+        }
+        var userCreateModel: BusinessUserCreateModel = await this.getUserCreateModel(requestBody);
+        return { userCreateModel};
+    };
+
     getSearchFilters = (query) => {
         
         var filters = {};
 
-        var businessNodeId = query.businessNodeId != 'undefined' ? query.businessNodeId : null;
+        var businessNodeId = (typeof query.businessNodeId != 'undefined') ? query.businessNodeId : null;
         if (businessNodeId != null) {
             filters['BusinessNodeId'] = businessNodeId;
         } 
-        var businessId = query.businessId != 'undefined' ? query.businessId : null;
+        var businessId = (typeof query.businessId != 'undefined') ? query.businessId : null;
         if (businessId != null) {
             filters['BusinessId'] = businessId;
         } 
-        var businessServiceId = query.businessServiceId != 'undefined' ? query.businessServiceId : null;
+        var businessServiceId = (typeof query.businessServiceId != 'undefined') ? query.businessServiceId : null;
         if (businessServiceId != null) {
             filters['BusinessServiceId'] = businessServiceId;
         } 
-        var name = query.name ? query.name : null;
+        var name = (typeof query.name != 'undefined') ? query.name : null;
         if (name != null) {
             filters['Name'] = name;
         }
