@@ -24,6 +24,7 @@ export class BusinessUserHourController extends BaseController {
             const record = await this._delegate.create(request.body);
             const message = 'Business user hours added successfully!';
             ResponseHandler.success(request, response, message, 201, record);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -35,18 +36,20 @@ export class BusinessUserHourController extends BaseController {
             const records = await this._delegate.createMultiple(request.body);
             const message = 'Business user hours added successfully!';
             ResponseHandler.success(request, response, message, 201, records);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
     getById = async (request:express.Request, response:express.Response): Promise <void>=>{
-        try{
+        try {
             await this.authorize('BusinessUserHour.GetById', request, response, false);
             const record = await this._delegate.getById(request.params.id);
             const message ="Business user hours retrieved successfully!";
             ResponseHandler.success(request, response, message, 200, record);
-        }catch(error){
+
+        } catch(error){
             ResponseHandler.handleError(request, response, error);
         }
     };
@@ -57,6 +60,7 @@ export class BusinessUserHourController extends BaseController {
             const searchResults = await this._delegate.search(request.query);
             const message = 'Business user hours records retrieved successfully!';
             ResponseHandler.success(request, response, message, 200, searchResults);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -68,6 +72,7 @@ export class BusinessUserHourController extends BaseController {
             const updatedRecord = await this._delegate.update(request.params.id, request.body);
             const message = 'Business user hours updated successfully!';
             ResponseHandler.success(request, response, message, 200, updatedRecord);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -79,6 +84,7 @@ export class BusinessUserHourController extends BaseController {
             const updatedRecord = await this._delegate.updateMultiple(request.params.businessUserid, request.body);
             const message = 'Business user hours updated successfully!';
             ResponseHandler.success(request, response, message, 200, updatedRecord);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -91,10 +97,8 @@ export class BusinessUserHourController extends BaseController {
             const message = 'Business user hours deleted successfully!';
             ResponseHandler.success(request, response, message, 200, result);
 
-        }catch (error) {
+        } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
-
-    
 }
