@@ -14,26 +14,32 @@ export class BusinessUserServiceService{
 
     create = async (createModel) => {
         try{
-            var record = await this.prisma.business_user_services.create({data:createModel});
-            //console.log(record);
+            var record = await this.prisma.business_user_services.create({
+                data: createModel
+            })
             return record;
         }catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to create business user service!', error)
+            ErrorHandler.throwDbAccessError('DB Error: Unable to create business user service!', error);
         } 
     };
     
     createMany = async (createModels) => {
-        try{
-            var records = await this.prisma.business_user_services.createMany({data:createModels});
+        try {
+            var records = await this.prisma.business_user_services.createMany({
+                data: createModels
+            });
             return records;
-            }catch (error) {
-                ErrorHandler.throwDbAccessError('DB Error: Unable to create business user service!', error)
+            } catch (error) {
+                ErrorHandler.throwDbAccessError('DB Error: Unable to create business user service!', error);
         } 
     };
 
     getById = async (id) => {
             try {
-                var record = await this.prisma.business_user_services.findUnique({where : {id : id}
+                var record = await this.prisma.business_user_services.findUnique({
+                    where: {
+                        id : id,
+                    },
                 });
                 return record;
             } catch (error) {
@@ -112,11 +118,12 @@ export class BusinessUserServiceService{
     update = async (id, updateModel) => {
         try {
             if (Object.keys(updateModel).length > 0) {
-                var res = await this.prisma.business_user_services.updateMany({data:updateModel,
-                        where : {
-                            id : id
-                        }
-                    });  
+                var res = await this.prisma.business_user_services.updateMany({
+                    data: updateModel,
+                    where: {
+                        id : id,
+                    },
+                })
             }
             return await this.getById(id);
         } catch (error) {
@@ -126,8 +133,10 @@ export class BusinessUserServiceService{
     
     delete = async (id) => {
         try {
-            const result = await this.prisma.business_user_services.delete({ where: 
-                { id: id } 
+            const result = await this.prisma.business_user_services.delete({
+                where: {
+                    id : id,
+                }, 
             });
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to delete business user service!', error);

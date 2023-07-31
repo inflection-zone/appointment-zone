@@ -17,15 +17,20 @@ export class BusinessUserServiceControllerDelegate {
 
     //#region member variables and constructors
 
+    public static instance:BusinessUserServiceService = null;
+
     _service: BusinessUserServiceService = null;
+
     _businessUserService: BusinessUserService = null;
+
     _businessServiceService: BusinessServiceService =null;
 
     constructor() {
         this._service = new BusinessUserServiceService();
-        this._businessUserService = new BusinessUserService();
-        this._businessServiceService = new BusinessServiceService();
 
+        this._businessUserService = new BusinessUserService();
+
+        this._businessServiceService = new BusinessServiceService();
     }
 
     create = async (requestBody: any) => {
@@ -49,31 +54,27 @@ export class BusinessUserServiceControllerDelegate {
         return this.getEnrichedDto(record);
     };
 
-    createMany = async (requestBody: any) => {
-        await validator.validateCreateManyRequest(requestBody);
-        var createModels = await this.getValidCreateManyModel(requestBody);
+    createMultiple = async (requestBody: any) => {
+        await validator.validateCreateMultipleRequest(requestBody);
+        var createModels = await this.getValidCreateMultipleModel(requestBody);
+        for (const createModel of createModels)
         {
-            for (const createModel of createModels)
-            {
-                var businessUserId = createModel.BusinessUserId;
-                const businessUser = await this._businessUserService.getById(businessUserId);
-                if (!businessUser) {
-                    ErrorHandler.throwNotFoundError(`Business user id not found!`);
-                }
-                var businessServiceId = createModel.BusinessServiceId;
-                const businessService = await this._businessServiceService.getById(businessServiceId);
-                if (!businessService) {
-                    ErrorHandler.throwNotFoundError(`Business service id not found!`);
-                }
-          }
+            var businessUserId = createModel.BusinessUserId;
+            const businessUser = await this._businessUserService.getById(businessUserId);
+            if (!businessUser) {
+                ErrorHandler.throwNotFoundError(`Business user id not found!`);
+            }
+            var businessServiceId = createModel.BusinessServiceId;
+            const businessService = await this._businessServiceService.getById(businessServiceId);
+            if (!businessService) {
+                ErrorHandler.throwNotFoundError(`Business service id not found!`);
+            }
+        }
         const records = await this._service.createMany(createModels);
         if (records === null) {
             throw new ApiError('Unable to create business user service!', 400);
         }
-        return records;
-        // return this.getEnrichedDtos(records);
-            
-    }
+        return records;  
     };
 
     getById = async (id: uuid) => {
@@ -150,12 +151,12 @@ export class BusinessUserServiceControllerDelegate {
         return createModel;
     };
 
-    getCreateManyModel = (requestBody) => {
+    getCreateMultipleModel = (requestBody) => {
         const records: BusinessUserServiceCreateModel[] = [];
         for (const s of requestBody) {
             const record = {
-                BusinessUserId     : s.BusinessUserId ? s.BusinessUserId : null,
-                BusinessServiceId  : s.BusinessServiceId ? s.BusinessServiceId : null,
+                BusinessUserId     : s.BusinessUserId,
+                BusinessServiceId  : s.BusinessServiceId,
                 IsActive           : s.IsActive ? s.IsActive : true
             };  
             records.push(record);
@@ -163,88 +164,73 @@ export class BusinessUserServiceControllerDelegate {
         return records
     };
 
-    getValidCreateManyModel = async (requestBody) => {
+    getValidCreateMultipleModel = async (requestBody) => {
         for (const s of requestBody) {
         const existing = await this._service.exists(s.BusinessServiceId, s.BusinessUserId);
         if(existing){
             ErrorHandler.throwNotFoundError(`Business user service with BusinessServiceId = ${s.BusinessServiceId} and BusinessUserId = ${s.BusinessUserId} already exists!`);
         }
-        var createModels = await this.getCreateManyModel(requestBody);
+        var createModels = await this.getCreateMultipleModel(requestBody);
         }
         return createModels;
     };
 
     getSearchFilters = (query) => {
         var filters = {};
+        var businessServiceId = query.businessServiceId ? query.businessServiceId : null;
+        if (businessServiceId != null) {
+            filters['BusinessServiceId'] = businessServiceId;
+        }
+        var businessUserId = query.businessUserId ? query.businessUserId : null;
+        if (businessUserId != null) {
+            filters['BusinessUserId'] = businessUserId;
+        }
+        var isActive= query.isActive ? query.isActive : null;
+        if (isActive != null) {
+            filters['IsActive'] = isActive;
+        }
+        return filters;
+    };
 
-            var businessServiceId = query.businessServiceId ? query.businessServiceId : null;
-            if (businessServiceId != null) {
-                filters['BusinessServiceId'] = businessServiceId;
+    getUpdateModel = (requestBody): BusinessUserServiceUpdateModel => {
+
+        const updateModel: BusinessUserServiceUpdateModel = {};
+            if (Helper.hasProperty(requestBody, 'BusinessServiceId')) {
+                updateModel.BusinessServiceId = requestBody.BusinessServiceId;
             }
-            var businessUserId = query.businessUserId ? query.businessUserId : null;
-            if (businessUserId != null) {
-                filters['BusinessUserId'] = businessUserId;
+            if (Helper.hasProperty(requestBody, 'BusinessUserId')) {
+                updateModel.BusinessUserId = requestBody.BusinessUserId;
             }
-            var isActive= query.isActive ? query.isActive : null;
-            if (isActive != null) {
-                filters['IsActive'] = isActive;
+            if (Helper.hasProperty(requestBody, 'IsActive')) {
+                updateModel.IsActive = requestBody.IsActive;
             }
-            return filters;
-
-        };
-
-        getUpdateModel = (requestBody): BusinessUserServiceUpdateModel => {
-
-            const updateModel: BusinessUserServiceUpdateModel = {};
-                if (Helper.hasProperty(requestBody, 'BusinessServiceId')) {
-                    updateModel.BusinessServiceId = requestBody.BusinessServiceId;
-                }
-                if (Helper.hasProperty(requestBody, 'BusinessUserId')) {
-                    updateModel.BusinessUserId = requestBody.BusinessUserId;
-                }
-                if (Helper.hasProperty(requestBody, 'IsActive')) {
-                    updateModel.IsActive = requestBody.IsActive;
-                }
-                return updateModel;
-        };
+            return updateModel;
+    };
     
-        getEnrichedDto = (record) => {
-            if (record == null) {
-                return null;
-            }
-            return {
-                id                  : record.id,
-                BusinessUserId      : record.BusinessUserId,
-                BusinessServiceId   : record.BusinessServiceId,
-                IsActive            : record.IsActive    
-        };
-     };
-
-     getEnrichedDtos = (records) => {
-        if (records == null) {
+    getEnrichedDto = (record) => {
+        if (record == null) {
             return null;
         }
-        for (const r of records){
-            const record = {
-                id                  : r.id,
-                BusinessUserId      : r.BusinessUserId,
-                BusinessServiceId   : r.BusinessServiceId,
-                IsActive            : r.IsActive   
-            }
-            records.push(record);
-        }
-        return records;
- };
+        return {
+            id                  : record.id,
+            BusinessUserId      : record.BusinessUserId,
+            BusinessServiceId   : record.BusinessServiceId,
+            IsActive            : record.IsActive,
+            CreatedAt           : record.CreatedAt,
+            UpdatedAt           : record.UpdatedAt,
+            DeletedAt           : record.DeletedAt 
+        };
+    };
 
-        getSearchDto = (record) => {
-            if (record == null) {
-                return null;
-            }
-            return {
-                id                  : record.id,
-                BusinessUserId      : record.BusinessUserId,
-                BusinessServiceId   : record.BusinessServiceId,
-                IsActive            : record.IsActive    
+    getSearchDto = (record) => {
+        if (record == null) {
+            return null;
+        }
+        return {
+            id                  : record.id,
+            BusinessUserId      : record.BusinessUserId,
+            BusinessServiceId   : record.BusinessServiceId,
+            IsActive            : record.IsActive    
         };
     };
 }
