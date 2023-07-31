@@ -13,14 +13,13 @@ export class BusinessNodeHourValidator {
                 BusinessNodeId                     : joi.string().max(255).required(),
                 Type                               : joi.string().max(255).required(),
                 Day                                : joi.number().required(),
-                Date                               : joi.date().iso().optional(),
-                IsOpen                             : joi.boolean().optional().default('true'),
+                Date                               : joi.date().optional(),
+                IsOpen                             : joi.boolean().optional(),
                 Message                            : joi.string().max(255).optional(),
-                StartTime                          : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).optional(),
-                EndTime                            : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).optional(),
-                IsActive                           : joi.boolean().optional().default('true'),
+                StartTime                          : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).required(),
+                EndTime                            : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).required(),
+                IsActive                           : joi.boolean().optional(),
                 IsDeleted                          : joi.boolean().optional(),
-               
             });
             return await schema.validateAsync(requestBody);
         } catch (error) {
@@ -28,13 +27,13 @@ export class BusinessNodeHourValidator {
         }
     };
 
-    static validateCreateManyRequest = async (requestBody) => {
+    static validateCreateMultipleRequest = async (requestBody) => {
         try {
             const schema = joi.object({
                 BusinessNodeId      : joi.string().max(255).optional(),
                 Type                : joi.string().max(255).optional(),
                 Day                 : joi.number().required(),
-                Date                : joi.date().iso().optional(),
+                Date                : joi.date().optional(),
                 IsOpen              : joi.boolean().optional(),
                 Message             : joi.string().max(255).optional(), 
                 IsActive            : joi.boolean().optional(),
@@ -52,19 +51,18 @@ export class BusinessNodeHourValidator {
         }
     };
 
-
     static validateSearchRequest = async (query) => {
         try {
             const schema = joi.object({
                 businessNodeId                     : joi.string().max(255).optional(),
                 type                               : joi.string().max(255).optional(),
                 day                                : joi.string().max(255).optional(),
-                date                               : joi.date().iso().optional(),
-                isOpen                             : joi.boolean().optional().default('true'),
+                date                               : joi.date().optional(),
+                isOpen                             : joi.boolean().optional(),
                 message                            : joi.string().max(255).optional(),
                 startTime                          : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).optional(),
                 endTime                            : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).optional(),
-                isActive                           : joi.boolean().optional().default('true'),
+                isActive                           : joi.boolean().optional(),
                 isDeleted                          : joi.boolean().optional(),
             });
             return await schema.validateAsync(query);
@@ -80,19 +78,19 @@ export class BusinessNodeHourValidator {
                 BusinessNodeId                     : joi.string().max(255).optional(),
                 Type                               : joi.string().max(255).optional(),
                 Day                                : joi.number().optional(),
-                Date                               : joi.date().iso().optional(),
-                IsOpen                             : joi.boolean().optional().default('true'),
+                Date                               : joi.date().optional(),
+                IsOpen                             : joi.boolean().optional(),
                 Message                            : joi.string().max(255).optional(),
                 StartTime                          : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).optional(),
                 EndTime                            : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).optional(),
-                IsActive                           : joi.boolean().optional().default('true'),
+                IsActive                           : joi.boolean().optional(),
                 IsDeleted                          : joi.boolean().optional(),
             });
             return await schema.validateAsync(requestBody);
         } catch (error) {
             ErrorHandler.handleValidationError(error);
         }
-    }
+    };
 
     static validateUpdateMultipleRequest = async (requestBody) => {
         try {
@@ -100,20 +98,20 @@ export class BusinessNodeHourValidator {
                 BusinessNodeId                     : joi.string().max(255).optional(),
                 Type                               : joi.string().max(255).optional(),
                 Day                                : joi.number().optional(),
-                Date                               : joi.date().iso().optional(),
-                IsOpen                             : joi.boolean().optional().default('true'),
+                Date                               : joi.date().optional(),
+                IsOpen                             : joi.boolean().optional(),
                 Message                            : joi.string().max(255).optional(),
                 StartTime                          : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).optional(),
                 EndTime                            : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).optional(),
-                IsActive                           : joi.boolean().optional().default('true'),
+                IsActive                           : joi.boolean().optional(),
                 IsDeleted                          : joi.boolean().optional(),
             });
             const records : BusinessNodeHourCreateModel[] = [];
-                for (const wh of requestBody.DayWiseWorkingHours) {
-                    const request = await schema.validateAsync(wh);
-                    records.push(request);
-                }
-                return records;
+            for (const wh of requestBody.DayWiseWorkingHours) {
+                const request = await schema.validateAsync(wh);
+                records.push(request);
+            }
+            return records;
         } catch (error) {
             ErrorHandler.handleValidationError(error);
         }

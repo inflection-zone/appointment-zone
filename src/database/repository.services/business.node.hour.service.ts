@@ -1,6 +1,8 @@
 import { ErrorHandler } from "../../common/error.handler";
 import { PrismaClientInit } from "../../startup/prisma.client.init";
 import { Prisma } from '@prisma/client';
+import { TimeHelper as th } from "../../common/time.helper";
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export class BusinessNodeHourService{
@@ -13,19 +15,23 @@ export class BusinessNodeHourService{
     }
 
     create = async (createModel) => {
-        try{
-            var record=await this.prisma.business_node_hours.create({data:createModel});
-            //console.log(record);
+        try {
+            var record=await this.prisma.business_node_hours.create({
+                data : createModel
+            })
             return record;
-        }catch (error) {
+        } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create business node hour!',error);
         } 
     };
 
     getById = async (id) => {
         try {
-            var record = await this.prisma.business_node_hours.findUnique({where : {id : id}
-            });
+            var record = await this.prisma.business_node_hours.findUnique({
+                where : {
+                    id : id,
+                },
+            })
             return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve business node hour!', error);
@@ -35,17 +41,20 @@ export class BusinessNodeHourService{
     exists = async (requestBody) => {
         try {
             const search : Prisma.business_node_hoursFindManyArgs = {};
+            var dt = requestBody.Date ? th.getDate(requestBody.Date) : null;
             var businessNodeId = requestBody.BusinessNodeId;
             var type = requestBody.Type;
             var day = requestBody.Day;
-            var date = requestBody.Date;
+            var date = dt;
 
             search.where = {
-                BusinessNodeId : businessNodeId,
-                Type : type,
-                Day : day,
-                Date : date,
-                IsActive : true
+                AND : {
+                BusinessNodeId  : businessNodeId,
+                Type            : type,
+                Day             : day,
+                Date            : date,
+                IsActive        : true,
+                }
             }
             const result = await this.prisma.business_node_hours.findMany(search);
             if(result.length > 0) {
@@ -105,13 +114,14 @@ export class BusinessNodeHourService{
     update = async (id, updateModel) => {
         try {
             if (Object.keys(updateModel).length > 0) {
-                var res = await this.prisma.business_node_hours.updateMany({data:updateModel,
-                    where :{
-                    id : id
-                }
-            });
-        }
-        return await this.getById(id);
+                var res = await this.prisma.business_node_hours.updateMany({
+                    data : updateModel,
+                    where : {
+                        id : id,
+                    }
+                })
+            }
+            return await this.getById(id);
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to update business node hour!', error);
         }
@@ -123,8 +133,13 @@ export class BusinessNodeHourService{
             //     { id: id } 
             // });
             const deleted = await this.prisma.business_node_hours.updateMany({
-                where : { id : id, IsActive : true },
-                data : { IsActive : false },
+                where : {
+                    id : id,
+                    IsActive : true,
+                },
+                data : {
+                    IsActive : false,
+                },
             })
             return deleted;
         } catch (error) {
@@ -132,11 +147,11 @@ export class BusinessNodeHourService{
         }
     };
 
-    createDefaultHoursForNode = async(record) => {
+    createDefaultHoursForNode = async (record) => {
         var nodeHours = null;
         // for week days
         const weekday = [1, 2, 3, 4, 5];
-        for (const d of weekday){
+        for (const d of weekday) {
             var newBusinessNodeHours = {
                 BusinessNodeId : record.id,
                 Type           : "WEEKDAY",
@@ -146,7 +161,7 @@ export class BusinessNodeHourService{
             nodeHours = await this.prisma.business_node_hours.create({data:newBusinessNodeHours});
         }
         //for Weekend
-        const weekend = [6,7];
+        const weekend = [6, 7];
         for(const d of weekend){
             var newBusinessNodeHours = {
                 BusinessNodeId : record.id,
