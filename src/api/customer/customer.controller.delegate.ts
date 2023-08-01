@@ -3,21 +3,20 @@
 
 import { ApiError } from "../../common/api.error";
 import { CustomerCreateModel, CustomerDto, CustomerUpdateModel, CustomerSearchFilters, CustomerSearchResults } from "../../domain.types/customer/customer.domain.types";
-import { CustomerValidator ,CustomerValidator as validator } from './customer.validator';
+import { CustomerValidator as validator } from './customer.validator';
 import { CustomerService } from '../../database/repository.services/customer.service';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { ErrorHandler } from "../../common/error.handler";
 import { Helper } from "../../common/helper";
+
 export class CustomerControllerDelegate {
 
     //#region member variables and constructors
 
     _service: CustomerService = null;
 
-
     constructor() {
         this._service = new CustomerService();
-       
     }
 
     //#endregion
@@ -26,7 +25,7 @@ export class CustomerControllerDelegate {
 
         await validator.validateCreateRequest(requestBody);
         const { CreateModel } =
-            await CustomerValidator.getValidCustomerCreateModel(requestBody);
+            await this.getValidCustomerCreateModel(requestBody);
 
         // eslint-DisplayPictureable-next-line @typescript-eslint/no-unused-vars
         var createModel: CustomerCreateModel = this.getCreateModel(requestBody);
@@ -48,12 +47,11 @@ export class CustomerControllerDelegate {
     search = async (query) => {
         await validator.validateSearchRequest(query);
         var filters: CustomerSearchFilters = this.getSearchFilters(query);
-        var searchResults : CustomerSearchResults = await this._service.search(filters);
+        var searchResults = await this._service.search(filters);
         var items = searchResults.Items.map(x => this.getPublicDto(x));
         searchResults.Items = items;
         return searchResults;
-       
-    }
+    };
 
     update = async (id: uuid ,requestBody: any) =>{
         await validator.validateUpdateRequest(requestBody);
@@ -61,6 +59,7 @@ export class CustomerControllerDelegate {
         if (record === null) {
           ErrorHandler.throwNotFoundError(" Customer with id " + id.toString() + "cannot be found!");
         }
+
         if (Helper.hasProperty(requestBody, 'Mobile')) {
             var mobile = requestBody.Mobile;
             var otherEntity = await this._service.getCustomerWithMobile(mobile);
@@ -68,6 +67,7 @@ export class CustomerControllerDelegate {
                 ErrorHandler.throwDuplicateUserError(`Business customer with mobile ${requestBody.Mobile} already exists!`);
             }
         }
+
         if (Helper.hasProperty(requestBody, 'Email')) {
             var email = requestBody.Email;
             var otherEntity = await this._service.getCustomerWithEmail(email);
@@ -75,11 +75,13 @@ export class CustomerControllerDelegate {
                 ErrorHandler.throwDuplicateUserError(`Business customer with email ${requestBody.Email} already exists!`);
             }
         }
+
         const updateModel: CustomerUpdateModel = this.getUpdateModel(requestBody);
         const updated: CustomerDto = await this._service.update(id , updateModel);
         if (updated == null) {
             throw new ApiError('Unable to update customer!', 400);
         }
+
         return this.getEnrichedDto(updated);
     }
 
@@ -92,26 +94,42 @@ export class CustomerControllerDelegate {
         return {
             Deleted : customerDeleted
         };
-    }
+    };
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     getCreateModel = (requestBody): CustomerCreateModel => {
         const birthDate = requestBody.BirthDate ? Date.parse(requestBody.BirthDate) : null;
         return {
-            Prefix          : requestBody.Prefix ? requestBody.Prefix : null,
-            FirstName       : requestBody.FirstName? requestBody.FirstName: null,
-            LastName        : requestBody.LastName ? requestBody.LastName : null,
-            Mobile          : requestBody.Mobile? requestBody.Mobile: null,
-            Email           : requestBody.Email ? requestBody.Email : null,
+            Prefix          : requestBody.Prefix,
+            FirstName       : requestBody.FirstName,
+            LastName        : requestBody.LastName,
+            Mobile          : requestBody.Mobile,
+            Email           : requestBody.Email,
             BirthDate       : new Date(birthDate),
-            Gender          : requestBody.Gender ? requestBody.Gender : null,
-            DisplayPicture  : requestBody.DisplayPicture? requestBody.DisplayPicture: null,
+            Gender          : requestBody.Gender,
+            DisplayPicture  : requestBody.DisplayPicture ? requestBody.DisplayPicture: null,
             Address         : requestBody.Address ? requestBody.Address : null,
-            IsActive        : requestBody.IsActive ? requestBody.IsActive : null,
-            InAppUser       : requestBody.InAppUser ? requestBody.InAppUser : null,
-
+            InAppUser       : requestBody.InAppUser ? requestBody.InAppUser : true,
+            IsActive        : true,
         };
+    };
+
+    getValidCustomerCreateModel = async (requestBody) => {
+
+        const validCustomerService = new CustomerService();
+        var customerWithMobile = await validCustomerService.getCustomerWithMobile( requestBody.Mobile);
+        if (customerWithMobile) {
+            ErrorHandler.throwDuplicateUserError(`User with phone ${requestBody.Mobile} already exists!`);
+        }
+
+        var customerWithEmail = await validCustomerService.getCustomerWithEmail(requestBody.Email);
+        if (customerWithEmail) {
+            ErrorHandler.throwDuplicateUserError(`User with email ${requestBody.Email} already exists!`);
+        }
+
+        var CreateModel: CustomerCreateModel = await this.getCreateModel(requestBody);
+        return { CreateModel};
     };
 
     getSearchFilters = (query) => {
@@ -132,6 +150,10 @@ export class CustomerControllerDelegate {
         if (email != null) {
             filters['Email'] = email;
         }
+        var name = query.name ? query.name : null;
+        if (name != null) {
+            filters['Name'] = name;
+        }
         var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : null;
         if (itemsPerPage != null) {
             filters['ItemsPerPage'] = itemsPerPage;
@@ -141,7 +163,7 @@ export class CustomerControllerDelegate {
             filters['Order'] = order;
         }
         return filters;
-    }
+    };
 
     //This function returns a response DTO which is enriched with available resource data
 
@@ -199,43 +221,40 @@ export class CustomerControllerDelegate {
 
         let updateModel: CustomerUpdateModel = {};
 
-    if (Helper.hasProperty(requestBody, 'Prefix')) {
-        updateModel.Prefix = requestBody.Prefix;
-    }
-    if (Helper.hasProperty(requestBody, ' FirstName')) {
-        updateModel. FirstName = requestBody. FirstName;
-    }
-    if (Helper.hasProperty(requestBody, 'LastName')) {
-        updateModel.LastName = requestBody.LastName;
-    }
-    if (Helper.hasProperty(requestBody, 'Mobile')) {
-        updateModel.Mobile = requestBody.Mobile;
-    }
-    if (Helper.hasProperty(requestBody, 'Email')) {
-        updateModel.Email = requestBody.Email
-    }
-    if (Helper.hasProperty(requestBody, 'Gender')) {
-        updateModel.Gender = requestBody.Gender;
-    }
-    if (Helper.hasProperty(requestBody, 'DisplayPicture')) {
-        updateModel.DisplayPicture = requestBody.DisplayPicture;
-    }
-    if (Helper.hasProperty(requestBody, 'BirthDate')) {
-        updateModel.BirthDate = requestBody.BirthDate;
-    }
-    if (Helper.hasProperty(requestBody, 'Address')) {
-        updateModel.Address = requestBody.Address
-    }
-    if (Helper.hasProperty(requestBody, 'IsActive')) {
-        updateModel.IsActive = requestBody.IsActive;
-    }
-    if (Helper.hasProperty(requestBody, 'InAppUser')) {
-        updateModel.InAppUser = requestBody.InAppUser;
-    }
-   
-    return updateModel;
-}
-
-
-
+        if (Helper.hasProperty(requestBody, 'Prefix')) {
+            updateModel.Prefix = requestBody.Prefix;
+        }
+        if (Helper.hasProperty(requestBody, ' FirstName')) {
+            updateModel. FirstName = requestBody. FirstName;
+        }
+        if (Helper.hasProperty(requestBody, 'LastName')) {
+            updateModel.LastName = requestBody.LastName;
+        }
+        if (Helper.hasProperty(requestBody, 'Mobile')) {
+            updateModel.Mobile = requestBody.Mobile;
+        }
+        if (Helper.hasProperty(requestBody, 'Email')) {
+            updateModel.Email = requestBody.Email
+        }
+        if (Helper.hasProperty(requestBody, 'Gender')) {
+            updateModel.Gender = requestBody.Gender;
+        }
+        if (Helper.hasProperty(requestBody, 'DisplayPicture')) {
+            updateModel.DisplayPicture = requestBody.DisplayPicture;
+        }
+        if (Helper.hasProperty(requestBody, 'BirthDate')) {
+            updateModel.BirthDate = requestBody.BirthDate;
+        }
+        if (Helper.hasProperty(requestBody, 'Address')) {
+            updateModel.Address = requestBody.Address
+        }
+        if (Helper.hasProperty(requestBody, 'IsActive')) {
+            updateModel.IsActive = requestBody.IsActive;
+        }
+        if (Helper.hasProperty(requestBody, 'InAppUser')) {
+            updateModel.InAppUser = requestBody.InAppUser;
+        }
+    
+        return updateModel;
+    };
 }
