@@ -8,8 +8,8 @@ export class BusinessUserSkillValidator {
     static validateCreateRequest = async (requestBody) => {
         try {
             const schema = joi.object({
-    	        BusinessSkillId           : joi.string().guid({version : ['uuidv4'] }).optional(),              
-  	            BusinessUserId            : joi.string().guid({version : ['uuidv4'] }).optional(),
+    	        BusinessSkillId           : joi.string().guid({version : ['uuidv4'] }).required(),              
+  	            BusinessUserId            : joi.string().guid({version : ['uuidv4'] }).required(),
                 IsActive                  : joi.boolean().required(), 
             });
             return await schema.validateAsync(requestBody);

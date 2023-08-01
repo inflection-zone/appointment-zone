@@ -24,17 +24,19 @@ export class BusinessUserSkillController extends BaseController {
             const record = await this._delegate.create(request.body);
             const message = 'Business user skills added successfully!';
             ResponseHandler.success(request, response, message, 201, record);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
-    createMany = async (request: express.Request, response: express.Response): Promise <void> => {
+    createMultiple = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
-            await this.authorize('BusinessUserSkill.CreateMany', request, response, false);
-            const skills = await this._delegate.createMany(request.body.skills);
+            await this.authorize('BusinessUserSkill.CreateMultiple', request, response, false);
+            const skills = await this._delegate.createMultiple(request.body.skills);
             const message = 'Business user skills added successfully!';
             ResponseHandler.success(request, response, message, 201, skills);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -46,6 +48,7 @@ export class BusinessUserSkillController extends BaseController {
             const record = await this._delegate.getById(request.params.id);
             const message ="Business user skills retrieved successfully!";
             ResponseHandler.success(request, response, message, 200, record);
+
         } catch(error){
             ResponseHandler.handleError(request, response, error);
         }
@@ -57,6 +60,7 @@ export class BusinessUserSkillController extends BaseController {
             const searchResults = await this._delegate.search(request.query);
             const message = 'Business user skill records retrieved successfully!';
             ResponseHandler.success(request, response, message, 200, searchResults);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -68,6 +72,7 @@ export class BusinessUserSkillController extends BaseController {
             const updatedRecord = await this._delegate.update(request.params.id, request.body);
             const message = 'Business user skills updated successfully!';
             ResponseHandler.success(request, response, message, 200, updatedRecord);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -79,6 +84,7 @@ export class BusinessUserSkillController extends BaseController {
             const result = await this._delegate.delete(request.params.id);
             const message = 'Business user skills deleted successfully!';
             ResponseHandler.success(request, response, message, 200, result);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
