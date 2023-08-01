@@ -14,8 +14,7 @@ export class BusinessSkillService{
 
     create = async (createModel) => {
         try{
-            var record=await this.prisma.business_skills.create({data:createModel});
-            //console.log(record);
+            var record = await this.prisma.business_skills.create({data:createModel});
             return record;
         }catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create business skills!',error)
@@ -23,32 +22,35 @@ export class BusinessSkillService{
     };
 
     getById = async (id) => {
-            try {
-                var record = await this.prisma.business_skills.findUnique({where : {id : id}
-                });
-                return record;
-            } catch (error) {
-            ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve business skills!', error);
-        }
+        try {
+            var record = await this.prisma.business_skills.findUnique({
+                where : {
+                    id : id,
+                },
+            });
+            return record;
+        } catch (error) {
+        ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve business skills!', error);
+    }
     };
 
-search = async (filters) => {
+    search = async (filters) => {
         try {
-                const search : Prisma.business_skillsFindManyArgs = {};
-            
-                search.where = {
-                    IsActive : true,
-                }
-                if (filters.Name != null) {
-                    search.where =   {
-                        Name : filters.Name,
-                        }
-                }
-                if (filters.BusinessNodeId != null) {
-                    search.where =   {
-                        BusinessNodeId : filters.BusinessNodeId,
-                        }
-                }
+            const search : Prisma.business_skillsFindManyArgs = {};
+        
+            search.where = {
+                IsActive : true,
+            }
+            if (filters.Name != null) {
+                search.where =   {
+                    Name : filters.Name,
+                    }
+            }
+            if (filters.BusinessNodeId != null) {
+                search.where =   {
+                    BusinessNodeId : filters.BusinessNodeId,
+                    }
+            }
             search.orderBy = {
                     CreatedAt : 'asc'
             }
@@ -59,7 +61,7 @@ search = async (filters) => {
             }
             search.take = 25;
             if (filters.ItemsPerPage) {
-               search.take = Number(filters.ItemsPerPage);
+                search.take = Number(filters.ItemsPerPage);
             }
             search.skip = 0;
             let pageIndex = 0;
@@ -77,7 +79,6 @@ search = async (filters) => {
                 Items          : foundResults,
             };
             return searchResults;
-        
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to search business skill records!', error);
         }
@@ -86,11 +87,12 @@ search = async (filters) => {
     update = async (id, updateModel) => {
         try {
             if (Object.keys(updateModel).length > 0) {
-                var res = await this.prisma.business_skills.updateMany({data:updateModel,
-                        where :{
-                        id : id
-                    }
-                 });  
+                var res = await this.prisma.business_skills.updateMany({
+                    data:updateModel,
+                    where : {
+                        id : id,
+                    },
+                });  
             }
             return await this.getById(id);
         } catch (error) {
@@ -100,9 +102,19 @@ search = async (filters) => {
 
     delete = async (id) => {
         try {
-            const result = await this.prisma.business_skills.delete({ where: 
-                { id: id } 
-            });
+            // const result = await this.prisma.business_skills.delete({ where: 
+            //     { id: id } 
+            // });
+            const deleted = await this.prisma.business_skills.updateMany({
+                where : {
+                    id : id,
+                    IsActive : true,
+                },
+                data : {
+                    IsActive : false,
+                },
+            })
+            return deleted;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to delete business skills!', error);
         }

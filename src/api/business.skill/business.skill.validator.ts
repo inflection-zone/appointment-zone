@@ -8,8 +8,8 @@ export class BusinessSkillValidator {
     static validateCreateRequest = async (requestBody) => {
         try {
             const schema = joi.object({
-	            BusinessNodeId          : joi.string().guid({version : ['uuidv4'] }).optional(),
-                Description             : joi.string().max(255).optional(),
+	            BusinessNodeId          : joi.string().guid({version : ['uuidv4'] }).required(),
+                Description             : joi.string().optional(),
                 Name                    : joi.string().max(255).required(),
                 DisplayPicture          : joi.string().optional(),
                 IsActive                : joi.boolean().required(),
@@ -25,7 +25,7 @@ export class BusinessSkillValidator {
             const schema = joi.object({
                 isActive                : joi.boolean().optional(),
 	            businessNodeId	        : joi.string().max(255).optional(),
-	            name	                :joi.boolean().optional(),
+	            name	                : joi.boolean().optional(),
             });
             return await schema.validateAsync(query);
         } catch (error) {
@@ -37,7 +37,7 @@ export class BusinessSkillValidator {
         try {
             const schema = joi.object({
 	            BusinessNodeId          : joi.string().guid({version : ['uuidv4'] }).optional(),
-                Description             : joi.string().max(255).optional(),
+                Description             : joi.string().optional(),
                 Name                    : joi.string().max(255).optional(),
                 DisplayPicture          : joi.string().optional(),
                 IsActive                : joi.boolean().optional(),
