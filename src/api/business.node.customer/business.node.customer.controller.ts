@@ -21,6 +21,7 @@ export class BusinessNodeCustomerController extends BaseController {
             const record = await this._delegate.create(request.body);
             const message = 'Business node customer added successfully!';
             ResponseHandler.success(request, response, message, 201, record);
+            
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -32,6 +33,7 @@ export class BusinessNodeCustomerController extends BaseController {
             const record = await this._delegate.getById(request.params.id);
             const message ="Business node customer retrieved successfully!";
             ResponseHandler.success(request, response, message, 200, record);
+
         }catch(error){
             ResponseHandler.handleError(request, response, error);
         }
@@ -43,6 +45,7 @@ export class BusinessNodeCustomerController extends BaseController {
             const searchResults = await this._delegate.search(request.query);
             const message = 'Business node customer records retrieved successfully!';
             ResponseHandler.success(request, response, message, 200, searchResults);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -54,6 +57,7 @@ export class BusinessNodeCustomerController extends BaseController {
             const updatedRecord = await this._delegate.update(request.params.id, request.body);
             const message = 'Business node customer updated successfully!';
             ResponseHandler.success(request, response, message, 200, updatedRecord);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -65,6 +69,7 @@ export class BusinessNodeCustomerController extends BaseController {
             const result = await this._delegate.delete(request.params.id);
             const message = 'Business node customer deleted successfully!';
             ResponseHandler.success(request, response, message, 200, result);
+
         }catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

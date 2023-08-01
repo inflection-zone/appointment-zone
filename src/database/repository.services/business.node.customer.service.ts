@@ -14,7 +14,6 @@ export class BusinessNodeCustomerService{
     create = async (createModel) => {
         try {
             var record = await this.prisma.business_node_customers.create({data:createModel});
-            // //console.log(record);
             return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create business node customer!', error)
@@ -23,7 +22,10 @@ export class BusinessNodeCustomerService{
 
     getById = async (id) => {
         try {
-            var record = await this.prisma.business_node_customers.findUnique({where : {id : id}
+            var record = await this.prisma.business_node_customers.findUnique({
+                where : {
+                    id : id,
+                },
             });
             return record;
         } catch (error) {
@@ -84,13 +86,14 @@ export class BusinessNodeCustomerService{
     update = async (id, updateModel) => {
         try {
             if (Object.keys(updateModel).length > 0) {
-            var res = await this.prisma.business_node_customers.updateMany({data:updateModel,
-                    where :{
-                    id : id
-                }
-            }); 
-        }
-        return await this.getById(id);
+                var res = await this.prisma.business_node_customers.updateMany({
+                    data : updateModel,
+                    where : {
+                        id : id,
+                    },
+                }); 
+            }
+            return await this.getById(id);
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to update business node customer!', error);
         }
@@ -98,9 +101,14 @@ export class BusinessNodeCustomerService{
 
     delete = async (id) => {
         try {
-        const result = await this.prisma.business_node_customers.delete({ where: 
-            { id: id } 
-        });
+            // const result = await this.prisma.business_node_customers.delete({ where: 
+            //     { id: id } 
+            // });
+            const deleted = await this.prisma.business_node_customers.updateMany({
+                where : { id : id, IsActive : true },
+                data : { IsActive : false },
+            })
+            return deleted;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to delete business node customer!', error);
         }
