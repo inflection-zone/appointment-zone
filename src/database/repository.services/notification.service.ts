@@ -13,8 +13,7 @@ export class NotificationService{
 
     create = async (createModel) => {
         try {
-            var record=await this.prisma.notifications.create({data:createModel});
-            //console.log(record);
+            var record = await this.prisma.notifications.create({data:createModel});
             return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create notifications!',error)
@@ -23,7 +22,10 @@ export class NotificationService{
 
     getById = async (id) => {
         try {
-            var record = await this.prisma.notifications.findUnique({where : {id : id}
+            var record = await this.prisma.notifications.findUnique({
+                where : {
+                    id : id,
+                },
             });
             return record;
         } catch (error) {
@@ -84,8 +86,9 @@ export class NotificationService{
     update = async (id, updateModel) => {
         try {
             if (Object.keys(updateModel).length > 0) {
-            var res = await this.prisma.notifications.updateMany({data:updateModel,
-                    where :{
+            var res = await this.prisma.notifications.updateMany({
+                data:updateModel,
+                where : { 
                     id : id
                 }
             }); 
@@ -98,9 +101,21 @@ export class NotificationService{
 
     delete = async (id) => {
         try {
-        const result = await this.prisma.notifications.delete({ where: 
-            { id: id } 
-        });
+        // const result = await this.prisma.notifications.delete({
+        //     where : {
+        //         id : id,
+        //     },
+        // });
+            const deleted = await this.prisma.notifications.updateMany({
+                where : {
+                    id : id,
+                    IsActive : true,
+                },
+                data : {
+                    IsActive : false,
+                },
+            })
+            return deleted; 
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to delete notifications!', error);
         }

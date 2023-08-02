@@ -7,18 +7,20 @@ export class NotificationValidator {
     static validateCreateRequest = async (requestBody) => {
         try {
             const schema = joi.object({
-                Body                : joi.string().max(255).optional(),
-    	        BusinessNodeId      : joi.string().guid({version : ['uuidv4'] }).optional(),              
-  	            CustomerId          : joi.string().guid({version : ['uuidv4'] }).optional(),
+                Body                : joi.string().optional(),
+    	        BusinessNodeId      : joi.string().guid({version : ['uuidv4'] }).required(),              
+  	            CustomerId          : joi.string().guid({version : ['uuidv4'] }).required(),
                 IsRead              : joi.boolean().required(),   
                 IsSent              : joi.boolean().required(),
-                Message             : joi.string().max(255).required(),
-                ReadOn              : joi.date().iso().optional(),
-                SentOn              : joi.date().iso().optional(),
+                Message             : joi.string().optional(),
+                ReadOn              : joi.date().optional(),
+                SentOn              : joi.date().optional(),
                 Title               : joi.string().max(255).optional(),
                 Type                : joi.string().max(255).optional(),
-                TypeId              : joi.number().optional(),
-                IsActive            : joi.boolean().required() 
+                TypeId              : joi.number().required(),
+                IsActive            : joi.boolean().required(),
+                DeletedAt           : joi.boolean().optional(),
+                IsDeleted           : joi.boolean().optional()
             });
             return await schema.validateAsync(requestBody);
         } catch (error) {
@@ -26,14 +28,14 @@ export class NotificationValidator {
         }
     };
 
-    static validateSearchRequest = async (requestBody) => {
+    static validateSearchRequest = async (query) => {
         try {
             const schema = joi.object({
     	        businessNodeId      : joi.string().guid({version : ['uuidv4'] }).optional(),              
   	            customerId          : joi.string().guid({version : ['uuidv4'] }).optional(),
                 isActive            : joi.boolean().optional() 
             });
-            return await schema.validateAsync(requestBody);
+            return await schema.validateAsync(query);
         } catch (error) {
             ErrorHandler.handleValidationError(error);
         }
@@ -42,18 +44,20 @@ export class NotificationValidator {
     static validateUpdateRequest = async (requestBody) => {
         try {
             const schema = joi.object({
-                Body                : joi.string().max(255).optional(),
+                Body                : joi.string().optional(),
     	        BusinessNodeId      : joi.string().guid({version : ['uuidv4'] }).optional(),              
   	            CustomerId          : joi.string().guid({version : ['uuidv4'] }).optional(),
                 IsRead              : joi.boolean().optional(),   
                 IsSent              : joi.boolean().optional(),
-                Message             : joi.string().max(255).optional(),
-                ReadOn              : joi.date().iso().optional(),
-                SentOn              : joi.date().iso().optional(),
+                Message             : joi.string().optional(),
+                ReadOn              : joi.date().optional(),
+                SentOn              : joi.date().optional(),
                 Title               : joi.string().max(255).optional(),
                 Type                : joi.string().max(255).optional(),
                 TypeId              : joi.number().optional(),
-                IsActive            : joi.boolean().optional() 
+                IsActive            : joi.boolean().optional(),
+                DeletedAt           : joi.date().optional(),
+                IsDeleted           : joi.boolean().optional()
             });
             return await schema.validateAsync(requestBody);
         } catch (error) {
