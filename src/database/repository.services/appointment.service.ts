@@ -69,17 +69,10 @@ export class AppointmentService{
                     OR :
                     [
                         {
-                        StartTime   :
-                        {
-                            gte : start,
-                            lte : end,
-                        },
+                        StartTime   : start
                     },
                     {
-                        EndTime : {
-                            gte : start,
-                            lte : end,
-                        },
+                        EndTime : end
                     },
                 ],
             },

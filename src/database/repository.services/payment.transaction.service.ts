@@ -14,7 +14,6 @@ export class PaymentTransactionService{
     create = async (createModel) => {
         try {
             var record=await this.prisma.payment_transactions.create({data:createModel});
-            //console.log(record);
             return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create payment transactions!',error)
@@ -23,7 +22,10 @@ export class PaymentTransactionService{
 
     getById = async (id) => {
         try {
-            var record = await this.prisma.payment_transactions.findUnique({where : {id : id}
+            var record = await this.prisma.payment_transactions.findUnique({
+                where : {
+                    id : id,
+                },
             });
             return record;
         } catch (error) {
@@ -39,14 +41,19 @@ export class PaymentTransactionService{
                     IsActive : true,
                 }
                 if (filters.businessNodeId != null) {
-                    search.where =   {
+                    search.where = {
                         BusinessNodeId : filters.BusinessNodeId,
-                        }
+                    }
                 }
                 if (filters.customerId != null) {
-                    search.where =   {
-                            CustomerId : filters.CustomerId,
-                        }
+                    search.where = {
+                        CustomerId : filters.CustomerId,
+                    }
+                }
+                if (filters.appointmentId != null) {
+                    search.where = {
+                        AppointmentId : filters.AppointmentId,
+                    }
                 }
                 search.orderBy = {
                     CreatedAt : 'asc'
@@ -85,9 +92,9 @@ export class PaymentTransactionService{
         try {
             if (Object.keys(updateModel).length > 0) {
             var res = await this.prisma.payment_transactions.updateMany({data:updateModel,
-                    where :{
-                    id : id
-                }
+                where : {
+                    id : id,
+                },
             }); 
         }
         return await this.getById(id);
@@ -98,9 +105,21 @@ export class PaymentTransactionService{
 
     delete = async (id) => {
         try {
-        const result = await this.prisma.payment_transactions.delete({ where: 
-            { id: id } 
-        });
+        // const result = await this.prisma.payment_transactions.delete({
+            //   where : {
+            //        id: id,
+            //    } 
+            // });
+            const deleted = await this.prisma.payment_transactions.updateMany({
+                where : {
+                    id : id,
+                    IsActive : true,
+                },
+                data : {
+                    IsActive : false,
+                },
+            })
+            return deleted;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to delete payment transactions!', error);
         }

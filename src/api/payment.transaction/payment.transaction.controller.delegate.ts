@@ -5,11 +5,12 @@ import { PaymentTransactionCreateModel, PaymentTransactionUpdateModel,
 import { PaymentTransactionService } from "../../database/repository.services/payment.transaction.service";
 import { BusinessNodeService } from "../../database/repository.services/business.node.service";
 import { CustomerService } from "../../database/repository.services/customer.service";
-//import { AppointmentService } from "../../database/repository.services/appointment.service";
+import { AppointmentService } from "../../database/repository.services/appointment.service";
 import { PaymentTransactionValidator as validator } from './payment.transaction.validator';
 import { ErrorHandler } from '../../common/error.handler';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { Helper } from "../../common/helper";
+import { TimeHelper as th } from "../../common/time.helper";
 
 export class PaymentTransactionControllerDelegate {
 
@@ -21,13 +22,13 @@ export class PaymentTransactionControllerDelegate {
     
     _customerService : CustomerService = null;
 
-    //_appointmentId : AppointmentService =null;
+    _appointmentService : AppointmentService = null;
 
     constructor() {
         this._service = new PaymentTransactionService();
         this._businessNodeService = new BusinessNodeService();
         this._customerService = new CustomerService();
-       // this._appointmentId = new AppointmentService();
+        this._appointmentService = new AppointmentService();
     }
 
     //#endregion
@@ -35,11 +36,6 @@ export class PaymentTransactionControllerDelegate {
     create = async (requestBody: any) => {
 
         await validator.validateCreateRequest(requestBody);
-        if (!requestBody.BusinessNodeId ||
-            !requestBody.CustomerId || 
-            !requestBody.TotalAmount) {
-                ErrorHandler.throwNotFoundError('Missing required parameters!');
-            }
         var businessNodeId = requestBody.BusinessNodeId;
         const businessNode = await this._businessNodeService.getById(businessNodeId);
         if (!businessNode) {
@@ -50,11 +46,11 @@ export class PaymentTransactionControllerDelegate {
         if (!customer) {
             ErrorHandler.throwNotFoundError('Customer with id ' + customerId.toString() + ' not found!');
         }
-        // var appointmentId = requestBody.AppointmentId;
-        // const appointment = await this._appointmentId.getById(appointmentId);
-        // if (!appointment) {
-        //     ErrorHandler.throwNotFoundError('Appointment with id ' + appointmentId.toString() + ' not found!');
-        // }
+        var appointmentId = requestBody.AppointmentId;
+        const appointment = await this._appointmentService.getById(appointmentId);
+        if (!appointment) {
+            ErrorHandler.throwNotFoundError('Appointment with id ' + appointmentId.toString() + ' not found!');
+        }
         var createModel: PaymentTransactionCreateModel = this.getCreateModel(requestBody);
         const record: PaymentTransactionDto = await this._service.create(createModel);
         if (record === null) {
@@ -109,15 +105,15 @@ export class PaymentTransactionControllerDelegate {
 
     getCreateModel = (requestBody): PaymentTransactionCreateModel => {
         return {
-            //AppointmentId   : requestBody.AppointmentId ? requestBody.AppointmentId : null,
-            BusinessNodeId  : requestBody.BusinessNodeId ? requestBody.BusinessNodeId : null,
-            CustomerId      : requestBody.CustomerId ? requestBody.CustomerId : null,
-            TotalAmount     : requestBody.TotalAmount ? requestBody.TotalAmount : null,
+            AppointmentId   : requestBody.AppointmentId,
+            BusinessNodeId  : requestBody.BusinessNodeId,
+            CustomerId      : requestBody.CustomerId,
+            TotalAmount     : requestBody.TotalAmount,
             ExternalId      : requestBody.ExternalId ? requestBody.ExternalId : null,
             Currency        : requestBody.Currency ? requestBody.Currency : '',
-            InitiatedOn     : requestBody.InitiatedOn ? requestBody.InitiatedOn : null,
-            Status          : requestBody.Status ? requestBody.Status : '',
-            CompletedOn     : requestBody.CompletedOn ? requestBody.CompletedOn : false,
+            InitiatedOn     : requestBody.InitiatedOn ? th.getDate(requestBody.InitiatedOn) : null,
+            Status          : requestBody.Status ? requestBody.Status : null,
+            CompletedOn     : requestBody.CompletedOn ? th.getDate(requestBody.CompletedOn) : null,
             IsComplete      : requestBody.IsComplete ? requestBody.IsComplete : false,
             IsActive        : requestBody.IsActive ? requestBody.IsActive : true,
         }
@@ -126,19 +122,19 @@ export class PaymentTransactionControllerDelegate {
     getSearchFilters = (query) => {
         var filters = {};
 
-            var businessNodeId= query.businessNodeId ? query.businessNodeId : null;
+            var businessNodeId = query.businessNodeId ? query.businessNodeId : null;
             if (businessNodeId != null) {
                 filters['BusinessNodeId'] = businessNodeId;
             }
-            var customerId= query.customerId ? query.customerId : null;
+            var customerId = query.customerId ? query.customerId : null;
             if (customerId != null) {
                 filters['CustomerId'] = customerId;
             }
-            // var appointmentId= query.appointmentId ? query.appointmentId : null;
-            // if (appointmentId != null) {
-            //     filters['AppointmentId'] = appointmentId;
-            // }
-            var isActive= query.isActive ? query.isActive : null;
+            var appointmentId = query.appointmentId ? query.appointmentId : null;
+            if (appointmentId != null) {
+                filters['AppointmentId'] = appointmentId;
+            }
+            var isActive = query.isActive ? query.isActive : null;
             if (isActive != null) {
                 filters['IsActive'] = isActive;
             }
@@ -163,9 +159,9 @@ export class PaymentTransactionControllerDelegate {
         if (Helper.hasProperty(requestBody, 'CustomerId')) {
             updateModel.CustomerId = requestBody.CustomerId;
         }
-        // if (Helper.hasProperty(requestBody, 'AppointmentId')) {
-        //     updateModel.AppointmentId = requestBody.AppointmentId;
-        // }
+        if (Helper.hasProperty(requestBody, 'AppointmentId')) {
+            updateModel.AppointmentId = requestBody.AppointmentId;
+        }
         if (Helper.hasProperty(requestBody, 'IsActive')) {
             updateModel.IsActive = requestBody.IsActive;
         }
