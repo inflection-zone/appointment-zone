@@ -50,7 +50,7 @@ export class BusinessNodeHourService{
             search.where = {
                 AND : {
                 BusinessNodeId  : businessNodeId,
-                Type            : type,
+                Type            : {contains: type},
                 Day             : day,
                 Date            : date,
                 IsActive        : true,

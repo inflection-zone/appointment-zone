@@ -215,6 +215,7 @@ export class BusinessControllerDelegate {
             ExternalId          : record.ExternalId,
             Name                : record.Name,
             Email               : record.Email,
+            Mobile              : record.Mobile,
             AboutUs             : record.AboutUs,
             Logo                : record.Logo,
             DisplayPicture      : record.DisplayPicture,

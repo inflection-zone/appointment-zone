@@ -144,6 +144,10 @@ export class BusinessNodeControllerDelegate {
         if (businessId != null) {
             filters['BusinessId'] = businessId;
         }
+        var isActive = query.isActive ? query.isActive : null;
+        if (isActive != null) {
+            filters['IsActive'] = isActive;
+        }
         var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : null;
         if (itemsPerPage != null) {
             filters['ItemsPerPage'] = itemsPerPage;

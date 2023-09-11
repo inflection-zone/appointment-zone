@@ -46,7 +46,9 @@ export class BusinessNodeService{
             }
             if (filters.Name != null) {
                 search.where = {
-                    Name : filters.Name
+                    Name: {
+                    contains : filters.Name,
+                    },
                 }
             }
             if (filters.BusinessId != null) {

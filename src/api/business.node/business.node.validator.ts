@@ -33,16 +33,7 @@ export class BusinessNodeValidator {
             const schema = joi.object({
                 businessId               : joi.string().guid({version : ['uuidv4'] }).optional(),
                 name                     : joi.string().max(255).optional(),
-                mobile                   : joi.string().max(255).optional(),
-                Email                    : joi.string().email().required(),
-                displayPicture           : joi.string().optional(),
-                address                  : joi.string().max(255).optional(),
-                longitude                : joi.string().optional(),             
-                lattitude                : joi.string().optional(),            
-                overallRating            : joi.number().optional(),
-                timeZone                 : joi.string().optional(),      
-                allowWalkinAppointments  : joi.boolean().optional(),
-                allowFutureBookingFor    : joi.string().max(255).optional(),
+               
                 isActive                 : joi.boolean().optional(),
             });
             return await schema.validateAsync(query);
@@ -55,10 +46,10 @@ export class BusinessNodeValidator {
     static validateUpdateRequest = async (requestBody) => {
         try {
             const schema = joi.object({
-                BusinessId               : joi.string().guid({version : ['uuidv4'] }).required(),
+                BusinessId               : joi.string().guid({version : ['uuidv4'] }).optional(),
                 Name                     : joi.string().max(255).optional(),
                 Mobile                   : joi.string().max(255).optional(),
-                Email                    : joi.string().email().required(),
+                Email                    : joi.string().email().optional(),
                 DisplayPicture           : joi.string().optional(),
                 Address                  : joi.string().max(255).optional(),
                 Longitude                : joi.string().optional(),             

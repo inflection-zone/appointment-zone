@@ -41,7 +41,7 @@ export class BusinessUserControllerDelegate {
         var defaultUserHours = await this._businessUserHourService.createDefaultHoursForUser(record);
         const businessUser = {
             UserRecords      : record,
-            DefaultUserHours : defaultUserHours
+            DefaultUserHours : defaultUserHours,
         }
         return businessUser;
     };

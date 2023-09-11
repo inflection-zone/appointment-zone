@@ -25,7 +25,7 @@ export class BusinessSkillValidator {
             const schema = joi.object({
                 isActive                : joi.boolean().optional(),
 	            businessNodeId	        : joi.string().max(255).optional(),
-	            name	                : joi.boolean().optional(),
+	            name	                : joi.string().optional(),
             });
             return await schema.validateAsync(query);
         } catch (error) {

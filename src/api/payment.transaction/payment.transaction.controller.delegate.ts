@@ -46,11 +46,11 @@ export class PaymentTransactionControllerDelegate {
         if (!customer) {
             ErrorHandler.throwNotFoundError('Customer with id ' + customerId.toString() + ' not found!');
         }
-        var appointmentId = requestBody.AppointmentId;
-        const appointment = await this._appointmentService.getById(appointmentId);
-        if (!appointment) {
-            ErrorHandler.throwNotFoundError('Appointment with id ' + appointmentId.toString() + ' not found!');
-        }
+        // var appointmentId = requestBody.AppointmentId;
+        // const appointment = await this._appointmentService.getById(appointmentId);
+        // if (!appointment) {
+        //     ErrorHandler.throwNotFoundError('Appointment with id ' + appointmentId.toString() + ' not found!');
+        // }
         var createModel: PaymentTransactionCreateModel = this.getCreateModel(requestBody);
         const record: PaymentTransactionDto = await this._service.create(createModel);
         if (record === null) {

@@ -44,7 +44,7 @@ export class CustomerControllerDelegate {
         return this.getEnrichedDto(record);
     };
 
-    search = async (query) => {
+    search = async (query: any) => {
         await validator.validateSearchRequest(query);
         var filters: CustomerSearchFilters = this.getSearchFilters(query);
         var searchResults = await this._service.search(filters);
@@ -53,7 +53,7 @@ export class CustomerControllerDelegate {
         return searchResults;
     };
 
-    update = async (id: uuid ,requestBody: any) =>{
+    update = async (id: uuid, requestBody: any) =>{
         await validator.validateUpdateRequest(requestBody);
         const record: CustomerDto = await this._service.getById(id);
         if (record === null) {

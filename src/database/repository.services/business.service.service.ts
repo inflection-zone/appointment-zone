@@ -47,7 +47,7 @@ export class BusinessServiceService{
                         where : {
                             IsActive : true,
                             BusinessNodeId : node.id,
-                            Name : filters.Name,
+                            Name : {contains: filters.Name},
                         },
                     });
                     if (nodeServices.length > 0) {
@@ -65,7 +65,7 @@ export class BusinessServiceService{
                     where: {
                         IsActive : true,
                         BusinessNodeId : node.id,
-                        Name : filters.Name,
+                        Name : {contains: filters.Name},
                     },
                 });
                 if (nodeServices.length > 0) {
@@ -91,7 +91,7 @@ export class BusinessServiceService{
         try {
             const record = await this.prisma.business_services.findUnique({
                 where: {
-                    id:id,
+                    id: id,
                 },
             });
             return record !== null;
@@ -109,8 +109,10 @@ export class BusinessServiceService{
             }
             if (filters.Name != null) {
                 search.where =   {
-                    Name : filters.Name,
-                    }
+                    Name : {
+                        contains: filters.Name,
+                    },
+                }
             }
             if (filters.BusinessNodeId != null) {
                 search.where =   {

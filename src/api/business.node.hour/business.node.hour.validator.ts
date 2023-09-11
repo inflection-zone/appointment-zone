@@ -16,8 +16,8 @@ export class BusinessNodeHourValidator {
                 Date                               : joi.date().optional(),
                 IsOpen                             : joi.boolean().optional(),
                 Message                            : joi.string().max(255).optional(),
-                StartTime                          : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).required(),
-                EndTime                            : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).required(),
+                StartTime                          : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).optional(),
+                EndTime                            : joi.string().regex(/(?:[01]\d|2[0-3]):(?:[0-5]\d):(?:[0-5]\d)/).optional(),
                 IsActive                           : joi.boolean().optional(),
                 IsDeleted                          : joi.boolean().optional(),
             });

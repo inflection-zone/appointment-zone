@@ -14,6 +14,8 @@ export class ApiClientValidator {
             const schema = joi.object({
                 ClientName          : joi.string().max(256).optional(),
                 ClientCode          : joi.string().max(256).optional(),
+                FirstName           : joi.string().max(256).optional(),
+                LastName            : joi.string().max(256).optional(),
                 ClientInterfaceType : joi.string().valid("Mobile App", "Web App", "Desktop App", "Other").optional(),
                 IsPrivileged        : joi.boolean().optional(),
                 CountryCode         : joi.string().required(),
@@ -35,6 +37,8 @@ export class ApiClientValidator {
             const schema = joi.object({
                 ClientName          : joi.string().max(256).optional(),
                 ClientCode          : joi.string().max(256).optional(),
+                FirstName           : joi.string().max(256).optional(),
+                LastName            : joi.string().max(256).optional(),
                 ClientInterfaceType : joi.string().valid("Mobile App", "Web App", "Desktop App", "Other").optional(),
                 IsPrivileged        : joi.boolean().optional(),
                 CountryCode         : joi.string().optional(),
@@ -56,6 +60,8 @@ export class ApiClientValidator {
             const schema = joi.object({
                 clientName          : joi.string().max(256).optional(),
                 clientCode          : joi.string().max(256).optional(),
+                firstName           : joi.string().max(256).optional(),
+                lastName            : joi.string().max(256).optional(),
                 clientInterfaceType : joi.string().valid("Mobile App", "Web App", "Desktop App", "Other").optional(),
                 isPrivileged        : joi.boolean().optional(),
                 countryCode         : joi.string().optional(),

@@ -43,20 +43,35 @@ export class CustomerService {
                 }
             }
             if (filters.LastName != null) {
-                search.where =   {
+                search.where = {
                     LastName : filters.LastName 
                 }
             }
             if (filters.Mobile != null) {
-                search.where =   {
-                    Mobile : filters.Mobile
+                search.where = {
+                    Mobile : {
+                        contains: filters.Mobile,
+                    },
                 }
             }
             if (filters.Email != null) {
-                search.where =   {
-                    Email : filters.Email
+                search.where = {
+                    Email : {
+                        contains: filters.Email,
+                    },
                 }
             }
+            search.take = 25;
+                if (filters.ItemsPerPage) {
+                    search.take = Number(filters.ItemsPerPage);
+                }
+                
+            search.skip = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                search.skip = pageIndex * search.take;
+            }    
             let customers = await this.prisma.customers.findMany(search)
 
             if (filters.Name != null) {
@@ -80,6 +95,7 @@ export class CustomerService {
             const searchResults = {
                 TotalCount     : customers.length,
                 RetrievedCount : customers.length,
+                PageIndex      : pageIndex,
                 ItemsPerPage   : search.take,
                 Items          : customers,
             };
