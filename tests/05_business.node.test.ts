@@ -22,34 +22,33 @@ describe('Business node tests', function() {
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
-              setTestData(response.body.Data.id, 'BusinessNodeId');
-                expect(response.body.Data).to.have.property('id');
-                expect(response.body.Data).to.have.property('id');
-                expect(response.body.Data).to.have.property('BusinessId');
-                expect(response.body.Data).to.have.property('Name');
-                expect(response.body.Data).to.have.property('Mobile');
-                expect(response.body.Data).to.have.property('Email');
-                expect(response.body.Data).to.have.property('DisplayPicture');
-                expect(response.body.Data).to.have.property('Address');
-                expect(response.body.Data).to.have.property('Longitude');
-                expect(response.body.Data).to.have.property('OverallRating');
-                expect(response.body.Data).to.have.property('AllowWalkinAppointments');
-                expect(response.body.Data).to.have.property('AllowFutureBookingFor');
-                expect(response.body.Data).to.have.property('IsActive');
+              setTestData(response.body.Data.Node.id, 'BusinessNodeId');
+                expect(response.body.Data.Node).to.have.property('id');
+                expect(response.body.Data.Node).to.have.property('BusinessId');
+                expect(response.body.Data.Node).to.have.property('Name');
+                expect(response.body.Data.Node).to.have.property('Mobile');
+                expect(response.body.Data.Node).to.have.property('Email');
+                expect(response.body.Data.Node).to.have.property('DisplayPicture');
+                expect(response.body.Data.Node).to.have.property('Address');
+                expect(response.body.Data.Node).to.have.property('Longitude');
+                expect(response.body.Data.Node).to.have.property('OverallRating');
+                expect(response.body.Data.Node).to.have.property('AllowWalkinAppointments');
+                expect(response.body.Data.Node).to.have.property('AllowFutureBookingFor');
+                expect(response.body.Data.Node).to.have.property('IsActive');
 
-                setTestData(response.body.Data.id, 'BusinessNodeId');
+                setTestData(response.body.Data.Node.id, 'BusinessNodeId');
 
-                expect(response.body.Data.BusinessId).to.equal(getTestData("BusinessNodeCreateModel").BusinessId);
-                expect(response.body.Data.Name).to.equal(getTestData("BusinessNodeCreateModel").Name);
-                expect(response.body.Data.Mobile).to.equal(getTestData("BusinessNodeCreateModel").Mobile);
-                expect(response.body.Data.Email).to.equal(getTestData("BusinessNodeCreateModel").Email);
-                expect(response.body.Data.DisplayPicture).to.equal(getTestData("BusinessNodeCreateModel").DisplayPicture);
-                expect(response.body.Data.Address).to.equal(getTestData("BusinessNodeCreateModel").Address);
-                expect(response.body.Data.Longitude).to.equal(getTestData("BusinessNodeCreateModel").Longitude);
-                expect(response.body.Data.OverallRating).to.equal(getTestData("BusinessNodeCreateModel").OverallRating);
-                expect(response.body.Data.AllowWalkinAppointments).to.equal(getTestData("BusinessNodeCreateModel").AllowWalkinAppointments);
-                expect(response.body.Data.AllowFutureBookingFor).to.equal(getTestData("BusinessNodeCreateModel").AllowFutureBookingFor);
-                expect(response.body.Data.IsActive).to.equal(getTestData("BusinessNodeCreateModel").IsActive);
+                expect(response.body.Data.Node.BusinessId).to.equal(getTestData("BusinessNodeCreateModel").BusinessId);
+                expect(response.body.Data.Node.Name).to.equal(getTestData("BusinessNodeCreateModel").Name);
+                expect(response.body.Data.Node.Mobile).to.equal(getTestData("BusinessNodeCreateModel").Mobile);
+                expect(response.body.Data.Node.Email).to.equal(getTestData("BusinessNodeCreateModel").Email);
+                expect(response.body.Data.Node.DisplayPicture).to.equal(getTestData("BusinessNodeCreateModel").DisplayPicture);
+                expect(response.body.Data.Node.Address).to.equal(getTestData("BusinessNodeCreateModel").Address);
+                expect(response.body.Data.Node.Longitude).to.equal(getTestData("BusinessNodeCreateModel").Longitude);
+                expect(response.body.Data.Node.OverallRating).to.equal(getTestData("BusinessNodeCreateModel").OverallRating);
+                expect(response.body.Data.Node.AllowWalkinAppointments).to.equal(getTestData("BusinessNodeCreateModel").AllowWalkinAppointments);
+                expect(response.body.Data.Node.AllowFutureBookingFor).to.equal(getTestData("BusinessNodeCreateModel").AllowFutureBookingFor);
+                expect(response.body.Data.Node.IsActive).to.equal(getTestData("BusinessNodeCreateModel").IsActive);
 
             })
             .expect(201, done);
@@ -60,7 +59,7 @@ describe('Business node tests', function() {
         agent
             .get(`/api/v1/business-nodes/${getTestData("BusinessNodeId")}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
               expect(response.body.Data).to.have.property('id');
@@ -96,8 +95,8 @@ describe('Business node tests', function() {
         agent
             .get(`/api/v1/business-nodes/search${loadBusinessNodeQueryString()}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
-            .set('Authorization', `Bearer ${global.TestCache.AdminJwt}`)
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data).to.have.property('TotalCount');
                 expect(response.body.Data).to.have.property('RetrievedCount');
@@ -118,7 +117,7 @@ describe('Business node tests', function() {
         agent
             .put(`/api/v1/business-nodes/${getTestData("BusinessNodeId")}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
@@ -158,7 +157,7 @@ describe('Business node tests', function() {
         agent
             .delete(`/api/v1/business-nodes/${getTestData("BusinessNodeId")}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
               expect(response.body).to.have.property('Status');
@@ -176,34 +175,33 @@ describe('Business node tests', function() {
           .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
           .send(createModel)
           .expect(response => {
-            setTestData(response.body.Data.id, 'BusinessNodeId');
-              expect(response.body.Data).to.have.property('id');
-              expect(response.body.Data).to.have.property('id');
-              expect(response.body.Data).to.have.property('BusinessId');
-              expect(response.body.Data).to.have.property('Name');
-              expect(response.body.Data).to.have.property('Mobile');
-              expect(response.body.Data).to.have.property('Email');
-              expect(response.body.Data).to.have.property('DisplayPicture');
-              expect(response.body.Data).to.have.property('Address');
-              expect(response.body.Data).to.have.property('Longitude');
-              expect(response.body.Data).to.have.property('OverallRating');
-              expect(response.body.Data).to.have.property('AllowWalkinAppointments');
-              expect(response.body.Data).to.have.property('AllowFutureBookingFor');
-              expect(response.body.Data).to.have.property('IsActive');
+            setTestData(response.body.Data.Node.id, 'BusinessNodeId_1');
+              expect(response.body.Data.Node).to.have.property('id');
+              expect(response.body.Data.Node).to.have.property('BusinessId');
+              expect(response.body.Data.Node).to.have.property('Name');
+              expect(response.body.Data.Node).to.have.property('Mobile');
+              expect(response.body.Data.Node).to.have.property('Email');
+              expect(response.body.Data.Node).to.have.property('DisplayPicture');
+              expect(response.body.Data.Node).to.have.property('Address');
+              expect(response.body.Data.Node).to.have.property('Longitude');
+              expect(response.body.Data.Node).to.have.property('OverallRating');
+              expect(response.body.Data.Node).to.have.property('AllowWalkinAppointments');
+              expect(response.body.Data.Node).to.have.property('AllowFutureBookingFor');
+              expect(response.body.Data.Node).to.have.property('IsActive');
 
-              setTestData(response.body.Data.id, 'BusinessNodeId');
+              setTestData(response.body.Data.Node.id, 'BusinessNodeId_1');
 
-              expect(response.body.Data.BusinessId).to.equal(getTestData("BusinessNodeCreateModel").BusinessId);
-              expect(response.body.Data.Name).to.equal(getTestData("BusinessNodeCreateModel").Name);
-              expect(response.body.Data.Mobile).to.equal(getTestData("BusinessNodeCreateModel").Mobile);
-              expect(response.body.Data.Email).to.equal(getTestData("BusinessNodeCreateModel").Email);
-              expect(response.body.Data.DisplayPicture).to.equal(getTestData("BusinessNodeCreateModel").DisplayPicture);
-              expect(response.body.Data.Address).to.equal(getTestData("BusinessNodeCreateModel").Address);
-              expect(response.body.Data.Longitude).to.equal(getTestData("BusinessNodeCreateModel").Longitude);
-              expect(response.body.Data.OverallRating).to.equal(getTestData("BusinessNodeCreateModel").OverallRating);
-              expect(response.body.Data.AllowWalkinAppointments).to.equal(getTestData("BusinessNodeCreateModel").AllowWalkinAppointments);
-              expect(response.body.Data.AllowFutureBookingFor).to.equal(getTestData("BusinessNodeCreateModel").AllowFutureBookingFor);
-              expect(response.body.Data.IsActive).to.equal(getTestData("BusinessNodeCreateModel").IsActive);
+              expect(response.body.Data.Node.BusinessId).to.equal(getTestData("BusinessNodeCreateModel").BusinessId);
+              expect(response.body.Data.Node.Name).to.equal(getTestData("BusinessNodeCreateModel").Name);
+              expect(response.body.Data.Node.Mobile).to.equal(getTestData("BusinessNodeCreateModel").Mobile);
+              expect(response.body.Data.Node.Email).to.equal(getTestData("BusinessNodeCreateModel").Email);
+              expect(response.body.Data.Node.DisplayPicture).to.equal(getTestData("BusinessNodeCreateModel").DisplayPicture);
+              expect(response.body.Data.Node.Address).to.equal(getTestData("BusinessNodeCreateModel").Address);
+              expect(response.body.Data.Node.Longitude).to.equal(getTestData("BusinessNodeCreateModel").Longitude);
+              expect(response.body.Data.Node.OverallRating).to.equal(getTestData("BusinessNodeCreateModel").OverallRating);
+              expect(response.body.Data.Node.AllowWalkinAppointments).to.equal(getTestData("BusinessNodeCreateModel").AllowWalkinAppointments);
+              expect(response.body.Data.Node.AllowFutureBookingFor).to.equal(getTestData("BusinessNodeCreateModel").AllowFutureBookingFor);
+              expect(response.body.Data.Node.IsActive).to.equal(getTestData("BusinessNodeCreateModel").IsActive);
 
           })
           .expect(201, done);

@@ -2,7 +2,7 @@ import  request  from 'supertest';
 import{ expect, should, assert } from 'chai';
 import Application from '../src/app';
 import { describe, it } from 'mocha';
-// import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import { getTestData, setTestData } from './init';
 
 const infra = Application.instance();
@@ -13,7 +13,7 @@ describe('Appointment tests', function() {
 
     var agent = request.agent(infra._app);
 
-    it('Find availabe slots', function(done) {
+    it('Find available slots', function(done) {
       loadAppointmentGetModel();
       const BusinessId = getTestData("BusinessId");
       const BusinessNodeId = getTestData("BusinessNodeId");
@@ -21,7 +21,7 @@ describe('Appointment tests', function() {
         agent
             .get(`/api/v1/appointments/business/${BusinessId}/node/${BusinessNodeId}/service/${BusinessServiceId}/slots`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .expect(response => {
               expect(response.body).to.have.property('Status');
               expect(response.body.Status).to.equal('success');
@@ -29,13 +29,13 @@ describe('Appointment tests', function() {
             .expect(200, done);
     });
 
-    it('Find availabe slots for user', function(done) {
+    it('Find available slots for user', function(done) {
       loadAppointmentGetUserModel();
       const BusinessUserId = getTestData("BusinessUserId");
         agent
             .get(`/api/v1/appointments/businessUser/${BusinessUserId}/slots`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .expect(response => {
               expect(response.body).to.have.property('Status');
               expect(response.body.Status).to.equal('success');
@@ -49,7 +49,7 @@ describe('Appointment tests', function() {
       agent
           .post(`/api/v1/appointments/book`)
           .set('Content-Type', 'application/json')
-          .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+          .set('x-api-key', `${process.env.TEST_API_KEY}`)
           .send(createModel)
           .expect(response => {
               setTestData(response.body.Data.id, 'AppointmentId');
@@ -76,8 +76,6 @@ describe('Appointment tests', function() {
               expect(response.body.Data.CustomerId).to.equal(getTestData("AppointmentBookCreateModel").CustomerId);
               expect(response.body.Data.BusinessUserId).to.equal(getTestData("AppointmentBookCreateModel").BusinessUserId);
               expect(response.body.Data.BusinessServiceId).to.equal(getTestData("AppointmentBookCreateModel").BusinessServiceId);
-              // expect(response.body.Data.StartTime).to.equal(getTestData("AppointmentBookCreateModel").StartTime);
-              // expect(response.body.Data.EndTime).to.equal(getTestData("AppointmentBookCreateModel").EndTime);
               expect(response.body.Data.Type).to.equal(getTestData("AppointmentBookCreateModel").Type);
               expect(response.body.Data.Note).to.equal(getTestData("AppointmentBookCreateModel").Note);
               expect(response.body.Data.StatusCode).to.equal(getTestData("AppointmentBookCreateModel").StatusCode);
@@ -96,7 +94,7 @@ describe('Appointment tests', function() {
     agent
         .get(`/api/v1/appointments/${getTestData("AppointmentId")}`)
         .set('Content-Type', 'application/json')
-        .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+        .set('x-api-key', `${process.env.TEST_API_KEY}`)
         .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
         .expect(response => {
           expect(response.body.Data).to.have.property('id');
@@ -120,8 +118,6 @@ describe('Appointment tests', function() {
           expect(response.body.Data.CustomerId).to.equal(getTestData("AppointmentBookCreateModel").CustomerId);
           expect(response.body.Data.BusinessUserId).to.equal(getTestData("AppointmentBookCreateModel").BusinessUserId);
           expect(response.body.Data.BusinessServiceId).to.equal(getTestData("AppointmentBookCreateModel").BusinessServiceId);
-          // expect(response.body.Data.StartTime).to.equal(getTestData("AppointmentBookCreateModel").StartTime);
-          // expect(response.body.Data.EndTime).to.equal(getTestData("AppointmentBookCreateModel").EndTime);
           expect(response.body.Data.Type).to.equal(getTestData("AppointmentBookCreateModel").Type);
           expect(response.body.Data.Note).to.equal(getTestData("AppointmentBookCreateModel").Note);
           expect(response.body.Data.StatusCode).to.equal(getTestData("AppointmentBookCreateModel").StatusCode);
@@ -140,7 +136,7 @@ describe('Appointment tests', function() {
       agent
           .get(`/api/v1/appointments/business-user/${getTestData("BusinessUserId")}`)
           .set('Content-Type', 'application/json')
-          .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+          .set('x-api-key', `${process.env.TEST_API_KEY}`)
           .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
           .expect(response => {
             expect(response.body).to.have.property('Status');
@@ -154,7 +150,7 @@ describe('Appointment tests', function() {
     agent
         .get(`/api/v1/appointments/business-node/${getTestData("BusinessNodeId")}`)
         .set('Content-Type', 'application/json')
-        .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+        .set('x-api-key', `${process.env.TEST_API_KEY}`)
         .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
         .expect(response => {
           expect(response.body).to.have.property('Status');
@@ -168,7 +164,7 @@ it('Get appointment by customer id', function(done) {
   agent
       .get(`/api/v1/appointments/customer/${getTestData("CustomerId")}`)
       .set('Content-Type', 'application/json')
-      .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+      .set('x-api-key', `${process.env.TEST_API_KEY}`)
       .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
       .expect(response => {
         expect(response.body).to.have.property('Status');
@@ -182,7 +178,7 @@ it('Get appointment by display id', function(done) {
   agent
       .get(`/api/v1/appointments/by-display-id/${getTestData("DisplayId")}`)
       .set('Content-Type', 'application/json')
-      .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+      .set('x-api-key', `${process.env.TEST_API_KEY}`)
       .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
       .expect(response => {
         expect(response.body).to.have.property('Status');
@@ -198,7 +194,7 @@ it('Update appointment', function(done) {
       agent
           .put(`/api/v1/appointments/${getTestData("AppointmentId")}`)
           .set('Content-Type', 'application/json')
-          .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+          .set('x-api-key', `${process.env.TEST_API_KEY}`)
           .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
           .send(updateModel)
           .expect(response => {
@@ -223,8 +219,6 @@ it('Update appointment', function(done) {
             expect(response.body.Data.CustomerId).to.equal(getTestData("AppointmentBookUpdateModel").CustomerId);
             expect(response.body.Data.BusinessUserId).to.equal(getTestData("AppointmentBookUpdateModel").BusinessUserId);
             expect(response.body.Data.BusinessServiceId).to.equal(getTestData("AppointmentBookUpdateModel").BusinessServiceId);
-            // expect(response.body.Data.StartTime).to.equal(getTestData("AppointmentBookUpdateModel").StartTime);
-            // expect(response.body.Data.EndTime).to.equal(getTestData("AppointmentBookUpdateModel").EndTime);
             expect(response.body.Data.Type).to.equal(getTestData("AppointmentBookUpdateModel").Type);
             expect(response.body.Data.Note).to.equal(getTestData("AppointmentBookUpdateModel").Note);
             expect(response.body.Data.Appointment.StatusCode).to.equal(getTestData("AppointmentBookUpdateModel").StatusCode);
@@ -243,7 +237,7 @@ it('Cancel appointment', function(done) {
     agent
         .put(`/api/v1/appointments/cancel/${getTestData("AppointmentId")}`)
         .set('Content-Type', 'application/json')
-        .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+        .set('x-api-key', `${process.env.TEST_API_KEY}`)
         .expect(response => {
           expect(response.body).to.have.property('Status');
           expect(response.body.Status).to.equal('success');
@@ -256,7 +250,7 @@ it('Complete appointment', function(done) {
     agent
         .put(`/api/v1/appointments/complete/${getTestData("AppointmentId")}`)
         .set('Content-Type', 'application/json')
-        .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+        .set('x-api-key', `${process.env.TEST_API_KEY}`)
         .expect(response => {
           expect(response.body).to.have.property('Status');
           expect(response.body.Status).to.equal('success');
@@ -269,7 +263,7 @@ it('Confirm appointment', function(done) {
     agent
         .put(`/api/v1/appointments/confirm/${getTestData("AppointmentId")}`)
         .set('Content-Type', 'application/json')
-        .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+        .set('x-api-key', `${process.env.TEST_API_KEY}`)
         .expect(response => {
           expect(response.body).to.have.property('Status');
           expect(response.body.Status).to.equal('success');
@@ -306,8 +300,8 @@ export const loadAppointmentBookCreateModel = async (
       CustomerId: getTestData("CustomerId"),
       BusinessUserId: getTestData("BusinessUserId"),
       BusinessServiceId: getTestData("BusinessServiceId"),
-      StartTime:  "2023-07-20T14:30:00Z",
-      EndTime: "2023-07-20T15:00:00Z",
+      StartTime: "2023-10-05T14:00:00Z",
+      EndTime: "2023-10-05T14:30:00Z",
       Type: "IN-PERSON",
       Note: "This is doctor appointment note",
       StatusCode: "1",
@@ -325,7 +319,7 @@ export const loadAppointmentBookUpdateModel = async (
   ) => {
       const model = {
         Status: "Confirmed",
-        StatusCode: "2"
+        StatusCode: "2",
       };
       setTestData(model, "AppointmentBookUpdateModel");
   }

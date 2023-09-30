@@ -25,6 +25,7 @@ describe('Api client tests', function() {
                 setTestData(response.body.Data.id, 'ApiClientId')
                 expect(response.body.Data).to.have.property('id');
                 expect(response.body.Data).to.have.property('ClientName');
+                expect(response.body.Data).to.have.property('CountryCode');                
                 expect(response.body.Data).to.have.property('Phone');
                 expect(response.body.Data).to.have.property('Email');
                 expect(response.body.Data).to.have.property('IsPrivileged');
@@ -32,6 +33,7 @@ describe('Api client tests', function() {
                 setTestData(response.body.Data.id, 'ApiClientId')
 
                 expect(response.body.Data.ClientName).to.equal(getTestData("ApiClientCreateModel").ClientName);
+                expect(response.body.Data.CountryCode).to.equal(getTestData("ApiClientCreateModel").CountryCode);
                 expect(response.body.Data.Phone).to.equal(getTestData("ApiClientCreateModel").Phone);
                 expect(response.body.Data.Email).to.equal(getTestData("ApiClientCreateModel").Email);        
                 expect(response.body.Data.IsPrivileged).to.equal(getTestData("ApiClientCreateModel").IsPrivileged);

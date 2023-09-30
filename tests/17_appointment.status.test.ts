@@ -21,7 +21,7 @@ describe('Appointment status tests', function() {
             .set('Content-Type', 'application/json')
             .send(createModel)
             .expect(response => {
-                setTestData( response.body.Data.id, 'AppointmentStatusId');
+                setTestData( response.body.Data.id, 'AppointmentStatusId_1');
                 expect(response.body.Data).to.have.property('id');
                 expect(response.body.Data).to.have.property('BusinessNodeId');
                 expect(response.body.Data).to.have.property('Status');
@@ -38,7 +38,7 @@ describe('Appointment status tests', function() {
                 expect(response.body.Data).to.have.property('IsWalkinEntryStatus');         
                 expect(response.body.Data).to.have.property('IsActive');
 
-                setTestData( response.body.Data.id, 'AppointmentStatusId');
+                setTestData( response.body.Data.id, 'AppointmentStatusId_1');
 
                 expect(response.body.Data.BusinessNodeId).to.equal(getTestData("AppointmentStatusCreateModel").BusinessNodeId);
                 expect(response.body.Data.Status).to.equal(getTestData("AppointmentStatusCreateModel").Status);
@@ -60,11 +60,11 @@ describe('Appointment status tests', function() {
     });
 
     it('Get appointment status by id', function(done) {
-        const id = `${getTestData("AppointmentStatusId")}`
+        const id = `${getTestData("AppointmentStatusId_1")}`
         agent
-            .get(`/api/v1/appointment-statuses/${getTestData("AppointmentStatusId")}`)
+            .get(`/api/v1/appointment-statuses/${getTestData("AppointmentStatusId_1")}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
               expect(response.body.Data).to.have.property('id');
@@ -106,7 +106,7 @@ describe('Appointment status tests', function() {
         agent
             .get(`/api/v1/appointment-statuses/search${loadAppointmentStatusQueryString()}`)
             .set('Content-Type', 'application/json')
-             .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data).to.have.property('TotalCount');
@@ -126,9 +126,9 @@ describe('Appointment status tests', function() {
         const updateModel = getTestData("AppointmentStatusUpdateModel");
         const id = `${getTestData("AppointmentStatusId")}`
         agent
-            .put(`/api/v1/appointment-statuses/${getTestData("AppointmentStatusId")}`)
+            .put(`/api/v1/appointment-statuses/${getTestData("AppointmentStatusId_1")}`)
             .set('Content-Type', 'application/json')
-             .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
@@ -168,13 +168,13 @@ describe('Appointment status tests', function() {
     });
 
     it('Delete appointment status', function(done) {
-        const id = `${getTestData("AppointmentStatusId")}`
+        const id = `${getTestData("AppointmentStatusId_1")}`
 
         //Delete
         agent
-            .delete(`/api/v1/appointment-statuses/${getTestData("AppointmentStatusId")}`)
+            .delete(`/api/v1/appointment-statuses/${getTestData("AppointmentStatusId_1")}`)
             .set('Content-Type', 'application/json')
-             .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
               expect(response.body).to.have.property('Status');

@@ -44,7 +44,7 @@ describe('Business skill tests', function() {
         agent
             .get(`/api/v1/business-skills/${getTestData("BusinessSkillId")}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
               expect(response.body.Data).to.have.property('id');
@@ -66,7 +66,7 @@ describe('Business skill tests', function() {
         agent
             .get(`/api/v1/business-skills/search${loadBusinessSkillQueryString()}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data).to.have.property('TotalCount');
@@ -88,21 +88,20 @@ describe('Business skill tests', function() {
         agent
             .put(`/api/v1/business-skills/${getTestData("BusinessSkillId")}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
-              expect(response.body.Data).to.have.property('id');
-              expect(response.body.Data).to.have.property('Name');
-              expect(response.body.Data).to.have.property('Description');             
-              expect(response.body.Data).to.have.property('DisplayPicture');
-              expect(response.body.Data).to.have.property('IsActive');
+                expect(response.body.Data).to.have.property('id');
+                expect(response.body.Data).to.have.property('Name');
+                expect(response.body.Data).to.have.property('Description');             
+                expect(response.body.Data).to.have.property('DisplayPicture');
+                expect(response.body.Data).to.have.property('IsActive');
 
-              expect(response.body.Data.Name).to.equal(getTestData("BusinessSkillUpdateModel").Name);
-              expect(response.body.Data.Description).to.equal(getTestData("BusinessSkillUpdateModel").Description);
-              expect(response.body.Data.DisplayPicture).to.equal(getTestData("BusinessSkillUpdateModel").DisplayPicture);
-              expect(response.body.Data.IsActive).to.equal(getTestData("BusinessSkillUpdateModel").IsActive);
-
+                expect(response.body.Data.Name).to.equal(getTestData("BusinessSkillUpdateModel").Name);
+                expect(response.body.Data.Description).to.equal(getTestData("BusinessSkillUpdateModel").Description);
+                expect(response.body.Data.DisplayPicture).to.equal(getTestData("BusinessSkillUpdateModel").DisplayPicture);
+                expect(response.body.Data.IsActive).to.equal(getTestData("BusinessSkillUpdateModel").IsActive);
             })
             .expect(200, done);
     });
@@ -114,11 +113,11 @@ describe('Business skill tests', function() {
         agent
             .delete(`/api/v1/business-skills/${getTestData("BusinessSkillId")}`)
             .set('Content-Type', 'application/json')
-             .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
-              expect(response.body).to.have.property('Status');
-              expect(response.body.Status).to.equal('success');
+                expect(response.body).to.have.property('Status');
+                expect(response.body.Status).to.equal('success');
             })
             .expect(200, done);
     });
@@ -127,66 +126,65 @@ describe('Business skill tests', function() {
       loadBusinessSkillCreateModel();
       const createModel = getTestData("BusinessSkillCreateModel");
       agent
-          .post(`/api/v1/business-skills/`)
-          .set('Content-Type', 'application/json')
-          .send(createModel)
-          .expect(response => {
-              setTestData(response.body.Data.id, 'BusinessSkillId')
-              expect(response.body.Data).to.have.property('id');
-              expect(response.body.Data).to.have.property('Name');
-              expect(response.body.Data).to.have.property('Description');             
-              expect(response.body.Data).to.have.property('DisplayPicture');
-              expect(response.body.Data).to.have.property('IsActive');
+            .post(`/api/v1/business-skills/`)
+            .set('Content-Type', 'application/json')
+            .send(createModel)
+            .expect(response => {
+                setTestData(response.body.Data.id, 'BusinessSkillId_1')
+                expect(response.body.Data).to.have.property('id');
+                expect(response.body.Data).to.have.property('Name');
+                expect(response.body.Data).to.have.property('Description');             
+                expect(response.body.Data).to.have.property('DisplayPicture');
+                expect(response.body.Data).to.have.property('IsActive');
 
-              setTestData(response.body.Data.id, 'BusinessSkillId')
-              
-              expect(response.body.Data.Name).to.equal(getTestData("BusinessSkillCreateModel").Name);
-              expect(response.body.Data.Description).to.equal(getTestData("BusinessSkillCreateModel").Description);
-              expect(response.body.Data.DisplayPicture).to.equal(getTestData("BusinessSkillCreateModel").DisplayPicture);
-              expect(response.body.Data.IsActive).to.equal(getTestData("BusinessSkillCreateModel").IsActive);
-
-          })
-          .expect(201, done);
-  });
+                setTestData(response.body.Data.id, 'BusinessSkillId_1')
+                
+                expect(response.body.Data.Name).to.equal(getTestData("BusinessSkillCreateModel").Name);
+                expect(response.body.Data.Description).to.equal(getTestData("BusinessSkillCreateModel").Description);
+                expect(response.body.Data.DisplayPicture).to.equal(getTestData("BusinessSkillCreateModel").DisplayPicture);
+                expect(response.body.Data.IsActive).to.equal(getTestData("BusinessSkillCreateModel").IsActive);
+            })
+            .expect(201, done);
+    });
 
 });
 
 ///////////////////////////////////////////////////////////////////////////
 
 export const loadBusinessSkillCreateModel = async (
-  Name = faker.person.fullName(),
-  Description = faker.lorem.words(),
-  DisplayPicture = faker.image.url(),
-) => {
-  const model = {
-    BusinessNodeId: getTestData("BusinessNodeId"),
-    Name: "some jgjhgj skill",
-    Description: "the special skill nobody else has!",
-    DisplayPicture: "hcbjb",
-    IsActive: true
-  };
-  setTestData(model, "BusinessSkillCreateModel");
-}
+    Name = faker.person.fullName(),
+    Description = faker.lorem.words(),
+    DisplayPicture = faker.image.url(),
+    ) => {
+    const model = {
+        BusinessNodeId: getTestData("BusinessNodeId"),
+        Name: "some jgjhgj skill",
+        Description: "the special skill nobody else has!",
+        DisplayPicture: "hcbjb",
+        IsActive: true
+    };
+    setTestData(model, "BusinessSkillCreateModel");
+    }
 
 export const loadBusinessSkillUpdateModel = async (
-  Name = faker.person.fullName(),
-  Description = faker.lorem.words(),
-  DisplayPicture = faker.image.url(),
-) => {
-  const model = {
-      BusinessNodeId: getTestData("BusinessNodeId"),
-      Name: Name,
-      Description: Description,
-      DisplayPicture: DisplayPicture,
-      IsActive: true
-  };
-  setTestData(model, "BusinessSkillUpdateModel");
-}
+    Name = faker.person.fullName(),
+    Description = faker.lorem.words(),
+    DisplayPicture = faker.image.url(),
+    ) => {
+    const model = {
+        BusinessNodeId: getTestData("BusinessNodeId"),
+        Name: Name,
+        Description: Description,
+        DisplayPicture: DisplayPicture,
+        IsActive: true
+    };
+    setTestData(model, "BusinessSkillUpdateModel");
+    }
 
-function loadBusinessSkillQueryString() {
-    //This is raw query. Please modify to suit the test
-    const queryString = '?isActive=true'
-    return queryString;
-}
+    function loadBusinessSkillQueryString() {
+        //This is raw query. Please modify to suit the test
+        const queryString = '?isActive=true'
+        return queryString;
+    }
 
 ///////////////////////////////////////////////////////////////////////////

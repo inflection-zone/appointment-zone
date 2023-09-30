@@ -19,9 +19,11 @@ describe('Business user tests', function() {
         agent
             .post(`/api/v1/business-users/`)
             .set('Content-Type', 'application/json')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
-                setTestData( response.body.Data.UserRecords.id, 'BusinessUserId')
+              setTestData(response.body.Data.UserRecords.id, 'BusinessUserId')
                 expect(response.body.Data.UserRecords).to.have.property('id');
                 expect(response.body.Data.UserRecords).to.have.property('BusinessNodeId');
                 expect(response.body.Data.UserRecords).to.have.property('FirstName');
@@ -43,9 +45,9 @@ describe('Business user tests', function() {
                 expect(response.body.Data.UserRecords).to.have.property('Yelp');
                 expect(response.body.Data.UserRecords).to.have.property('IsActive');
 
-                setTestData( response.body.Data.UserRecords.id, 'BusinessUserId')
+                setTestData(response.body.Data.UserRecords.id, 'BusinessUserId')
 
-                expect(response.body.Data.UserRecords.BusinessNodeId).to.equal(global.TestCache.BusinessUserCreateModel.BusinessNodeId);
+                expect(response.body.Data.UserRecords.BusinessNodeId).to.equal(getTestData("BusinessUserCreateModel").BusinessNodeId);
                 expect(response.body.Data.UserRecords.FirstName).to.equal(getTestData("BusinessUserCreateModel").FirstName);
                 expect(response.body.Data.UserRecords.LastName).to.equal(getTestData("BusinessUserCreateModel").LastName);
                 expect(response.body.Data.UserRecords.Prefix).to.equal(getTestData("BusinessUserCreateModel").Prefix);
@@ -74,7 +76,7 @@ describe('Business user tests', function() {
         agent
             .get(`/api/v1/business-users/${getTestData("BusinessUserId")}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
               expect(response.body.Data).to.have.property('id');
@@ -126,7 +128,7 @@ describe('Business user tests', function() {
         agent
             .get(`/api/v1/business-users/search${loadBusinessUserQueryString()}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data).to.have.property('TotalCount');
@@ -145,7 +147,7 @@ describe('Business user tests', function() {
         agent
             .put(`/api/v1/business-users/${getTestData("BusinessUserId")}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
@@ -202,7 +204,7 @@ describe('Business user tests', function() {
         agent
             .delete(`/api/v1/business-users/${getTestData("BusinessUserId")}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
               expect(response.body).to.have.property('Status');
@@ -219,7 +221,7 @@ describe('Business user tests', function() {
           .set('Content-Type', 'application/json')
           .send(createModel)
           .expect(response => {
-              setTestData( response.body.Data.UserRecords.id, 'BusinessUserId')
+              setTestData( response.body.Data.UserRecords.id, 'BusinessUserId_1')
               expect(response.body.Data.UserRecords).to.have.property('id');
               expect(response.body.Data.UserRecords).to.have.property('BusinessNodeId');
               expect(response.body.Data.UserRecords).to.have.property('FirstName');
@@ -241,7 +243,7 @@ describe('Business user tests', function() {
               expect(response.body.Data.UserRecords).to.have.property('Yelp');
               expect(response.body.Data.UserRecords).to.have.property('IsActive');
 
-              setTestData( response.body.Data.UserRecords.id, 'BusinessUserId')
+              setTestData( response.body.Data.UserRecords.id, 'BusinessUserId_1')
 
               expect(response.body.Data.UserRecords.BusinessNodeId).to.equal(global.TestCache.BusinessUserCreateModel.BusinessNodeId);
               expect(response.body.Data.UserRecords.FirstName).to.equal(getTestData("BusinessUserCreateModel").FirstName);
@@ -299,7 +301,7 @@ export const loadBusinessUserCreateModel = async (
       Prefix: Prefix,
       Mobile: Mobile,
       Email: Email,
-      Dob: '2023-01-01T12:12:12.000Z',
+      Dob: '1970-01-01T00:00:00.000Z',
       Gender: 'Male',
       DisplayPicture: DisplayPicture,
       AboutMe: AboutMe,
@@ -344,7 +346,7 @@ export const loadBusinessUserUpdateModel = async (
       Prefix: Prefix,
       Mobile: Mobile,
       Email: Email,
-      Dob: '2023-01-01T12:12:12.000Z',
+      Dob: '1970-01-01T00:00:00.000Z',
       Gender: 'Male',
       DisplayPicture: DisplayPicture,
       AboutMe: AboutMe,

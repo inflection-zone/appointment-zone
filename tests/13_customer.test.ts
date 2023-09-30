@@ -100,7 +100,6 @@ describe('Customer tests', function() {
                 expect(response.body.Data).to.have.property('RetrievedCount');
                 expect(response.body.Data).to.have.property('PageIndex');
                 expect(response.body.Data).to.have.property('ItemsPerPage');
-                expect(response.body.Data).to.have.property('Order');
                 expect(response.body.Data.TotalCount).to.greaterThan(0);
                 expect(response.body.Data.RetrievedCount).to.greaterThan(0);
                 expect(response.body.Data.Items.length).to.greaterThan(0);

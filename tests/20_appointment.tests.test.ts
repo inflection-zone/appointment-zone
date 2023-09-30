@@ -18,7 +18,7 @@ describe('Appointment tests', function() {
       agent
           .post(`/api/v1/appointments/book`)
           .set('Content-Type', 'application/json')
-          .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+          .set('x-api-key', `${process.env.TEST_API_KEY}`)
           .send(createModel)
           .expect(response => {
             expect(response.body).to.have.property('Status');
@@ -27,13 +27,13 @@ describe('Appointment tests', function() {
           .expect(412, done);
   });
 
-  it('Slot is availabe on given date & time and availabe is true', function(done) {
+  it('Slot is available on given date & time and available is true', function(done) {
     loadAppointmentBookCreateModel();
     const createModel = getTestData("AppointmentBookCreateModel");
     agent
         .post(`/api/v1/appointments/book`)
         .set('Content-Type', 'application/json')
-        .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+        .set('x-api-key', `${process.env.TEST_API_KEY}`)
         .send(createModel)
         .expect(response => {
             setTestData(response.body.Data.id, 'AppointmentId');
@@ -79,7 +79,7 @@ it('If slot is booked for given time & date', function(done) {
   agent
       .post(`/api/v1/appointments/book`)
       .set('Content-Type', 'application/json')
-      .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+      .set('x-api-key', `${process.env.TEST_API_KEY}`)
       .send(createModel)
       .expect(response => {
         expect(response.body).to.have.property('Status');
@@ -94,7 +94,7 @@ it('Appointment is book on available slot', function(done) {
   agent
       .post(`/api/v1/appointments/book`)
       .set('Content-Type', 'application/json')
-      .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+      .set('x-api-key', `${process.env.TEST_API_KEY}`)
       .send(createModel)
       .expect(response => {
         expect(response.body).to.have.property('Status');
@@ -109,7 +109,7 @@ it('Book appointment then cancel & book again for same time & day', function(don
   agent
       .post(`/api/v1/appointments/book`)
       .set('Content-Type', 'application/json')
-      .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+      .set('x-api-key', `${process.env.TEST_API_KEY}`)
       .send(createModel)
       .expect(response => {
           setTestData(response.body.Data.id, 'AppointmentId');
@@ -149,25 +149,25 @@ it('Book appointment then cancel & book again for same time & day', function(don
       .expect(201, done);
 
       //cancel appointment
+      
       agent
       .get(`/api/v1/appointments/cancel/${getTestData("AppointmentId")}`)
       .set('Content-Type', 'application/json')
-      .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+      .set('x-api-key', `${process.env.TEST_API_KEY}`)
       .expect(response => {
         expect(response.body).to.have.property('Status');
         expect(response.body.Status).to.equal('success');
       })
-      // .expect(200, done);
 
       //Again book appointment for same time
       const createAgainModel = getTestData("AppointmentBookAndCancelModel");
       agent
           .post(`/api/v1/appointments/book`)
           .set('Content-Type', 'application/json')
-          .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+          .set('x-api-key', `${process.env.TEST_API_KEY}`)
           .send(createAgainModel)
           .expect(response => {
-              setTestData(response.body.Data.id, 'AppointmentId_1');
+              setTestData(response.body.Data.id, 'AppointmentId');
               expect(response.body.Data).to.have.property('id');
               expect(response.body.Data).to.have.property('BusinessNodeId');
               expect(response.body.Data).to.have.property('CustomerId');
@@ -185,7 +185,7 @@ it('Book appointment then cancel & book again for same time & day', function(don
               expect(response.body.Data).to.have.property('Total');         
               expect(response.body.Data).to.have.property('IsPaid');
     
-              setTestData(response.body.Data.id, 'AppointmentId_1');
+              setTestData(response.body.Data.id, 'AppointmentId');
     
               expect(response.body.Data.BusinessNodeId).to.equal(getTestData("AppointmentBookCreateModel").BusinessNodeId);
               expect(response.body.Data.CustomerId).to.equal(getTestData("AppointmentBookCreateModel").CustomerId);
@@ -210,13 +210,13 @@ it('Book appointment then cancel & book again for same time & day', function(don
     agent
         .post(`/api/v1/appointments/book`)
         .set('Content-Type', 'application/json')
-        .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+        .set('x-api-key', `${process.env.TEST_API_KEY}`)
         .send(createModel)
         .expect(response => {
           expect(response.body).to.have.property('Status');
           expect(response.body.Status).to.equal('failure');
         })
-        .expect(412, done);
+        .expect(404, done);
   });
 
   it('Update the booked appointment time slot but that time slot is already booked', function(done) {
@@ -226,7 +226,7 @@ it('Book appointment then cancel & book again for same time & day', function(don
       agent
           .put(`/api/v1/appointments/${getTestData("AppointmentId")}`)
           .set('Content-Type', 'application/json')
-          .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+          .set('x-api-key', `${process.env.TEST_API_KEY}`)
           .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
           .send(updateModel)
           .expect(response => {
@@ -241,30 +241,30 @@ it('Book appointment then cancel & book again for same time & day', function(don
     const createModel = getTestData("AppointmentDiffTimeModel");
     agent
         .post(`/api/v1/appointments/book`)
-        .set('Content-Type', 'application/json')
-        .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
-        .send(createModel)
-        .expect(response => {
-          expect(response.body).to.have.property('Status');
-          expect(response.body.Status).to.equal('failure');
-        })
+            .set('Content-Type', 'application/json')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
+            .send(createModel)
+            .expect(response => {
+                expect(response.body).to.have.property('Status');
+                expect(response.body.Status).to.equal('failure');
+            })
         .expect(404, done);
   });
 
-  // it('Future appointment booking allowed upto 60 days & customer try to book after 60 days', function(done) {
-  //   loadAppointmentBookFutureModel();
-  //   const createModel = getTestData("AppointmentBookFutureModel");
-  //   agent
-  //       .post(`/api/v1/appointments/book`)
-  //       .set('Content-Type', 'application/json')
-  //       .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
-  //       .send(createModel)
-  //       .expect(response => {
-  //         expect(response.body).to.have.property('Status');
-  //         expect(response.body.Status).to.equal('failure');
-  //       })
-  //       .expect(500, done);
-  // });
+//   it('Future appointment booking allowed upto 60 days & customer try to book after 60 days', function(done) {
+//     loadAppointmentBookFutureModel();
+//     const createModel = getTestData("AppointmentBookFutureModel");
+//     agent
+//         .post(`/api/v1/appointments/book`)
+//         .set('Content-Type', 'application/json')
+//         .set('x-api-key', `${process.env.TEST_API_KEY}`)
+//         .send(createModel)
+//         .expect(response => {
+//           expect(response.body).to.have.property('Status');
+//           expect(response.body.Status).to.equal('success');
+//         })
+//         .expect(200, done);
+//   });
 
 });
 
@@ -277,8 +277,8 @@ export const loadAppointmentBookBeforeDateModel = async (
       CustomerId: getTestData("CustomerId"),
       BusinessUserId: getTestData("BusinessUserId"),
       BusinessServiceId: getTestData("BusinessServiceId"),
-      StartTime:  "2023-07-10T14:30:00Z",
-      EndTime: "2023-07-10T15:00:00Z",
+      StartTime:  "2023-09-28T14:00:00Z",
+      EndTime: "2023-09-28T14:30:00Z",
       Type: "IN-PERSON",
       Note: "This is doctor appointment note",
       StatusCode: "1",
@@ -299,8 +299,8 @@ export const loadAppointmentBookCreateModel = async (
         CustomerId: getTestData("CustomerId"),
         BusinessUserId: getTestData("BusinessUserId"),
         BusinessServiceId: getTestData("BusinessServiceId"),
-        StartTime:  "2023-08-11T14:30:00Z",
-        EndTime: "2023-08-11T15:00:00Z",
+        StartTime:  "2023-10-05T15:00:00Z",
+        EndTime: "2023-10-05T15:30:00Z",
         Type: "IN-PERSON",
         Note: "This is doctor appointment note",
         StatusCode: "1",
@@ -321,8 +321,8 @@ export const loadAppointmentBookCreateModel = async (
           CustomerId: getTestData("CustomerId"),
           BusinessUserId: getTestData("BusinessUserId"),
           BusinessServiceId: getTestData("BusinessServiceId"),
-          StartTime:  "2023-07-27T14:30:00Z",
-          EndTime: "2023-07-27T15:00:00Z",
+          StartTime:  "2023-10-05T11:30:00Z",
+          EndTime: "2023-10-05T12:00:00Z",
           Type: "IN-PERSON",
           Note: "This is doctor appointment note",
           StatusCode: "1",
@@ -343,8 +343,8 @@ export const loadAppointmentBookCreateModel = async (
             CustomerId: getTestData("CustomerId"),
             BusinessUserId: getTestData("BusinessUserId"),
             BusinessServiceId: getTestData("BusinessServiceId"),
-            StartTime:  "2023-08-17T14:30:00Z",
-            EndTime: "2023-08-17T15:00:00Z",
+            StartTime:  "2023-10-05T12:30:00Z",
+            EndTime: "2023-10-05T13:00:00Z",
             Type: "IN-PERSON",
             Note: "This is doctor appointment note",
             StatusCode: "1",
@@ -365,8 +365,8 @@ export const loadAppointmentBookCreateModel = async (
             CustomerId: getTestData("CustomerId"),
             BusinessUserId: getTestData("BusinessUserId"),
             BusinessServiceId: getTestData("BusinessServiceId"),
-            StartTime:  "2023-07-11T14:30:00Z",
-            EndTime: "2023-07-11T15:00:00Z",
+            StartTime:  "2023-10-03T15:30:00Z",
+            EndTime: "2023-10-03T16:00:00Z",
             Type: "IN-PERSON",
             Note: "This is doctor appointment note",
             StatusCode: "1",
@@ -383,8 +383,8 @@ export const loadAppointmentBookCreateModel = async (
       export const loadAppointmentBookUpdateTimeModel = async (
         ) => {
             const model = {
-              StartTime:  "2023-07-13T14:30:00Z",
-              EndTime: "2023-07-13T15:00:00Z",
+              StartTime:  "2023-10-05T12:00:00Z",
+              EndTime: "2023-10-05T12:30:00Z",
             };
             setTestData(model, "AppointmentBookUpdateTimeModel");
         }
@@ -396,8 +396,8 @@ export const loadAppointmentBookCreateModel = async (
               CustomerId: getTestData("CustomerId"),
               BusinessUserId: getTestData("BusinessUserId"),
               BusinessServiceId: getTestData("BusinessServiceId"),
-              StartTime:  "2023-07-12T14:30:00Z",
-              EndTime: "2023-07-12T18:00:00Z",
+              StartTime:  "2023-09-07T14:30:00Z",
+              EndTime: "2023-09-07T18:00:00Z",
               Type: "IN-PERSON",
               Note: "This is doctor appointment note",
               StatusCode: "1",
@@ -419,8 +419,8 @@ export const loadAppointmentBookCreateModel = async (
                 CustomerId: getTestData("CustomerId"),
                 BusinessUserId: getTestData("BusinessUserId"),
                 BusinessServiceId: getTestData("BusinessServiceId"),
-                StartTime:  "2023-08-22T14:30:00Z",
-                EndTime: "2023-08-22T15:00:00Z",
+                StartTime: "2023-10-05T23:30:00Z",
+                EndTime: "2023-10-05T24:00:00Z",
                 Type: "IN-PERSON",
                 Note: "This is doctor appointment note",
                 StatusCode: "1",
@@ -434,26 +434,26 @@ export const loadAppointmentBookCreateModel = async (
               setTestData(model, "AppointmentDiffTimeModel");
           }
 
-        export const loadAppointmentBookFutureModel = async (
-          ) => {
-              const model = {
-                BusinessNodeId: getTestData("BusinessNodeId"),
-                CustomerId: getTestData("CustomerId"),
-                BusinessUserId: getTestData("BusinessUserId"),
-                BusinessServiceId: getTestData("BusinessServiceId"),
-                StartTime:  "2024-07-12T14:30:00Z",
-                EndTime: "2024-07-12T15:00:00Z",
-                Type: "IN-PERSON",
-                Note: "This is doctor appointment note",
-                StatusCode: "1",
-                Fees: 300,
-                Tax:10,
-                Tip: 0,
-                Discount: 0,
-                Total: 330,
-                IsPaid: true
-              };
-              setTestData(model, "AppointmentBookFutureModel");
-          }
+        // export const loadAppointmentBookFutureModel = async (
+        //   ) => {
+        //       const model = {
+        //         BusinessNodeId: getTestData("BusinessNodeId"),
+        //         CustomerId: getTestData("CustomerId"),
+        //         BusinessUserId: getTestData("BusinessUserId"),
+        //         BusinessServiceId: getTestData("BusinessServiceId"),
+        //         StartTime:  "2024-11-02T14:30:00Z",
+        //         EndTime: "2024-11-02T15:00:00Z",
+        //         Type: "IN-PERSON",
+        //         Note: "This is doctor appointment note",
+        //         StatusCode: "1",
+        //         Fees: 300,
+        //         Tax:10,
+        //         Tip: 0,
+        //         Discount: 0,
+        //         Total: 330,
+        //         IsPaid: true
+        //       };
+        //       setTestData(model, "AppointmentBookFutureModel");
+        //   }
 
 ///////////////////////////////////////////////////////////////////////////

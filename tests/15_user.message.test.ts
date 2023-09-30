@@ -52,7 +52,7 @@ describe('User message tests', function() {
         agent
             .get(`/api/v1/user-messages/${getTestData("UserMessageId")}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
               expect(response.body.Data).to.have.property('id');
@@ -82,7 +82,7 @@ describe('User message tests', function() {
         agent
             .get(`/api/v1/user-messages/search${loadUserMessageQueryString()}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data).to.have.property('TotalCount');
@@ -104,7 +104,7 @@ describe('User message tests', function() {
         agent
             .put(`/api/v1/user-messages/${getTestData("UserMessageId")}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
@@ -138,7 +138,7 @@ describe('User message tests', function() {
         agent
             .delete(`/api/v1/user-messages/${getTestData("UserMessageId")}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
               expect(response.body).to.have.property('Status');

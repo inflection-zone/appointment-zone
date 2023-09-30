@@ -44,7 +44,7 @@ describe('Business node customer tests', function() {
         agent
             .get(`/api/v1/business-node-customers/${getTestData("BusinessNodeCustomerId")}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data).to.have.property('id');
@@ -66,7 +66,7 @@ describe('Business node customer tests', function() {
         agent
             .get(`/api/v1/business-node-customers/search${loadBusinessNodeCustomerQueryString()}`)
             .set('Content-Type', 'application/json')
-             .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data).to.have.property('TotalCount');
@@ -88,7 +88,7 @@ describe('Business node customer tests', function() {
         agent
             .put(`/api/v1/business-node-customers/${getTestData("BusinessNodeCustomerId")}`)
             .set('Content-Type', 'application/json')
-             .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
@@ -114,7 +114,7 @@ describe('Business node customer tests', function() {
         agent
             .delete(`/api/v1/business-node-customers/${getTestData("BusinessNodeCustomerId")}`)
             .set('Content-Type', 'application/json')
-             .set('x-api-key', 'T26BP24-MRGMRYE-JB352V-NC93PY0')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
               expect(response.body).to.have.property('Status');
