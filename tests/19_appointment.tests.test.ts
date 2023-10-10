@@ -300,8 +300,9 @@ export const loadAppointmentBookCreateModel = async (
       CustomerId: getTestData("CustomerId"),
       BusinessUserId: getTestData("BusinessUserId"),
       BusinessServiceId: getTestData("BusinessServiceId"),
-      StartTime: "2023-10-05T14:00:00Z",
-      EndTime: "2023-10-05T14:30:00Z",
+      StartTime: "2023-12-01T14:00:00Z",
+      EndTime: "2023-12-01T14:30:00Z",
+      
       Type: "IN-PERSON",
       Note: "This is doctor appointment note",
       StatusCode: "1",
@@ -311,6 +312,16 @@ export const loadAppointmentBookCreateModel = async (
       Discount: 0,
       Total: 330,
       IsPaid: true
+
+      // Type: faker.lorem.word(),
+      // Note: faker.lorem.words(),
+      // StatusCode: faker.lorem.word(),
+      // Fees: faker.number.int({ min: 500, max: 100 }),
+      // Tax: faker.number.int({ min: 1, max: 20 }),
+      // Tip: faker.number.int({ min: 0, max: 1 }),
+      // Discount: faker.number.int({ min: 0, max: 1 }),
+      // Total: faker.number.int({ min: 500, max: 100 }),
+      // IsPaid: true
     };
     setTestData(model, "AppointmentBookCreateModel");
 }

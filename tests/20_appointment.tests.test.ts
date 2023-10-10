@@ -3,6 +3,7 @@ import{ expect, should, assert } from 'chai';
 import Application from '../src/app';
 import { describe, it } from 'mocha';
 import { getTestData, setTestData } from './init';
+import { endDate, startDate } from './utils';
 
 const infra = Application.instance();
 
@@ -277,8 +278,8 @@ export const loadAppointmentBookBeforeDateModel = async (
       CustomerId: getTestData("CustomerId"),
       BusinessUserId: getTestData("BusinessUserId"),
       BusinessServiceId: getTestData("BusinessServiceId"),
-      StartTime:  "2023-09-28T14:00:00Z",
-      EndTime: "2023-09-28T14:30:00Z",
+      StartTime:  "2023-09-01T14:00:00Z",
+      EndTime: "2023-09-01T14:30:00Z",
       Type: "IN-PERSON",
       Note: "This is doctor appointment note",
       StatusCode: "1",
@@ -299,8 +300,8 @@ export const loadAppointmentBookCreateModel = async (
         CustomerId: getTestData("CustomerId"),
         BusinessUserId: getTestData("BusinessUserId"),
         BusinessServiceId: getTestData("BusinessServiceId"),
-        StartTime:  "2023-10-05T15:00:00Z",
-        EndTime: "2023-10-05T15:30:00Z",
+        StartTime:  "2023-12-01T15:00:00Z",
+        EndTime: "2023-12-01T15:30:00Z",
         Type: "IN-PERSON",
         Note: "This is doctor appointment note",
         StatusCode: "1",
@@ -321,8 +322,8 @@ export const loadAppointmentBookCreateModel = async (
           CustomerId: getTestData("CustomerId"),
           BusinessUserId: getTestData("BusinessUserId"),
           BusinessServiceId: getTestData("BusinessServiceId"),
-          StartTime:  "2023-10-05T11:30:00Z",
-          EndTime: "2023-10-05T12:00:00Z",
+          StartTime:  "2023-12-01T11:30:00Z",
+          EndTime: "2023-12-01T12:00:00Z",
           Type: "IN-PERSON",
           Note: "This is doctor appointment note",
           StatusCode: "1",
@@ -343,8 +344,8 @@ export const loadAppointmentBookCreateModel = async (
             CustomerId: getTestData("CustomerId"),
             BusinessUserId: getTestData("BusinessUserId"),
             BusinessServiceId: getTestData("BusinessServiceId"),
-            StartTime:  "2023-10-05T12:30:00Z",
-            EndTime: "2023-10-05T13:00:00Z",
+            StartTime:  "2023-12-01T12:30:00Z",
+            EndTime: "2023-12-01T13:00:00Z",
             Type: "IN-PERSON",
             Note: "This is doctor appointment note",
             StatusCode: "1",
@@ -365,8 +366,8 @@ export const loadAppointmentBookCreateModel = async (
             CustomerId: getTestData("CustomerId"),
             BusinessUserId: getTestData("BusinessUserId"),
             BusinessServiceId: getTestData("BusinessServiceId"),
-            StartTime:  "2023-10-03T15:30:00Z",
-            EndTime: "2023-10-03T16:00:00Z",
+            StartTime:  startDate,
+            EndTime: endDate,
             Type: "IN-PERSON",
             Note: "This is doctor appointment note",
             StatusCode: "1",
@@ -383,8 +384,8 @@ export const loadAppointmentBookCreateModel = async (
       export const loadAppointmentBookUpdateTimeModel = async (
         ) => {
             const model = {
-              StartTime:  "2023-10-05T12:00:00Z",
-              EndTime: "2023-10-05T12:30:00Z",
+              StartTime:  "2023-12-01T12:00:00Z",
+              EndTime: "2023-12-01T12:30:00Z",
             };
             setTestData(model, "AppointmentBookUpdateTimeModel");
         }
@@ -396,8 +397,8 @@ export const loadAppointmentBookCreateModel = async (
               CustomerId: getTestData("CustomerId"),
               BusinessUserId: getTestData("BusinessUserId"),
               BusinessServiceId: getTestData("BusinessServiceId"),
-              StartTime:  "2023-09-07T14:30:00Z",
-              EndTime: "2023-09-07T18:00:00Z",
+              StartTime:  "2023-12-01T14:30:00Z",
+              EndTime: "2023-12-01T18:00:00Z",
               Type: "IN-PERSON",
               Note: "This is doctor appointment note",
               StatusCode: "1",
@@ -411,7 +412,6 @@ export const loadAppointmentBookCreateModel = async (
             setTestData(model, "AppointmentBookTimeModel");
         }
 
-
         export const loadAppointmentDiffTimeModel = async (
           ) => {
               const model = {
@@ -419,8 +419,8 @@ export const loadAppointmentBookCreateModel = async (
                 CustomerId: getTestData("CustomerId"),
                 BusinessUserId: getTestData("BusinessUserId"),
                 BusinessServiceId: getTestData("BusinessServiceId"),
-                StartTime: "2023-10-05T23:30:00Z",
-                EndTime: "2023-10-05T24:00:00Z",
+                StartTime: "2023-12-01T23:30:00Z",
+                EndTime: "2023-12-01T24:00:00Z",
                 Type: "IN-PERSON",
                 Note: "This is doctor appointment note",
                 StatusCode: "1",

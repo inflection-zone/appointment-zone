@@ -197,51 +197,51 @@ describe('Appointment status tests', function() {
           .expect(201, done);
   });
 
-    it('Create appointment status again', function(done) {
-      loadAppointmentStatusCreateModel();
-      const createModel = getTestData("AppointmentStatusCreateModel");
-      agent
-          .post(`/api/v1/appointment-statuses/`)
-          .set('Content-Type', 'application/json')
-          .send(createModel)
-          .expect(response => {
-              setTestData( response.body.Data.id, 'AppointmentStatusId');
-              expect(response.body.Data).to.have.property('id');
-              expect(response.body.Data).to.have.property('BusinessNodeId');
-              expect(response.body.Data).to.have.property('Status');
-              expect(response.body.Data).to.have.property('StatusColor');
-              expect(response.body.Data).to.have.property('Sequence');
-              expect(response.body.Data).to.have.property('IsCancellationStatus');
-              expect(response.body.Data).to.have.property('IsConfirmedStatus');
-              expect(response.body.Data).to.have.property('SendNotification');
-              expect(response.body.Data).to.have.property('NotificationText');
-              expect(response.body.Data).to.have.property('SendSms');
-              expect(response.body.Data).to.have.property('SmsText');
-              expect(response.body.Data).to.have.property('IsDashboardStatus');
-              expect(response.body.Data).to.have.property('IsCompletedStatus');
-              expect(response.body.Data).to.have.property('IsWalkinEntryStatus');         
-              expect(response.body.Data).to.have.property('IsActive');
+  it('Create appointment status again', function(done) {
+    loadAppointmentStatusCreateModel();
+    const createModel = getTestData("AppointmentStatusCreateModel");
+    agent
+        .post(`/api/v1/appointment-statuses/`)
+        .set('Content-Type', 'application/json')
+        .send(createModel)
+        .expect(response => {
+            setTestData( response.body.Data.id, 'AppointmentStatusId_1');
+            expect(response.body.Data).to.have.property('id');
+            expect(response.body.Data).to.have.property('BusinessNodeId');
+            expect(response.body.Data).to.have.property('Status');
+            expect(response.body.Data).to.have.property('StatusColor');
+            expect(response.body.Data).to.have.property('Sequence');
+            expect(response.body.Data).to.have.property('IsCancellationStatus');
+            expect(response.body.Data).to.have.property('IsConfirmedStatus');
+            expect(response.body.Data).to.have.property('SendNotification');
+            expect(response.body.Data).to.have.property('NotificationText');
+            expect(response.body.Data).to.have.property('SendSms');
+            expect(response.body.Data).to.have.property('SmsText');
+            expect(response.body.Data).to.have.property('IsDashboardStatus');
+            expect(response.body.Data).to.have.property('IsCompletedStatus');
+            expect(response.body.Data).to.have.property('IsWalkinEntryStatus');         
+            expect(response.body.Data).to.have.property('IsActive');
 
-              setTestData( response.body.Data.id, 'AppointmentStatusId');
+            setTestData( response.body.Data.id, 'AppointmentStatusId_1');
 
-              expect(response.body.Data.BusinessNodeId).to.equal(getTestData("AppointmentStatusCreateModel").BusinessNodeId);
-              expect(response.body.Data.Status).to.equal(getTestData("AppointmentStatusCreateModel").Status);
-              expect(response.body.Data.StatusColor).to.equal(getTestData("AppointmentStatusCreateModel").StatusColor);
-              expect(response.body.Data.Sequence).to.equal(getTestData("AppointmentStatusCreateModel").Sequence);
-              expect(response.body.Data.IsCancellationStatus).to.equal(getTestData("AppointmentStatusCreateModel").IsCancellationStatus);
-              expect(response.body.Data.IsConfirmedStatus).to.equal(getTestData("AppointmentStatusCreateModel").IsConfirmedStatus);
-              expect(response.body.Data.SendNotification).to.equal(getTestData("AppointmentStatusCreateModel").SendNotification);
-              expect(response.body.Data.NotificationText).to.equal(getTestData("AppointmentStatusCreateModel").NotificationText);
-              expect(response.body.Data.SendSms).to.equal(getTestData("AppointmentStatusCreateModel").SendSms);
-              expect(response.body.Data.SmsText).to.equal(getTestData("AppointmentStatusCreateModel").SmsText);
-              expect(response.body.Data.IsDashboardStatus).to.equal(getTestData("AppointmentStatusCreateModel").IsDashboardStatus);
-              expect(response.body.Data.IsCompletedStatus).to.equal(getTestData("AppointmentStatusCreateModel").IsCompletedStatus);
-              expect(response.body.Data.IsWalkinEntryStatus).to.equal(getTestData("AppointmentStatusCreateModel").IsWalkinEntryStatus);
-              expect(response.body.Data.IsActive).to.equal(getTestData("AppointmentStatusCreateModel").IsActive);
+            expect(response.body.Data.BusinessNodeId).to.equal(getTestData("AppointmentStatusCreateModel").BusinessNodeId);
+            expect(response.body.Data.Status).to.equal(getTestData("AppointmentStatusCreateModel").Status);
+            expect(response.body.Data.StatusColor).to.equal(getTestData("AppointmentStatusCreateModel").StatusColor);
+            expect(response.body.Data.Sequence).to.equal(getTestData("AppointmentStatusCreateModel").Sequence);
+            expect(response.body.Data.IsCancellationStatus).to.equal(getTestData("AppointmentStatusCreateModel").IsCancellationStatus);
+            expect(response.body.Data.IsConfirmedStatus).to.equal(getTestData("AppointmentStatusCreateModel").IsConfirmedStatus);
+            expect(response.body.Data.SendNotification).to.equal(getTestData("AppointmentStatusCreateModel").SendNotification);
+            expect(response.body.Data.NotificationText).to.equal(getTestData("AppointmentStatusCreateModel").NotificationText);
+            expect(response.body.Data.SendSms).to.equal(getTestData("AppointmentStatusCreateModel").SendSms);
+            expect(response.body.Data.SmsText).to.equal(getTestData("AppointmentStatusCreateModel").SmsText);
+            expect(response.body.Data.IsDashboardStatus).to.equal(getTestData("AppointmentStatusCreateModel").IsDashboardStatus);
+            expect(response.body.Data.IsCompletedStatus).to.equal(getTestData("AppointmentStatusCreateModel").IsCompletedStatus);
+            expect(response.body.Data.IsWalkinEntryStatus).to.equal(getTestData("AppointmentStatusCreateModel").IsWalkinEntryStatus);
+            expect(response.body.Data.IsActive).to.equal(getTestData("AppointmentStatusCreateModel").IsActive);
 
-          })
-          .expect(201, done);
-  });
+        })
+        .expect(201, done);
+});    
 
 });
 

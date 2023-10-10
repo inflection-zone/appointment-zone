@@ -7,6 +7,7 @@ import { getTestData, setTestData } from './init';
 const infra = Application.instance();
 
 ////////////////////////////////////////////////////////////////
+
 describe('Appointment tests', function() {
 
 	var agent = request.agent(infra._app);
@@ -19,7 +20,7 @@ describe('Appointment tests', function() {
 		agent
 			.get(`/api/v1/appointments/business/${BusinessId}/node/${BusinessNodeId}/service/${BusinessServiceId}/slots`)
 			.set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
+      .set('x-api-key', `${process.env.TEST_API_KEY}`)
 			.expect(response => {
 				expect(response.body).to.have.property('Status');
 				expect(response.body.Status).to.equal('success');
@@ -27,10 +28,12 @@ describe('Appointment tests', function() {
 		.expect(200, done);
 	});
 });
-   //////////////////////////////////////////////////////////////////////////
-   function loadAppointmentFindQueryString() {
-    //This is raw query. Please modify to suit the test
-    const queryString = ''
-    return queryString;
+
+//////////////////////////////////////////////////////////////////////////
+
+function loadAppointmentFindQueryString() {
+  //This is raw query. Please modify to suit the test
+  const queryString = ''
+  return queryString;
 }
     

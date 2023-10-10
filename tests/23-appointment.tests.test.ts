@@ -208,8 +208,8 @@ export const loadAppointmentBookCreateModel = async () => {
         CustomerId: getTestData("CustomerId"),
         BusinessUserId: getTestData("BusinessUserId"),
         BusinessServiceId: getTestData("BusinessServiceId_3"),
-        StartTime:  "2023-10-06T16:30:00Z",
-        EndTime: "2023-10-06T17:00:00Z",
+        StartTime:  "2023-12-01T16:30:00Z",
+        EndTime: "2023-12-01T17:00:00Z",
         Type: "IN-PERSON",
         Note: "This is doctor appointment note",
         StatusCode: "1",
@@ -257,8 +257,8 @@ export const loadAppointmentCreateModel = async () => {
         CustomerId: getTestData("CustomerId"),
         BusinessUserId: getTestData("BusinessUserId"),
         BusinessServiceId: getTestData("BusinessServiceId_3"),
-        StartTime:  "2023-10-06T10:00:00Z",
-        EndTime: "2023-10-06T10:30:00Z",
+        StartTime:  "2023-12-01T10:00:00Z",
+        EndTime: "2023-12-01T10:30:00Z",
         Type: "IN-PERSON",
         Note: "This is doctor appointment note",
         StatusCode: "1",
@@ -283,6 +283,6 @@ export const loadAppointmentGetModel = async () => {
 
     function loadNotificationQueryString() {
     //This is raw query. Please modify to suit the test
-    const queryString = '?fromDate=2023-07-07&toDate=2023-07-13'
+    const queryString = ''
    return queryString;
 }

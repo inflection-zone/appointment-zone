@@ -165,7 +165,7 @@ export const loadAppointmentGetModel = async () => {
 
 function loadAppointmentQueryString() {
     //This is raw query. Please modify to suit the test
-    const queryString = '?fromDate=2023-09-14&toDate=2023-09-16'
+    const queryString = ''
     return queryString;
 }
 export const loadBusinessNodeHourCreateMultipleModel = async (
@@ -417,8 +417,8 @@ export const loadAppointmentBookCreateModel = async () => {
         CustomerId: getTestData("CustomerId"),
         BusinessUserId: getTestData("BusinessUserId"),
         BusinessServiceId: getTestData("BusinessServiceId"),
-        StartTime:  "2023-10-02T10:00:00Z",
-        EndTime: "2023-10-02T10:30:00Z",
+        StartTime:  "2023-12-01T11:00:00Z",
+        EndTime: "2023-12-01T11:30:00Z",
         Type: "IN-PERSON",
         Note: "This is doctor appointment note",
         StatusCode: "8",
