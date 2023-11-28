@@ -1,0 +1,190 @@
+syntax = "proto3";
+
+package appointment;
+
+message BusinessUser {
+  string id = 1; 
+  string BusinessNodeId = 2;
+  string FirstName = 3;
+  string LastName = 4;
+  string Prefix = 5;
+  string Mobile = 6;
+  string Email = 7;
+  string Dob = 8;
+  string Gender = 9;
+  string DisplayPicture = 10;
+  string AboutMe = 11;
+  string Qualification = 12;
+  string Experience = 13;
+  bool IsAvailableForEmergency = 14;
+  string Facebook = 15;
+  string Linkedin = 16;
+  string Twitter = 17;
+  string Instagram = 18;
+  string Yelp = 19;
+  bool IsActive = 20;
+}
+
+message BusinessUserCreateModel {
+  string BusinessNodeId = 1;
+  string FirstName = 2;
+  string LastName = 3;
+  string Prefix = 4;
+  string Mobile = 5;
+  string Email = 6;
+  string Dob = 7;
+  string Gender = 8;
+  string DisplayPicture = 9;
+  string AboutMe = 10;
+  string Qualification = 11;
+  string Experience = 12;
+  bool IsAvailableForEmergency = 13;
+  string Facebook = 14;
+  string Linkedin = 15;
+  string Twitter = 16;
+  string Instagram = 17;
+  string Yelp = 18;
+  bool IsActive = 19;
+}
+
+message BusinessUserGetByIdModel {
+    string id = 1; 
+}
+
+message BusinessUserGetByIdResponse {
+  string id = 1; 
+  string BusinessNodeId = 2;
+  string FirstName = 3;
+  string LastName = 4;
+  string Prefix = 5;
+  string Mobile = 6;
+  string Email = 7;
+  string Dob = 8;
+  string Gender = 9;
+  string DisplayPicture = 10;
+  string AboutMe = 11;
+  string Qualification = 12;
+  string Experience = 13;
+  bool IsAvailableForEmergency = 14;
+  string Facebook = 15;
+  string Linkedin = 16;
+  string Twitter = 17;
+  string Instagram = 18;
+  string Yelp = 19;
+  bool IsActive = 20; 
+}
+
+message BusinessUserCreateResponse {
+  string id = 1; 
+  string BusinessNodeId = 2;
+  string FirstName = 3;
+  string LastName = 4;
+  string Prefix = 5;
+  string Mobile = 6;
+  string Email = 7;
+  string Dob = 8;
+  string Gender = 9;
+  string DisplayPicture = 10;
+  string AboutMe = 11;
+  string Qualification = 12;
+  string Experience = 13;
+  bool IsAvailableForEmergency = 14;
+  string Facebook = 15;
+  string Linkedin = 16;
+  string Twitter = 17;
+  string Instagram = 18;
+  string Yelp = 19;
+  bool IsActive = 20;
+}
+
+message BusinessUserUpdateModel {
+  string id = 1; 
+  string BusinessNodeId = 2;
+  string FirstName = 3;
+  string LastName = 4;
+  string Prefix = 5;
+  string Mobile = 6;
+  string Email = 7;
+  string Gender = 8;
+  string DisplayPicture = 9;
+  string AboutMe = 10;
+  string Qualification = 11;
+  string Experience = 12;
+  bool IsAvailableForEmergency = 13;
+  string Facebook = 14;
+  string Linkedin = 15;
+  string Twitter = 16;
+  string Instagram = 17;
+  string Yelp = 18;
+  bool IsActive = 19;
+  }
+
+message BusinessUserUpdateResponse {
+  string id = 1; 
+  string BusinessNodeId = 2;
+  string FirstName = 3;
+  string LastName = 4;
+  string Prefix = 5;
+  string Mobile = 6;
+  string Email = 7;
+  string Dob = 8;
+  string Gender = 9;
+  string DisplayPicture = 10;
+  string AboutMe = 11;
+  string Qualification = 12;
+  string Experience = 13;
+  bool IsAvailableForEmergency = 14;
+  string Facebook = 15;
+  string Linkedin = 16;
+  string Twitter = 17;
+  string Instagram = 18;
+  string Yelp = 19;
+  bool IsActive = 20;
+}
+
+message BusinessUserSearchModel {
+  string businessNodeId = 1;
+  string businessId = 2;
+  string businessServiceId = 3;
+  string name = 4;
+}
+
+message BusinessUserSearchResponse {
+  string id = 1; 
+  string BusinessNodeId = 2;
+  string FirstName = 3;
+  string LastName = 4;
+  string Prefix = 5;
+  string Mobile = 6;
+  string Email = 7;
+  string Dob = 8;
+  string Gender = 9;
+  string DisplayPicture = 10;
+  string AboutMe = 11;
+  string Qualification = 12;
+  string Experience = 13;
+  bool IsAvailableForEmergency = 14;
+  string Facebook = 15;
+  string Linkedin = 16;
+  string Twitter = 17;
+  string Instagram = 18;
+  string Yelp = 19;
+  bool IsActive = 20;
+}
+
+message BusinessUserDeleteModel {
+    string id = 1;
+}
+
+  message BusinessUserDeleteResponse {
+    string id = 1;
+}
+
+service BusinessUsers {
+    rpc Create(BusinessUserCreateModel) returns (BusinessUserCreateResponse);
+    rpc GetById(BusinessUserGetByIdModel) returns (BusinessUserGetByIdResponse) {};
+    rpc Search(BusinessUserSearchModel) returns (BusinessUserSearchResponse) {};
+    rpc Update(BusinessUserUpdateModel) returns (BusinessUserUpdateResponse) {};
+    rpc Delete(BusinessUserDeleteModel) returns (BusinessUserDeleteResponse) {};
+
+}

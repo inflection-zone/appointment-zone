@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+package appointment;
+
+message BusinessNodeHour {
+  string id = 1; 
+  string BusinessNodeId = 2;
+  string Type = 3;
+  int32 Day = 4;
+  string Date = 5;
+  bool IsOpen = 6;
+  bool IsActive = 7;
+  }
+
+message BusinessNodeHourCreateModel {
+    string BusinessNodeId = 1;
+    string Type = 2;
+    int32 Day = 3;
+    string Date = 4;
+    bool IsOpen = 5;
+    bool IsActive = 6;
+}
+
+message BusinessNodeHourGetByIdModel {
+    string id = 1; 
+}
+
+message BusinessNodeHourGetByIdResponse {
+    string id = 1; 
+    string BusinessNodeId = 2;
+    string Type = 3;
+    int32 Day = 4;
+    string Date = 5;
+    bool IsOpen = 6;
+    bool IsActive = 7;
+}
+
+message BusinessNodeHourCreateResponse {
+    string id = 1; 
+    string BusinessNodeId = 2;
+    string Type = 3;
+    int32 Day = 4;
+    string Date = 5;
+    bool IsOpen = 6;
+    bool IsActive = 7;
+}
+
+message BusinessNodeHourUpdateModel {
+    string id = 1; 
+    string BusinessNodeId = 2;
+    string Type = 3;
+    int32 Day = 4;
+    string Date = 5;
+    bool IsOpen = 6;
+    bool IsActive = 7;
+  }
+
+message BusinessNodeHourUpdateResponse {
+    string id = 1; 
+    string BusinessNodeId = 2;
+    string Type = 3;
+    int32 Day = 4;
+    string Date = 5;
+    bool IsOpen = 6;
+    bool IsActive = 7;
+  }
+
+message BusinessNodeHourSearchModel {
+    string businessNodeId = 1;
+    string type = 2;
+    string day = 3;
+    string date = 4;
+    bool isOpen = 5;
+    bool isActive = 6;
+}
+
+message BusinessNodeHourSearchResponse {
+    string id = 1; 
+    string BusinessNodeId = 2;
+    string Type = 3;
+    int32 Day = 4;
+    string Date = 5;
+    bool IsOpen = 6;
+    bool IsActive = 7;
+}
+
+message BusinessNodeHourDeleteModel {
+    string id = 1;
+}
+
+  message BusinessNodeHourDeleteResponse {
+    string id = 1;
+}
+
+service BusinessNodeHours {
+    rpc Create(BusinessNodeHourCreateModel) returns (BusinessNodeHourCreateResponse);
+    rpc GetById(BusinessNodeHourGetByIdModel) returns (BusinessNodeHourGetByIdResponse) {};
+    rpc Search(BusinessNodeHourSearchModel) returns (BusinessNodeHourSearchResponse) {};
+    rpc Update(BusinessNodeHourUpdateModel) returns (BusinessNodeHourUpdateResponse) {};
+    rpc Delete(BusinessNodeHourDeleteModel) returns (BusinessNodeHourDeleteResponse) {};
+
+}

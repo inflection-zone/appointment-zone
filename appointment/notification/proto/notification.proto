@@ -1,0 +1,127 @@
+syntax = "proto3";
+
+package appointment;
+
+message NotificationService {
+  string id = 1; 
+  string BusinessNodeId = 2;
+  string CustomerId = 3;
+  string Title = 4;
+  string Body = 5;
+  string Type = 6;
+  bool IsRead = 7;
+  int32 TypeId = 8;
+  string Message = 9;
+  bool IsSent = 10;
+  bool IsActive = 11;
+  }
+
+message NotificationCreateModel {
+  string BusinessNodeId = 1;
+  string CustomerId = 2;
+  string Title = 3;
+  string Body = 4;
+  string Type = 5;
+  bool IsRead = 6;
+  int32 TypeId = 7;
+  string Message = 8;
+  bool IsSent = 9;
+  bool IsActive = 10;
+}
+
+message NotificationGetByIdModel {
+    string id = 1; 
+}
+
+message NotificationGetByIdResponse {
+  string id = 1; 
+  string BusinessNodeId = 2;
+  string CustomerId = 3;
+  string Title = 4;
+  string Body = 5;
+  string Type = 6;
+  bool IsRead = 7;
+  int32 TypeId = 8;
+  string Message = 9;
+  bool IsSent = 10;
+  bool IsActive = 11;
+}
+
+message NotificationCreateResponse {
+  string id = 1; 
+  string BusinessNodeId = 2;
+  string CustomerId = 3;
+  string Title = 4;
+  string Body = 5;
+  string Type = 6;
+  bool IsRead = 7;
+  int32 TypeId = 8;
+  string Message = 9;
+  bool IsSent = 10;
+  bool IsActive = 11;
+}
+
+message NotificationUpdateModel {
+  string id = 1; 
+  string BusinessNodeId = 2;
+  string CustomerId = 3;
+  string Title = 4;
+  string Body = 5;
+  string Type = 6;
+  bool IsRead = 7;
+  int32 TypeId = 8;
+  string Message = 9;
+  bool IsSent = 10;
+  bool IsActive = 11;
+}
+
+message NotificationUpdateResponse {
+  string id = 1; 
+  string BusinessNodeId = 2;
+  string CustomerId = 3;
+  string Title = 4;
+  string Body = 5;
+  string Type = 6;
+  bool IsRead = 7;
+  int32 TypeId = 8;
+  string Message = 9;
+  bool IsSent = 10;
+  bool IsActive = 11;
+}
+
+message NotificationSearchModel {
+  string businessNodeId = 1;
+  string customerId = 2;
+  bool isActive = 3;
+}
+
+message NotificationSearchResponse {
+  string id = 1; 
+  string BusinessNodeId = 2;
+  string CustomerId = 3;
+  string Title = 4;
+  string Body = 5;
+  string Type = 6;
+  bool IsRead = 7;
+  int32 TypeId = 8;
+  string Message = 9;
+  bool IsSent = 10;
+  bool IsActive = 11;
+}
+
+message NotificationDeleteModel {
+    string id = 1;
+}
+
+  message NotificationDeleteResponse {
+    string id = 1;
+}
+
+service Notifications {
+    rpc Create(NotificationCreateModel) returns (NotificationCreateResponse);
+    rpc GetById(NotificationGetByIdModel) returns (NotificationGetByIdResponse) {};
+    rpc Search(NotificationSearchModel) returns (NotificationSearchResponse) {};
+    rpc Update(NotificationUpdateModel) returns (NotificationUpdateResponse) {};
+    rpc Delete(NotificationDeleteModel) returns (NotificationDeleteResponse) {};
+
+}

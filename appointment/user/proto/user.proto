@@ -1,0 +1,131 @@
+syntax = "proto3";
+
+package appointment;
+
+message User {
+    string id = 1; 
+    string UserName = 2;
+    string Prefix = 3;
+    string FirstName = 4;
+    string LastName = 5;
+    string CountryCode = 6;
+    string Phone = 7;
+    string Email = 8;
+    string Gender = 9;
+    string BirthDate = 10;
+    string Password = 11;
+  }
+
+message UserCreateModel { 
+  string UserName = 1;
+  string Prefix = 2;
+  string FirstName = 3;
+  string LastName = 4;
+  string CountryCode = 5;
+  string Phone = 6;
+  string Email = 7;
+  string Gender = 8;
+  string BirthDate = 9;
+  string Password = 10;
+}
+
+message UserGetByIdModel {
+    string id = 1; 
+}
+
+message UserGetByIdResponse {
+  string id = 1; 
+  string UserName = 2;
+  string Prefix = 3;
+  string FirstName = 4;
+  string LastName = 5;
+  string CountryCode = 6;
+  string Phone = 7;
+  string Email = 8;
+  string Gender = 9;
+  string BirthDate = 10;
+  string Password = 11; 
+}
+
+message UserCreateResponse {
+  string id = 1; 
+  string UserName = 2;
+  string Prefix = 3;
+  string FirstName = 4;
+  string LastName = 5;
+  string CountryCode = 6;
+  string Phone = 7;
+  string Email = 8;
+  string Gender = 9;
+  string BirthDate = 10;
+  string Password = 11; 
+}
+
+message UserUpdateModel {
+  string id = 1; 
+  string UserName = 2;
+  string Prefix = 3;
+  string FirstName = 4;
+  string LastName = 5;
+  string CountryCode = 6;
+  string Phone = 7;
+  string Email = 8;
+  string Gender = 9;
+  string BirthDate = 10;
+  string Password = 11; 
+}
+
+message UserUpdateResponse {
+  string id = 1; 
+  string UserName = 2;
+  string Prefix = 3;
+  string FirstName = 4;
+  string LastName = 5;
+  string CountryCode = 6;
+  string Phone = 7;
+  string Email = 8;
+  string Gender = 9;
+  string BirthDate = 10;
+  string Password = 11; 
+}
+
+message UserSearchModel {
+    string roleId = 1;
+    string prefix = 2;
+    string firstName = 3;
+    string lastName = 4;
+    string phone = 5;
+    string email = 6;
+    string gender = 7;
+}
+
+message UserSearchResponse {
+  string id = 1; 
+  string UserName = 2;
+  string Prefix = 3;
+  string FirstName = 4;
+  string LastName = 5;
+  string CountryCode = 6;
+  string Phone = 7;
+  string Email = 8;
+  string Gender = 9;
+  string BirthDate = 10;
+  string Password = 11; 
+}
+
+message UserDeleteModel {
+    string id = 1;
+}
+
+  message UserDeleteResponse {
+    string id = 1;
+}
+
+service Users {
+    rpc Create(UserCreateModel) returns (UserCreateResponse);
+    rpc GetById(UserGetByIdModel) returns (UserGetByIdResponse) {};
+    rpc Search(UserSearchModel) returns (UserSearchResponse) {};
+    rpc Update(UserUpdateModel) returns (UserUpdateResponse) {};
+    rpc Delete(UserDeleteModel) returns (UserDeleteResponse) {};
+
+}

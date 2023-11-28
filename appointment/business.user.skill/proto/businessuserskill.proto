@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package appointment;
+
+message BusinessUserSkill {
+  string id = 1; 
+  string BusinessSkillId = 2;
+  string BusinessUserId = 3;
+  bool IsActive = 4;
+}
+
+message BusinessUserSkillCreateModel { 
+  string BusinessSkillId = 1;
+  string BusinessUserId = 2;
+  bool IsActive = 3;
+}
+
+message BusinessUserSkillGetByIdModel {
+    string id = 1; 
+}
+
+message BusinessUserSkillGetByIdResponse {
+  string id = 1; 
+  string BusinessSkillId = 2;
+  string BusinessUserId = 3;
+  bool IsActive = 4;
+}
+
+message BusinessUserSkillCreateResponse {
+  string id = 1; 
+  string BusinessSkillId = 2;
+  string BusinessUserId = 3;
+  bool IsActive = 4;
+}
+
+message BusinessUserSkillUpdateModel {
+  string id = 1; 
+  string BusinessSkillId = 2;
+  string BusinessUserId = 3;
+  bool IsActive = 4;
+  }
+
+message BusinessUserSkillUpdateResponse {
+  string id = 1; 
+  string BusinessSkillId = 2;
+  string BusinessUserId = 3;
+  bool IsActive = 4;
+}
+
+message BusinessUserSkillSearchModel {
+  string businessSkillId = 1;
+  string businessUserId = 2;
+  bool isActive = 3;
+}
+
+message BusinessUserSkillSearchResponse {
+  string id = 1; 
+  string BusinessSkillId = 2;
+  string BusinessUserId = 3;
+  bool IsActive = 4;
+}
+
+message BusinessUserSkillDeleteModel {
+    string id = 1;
+}
+
+  message BusinessUserSkillDeleteResponse {
+    string id = 1;
+}
+
+service BusinessUserSkills {
+    rpc Create(BusinessUserSkillCreateModel) returns (BusinessUserSkillCreateResponse);
+    rpc GetById(BusinessUserSkillGetByIdModel) returns (BusinessUserSkillGetByIdResponse) {};
+    rpc Search(BusinessUserSkillSearchModel) returns (BusinessUserSkillSearchResponse) {};
+    rpc Update(BusinessUserSkillUpdateModel) returns (BusinessUserSkillUpdateResponse) {};
+    rpc Delete(BusinessUserSkillDeleteModel) returns (BusinessUserSkillDeleteResponse) {};
+
+}

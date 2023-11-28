@@ -118,7 +118,7 @@ export class CustomerControllerDelegate {
     getValidCustomerCreateModel = async (requestBody) => {
 
         const validCustomerService = new CustomerService();
-        var customerWithMobile = await validCustomerService.getCustomerWithMobile( requestBody.Mobile);
+        var customerWithMobile = await validCustomerService.getCustomerWithMobile(requestBody.Mobile);
         if (customerWithMobile) {
             ErrorHandler.throwDuplicateUserError(`User with phone ${requestBody.Mobile} already exists!`);
         }
