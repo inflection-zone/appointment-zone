@@ -99,7 +99,7 @@ message CustomerUpdateResponse {
 
 message CustomerSearchModel {
     string firstname = 1;
-    string LastName = 2;
+    string lastName = 2;
     string Mobile = 3;
     string email = 4;
     string name = 5;
@@ -123,11 +123,9 @@ message CustomerSearchResponse {
 message CustomerDeleteModel {
     string id = 1;
 }
-
   message CustomerDeleteResponse {
-    string id = 1;
+    int32 count = 1;
 }
-
 
 service Customers {
     rpc Create(CustomerCreateModel) returns (CustomerCreateResponse);

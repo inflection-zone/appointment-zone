@@ -145,7 +145,7 @@ message BusinessDeleteModel {
 }
 
   message BusinessDeleteResponse {
-    string id = 1;
+    int32 count = 1;
 }
 
 

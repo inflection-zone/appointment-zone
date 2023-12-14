@@ -177,7 +177,7 @@ message BusinessUserDeleteModel {
 }
 
   message BusinessUserDeleteResponse {
-    string id = 1;
+    int32 count = 1;
 }
 
 service BusinessUsers {

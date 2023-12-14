@@ -16,7 +16,7 @@ message BusinessNode {
   bool AllowWalkinAppointments = 11;
   string AllowFutureBookingFor = 12;
   bool IsActive = 13;
-  }
+}
 
 message BusinessNodeCreateModel {
     string BusinessId = 1;
@@ -99,7 +99,7 @@ message BusinessNodeUpdateResponse {
     bool AllowWalkinAppointments = 11;
     string AllowFutureBookingFor = 12;
     bool IsActive = 13;
-  }
+}
 
 message BusinessNodeSearchModel {
     string businessId = 1;
@@ -128,9 +128,8 @@ message BusinessNodeDeleteModel {
 }
 
   message BusinessNodeDeleteResponse {
-    string id = 1;
+    int32 count = 1;
 }
-
 
 service BusinessNodes {
     rpc Create(BusinessNodeCreateModel) returns (BusinessNodeCreateResponse);
@@ -138,5 +137,4 @@ service BusinessNodes {
     rpc Search(BusinessNodeSearchModel) returns (BusinessNodeSearchResponse) {};
     rpc Update(BusinessNodeUpdateModel) returns (BusinessNodeUpdateResponse) {};
     rpc Delete(BusinessNodeDeleteModel) returns (BusinessNodeDeleteResponse) {};
-
 }

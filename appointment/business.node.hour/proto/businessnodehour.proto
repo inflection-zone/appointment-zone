@@ -89,7 +89,7 @@ message BusinessNodeHourDeleteModel {
 }
 
   message BusinessNodeHourDeleteResponse {
-    string id = 1;
+    int32 count = 1;
 }
 
 service BusinessNodeHours {

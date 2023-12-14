@@ -170,9 +170,8 @@ message BusinessServiceDeleteModel {
 }
 
   message BusinessServiceDeleteResponse {
-    string id = 1;
+    int32 count = 1;
 }
-
 
 service BusinessServices {
     rpc Create(BusinessServiceCreateModel) returns (BusinessServiceCreateResponse);
@@ -180,5 +179,4 @@ service BusinessServices {
     rpc Search(BusinessServiceSearchModel) returns (BusinessServiceSearchResponse) {};
     rpc Update(BusinessServiceUpdateModel) returns (BusinessServiceUpdateResponse) {};
     rpc Delete(BusinessServiceDeleteModel) returns (BusinessServiceDeleteResponse) {};
-
 }

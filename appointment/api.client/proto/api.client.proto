@@ -1,0 +1,141 @@
+syntax = "proto3";
+
+package appointment;
+
+message ApiClient {
+    string id           = 1;
+    string ClientName   = 2;
+    string FirstName    = 3;
+    string LastName     = 4;
+    string CountryCode  = 5;
+    string ClientCode   = 6;
+    string Password     = 7;
+    string Phone        = 8;
+    string Email        = 9;
+    string ApiKey       = 10;
+    bool IsPrivileged   = 11;
+    string ValidFrom      = 12;
+    string ValidTill      = 13;
+}
+
+message ApiClientCreateModel {
+    string ClientName   = 1;
+    string FirstName    = 2;
+    string LastName     = 3;
+    string CountryCode  = 4;
+    string ClientCode   = 5;
+    string Password     = 6;
+    string Phone        = 7;
+    string Email        = 8;
+    string ApiKey       = 9;
+    bool IsPrivileged   = 10;
+    string ValidFrom    = 11;
+    string ValidTill    = 12;
+}
+
+message ApiClientGetByIdModel {
+    string id = 1;
+}
+
+message ApiClientUpdateModel {
+    string id           = 1;
+    string ClientName   = 2;
+    string FirstName    = 3;
+    string LastName     = 4;
+    string CountryCode  = 5;
+    string ClientCode   = 6;
+    string Phone         = 7;
+    string Email        = 8;
+    string ApiKey      = 9;
+    bool IsPrivileged     = 10;
+    string ValidFrom      = 11;
+    string ValidTill     = 12;
+}
+
+message ApiClientSearchModel {
+    string clientName   = 1;
+    string countryCode  = 2;
+    string clientCode   = 3;
+    bool isPrivileged   = 4;
+    string phone         = 5;
+    string email        = 6;
+    string vaidFrom      = 7;
+    string validTill     = 8;
+    string clientInterfaceType = 9;
+}
+
+message ApiClientGetByIdResponse {
+    string id           = 1;
+    string ClientName   = 2;
+    string FirstName    = 3;
+    string LastName     = 4;
+    string CountryCode  = 5;
+    string ClientCode   = 6;
+    string Phone         = 7;
+    string Email        = 8;
+    string ApiKey      = 9;
+    bool IsPrivileged     = 10;
+    string ValidFrom      = 11;
+    string ValidTill     = 12;
+}
+
+message ApiClientCreateResponse {
+    string id           = 1;
+    string ClientName   = 2;
+    string FirstName    = 3;
+    string LastName     = 4;
+    string CountryCode  = 5;
+    string ClientCode   = 6;
+    string Phone         = 7;
+    string Email        = 8;
+    string ApiKey      = 9;
+    bool IsPrivileged     = 10;
+    string ValidFrom      = 11;
+    string ValidTill     = 12;
+}
+
+message ApiClientUpdateResponse {
+    string id           = 1;
+    string ClientName   = 2;
+    string FirstName    = 3;
+    string LastName     = 4;
+    string CountryCode  = 5;
+    string ClientCode   = 6;
+    string Phone         = 7;
+    string Email        = 8;
+    string ApiKey      = 9;
+    bool IsPrivileged     = 10;
+    string ValidFrom      = 11;
+    string ValidTill     = 12;
+}
+
+message ApiClientSearchResponse {
+    string id           = 1;
+    string ClientName   = 2;
+    string FirstName    = 3;
+    string LastName     = 4;
+    string CountryCode  = 5;
+    string ClientCode   = 6;
+    string Phone         = 7;
+    string Email        = 8;
+    string ApiKey      = 9;
+    bool IsPrivileged     = 10;
+    string ValidFrom      = 11;
+    string ValidTill     = 12;
+}
+
+message ApiClientDeleteModel {
+    string id = 1;
+}
+
+  message ApiClientDeleteResponse {
+    int32 count = 1;
+}
+
+service ApiClients {
+    rpc Create(ApiClientCreateModel) returns (ApiClientCreateResponse);
+    rpc GetById(ApiClientGetByIdModel) returns (ApiClientGetByIdResponse) {};
+    rpc Search(ApiClientSearchModel) returns (ApiClientSearchResponse) {};
+    rpc Update(ApiClientUpdateModel) returns (ApiClientUpdateResponse) {};
+    rpc Delete(ApiClientDeleteModel) returns (ApiClientDeleteResponse) {};
+}

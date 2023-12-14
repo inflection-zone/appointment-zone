@@ -43,7 +43,7 @@ message BusinessNodeCustomerUpdateModel {
     string CustomerId = 3;
     string SmsConsent = 4;
     bool IsActive = 5;
-  }
+}
 
 message BusinessNodeCustomerUpdateResponse {
     string id = 1; 
@@ -51,7 +51,7 @@ message BusinessNodeCustomerUpdateResponse {
     string CustomerId = 3;
     string SmsConsent = 4;
     bool IsActive = 5;
-  }
+}
 
 message BusinessNodeCustomerSearchModel {
     string businessNodeId = 1;
@@ -72,7 +72,7 @@ message BusinessNodeCustomerDeleteModel {
 }
 
   message BusinessNodeCustomerDeleteResponse {
-    string id = 1;
+    int32 count = 1;
 }
 
 service BusinessNodeCustomers {

@@ -9,14 +9,16 @@ import { PrismaClientInit } from "../../src/startup/prisma.client.init";
 import { Seeder } from "../../src/startup/seeder";
 import fileUpload from "express-fileupload";
 import * as grpc from '@grpc/grpc-js';
+import { ApiClientsService } from '../api.client/proto/api.client_grpc_pb';
+import { apiClientService } from '../api.client/server/controller';
 import { CustomersService } from '../customer/proto/customer_grpc_pb';
 import { customerService } from '../customer/server/controller';
 import { businessService } from "../business/server/controller";
 import { BusinessesService } from '../business/proto/business_grpc_pb';
 import { businessNodeService } from "../business.node/server/controller";
-import { BusinessNodesService } from '../business.node/proto/businessnode_grpc_pb';
+import { BusinessNodesService } from '../business.node/proto/business.node_grpc_pb';
 // import   businessNodeCustomerServiceInstance  from "../business.node.customer/server/controller";
-import { BusinessNodeCustomersService } from '../business.node.customer/proto/businessnodecustomer_grpc_pb';
+import { BusinessNodeCustomersService } from '../business.node.customer/proto/business.node.customer_grpc_pb';
 import { businessNodeHourService } from "../business.node.hour/server/controller";
 import { BusinessNodeHoursService } from '../business.node.hour/proto/businessnodehour_grpc_pb';
 import { businessServiceService } from "../business.service/server/controller";
@@ -63,6 +65,8 @@ server.addService(UserMessagesService, userMessageService);
 server.addService(AppointmentStatusesService, appointmentStatusService);
 server.addService(AppointmentsService, appointmentService);
 server.addService(UsersService, userService);
+server.addService(ApiClientsService, apiClientService);
+
 export class GrpcApplication {
 
   //#region Member variables
