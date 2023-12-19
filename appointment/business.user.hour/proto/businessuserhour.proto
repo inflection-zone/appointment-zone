@@ -10,6 +10,9 @@ message BusinessUserHour {
   string Date = 5;
   bool IsOpen = 6;
   bool IsActive = 7;
+  string Message = 8;
+  string StartTime = 9;
+  string EndTime = 10;
 }
 
 message BusinessUserHourCreateModel { 
@@ -19,6 +22,9 @@ message BusinessUserHourCreateModel {
   string Date = 4;
   bool IsOpen = 5;
   bool IsActive = 6;
+  string Message = 8;
+  string StartTime = 9;
+  string EndTime = 10;
 }
 
 message BusinessUserHourGetByIdModel {
@@ -33,6 +39,9 @@ message BusinessUserHourGetByIdResponse {
   string Date = 5;
   bool IsOpen = 6;
   bool IsActive = 7; 
+  string Message = 8;
+  string StartTime = 9;
+  string EndTime = 10;
 }
 
 message BusinessUserHourCreateResponse {
@@ -43,6 +52,9 @@ message BusinessUserHourCreateResponse {
   string Date = 5;
   bool IsOpen = 6;
   bool IsActive = 7;
+  string Message = 8;
+  string StartTime = 9;
+  string EndTime = 10;
 }
 
 message BusinessUserHourUpdateModel {
@@ -53,6 +65,9 @@ message BusinessUserHourUpdateModel {
   string Date = 5;
   bool IsOpen = 6;
   bool IsActive = 7;
+  string Message = 8;
+  string StartTime = 9;
+  string EndTime = 10;
   }
 
 message BusinessUserHourUpdateResponse {
@@ -63,6 +78,9 @@ message BusinessUserHourUpdateResponse {
   string Date = 5;
   bool IsOpen = 6;
   bool IsActive = 7;
+  string Message = 8;
+  string StartTime = 9;
+  string EndTime = 10;
 }
 
 message BusinessUserHourSearchModel {
@@ -78,6 +96,9 @@ message BusinessUserHourSearchResponse {
   string Date = 5;
   string IsOpen = 6;
   bool IsActive = 7;
+  string Message = 8;
+  string StartTime = 9;
+  string EndTime = 10;
 }
 
 message BusinessUserHourDeleteModel {
@@ -85,7 +106,7 @@ message BusinessUserHourDeleteModel {
 }
 
   message BusinessUserHourDeleteResponse {
-    string id = 1;
+    int32 count = 1;
 }
 
 service BusinessUserHours {

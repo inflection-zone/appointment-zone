@@ -54,7 +54,7 @@ export const businessUserService = {
       response.setDob(result.UserRecords.Dob)
       response.setDisplaypicture(result.UserRecords.DisplayPicture)
       response.setGender(result.UserRecords.Gender)
-      response.setAboutMe(result.UserRecords.AboutMe)
+      response.setAboutme(result.UserRecords.AboutMe)
       response.setQualification(result.UserRecords.Qualification)
       response.setExperience(result.UserRecords.Experience)
       response.setIsavailableforemergency(result.UserRecords.IsAvailableForEmergency)

@@ -16,7 +16,7 @@ import { BusinessUserServiceControllerDelegate } from '../../../src/api/business
 const delegate = new BusinessUserServiceControllerDelegate();
 export const businessUserServiceService = {
 
-  create: (call: ServerUnaryCall<BusinessUserServiceCreateModel, BusinessUserServiceCreateResponse>,
+  create: async (call: ServerUnaryCall<BusinessUserServiceCreateModel, BusinessUserServiceCreateResponse>,
     callback: sendUnaryData<BusinessUserServiceCreateResponse>) => {
     try {
     const request: BusinessUserServiceCreateModel = call.request;
@@ -25,9 +25,13 @@ export const businessUserServiceService = {
         "BusinessServiceId": request.array[1],
         "IsActive": request.array[2],
     }
-    
-    const record = delegate.create(body);
+    const record = await delegate.create(body);
     const response = new BusinessUserServiceCreateResponse();
+    const result = record;
+    response.setId(result.id)
+    response.setBusinessuserid(result.BusinessUserId)
+    response.setBusinessserviceid(result.BusinessServiceId)
+    response.setIsactive(result.IsActive)
     console.log("Business user service created successfully") 
     callback(null, response);  
   } catch (error) {
@@ -46,6 +50,11 @@ export const businessUserServiceService = {
     const record = await delegate.getById(request.array[0]);
     const response = new BusinessUserServiceGetByIdResponse();
     response.id = request.array[0];
+    const result = record;
+    response.setId(result.id)
+    response.setBusinessuserid(result.BusinessUserId)
+    response.setBusinessserviceid(result.BusinessServiceId)
+    response.setIsactive(result.IsActive)
     console.log("record====",record)
     console.log("Business user service retrieved successfully")
     callback(null, response);
@@ -69,8 +78,13 @@ export const businessUserServiceService = {
       "BusinessServiceId": request.array[2],
       "IsActive": request.array[3],
   }
-    const record = delegate.update(id, body);
+    const record = await delegate.update(id, body);
     const response = new BusinessUserServiceUpdateResponse();
+    const result = record;
+    response.setId(result.id)
+    response.setBusinessuserid(result.BusinessUserId)
+    response.setBusinessserviceid(result.BusinessServiceId)
+    response.setIsactive(result.IsActive)
     console.log("Business user service updated successfully")
     callback(null, response);
   } catch (error) {
@@ -88,7 +102,8 @@ export const businessUserServiceService = {
     const request : BusinessUserServiceDeleteModel = call.request;
     const record = await delegate.delete(request.array[0]);
     const response = new BusinessUserServiceDeleteResponse();
-    console.log("record====",record)
+    // response.setCount(record.Deleted.count);
+    // console.log("record====", record.Deleted.count);
     console.log("Business user service deleted successfully")
     callback(null, response); 
   } catch (error) {

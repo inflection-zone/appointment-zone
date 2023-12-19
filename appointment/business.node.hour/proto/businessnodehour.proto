@@ -10,6 +10,9 @@ message BusinessNodeHour {
   string Date = 5;
   bool IsOpen = 6;
   bool IsActive = 7;
+  string Message = 8;
+  string StartTime = 9;
+  string EndTime = 10;
   }
 
 message BusinessNodeHourCreateModel {
@@ -19,6 +22,9 @@ message BusinessNodeHourCreateModel {
     string Date = 4;
     bool IsOpen = 5;
     bool IsActive = 6;
+    string Message = 7;
+    string StartTime = 9;
+    string EndTime = 10;
 }
 
 message BusinessNodeHourGetByIdModel {
@@ -33,6 +39,9 @@ message BusinessNodeHourGetByIdResponse {
     string Date = 5;
     bool IsOpen = 6;
     bool IsActive = 7;
+    string Message = 8;
+    string StartTime = 9;
+    string EndTime = 10;
 }
 
 message BusinessNodeHourCreateResponse {
@@ -43,6 +52,9 @@ message BusinessNodeHourCreateResponse {
     string Date = 5;
     bool IsOpen = 6;
     bool IsActive = 7;
+    string Message = 8;
+    string StartTime = 9;
+    string EndTime = 10;
 }
 
 message BusinessNodeHourUpdateModel {
@@ -53,6 +65,9 @@ message BusinessNodeHourUpdateModel {
     string Date = 5;
     bool IsOpen = 6;
     bool IsActive = 7;
+    string Message = 8;
+    string StartTime = 9;
+    string EndTime = 10;
   }
 
 message BusinessNodeHourUpdateResponse {
@@ -63,6 +78,9 @@ message BusinessNodeHourUpdateResponse {
     string Date = 5;
     bool IsOpen = 6;
     bool IsActive = 7;
+    string Message = 8;
+    string StartTime = 9;
+    string EndTime = 10;
   }
 
 message BusinessNodeHourSearchModel {
@@ -72,6 +90,9 @@ message BusinessNodeHourSearchModel {
     string date = 4;
     bool isOpen = 5;
     bool isActive = 6;
+    string Message = 7;
+    string StartTime = 9;
+    string EndTime = 10;
 }
 
 message BusinessNodeHourSearchResponse {
@@ -82,6 +103,9 @@ message BusinessNodeHourSearchResponse {
     string Date = 5;
     bool IsOpen = 6;
     bool IsActive = 7;
+    string Message = 8;
+    string StartTime = 9;
+    string EndTime = 10;
 }
 
 message BusinessNodeHourDeleteModel {
