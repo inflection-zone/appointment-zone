@@ -28,8 +28,8 @@
   },
   "include": [
       "src/**/*", 
-      "tests/*",
-      "appointment/**/*"
+      "appointment/**/*",
+      "grpc.tests/*"
   ],
   "exclude":[ 
       "node_modules"
