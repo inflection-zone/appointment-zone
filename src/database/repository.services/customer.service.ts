@@ -72,6 +72,16 @@ export class CustomerService {
                 pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
                 search.skip = pageIndex * search.take;
             }    
+            
+            search.orderBy = {
+                CreatedAt : 'asc'
+            }
+
+            if (filters.Order === 'descending') {
+                search.orderBy = {
+                    CreatedAt : 'desc'
+                    }
+            }
             let customers = await this.prisma.customers.findMany(search)
 
             if (filters.Name != null) {
@@ -97,6 +107,7 @@ export class CustomerService {
                 RetrievedCount : customers.length,
                 PageIndex      : pageIndex,
                 ItemsPerPage   : search.take,
+                Order          : search.orderBy["CreatedAt"] === 'desc' ? 'descending' : 'ascending',
                 Items          : customers,
             };
             return searchResults;
