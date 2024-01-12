@@ -1,128 +1,136 @@
 syntax = "proto3";
-
 package appointment;
+import "google/protobuf/timestamp.proto";
 
 message PaymentTransaction {
-    string id = 1; 
-    string BusinessNodeId = 2;
-    string CustomerId = 3;
-    float TotalAmount = 4;
-    string ExternalId = 5;
-    string Currency = 6;
-    string Status = 7;
-    bool IsComplete = 8;
-    string InitiatedOn = 9;
-    string CompletedOn = 10;
-    bool IsActive = 11;
-  }
+	string id = 1; 
+	string BusinessNodeId = 2;
+	string CustomerId = 3;
+	float TotalAmount = 4;
+	string ExternalId = 5;
+	string Currency = 6;
+	string Status = 7;
+	bool IsComplete = 8;
+	string InitiatedOn = 9;
+	string CompletedOn = 10;
+	bool IsActive = 11;
+}
 
 message PaymentTransactionCreateModel {
-  string BusinessNodeId = 1;
-  string CustomerId = 2;
-  float TotalAmount = 3;
-  string ExternalId = 4;
-  string Currency = 5;
-  string Status = 6;
-  bool IsComplete = 7;
-  string InitiatedOn = 8;
-  string CompletedOn = 9;
-  bool IsActive = 10;
-}
-
-message PaymentTransactionGetByIdModel {
-    string id = 1; 
-}
-
-message PaymentTransactionGetByIdResponse {
-  string id = 1; 
-  string BusinessNodeId = 2;
-  string CustomerId = 3;
-  float TotalAmount = 4;
-  string ExternalId = 5;
-  string Currency = 6;
-  string Status = 7;
-  bool IsComplete = 8;
-  string InitiatedOn = 9;
-  string CompletedOn = 10;
-  bool IsActive = 11;
+	string BusinessNodeId = 1;
+	string CustomerId = 2;
+	float TotalAmount = 3;
+	string ExternalId = 4;
+	string Currency = 5;
+	string Status = 6;
+	bool IsComplete = 7;
+	string InitiatedOn = 8;
+	string CompletedOn = 9;
+	bool IsActive = 10;
 }
 
 message PaymentTransactionCreateResponse {
-  string id = 1; 
-  string BusinessNodeId = 2;
-  string CustomerId = 3;
-  float TotalAmount = 4;
-  string ExternalId = 5;
-  string Currency = 6;
-  string Status = 7;
-  bool IsComplete = 8;
-  string InitiatedOn = 9;
-  string CompletedOn = 10;
-  bool IsActive = 11;
+	string id = 1; 
+	string BusinessNodeId = 2;
+	string CustomerId = 3;
+	float TotalAmount = 4;
+	string ExternalId = 5;
+	string Currency = 6;
+	string Status = 7;
+	bool IsComplete = 8;
+	string InitiatedOn = 9;
+	string CompletedOn = 10;
+	bool IsActive = 11;
 }
 
-message PaymentTransactionUpdateModel {
-  string id = 1; 
-  string BusinessNodeId = 2;
-  string CustomerId = 3;
-  float TotalAmount = 4;
-  string ExternalId = 5;
-  string Currency = 6;
-  string Status = 7;
-  bool IsComplete = 8;
-  string InitiatedOn = 9;
-  string CompletedOn = 10;
-  bool IsActive = 11;
+message PaymentTransactionGetByIdModel {
+  	string id = 1; 
 }
 
-message PaymentTransactionUpdateResponse {
-  string id = 1; 
-  string BusinessNodeId = 2;
-  string CustomerId = 3;
-  float TotalAmount = 4;
-  string ExternalId = 5;
-  string Currency = 6;
-  string Status = 7;
-  bool IsComplete = 8;
-  string InitiatedOn = 9;
-  string CompletedOn = 10;
-  bool IsActive = 11;
+message PaymentTransactionGetByIdResponse {
+	string id = 1; 
+	string BusinessNodeId = 2;
+	string CustomerId = 3;
+	float TotalAmount = 4;
+	string ExternalId = 5;
+	string Currency = 6;
+	string Status = 7;
+	bool IsComplete = 8;
+	string InitiatedOn = 9;
+	string CompletedOn = 10;
+	bool IsActive = 11;
 }
 
 message PaymentTransactionSearchModel {
-    string businessNodeId = 1;
-    string customerId = 2;
-    string appointmentId = 3;
-    bool isActive = 4;
+	string businessNodeId = 1;
+	string customerId = 2;
+	bool isActive = 3;
+}
+message PaymentTransactionSearchResponse {
+	int32 TotalCount = 1;
+	int32 RetrievedCount = 2;
+	int32 PageIndex = 3;
+	int32 ItemsPerPage = 4;
+	string Order = 5;
+	repeated PaymentTransactionSearchResponseItem Items = 6;
+}
+message PaymentTransactionSearchResponseItem {
+	string id = 1; 
+	string BusinessNodeId = 2;
+	string CustomerId = 3;
+	float TotalAmount = 4;
+	string ExternalId = 5;
+	string Currency = 6;
+	string Status = 7;
+	bool IsComplete = 8;
+	string InitiatedOn = 9;
+	string CompletedOn = 10;
+	bool IsActive = 11;
+	google.protobuf.Timestamp CreatedAt = 12;
+	google.protobuf.Timestamp UpdatedAt = 13;
+	google.protobuf.Timestamp DeletedAt = 14;
 }
 
-message PaymentTransactionSearchResponse {
-  string id = 1; 
-  string BusinessNodeId = 2;
-  string CustomerId = 3;
-  float TotalAmount = 4;
-  string ExternalId = 5;
-  string Currency = 6;
-  string Status = 7;
-  bool IsComplete = 8;
-  string InitiatedOn = 9;
-  string CompletedOn = 10;
-  bool IsActive = 11;
+message PaymentTransactionUpdateModel {
+	string id = 1; 
+	string BusinessNodeId = 2;
+	string CustomerId = 3;
+	float TotalAmount = 4;
+	string ExternalId = 5;
+	string Currency = 6;
+	string Status = 7;
+	bool IsComplete = 8;
+	string InitiatedOn = 9;
+	string CompletedOn = 10;
+	bool IsActive = 11;
+}
+
+message PaymentTransactionUpdateResponse {
+	string id = 1; 
+	string BusinessNodeId = 2;
+	string CustomerId = 3;
+	float TotalAmount = 4;
+	string ExternalId = 5;
+	string Currency = 6;
+	string Status = 7;
+	bool IsComplete = 8;
+	string InitiatedOn = 9;
+	string CompletedOn = 10;
+	bool IsActive = 11;
 }
 
 message PaymentTransactionDeleteModel {
-    string id = 1;
+  	string id = 1;
 }
 
-  message PaymentTransactionDeleteResponse {
-    string id = 1;
+message PaymentTransactionDeleteResponse {
+  	int32 count = 1;
 }
 
 service PaymentTransactions {
-    rpc Create(PaymentTransactionCreateModel) returns (PaymentTransactionCreateResponse);
-    rpc GetById(PaymentTransactionGetByIdModel) returns (PaymentTransactionGetByIdResponse) {};
-    rpc Search(PaymentTransactionSearchModel) returns (PaymentTransactionSearchResponse) {};
-    rpc Update(PaymentTransactionUpdateModel) returns (PaymentTransactionUpdateResponse) {};
-    rpc Delete(PaymentTransactionDeleteModel) returns (PaymentTransactionDeleteResponse) {};
-
+	rpc Create(PaymentTransactionCreateModel) returns (PaymentTransactionCreateResponse);
+	rpc GetById(PaymentTransactionGetByIdModel) returns (PaymentTransactionGetByIdResponse) {};
+	rpc Search(PaymentTransactionSearchModel) returns (PaymentTransactionSearchResponse) {};
+	rpc Update(PaymentTransactionUpdateModel) returns (PaymentTransactionUpdateResponse) {};
+	rpc Delete(PaymentTransactionDeleteModel) returns (PaymentTransactionDeleteResponse) {};
 }
