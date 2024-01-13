@@ -3,6 +3,7 @@
 'use strict';
 var grpc = require('@grpc/grpc-js');
 var businessuserservice_pb = require('./businessuserservice_pb.js');
+var google_protobuf_timestamp_pb = require('google-protobuf/google/protobuf/timestamp_pb.js');
 
 function serialize_appointment_BusinessUserServiceCreateModel(arg) {
   if (!(arg instanceof businessuserservice_pb.BusinessUserServiceCreateModel)) {
@@ -13,6 +14,28 @@ function serialize_appointment_BusinessUserServiceCreateModel(arg) {
 
 function deserialize_appointment_BusinessUserServiceCreateModel(buffer_arg) {
   return businessuserservice_pb.BusinessUserServiceCreateModel.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_appointment_BusinessUserServiceCreateMultipleModel(arg) {
+  if (!(arg instanceof businessuserservice_pb.BusinessUserServiceCreateMultipleModel)) {
+    throw new Error('Expected argument of type appointment.BusinessUserServiceCreateMultipleModel');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_appointment_BusinessUserServiceCreateMultipleModel(buffer_arg) {
+  return businessuserservice_pb.BusinessUserServiceCreateMultipleModel.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_appointment_BusinessUserServiceCreateMultipleResponse(arg) {
+  if (!(arg instanceof businessuserservice_pb.BusinessUserServiceCreateMultipleResponse)) {
+    throw new Error('Expected argument of type appointment.BusinessUserServiceCreateMultipleResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_appointment_BusinessUserServiceCreateMultipleResponse(buffer_arg) {
+  return businessuserservice_pb.BusinessUserServiceCreateMultipleResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_appointment_BusinessUserServiceCreateResponse(arg) {
@@ -126,6 +149,17 @@ var BusinessUserServicesService = exports.BusinessUserServicesService = {
     requestDeserialize: deserialize_appointment_BusinessUserServiceCreateModel,
     responseSerialize: serialize_appointment_BusinessUserServiceCreateResponse,
     responseDeserialize: deserialize_appointment_BusinessUserServiceCreateResponse,
+  },
+  createMultiple: {
+    path: '/appointment.BusinessUserServices/CreateMultiple',
+    requestStream: false,
+    responseStream: false,
+    requestType: businessuserservice_pb.BusinessUserServiceCreateMultipleModel,
+    responseType: businessuserservice_pb.BusinessUserServiceCreateMultipleResponse,
+    requestSerialize: serialize_appointment_BusinessUserServiceCreateMultipleModel,
+    requestDeserialize: deserialize_appointment_BusinessUserServiceCreateMultipleModel,
+    responseSerialize: serialize_appointment_BusinessUserServiceCreateMultipleResponse,
+    responseDeserialize: deserialize_appointment_BusinessUserServiceCreateMultipleResponse,
   },
   getById: {
     path: '/appointment.BusinessUserServices/GetById',

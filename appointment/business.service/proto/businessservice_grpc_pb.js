@@ -3,6 +3,7 @@
 'use strict';
 var grpc = require('@grpc/grpc-js');
 var businessservice_pb = require('./businessservice_pb.js');
+var google_protobuf_timestamp_pb = require('google-protobuf/google/protobuf/timestamp_pb.js');
 
 function serialize_appointment_BusinessServiceCreateModel(arg) {
   if (!(arg instanceof businessservice_pb.BusinessServiceCreateModel)) {

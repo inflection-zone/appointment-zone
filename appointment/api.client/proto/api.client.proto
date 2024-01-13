@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package appointment;
 
+import "google/protobuf/timestamp.proto";
+
 message ApiClient {
     string id           = 1;
     string ClientName   = 2;
@@ -14,8 +16,8 @@ message ApiClient {
     string Email        = 9;
     string ApiKey       = 10;
     bool IsPrivileged   = 11;
-    string ValidFrom      = 12;
-    string ValidTill      = 13;
+    google.protobuf.Timestamp ValidFrom      = 12;
+    google.protobuf.Timestamp ValidTill      = 13;
 }
 
 message ApiClientCreateModel {
@@ -29,8 +31,8 @@ message ApiClientCreateModel {
     string Email        = 8;
     string ApiKey       = 9;
     bool IsPrivileged   = 10;
-    string ValidFrom    = 11;
-    string ValidTill    = 12;
+    google.protobuf.Timestamp ValidFrom    = 11;
+    google.protobuf.Timestamp ValidTill    = 12;
 }
 
 message ApiClientGetByIdModel {
@@ -48,8 +50,8 @@ message ApiClientUpdateModel {
     string Email        = 8;
     string ApiKey      = 9;
     bool IsPrivileged     = 10;
-    string ValidFrom      = 11;
-    string ValidTill     = 12;
+    google.protobuf.Timestamp ValidFrom      = 11;
+    google.protobuf.Timestamp ValidTill     = 12;
 }
 
 message ApiClientSearchModel {
@@ -59,8 +61,8 @@ message ApiClientSearchModel {
     bool isPrivileged   = 4;
     string phone         = 5;
     string email        = 6;
-    string vaidFrom      = 7;
-    string validTill     = 8;
+    google.protobuf.Timestamp vaidFrom      = 7;
+    google.protobuf.Timestamp validTill     = 8;
     string clientInterfaceType = 9;
 }
 
@@ -75,8 +77,8 @@ message ApiClientGetByIdResponse {
     string Email        = 8;
     string ApiKey      = 9;
     bool IsPrivileged     = 10;
-    string ValidFrom      = 11;
-    string ValidTill     = 12;
+    google.protobuf.Timestamp ValidFrom      = 11;
+    google.protobuf.Timestamp ValidTill     = 12;
 }
 
 message ApiClientCreateResponse {
@@ -90,8 +92,8 @@ message ApiClientCreateResponse {
     string Email        = 8;
     string ApiKey      = 9;
     bool IsPrivileged     = 10;
-    string ValidFrom      = 11;
-    string ValidTill     = 12;
+    google.protobuf.Timestamp ValidFrom      = 11;
+    google.protobuf.Timestamp ValidTill     = 12;
 }
 
 message ApiClientUpdateResponse {
@@ -105,11 +107,19 @@ message ApiClientUpdateResponse {
     string Email        = 8;
     string ApiKey      = 9;
     bool IsPrivileged     = 10;
-    string ValidFrom      = 11;
-    string ValidTill     = 12;
+    google.protobuf.Timestamp ValidFrom      = 11;
+    google.protobuf.Timestamp ValidTill     = 12;
 }
 
 message ApiClientSearchResponse {
+    int32 TotalCount = 1;
+    int32 RetrievedCount = 2;
+    int32 PageIndex = 3;
+    int32 ItemsPerPage = 4;
+    string Order = 5;
+    repeated ApiClientSearchResponseItem Items = 6;
+}
+message ApiClientSearchResponseItem {
     string id           = 1;
     string ClientName   = 2;
     string FirstName    = 3;
@@ -120,8 +130,8 @@ message ApiClientSearchResponse {
     string Email        = 8;
     string ApiKey      = 9;
     bool IsPrivileged     = 10;
-    string ValidFrom      = 11;
-    string ValidTill     = 12;
+    google.protobuf.Timestamp ValidFrom      = 11;
+    google.protobuf.Timestamp ValidTill     = 12;
 }
 
 message ApiClientDeleteModel {

@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package appointment;
 
+import "google/protobuf/timestamp.proto";
+
 message BusinessSkill {
   string id = 1; 
   string BusinessNodeId = 2;
@@ -20,7 +22,7 @@ message BusinessSkillCreateModel {
 }
 
 message BusinessSkillGetByIdModel {
-    string id = 1; 
+  string id = 1; 
 }
 
 message BusinessSkillGetByIdResponse {
@@ -66,12 +68,24 @@ message BusinessSkillSearchModel {
 }
 
 message BusinessSkillSearchResponse {
+  int32 TotalCount = 1;
+  int32 RetrievedCount = 2;
+  int32 PageIndex = 3;
+  int32 ItemsPerPage = 4;
+  string Order = 5;
+  repeated BusinessSkillSearchResponseItem Items = 6;
+}
+
+message BusinessSkillSearchResponseItem {
   string id = 1; 
   string BusinessNodeId = 2;
   string Name = 3;
   string Description = 4;
   string DisplayPicture = 5;
   bool IsActive = 6;
+  google.protobuf.Timestamp CreatedAt = 7;
+  google.protobuf.Timestamp UpdatedAt = 8;
+  google.protobuf.Timestamp DeletedAt = 9;
 }
 
 message BusinessSkillDeleteModel {
@@ -79,7 +93,7 @@ message BusinessSkillDeleteModel {
 }
 
   message BusinessSkillDeleteResponse {
-    string id = 1;
+    int32 count = 1;
 }
 
 service BusinessSkills {
@@ -88,5 +102,4 @@ service BusinessSkills {
     rpc Search(BusinessSkillSearchModel) returns (BusinessSkillSearchResponse) {};
     rpc Update(BusinessSkillUpdateModel) returns (BusinessSkillUpdateResponse) {};
     rpc Delete(BusinessSkillDeleteModel) returns (BusinessSkillDeleteResponse) {};
-
 }

@@ -3,6 +3,7 @@
 'use strict';
 var grpc = require('@grpc/grpc-js');
 var businessnodehour_pb = require('./businessnodehour_pb.js');
+var google_protobuf_timestamp_pb = require('google-protobuf/google/protobuf/timestamp_pb.js');
 
 function serialize_appointment_BusinessNodeHourCreateModel(arg) {
   if (!(arg instanceof businessnodehour_pb.BusinessNodeHourCreateModel)) {
@@ -13,6 +14,28 @@ function serialize_appointment_BusinessNodeHourCreateModel(arg) {
 
 function deserialize_appointment_BusinessNodeHourCreateModel(buffer_arg) {
   return businessnodehour_pb.BusinessNodeHourCreateModel.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_appointment_BusinessNodeHourCreateMultipleModel(arg) {
+  if (!(arg instanceof businessnodehour_pb.BusinessNodeHourCreateMultipleModel)) {
+    throw new Error('Expected argument of type appointment.BusinessNodeHourCreateMultipleModel');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_appointment_BusinessNodeHourCreateMultipleModel(buffer_arg) {
+  return businessnodehour_pb.BusinessNodeHourCreateMultipleModel.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_appointment_BusinessNodeHourCreateMultipleResponse(arg) {
+  if (!(arg instanceof businessnodehour_pb.BusinessNodeHourCreateMultipleResponse)) {
+    throw new Error('Expected argument of type appointment.BusinessNodeHourCreateMultipleResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_appointment_BusinessNodeHourCreateMultipleResponse(buffer_arg) {
+  return businessnodehour_pb.BusinessNodeHourCreateMultipleResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_appointment_BusinessNodeHourCreateResponse(arg) {
@@ -126,6 +149,17 @@ var BusinessNodeHoursService = exports.BusinessNodeHoursService = {
     requestDeserialize: deserialize_appointment_BusinessNodeHourCreateModel,
     responseSerialize: serialize_appointment_BusinessNodeHourCreateResponse,
     responseDeserialize: deserialize_appointment_BusinessNodeHourCreateResponse,
+  },
+  createMultiple: {
+    path: '/appointment.BusinessNodeHours/CreateMultiple',
+    requestStream: false,
+    responseStream: false,
+    requestType: businessnodehour_pb.BusinessNodeHourCreateMultipleModel,
+    responseType: businessnodehour_pb.BusinessNodeHourCreateMultipleResponse,
+    requestSerialize: serialize_appointment_BusinessNodeHourCreateMultipleModel,
+    requestDeserialize: deserialize_appointment_BusinessNodeHourCreateMultipleModel,
+    responseSerialize: serialize_appointment_BusinessNodeHourCreateMultipleResponse,
+    responseDeserialize: deserialize_appointment_BusinessNodeHourCreateMultipleResponse,
   },
   getById: {
     path: '/appointment.BusinessNodeHours/GetById',

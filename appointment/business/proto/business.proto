@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package appointment;
 
+import "google/protobuf/timestamp.proto";
+
 message Business {
   string id = 1; 
   string ExternalId = 2;
@@ -122,6 +124,15 @@ message BusinessSearchModel {
 }
 
 message BusinessSearchResponse {
+  int32 TotalCount = 1;
+  int32 RetrievedCount = 2;
+  int32 PageIndex = 3;
+  int32 ItemsPerPage = 4;
+  string Order = 5;
+  repeated BusinessSearchResponseItem Items = 6;
+}
+
+message BusinessSearchResponseItem {
   string id = 1; 
   string ExternalId = 2;
   string Name = 3;
@@ -138,6 +149,11 @@ message BusinessSearchResponse {
   string Instagram = 14;
   string Yelp = 15;
   bool IsActive = 16;
+  google.protobuf.Timestamp CreatedAt = 17;
+  google.protobuf.Timestamp UpdatedAt = 18;
+  google.protobuf.Timestamp DeletedAt = 19;
+  bool IsDeleted = 20;
+  int32 OverallRating = 21;
 }
 
 message BusinessDeleteModel {
@@ -147,7 +163,6 @@ message BusinessDeleteModel {
   message BusinessDeleteResponse {
     int32 count = 1;
 }
-
 
 service Businesses {
     rpc Create(BusinessCreateModel) returns (BusinessCreateResponse);

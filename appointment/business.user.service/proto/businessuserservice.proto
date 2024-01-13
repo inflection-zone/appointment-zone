@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package appointment;
 
+import "google/protobuf/timestamp.proto";
+
 message BusinessUserService {
   string id = 1; 
   string BusinessUserId = 2;
@@ -13,6 +15,26 @@ message BusinessUserServiceCreateModel {
   string BusinessUserId = 1;
   string BusinessServiceId = 2;
   bool IsActive = 3;
+}
+message BusinessUserServiceCreateMultipleItem { 
+  string BusinessUserId = 1;
+  string BusinessServiceId = 2;
+  bool IsActive = 3;
+}
+
+message BusinessUserServiceCreateMultipleModel {
+  repeated BusinessUserServiceCreateMultipleItem items = 1;
+}
+
+message BusinessUserServiceCreateMultipleResponse{
+  repeated BusinessUserServiceCreateMultipleResponseItem item = 1;
+}
+
+message BusinessUserServiceCreateMultipleResponseItem {
+  string id = 1; 
+  string BusinessUserId = 2;
+  string BusinessServiceId = 3;
+  bool IsActive = 4;
 }
 
 message BusinessUserServiceGetByIdModel {
@@ -54,10 +76,23 @@ message BusinessUserServiceSearchModel {
 }
 
 message BusinessUserServiceSearchResponse {
+  int32 TotalCount = 1;
+  int32 RetrievedCount = 2;
+  int32 PageIndex = 3;
+  int32 ItemsPerPage = 4;
+  string Order = 5;
+  repeated BusinessUserServiceSearchResponseItem Items = 6;
+}
+
+message BusinessUserServiceSearchResponseItem {
   string id = 1; 
   string BusinessUserId = 2;
   string BusinessServiceId = 3;
   bool IsActive = 4;
+  google.protobuf.Timestamp CreatedAt = 5;
+  google.protobuf.Timestamp UpdatedAt = 6;
+  google.protobuf.Timestamp DeletedAt = 7;
+  bool IsDeleted = 8;
 }
 
 message BusinessUserServiceDeleteModel {
@@ -70,6 +105,7 @@ message BusinessUserServiceDeleteModel {
 
 service BusinessUserServices {
     rpc Create(BusinessUserServiceCreateModel) returns (BusinessUserServiceCreateResponse);
+    rpc CreateMultiple(BusinessUserServiceCreateMultipleModel) returns (BusinessUserServiceCreateMultipleResponse) {};
     rpc GetById(BusinessUserServiceGetByIdModel) returns (BusinessUserServiceGetByIdResponse) {};
     rpc Search(BusinessUserServiceSearchModel) returns (BusinessUserServiceSearchResponse) {};
     rpc Update(BusinessUserServiceUpdateModel) returns (BusinessUserServiceUpdateResponse) {};

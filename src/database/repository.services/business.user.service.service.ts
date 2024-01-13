@@ -133,11 +133,21 @@ export class BusinessUserServiceService{
     
     delete = async (id) => {
         try {
-            const result = await this.prisma.business_user_services.delete({
-                where: {
+            // const result = await this.prisma.business_user_services.delete({
+            //     where: {
+            //         id : id,
+            //     }, 
+            // });
+            const deleted = await this.prisma.business_user_services.updateMany({
+                where : {
                     id : id,
-                }, 
+                    IsActive : true,
+                },
+                data : {
+                    IsActive : false,
+                },
             });
+            return deleted;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to delete business user service!', error);
         }

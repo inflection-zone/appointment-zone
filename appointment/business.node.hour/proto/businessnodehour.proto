@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package appointment;
 
+import "google/protobuf/timestamp.proto";
+
 message BusinessNodeHour {
   string id = 1; 
   string BusinessNodeId = 2;
@@ -23,10 +25,40 @@ message BusinessNodeHourCreateModel {
     bool IsOpen = 5;
     bool IsActive = 6;
     string Message = 7;
-    string StartTime = 9;
-    string EndTime = 10;
+    string StartTime = 8;
+    string EndTime = 9;
 }
 
+message DayWiseWorkingHour {
+    int32 Day = 1;
+    string StartTime = 2;
+    string EndTime = 3;
+}
+
+message BusinessNodeHourCreateMultipleModel {
+    string BusinessNodeId = 1;
+    repeated DayWiseWorkingHour DayWiseWorkingHours = 2;
+}
+
+message BusinessNodeHourCreateMultipleResponse {
+    repeated BusinessNodeHourCreateMultipleResponseItem data = 1;
+}
+message BusinessNodeHourCreateMultipleResponseItem {
+    int32 Day = 1;
+    string Type = 2;
+    string Date = 3;
+    bool IsOpen = 4;
+    bool IsActive = 5;
+    string Message = 6;
+    string StartTime = 7;
+    string EndTime = 8;
+    string BusinessNodeId = 9;
+    string id = 10;
+    google.protobuf.Timestamp CreatedAt = 11;
+    google.protobuf.Timestamp UpdatedAt = 12;
+    google.protobuf.Timestamp DeletedAt = 13;
+    bool IsDeleted = 14;
+}
 message BusinessNodeHourGetByIdModel {
     string id = 1; 
 }
@@ -85,17 +117,19 @@ message BusinessNodeHourUpdateResponse {
 
 message BusinessNodeHourSearchModel {
     string businessNodeId = 1;
-    string type = 2;
-    string day = 3;
-    string date = 4;
-    bool isOpen = 5;
-    bool isActive = 6;
-    string Message = 7;
-    string StartTime = 9;
-    string EndTime = 10;
+    bool isActive = 2;
 }
 
 message BusinessNodeHourSearchResponse {
+    int32 TotalCount = 1;
+    int32 RetrievedCount = 2;
+    int32 PageIndex = 3;
+    int32 ItemsPerPage = 4;
+    string Order = 5;
+    repeated BusinessNodeHourSearchResponseItem Items = 6;
+}
+
+message BusinessNodeHourSearchResponseItem {
     string id = 1; 
     string BusinessNodeId = 2;
     string Type = 3;
@@ -106,6 +140,10 @@ message BusinessNodeHourSearchResponse {
     string Message = 8;
     string StartTime = 9;
     string EndTime = 10;
+    google.protobuf.Timestamp CreatedAt = 11;
+    google.protobuf.Timestamp UpdatedAt = 12;
+    google.protobuf.Timestamp DeletedAt = 13;
+    bool IsDeleted = 14;
 }
 
 message BusinessNodeHourDeleteModel {
@@ -118,6 +156,7 @@ message BusinessNodeHourDeleteModel {
 
 service BusinessNodeHours {
     rpc Create(BusinessNodeHourCreateModel) returns (BusinessNodeHourCreateResponse);
+    rpc CreateMultiple(BusinessNodeHourCreateMultipleModel) returns (BusinessNodeHourCreateMultipleResponse) {};
     rpc GetById(BusinessNodeHourGetByIdModel) returns (BusinessNodeHourGetByIdResponse) {};
     rpc Search(BusinessNodeHourSearchModel) returns (BusinessNodeHourSearchResponse) {};
     rpc Update(BusinessNodeHourUpdateModel) returns (BusinessNodeHourUpdateResponse) {};

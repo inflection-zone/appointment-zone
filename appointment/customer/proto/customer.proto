@@ -106,6 +106,15 @@ message CustomerSearchModel {
 }
 
 message CustomerSearchResponse {
+    int32 TotalCount = 1;
+    int32 RetrievedCount = 2;
+    int32 PageIndex = 3;
+    int32 ItemsPerPage = 4;
+    string Order = 5;
+    repeated CustomerSearchResponseItem Items = 6;
+}
+
+message CustomerSearchResponseItem {
     string id = 1; 
     string Prefix = 2;
     string FirstName = 3;
@@ -118,6 +127,11 @@ message CustomerSearchResponse {
     string Address = 10;
     bool InAppUser = 11;
     bool IsActive = 12;
+    google.protobuf.Timestamp CreatedAt = 13;
+    google.protobuf.Timestamp UpdatedAt = 14;
+    google.protobuf.Timestamp DeletedAt = 15;
+    bool IsDeleted = 16;
+    string Name = 17;
 }
 
 message CustomerDeleteModel {

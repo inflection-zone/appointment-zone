@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package appointment;
 
+import "google/protobuf/timestamp.proto";
+
 message BusinessUserSkill {
   string id = 1; 
   string BusinessSkillId = 2;
@@ -13,6 +15,27 @@ message BusinessUserSkillCreateModel {
   string BusinessSkillId = 1;
   string BusinessUserId = 2;
   bool IsActive = 3;
+}
+
+message BusinessUserSkillCreateMultipleItem { 
+  string BusinessSkillId = 1;
+  string BusinessUserId = 2;
+  bool IsActive = 3;
+}
+
+message BusinessUserSkillCreateMultipleModel {
+  repeated BusinessUserSkillCreateMultipleItem items = 1;
+}
+
+message BusinessUserSkillCreateMultipleResponse{
+  repeated BusinessUserSkillCreateMultipleResponseItem items = 1;
+}
+
+message BusinessUserSkillCreateMultipleResponseItem {
+  string id = 1; 
+  string BusinessSkillId = 2;
+  string BusinessUserId = 3;
+  bool IsActive = 4;
 }
 
 message BusinessUserSkillGetByIdModel {
@@ -54,22 +77,36 @@ message BusinessUserSkillSearchModel {
 }
 
 message BusinessUserSkillSearchResponse {
+  int32 TotalCount = 1;
+  int32 RetrievedCount = 2;
+  int32 PageIndex = 3;
+  int32 ItemsPerPage = 4;
+  string Order = 5;
+  repeated BusinessUserSkillSearchResponseItem Items = 6;
+}
+
+message BusinessUserSkillSearchResponseItem {
   string id = 1; 
   string BusinessSkillId = 2;
   string BusinessUserId = 3;
   bool IsActive = 4;
+  google.protobuf.Timestamp CreatedAt = 5;
+  google.protobuf.Timestamp UpdatedAt = 6;
+  google.protobuf.Timestamp DeletedAt = 7;
 }
+
 
 message BusinessUserSkillDeleteModel {
     string id = 1;
 }
 
   message BusinessUserSkillDeleteResponse {
-    string id = 1;
+    int32 count = 1;
 }
 
 service BusinessUserSkills {
     rpc Create(BusinessUserSkillCreateModel) returns (BusinessUserSkillCreateResponse);
+    rpc CreateMultiple(BusinessUserSkillCreateMultipleModel) returns (BusinessUserSkillCreateMultipleResponse);
     rpc GetById(BusinessUserSkillGetByIdModel) returns (BusinessUserSkillGetByIdResponse) {};
     rpc Search(BusinessUserSkillSearchModel) returns (BusinessUserSkillSearchResponse) {};
     rpc Update(BusinessUserSkillUpdateModel) returns (BusinessUserSkillUpdateResponse) {};

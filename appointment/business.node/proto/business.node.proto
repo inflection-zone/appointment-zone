@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package appointment;
 
+import "google/protobuf/timestamp.proto";
+
 message BusinessNode {
   string id = 1; 
   string BusinessId = 2;
@@ -108,6 +110,15 @@ message BusinessNodeSearchModel {
 }
 
 message BusinessNodeSearchResponse {
+    int32 TotalCount = 1;
+    int32 RetrievedCount = 2;
+    int32 PageIndex = 3;
+    int32 ItemsPerPage = 4;
+    string Order = 5;
+    repeated BusinessNodeSearchResponseItem Items = 6;
+}
+
+message BusinessNodeSearchResponseItem {
     string id = 1; 
     string BusinessId = 2;
     string Name = 3;
@@ -121,6 +132,10 @@ message BusinessNodeSearchResponse {
     bool AllowWalkinAppointments = 11;
     string AllowFutureBookingFor = 12;
     bool IsActive = 13;
+    google.protobuf.Timestamp CreatedAt = 14;
+    google.protobuf.Timestamp UpdatedAt = 15;
+    google.protobuf.Timestamp DeletedAt = 16;
+    bool IsDeleted = 17;
 }
 
 message BusinessNodeDeleteModel {

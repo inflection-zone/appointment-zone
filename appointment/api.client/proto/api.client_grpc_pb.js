@@ -3,6 +3,7 @@
 'use strict';
 var grpc = require('@grpc/grpc-js');
 var api_client_pb = require('./api.client_pb.js');
+var google_protobuf_timestamp_pb = require('google-protobuf/google/protobuf/timestamp_pb.js');
 
 function serialize_appointment_ApiClientCreateModel(arg) {
   if (!(arg instanceof api_client_pb.ApiClientCreateModel)) {
