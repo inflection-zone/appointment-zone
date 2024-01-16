@@ -1,127 +1,133 @@
 syntax = "proto3";
-
 package appointment;
+import "google/protobuf/timestamp.proto";
 
-message NotificationService {
-  string id = 1; 
-  string BusinessNodeId = 2;
-  string CustomerId = 3;
-  string Title = 4;
-  string Body = 5;
-  string Type = 6;
-  bool IsRead = 7;
-  int32 TypeId = 8;
-  string Message = 9;
-  bool IsSent = 10;
-  bool IsActive = 11;
-  }
+message Notification {
+	string id = 1;
+	string BusinessNodeId = 2;
+	string CustomerId = 3;
+	string Title = 4;
+	string Body = 5;
+	string Type = 6;
+	bool IsRead = 7;
+	int32 TypeId = 8;
+	string Message = 9;
+	bool IsSent = 10;
+	bool IsActive = 11;
+}
 
 message NotificationCreateModel {
-  string BusinessNodeId = 1;
-  string CustomerId = 2;
-  string Title = 3;
-  string Body = 4;
-  string Type = 5;
-  bool IsRead = 6;
-  int32 TypeId = 7;
-  string Message = 8;
-  bool IsSent = 9;
-  bool IsActive = 10;
-}
-
-message NotificationGetByIdModel {
-    string id = 1; 
-}
-
-message NotificationGetByIdResponse {
-  string id = 1; 
-  string BusinessNodeId = 2;
-  string CustomerId = 3;
-  string Title = 4;
-  string Body = 5;
-  string Type = 6;
-  bool IsRead = 7;
-  int32 TypeId = 8;
-  string Message = 9;
-  bool IsSent = 10;
-  bool IsActive = 11;
+	string BusinessNodeId = 1;
+	string CustomerId = 2;
+	string Title = 3;
+	string Body = 4;
+	string Type = 5;
+	bool IsRead = 6;
+	int32 TypeId = 7;
+	string Message = 8;
+	bool IsSent = 9;
+	bool IsActive = 10;
 }
 
 message NotificationCreateResponse {
-  string id = 1; 
-  string BusinessNodeId = 2;
-  string CustomerId = 3;
-  string Title = 4;
-  string Body = 5;
-  string Type = 6;
-  bool IsRead = 7;
-  int32 TypeId = 8;
-  string Message = 9;
-  bool IsSent = 10;
-  bool IsActive = 11;
+	string id = 1;
+	string BusinessNodeId = 2;
+	string CustomerId = 3;
+	string Title = 4;
+	string Body = 5;
+	string Type = 6;
+	bool IsRead = 7;
+	int32 TypeId = 8;
+	string Message = 9;
+	bool IsSent = 10;
+	bool IsActive = 11;
 }
 
-message NotificationUpdateModel {
-  string id = 1; 
-  string BusinessNodeId = 2;
-  string CustomerId = 3;
-  string Title = 4;
-  string Body = 5;
-  string Type = 6;
-  bool IsRead = 7;
-  int32 TypeId = 8;
-  string Message = 9;
-  bool IsSent = 10;
-  bool IsActive = 11;
+message NotificationGetByIdModel {
+  	string id = 1;
 }
-
-message NotificationUpdateResponse {
-  string id = 1; 
-  string BusinessNodeId = 2;
-  string CustomerId = 3;
-  string Title = 4;
-  string Body = 5;
-  string Type = 6;
-  bool IsRead = 7;
-  int32 TypeId = 8;
-  string Message = 9;
-  bool IsSent = 10;
-  bool IsActive = 11;
+message NotificationGetByIdResponse {
+	string id = 1;
+	string BusinessNodeId = 2;
+	string CustomerId = 3;
+	string Title = 4;
+	string Body = 5;
+	string Type = 6;
+	bool IsRead = 7;
+	int32 TypeId = 8;
+	string Message = 9;
+	bool IsSent = 10;
+	bool IsActive = 11;
 }
 
 message NotificationSearchModel {
-  string businessNodeId = 1;
-  string customerId = 2;
-  bool isActive = 3;
+	string businessNodeId = 1;
+	string customerId = 2;
+	bool isActive = 3;
+}
+message NotificationSearchResponse {
+	int32 TotalCount = 1;
+	int32 RetrievedCount = 2;
+	int32 PageIndex = 3;
+	int32 ItemsPerPage = 4;
+	string Order = 5;
+	repeated NotificationSearchResponseItem Items = 6;
+}
+message NotificationSearchResponseItem {
+	string id = 1;
+	string BusinessNodeId = 2;
+	string CustomerId = 3;
+	string Title = 4;
+	string Body = 5;
+	string Type = 6;
+	bool IsRead = 7;
+	int32 TypeId = 8;
+	string Message = 9;
+	bool IsSent = 10;
+	bool IsActive = 11;
+	google.protobuf.Timestamp CreatedAt = 12;
+	google.protobuf.Timestamp UpdatedAt = 13;
+	google.protobuf.Timestamp DeletedAt = 14;
 }
 
-message NotificationSearchResponse {
-  string id = 1; 
-  string BusinessNodeId = 2;
-  string CustomerId = 3;
-  string Title = 4;
-  string Body = 5;
-  string Type = 6;
-  bool IsRead = 7;
-  int32 TypeId = 8;
-  string Message = 9;
-  bool IsSent = 10;
-  bool IsActive = 11;
+message NotificationUpdateModel {
+	string id = 1;
+	string BusinessNodeId = 2;
+	string CustomerId = 3;
+	string Title = 4;
+	string Body = 5;
+	string Type = 6;
+	bool IsRead = 7;
+	int32 TypeId = 8;
+	string Message = 9;
+	bool IsSent = 10;
+	bool IsActive = 11;
+}
+message NotificationUpdateResponse {
+	string id = 1;
+	string BusinessNodeId = 2;
+	string CustomerId = 3;
+	string Title = 4;
+	string Body = 5;
+	string Type = 6;
+	bool IsRead = 7;
+	int32 TypeId = 8;
+	string Message = 9;
+	bool IsSent = 10;
+	bool IsActive = 11;
 }
 
 message NotificationDeleteModel {
-    string id = 1;
+  	string id = 1;
 }
-
-  message NotificationDeleteResponse {
-    string id = 1;
+message NotificationDeleteResponse {
+  	int32 count = 1;
 }
 
 service Notifications {
-    rpc Create(NotificationCreateModel) returns (NotificationCreateResponse);
-    rpc GetById(NotificationGetByIdModel) returns (NotificationGetByIdResponse) {};
-    rpc Search(NotificationSearchModel) returns (NotificationSearchResponse) {};
-    rpc Update(NotificationUpdateModel) returns (NotificationUpdateResponse) {};
-    rpc Delete(NotificationDeleteModel) returns (NotificationDeleteResponse) {};
-
+	rpc Create(NotificationCreateModel) returns (NotificationCreateResponse);
+	rpc GetById(NotificationGetByIdModel) returns (NotificationGetByIdResponse) {};
+	rpc Search(NotificationSearchModel) returns (NotificationSearchResponse) {};
+	rpc Update(NotificationUpdateModel) returns (NotificationUpdateResponse) {};
+	rpc Delete(NotificationDeleteModel) returns (NotificationDeleteResponse) {};
 }

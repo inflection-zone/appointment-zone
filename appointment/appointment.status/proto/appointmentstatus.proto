@@ -1,6 +1,6 @@
 syntax = "proto3";
-
 package appointment;
+import "google/protobuf/timestamp.proto";
 
 message AppointmentStatus {
     string id = 1; 
@@ -18,136 +18,147 @@ message AppointmentStatus {
     bool IsCompletedStatus = 13;
     bool IsWalkinEntryStatus = 14;
     bool IsActive = 15;
-  }
+}
 
 message AppointmentStatusCreateModel {
-  string BusinessNodeId = 1;
-  string Status = 2;
-  string StatusCode = 3;
-  string StatusColor = 4;
-  int32 Sequence = 5;
-  bool IsCancellationStatus = 6;
-  bool SendNotification = 7;
-  string NotificationText = 8;
-  bool SendSms = 9;
-  string SmsText = 10;
-  bool IsDashboardStatus = 11;
-  bool IsCompletedStatus = 12;
-  bool IsWalkinEntryStatus = 13;
-  bool IsActive = 14;
+	string BusinessNodeId = 1;
+	string Status = 2;
+	string StatusCode = 3;
+	string StatusColor = 4;
+	int32 Sequence = 5;
+	bool IsCancellationStatus = 6;
+	bool SendNotification = 7;
+	string NotificationText = 8;
+	bool SendSms = 9;
+	string SmsText = 10;
+	bool IsDashboardStatus = 11;
+	bool IsCompletedStatus = 12;
+	bool IsWalkinEntryStatus = 13;
+	bool IsActive = 14;
 }
+
+message AppointmentStatusCreateResponse {
+	string id = 1; 
+	string BusinessNodeId = 2;
+	string Status = 3;
+	string StatusCode = 4;
+	string StatusColor = 5;
+	int32 Sequence = 6;
+	bool IsCancellationStatus = 7;
+	bool SendNotification = 8;
+	string NotificationText = 9;
+	bool SendSms = 10;
+	string SmsText = 11;
+	bool IsDashboardStatus = 12;
+	bool IsCompletedStatus = 13;
+	bool IsWalkinEntryStatus = 14;
+	bool IsActive = 15;
+}
+  
 
 message AppointmentStatusGetByIdModel {
     string id = 1; 
 }
 
 message AppointmentStatusGetByIdResponse {
-  string id = 1; 
-  string BusinessNodeId = 2;
-  string Status = 3;
-  string StatusCode = 4;
-  string StatusColor = 5;
-  int32 Sequence = 6;
-  bool IsCancellationStatus = 7;
-  bool SendNotification = 8;
-  string NotificationText = 9;
-  bool SendSms = 10;
-  string SmsText = 11;
-  bool IsDashboardStatus = 12;
-  bool IsCompletedStatus = 13;
-  bool IsWalkinEntryStatus = 14;
-  bool IsActive = 15;
-}
-
-message AppointmentStatusCreateResponse {
-  string id = 1; 
-  string BusinessNodeId = 2;
-  string Status = 3;
-  string StatusCode = 4;
-  string StatusColor = 5;
-  int32 Sequence = 6;
-  bool IsCancellationStatus = 7;
-  bool SendNotification = 8;
-  string NotificationText = 9;
-  bool SendSms = 10;
-  string SmsText = 11;
-  bool IsDashboardStatus = 12;
-  bool IsCompletedStatus = 13;
-  bool IsWalkinEntryStatus = 14;
-  bool IsActive = 15;
-}
-
-message AppointmentStatusUpdateModel {
-  string id = 1; 
-  string BusinessNodeId = 2;
-  string Status = 3;
-  string StatusCode = 4;
-  string StatusColor = 5;
-  int32 Sequence = 6;
-  bool IsCancellationStatus = 7;
-  bool SendNotification = 8;
-  string NotificationText = 9;
-  bool SendSms = 10;
-  string SmsText = 11;
-  bool IsDashboardStatus = 12;
-  bool IsCompletedStatus = 13;
-  bool IsWalkinEntryStatus = 14;
-  bool IsActive = 15;
-}
-
-message AppointmentStatusUpdateResponse {
-  string id = 1; 
-  string BusinessNodeId = 2;
-  string Status = 3;
-  string StatusCode = 4;
-  string StatusColor = 5;
-  int32 Sequence = 6;
-  bool IsCancellationStatus = 7;
-  bool SendNotification = 8;
-  string NotificationText = 9;
-  bool SendSms = 10;
-  string SmsText = 11;
-  bool IsDashboardStatus = 12;
-  bool IsCompletedStatus = 13;
-  bool IsWalkinEntryStatus = 14;
-  bool IsActive = 15;
+	string id = 1; 
+	string BusinessNodeId = 2;
+	string Status = 3;
+	string StatusCode = 4;
+	string StatusColor = 5;
+	int32 Sequence = 6;
+	bool IsCancellationStatus = 7;
+	bool SendNotification = 8;
+	string NotificationText = 9;
+	bool SendSms = 10;
+	string SmsText = 11;
+	bool IsDashboardStatus = 12;
+	bool IsCompletedStatus = 13;
+	bool IsWalkinEntryStatus = 14;
+	bool IsActive = 15;
 }
 
 message AppointmentStatusSearchModel {
-  string businessNodeId = 1;
+	string businessNodeId = 1;
+	
+}
+message AppointmentStatusSearchResponse {
+	int32 TotalCount = 1;
+	int32 RetrievedCount = 2;
+	int32 PageIndex = 3;
+	int32 ItemsPerPage = 4;
+	string Order = 5;
+	repeated AppointmentStatusSearchResponseItem Items = 6;
+}
+message AppointmentStatusUpdateModel {
+	string id = 1; 
+	string BusinessNodeId = 2;
+	string Status = 3;
+	string StatusCode = 4;
+	string StatusColor = 5;
+	int32 Sequence = 6;
+	bool IsCancellationStatus = 7;
+	bool SendNotification = 8;
+	string NotificationText = 9;
+	bool SendSms = 10;
+	string SmsText = 11;
+	bool IsDashboardStatus = 12;
+	bool IsCompletedStatus = 13;
+	bool IsWalkinEntryStatus = 14;
+	bool IsActive = 15;
 }
 
-message AppointmentStatusSearchResponse {
-  string id = 1; 
-  string BusinessNodeId = 2;
-  string Status = 3;
-  string StatusCode = 4;
-  string StatusColor = 5;
-  int32 Sequence = 6;
-  bool IsCancellationStatus = 7;
-  bool SendNotification = 8;
-  string NotificationText = 9;
-  bool SendSms = 10;
-  string SmsText = 11;
-  bool IsDashboardStatus = 12;
-  bool IsCompletedStatus = 13;
-  bool IsWalkinEntryStatus = 14;
-  bool IsActive = 15;
+message AppointmentStatusUpdateResponse {
+	string id = 1; 
+	string BusinessNodeId = 2;
+	string Status = 3;
+	string StatusCode = 4;
+	string StatusColor = 5;
+	int32 Sequence = 6;
+	bool IsCancellationStatus = 7;
+	bool SendNotification = 8;
+	string NotificationText = 9;
+	bool SendSms = 10;
+	string SmsText = 11;
+	bool IsDashboardStatus = 12;
+	bool IsCompletedStatus = 13;
+	bool IsWalkinEntryStatus = 14;
+	bool IsActive = 15;
+}
+
+message AppointmentStatusSearchResponseItem {
+	string id = 1; 
+	string BusinessNodeId = 2;
+	string Status = 3;
+	string StatusCode = 4;
+	string StatusColor = 5;
+	int32 Sequence = 6;
+	bool IsCancellationStatus = 7;
+	bool SendNotification = 8;
+	string NotificationText = 9;
+	bool SendSms = 10;
+	string SmsText = 11;
+	bool IsDashboardStatus = 12;
+	bool IsCompletedStatus = 13;
+	bool IsWalkinEntryStatus = 14;
+	bool IsActive = 15;
+	google.protobuf.Timestamp CreatedAt = 16;
+	google.protobuf.Timestamp UpdatedAt = 17;
+	google.protobuf.Timestamp DeletedAt = 18;
 }
 
 message AppointmentStatusDeleteModel {
-    string id = 1;
+  	string id = 1;
 }
 
-  message AppointmentStatusDeleteResponse {
-    string id = 1;
+message AppointmentStatusDeleteResponse {
+  	int32 count = 1;
 }
 
 service AppointmentStatuses {
-    rpc Create(AppointmentStatusCreateModel) returns (AppointmentStatusCreateResponse);
-    rpc GetById(AppointmentStatusGetByIdModel) returns (AppointmentStatusGetByIdResponse) {};
-    rpc Search(AppointmentStatusSearchModel) returns (AppointmentStatusSearchResponse) {};
-    rpc Update(AppointmentStatusUpdateModel) returns (AppointmentStatusUpdateResponse) {};
-    rpc Delete(AppointmentStatusDeleteModel) returns (AppointmentStatusDeleteResponse) {};
-
+	rpc Create(AppointmentStatusCreateModel) returns (AppointmentStatusCreateResponse);
+	rpc GetById(AppointmentStatusGetByIdModel) returns (AppointmentStatusGetByIdResponse) {};
+	rpc Search(AppointmentStatusSearchModel) returns (AppointmentStatusSearchResponse) {};
+	rpc Update(AppointmentStatusUpdateModel) returns (AppointmentStatusUpdateResponse) {};
+	rpc Delete(AppointmentStatusDeleteModel) returns (AppointmentStatusDeleteResponse) {};
 }
