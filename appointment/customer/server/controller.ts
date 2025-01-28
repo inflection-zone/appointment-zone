@@ -16,7 +16,7 @@ import { CustomerControllerDelegate } from '../../../src/api/customer/customer.c
 const delegate = new CustomerControllerDelegate();
 export const customerService = {
 
-  create: (call: ServerUnaryCall<CustomerCreateModel, CustomerCreateResponse>,
+  create: async (call: ServerUnaryCall<CustomerCreateModel, CustomerCreateResponse>,
     callback: sendUnaryData<CustomerCreateResponse>) => {
     try {
     const request: CustomerCreateModel = call.request;
@@ -34,10 +34,22 @@ export const customerService = {
         "IsActive": request.array[10]
     }
     
-    const record = delegate.create(body);
+    const record = await delegate.create(body);
     const response = new CustomerCreateResponse();
-    console.log("Customer created successfully") 
-    callback(null, response);  
+    const result = record;
+    
+    response.setId(result.id)
+    response.setPrefix(result.Prefix)
+    response.setFirstname(result.FirstName)
+    response.setLastname(result.LastName)
+    response.setMobile(result.Mobile)
+    response.setEmail(result.Email)
+    response.setGender(result.Gender)
+    response.setDisplaypicture(result.DisplayPicture)
+    response.setAddress(result.Address)
+    response.setInappuser(result.InAppUser)
+    response.setIsactive(result.IsActive)
+    callback(null, response);
   } catch (error) {
     console.log(error)
     callback({
@@ -54,8 +66,19 @@ export const customerService = {
     const record = await delegate.getById(request.array[0]);
     const response = new CustomerGetByIdResponse();
     response.id = request.array[0];
-    console.log("record====",record)
-    console.log("Customer retrieved successfully")
+    const result = record;
+    response.setId(result.id)
+    response.setPrefix(result.Prefix)
+    response.setFirstname(result.FirstName)
+    response.setLastname(result.LastName)
+    response.setMobile(result.Mobile)
+    response.setEmail(result.Email)
+    response.setGender(result.Gender)
+    response.setDisplaypicture(result.DisplayPicture)
+    response.setAddress(result.Address)
+    response.setInappuser(result.InAppUser)
+    response.setIsactive(result.IsActive)
+    // response.setStatus(result.Status)
     callback(null, response);
     
   } catch (error) {
@@ -71,7 +94,6 @@ export const customerService = {
     callback: sendUnaryData<CustomerUpdateResponse>) => {
     try {
     const request: CustomerUpdateModel = call.request;
-    // const id = "110c16d6-2bc5-446b-b020-d79fded47f2a"
     const id = request.array[0]
     const body = {
       "Prefix": request.array[1],
@@ -86,9 +108,20 @@ export const customerService = {
       "InAppUser" : request.array[10],
       "IsActive": request.array[11]
   }
-    const record = delegate.update(id, body);
+    const record = await delegate.update(id, body);
     const response = new CustomerUpdateResponse();
-    console.log("Customer updated successfully")
+    const result = record;
+    response.setId(result.id)
+    response.setPrefix(result.Prefix)
+    response.setFirstname(result.FirstName)
+    response.setLastname(result.LastName)
+    response.setMobile(result.Mobile)
+    response.setEmail(result.Email)
+    response.setGender(result.Gender)
+    response.setDisplaypicture(result.DisplayPicture)
+    response.setAddress(result.Address)
+    response.setInappuser(result.InAppUser)
+    response.setIsactive(result.IsActive)
     callback(null, response);
   } catch (error) {
     console.log(error)
@@ -105,7 +138,10 @@ export const customerService = {
     const request : CustomerDeleteModel = call.request;
     const record = await delegate.delete(request.array[0]);
     const response = new CustomerDeleteResponse();
-    console.log("record====",record)
+    const status = 200;
+    response.setNumberOfDeleteDrecords(record.Deleted.count);
+    response.setStatus(status);
+    console.log("record====",record.Deleted.count)
     console.log("Customer deleted successfully")
     callback(null, response); 
   } catch (error) {
@@ -129,7 +165,18 @@ export const customerService = {
     const searchResults = await delegate.search(query);
     const response = new CustomerSearchResponse();
     console.log("record====",searchResults)
-    console.log("Customer retrieved successfully")
+    const result = searchResults;
+    response.setId(result.Items[0].id)
+    response.setPrefix(result.Items[1].Prefix)
+    // response.setFirstname(result.Items[2].FirstName)
+    // response.setLastname(result.Items[3].LastName)
+    // response.setMobile(result.Items[4].Mobile)
+    // response.setEmail(result.Items[5].Email)
+    // response.setGender(result.Items[6].Gender)
+    // response.setDisplaypicture(result.Items[7].DisplayPicture)
+    // response.setAddress(result.Items[8].Address)
+    // response.setInappuser(result.Items[9].InAppUser)
+    // response.setIsactive(result.Items[10].IsActive)
     callback(null, response); 
     }  
   } catch (error) {

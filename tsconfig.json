@@ -29,7 +29,8 @@
   "include": [
       "src/**/*", 
       "appointment/**/*",
-      "grpc.tests/*"
+      "grpc.tests/*",
+      "tests/*"
   ],
   "exclude":[ 
       "node_modules"

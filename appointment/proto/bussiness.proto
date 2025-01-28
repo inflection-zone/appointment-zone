@@ -1,0 +1,159 @@
+syntax = "proto3";
+
+package appointment;
+
+message Business {
+  string id = 1; 
+  string ExternalId = 2;
+  string Name = 3;
+  string Mobile = 4;
+  string Email = 5;
+  string AboutUs = 6;
+  string ApiKey = 7;
+  string Logo = 8;
+  string DisplayPicture = 9;
+  string Address = 10;
+  string Facebook = 11;
+  string Twitter = 12;
+  string Linkedin = 13;
+  string Instagram = 14;
+  string Yelp = 15;
+  bool IsActive = 16;
+  }
+
+message BusinessCreateModel {
+    string ExternalId = 1;
+    string Name = 2;
+    string Mobile = 3;
+    string Email = 4;
+    string AboutUs = 5;
+    string ApiKey = 6;
+    string Logo = 7;
+    string DisplayPicture = 8;
+    string Address = 9;
+    string Facebook = 10;
+    string Twitter = 11;
+    string Linkedin = 12;
+    string Instagram = 13;
+    string Yelp = 14;
+    bool IsActive = 15;
+}
+
+message BusinessGetByIdModel {
+    string id = 1; 
+}
+
+message BusinessGetByIdResponse {
+    string id = 1; 
+    string ExternalId = 2;
+    string Name = 3;
+    string Mobile = 4;
+    string Email = 5;
+    string AboutUs = 6;
+    string ApiKey = 7;
+    string Logo = 8;
+    string DisplayPicture = 9;
+    string Address = 10;
+    string Facebook = 11;
+    string Twitter = 12;
+    string Linkedin = 13;
+    string Instagram = 14;
+    string Yelp = 15;
+    bool IsActive = 16; 
+}
+
+message BusinessCreateResponse {
+    string id = 1; 
+    string ExternalId = 2;
+    string Name = 3;
+    string Mobile = 4;
+    string Email = 5;
+    string AboutUs = 6;
+    string ApiKey = 7;
+    string Logo = 8;
+    string DisplayPicture = 9;
+    string Address = 10;
+    string Facebook = 11;
+    string Twitter = 12;
+    string Linkedin = 13;
+    string Instagram = 14;
+    string Yelp = 15;
+    bool IsActive = 16;
+}
+
+message BusinessUpdateModel {
+    string id = 1; 
+    string ExternalId = 2;
+    string Name = 3;
+    string Mobile = 4;
+    string Email = 5;
+    string AboutUs = 6;
+    string Logo = 7;
+    string DisplayPicture = 8;
+    string Address = 9;
+    string Facebook = 10;
+    string Twitter = 11;
+    string Linkedin = 12;
+    string Instagram = 13;
+    string Yelp = 14;
+    bool IsActive = 15;
+  }
+
+message BusinessUpdateResponse {
+    string id = 1; 
+    string ExternalId = 2;
+    string Name = 3;
+    string Mobile = 4;
+    string Email = 5;
+    string AboutUs = 6;
+    string Logo = 7;
+    string DisplayPicture = 8;
+    string Address = 9;
+    string Facebook = 10;
+    string Twitter = 11;
+    string Linkedin = 12;
+    string Instagram = 13;
+    string Yelp = 14;
+    bool IsActive = 15;
+  }
+
+message BusinessSearchModel {
+    bool isActive = 1;
+}
+
+message BusinessSearchResponse {
+  string id = 1; 
+  string ExternalId = 2;
+  string Name = 3;
+  string Mobile = 4;
+  string Email = 5;
+  string AboutUs = 6;
+  string ApiKey = 7;
+  string Logo = 8;
+  string DisplayPicture = 9;
+  string Address = 10;
+  string Facebook = 11;
+  string Twitter = 12;
+  string Linkedin = 13;
+  string Instagram = 14;
+  string Yelp = 15;
+  bool IsActive = 16;
+}
+
+message BusinessDeleteModel {
+    string id = 1;
+}
+
+  message BusinessDeleteResponse {
+    string id = 1;
+}
+
+
+service Businesses {
+    rpc Create(BusinessCreateModel) returns (BusinessCreateResponse);
+    rpc GetById(BusinessGetByIdModel) returns (BusinessGetByIdResponse) {};
+    rpc Search(BusinessSearchModel) returns (BusinessSearchResponse) {};
+    rpc Update(BusinessUpdateModel) returns (BusinessUpdateResponse) {};
+    rpc Delete(BusinessDeleteModel) returns (BusinessDeleteResponse) {};
+
+}

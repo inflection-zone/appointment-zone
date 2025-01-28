@@ -300,8 +300,8 @@ export const loadAppointmentBookCreateModel = async (
       CustomerId: getTestData("CustomerId"),
       BusinessUserId: getTestData("BusinessUserId"),
       BusinessServiceId: getTestData("BusinessServiceId"),
-      StartTime: "2023-12-01T14:00:00Z",
-      EndTime: "2023-12-01T14:30:00Z",
+      StartTime: "2025-01-27T14:00:00Z",
+      EndTime: "2025-01-27T14:30:00Z",
       
       Type: "IN-PERSON",
       Note: "This is doctor appointment note",

@@ -224,8 +224,8 @@ export class CustomerControllerDelegate {
         if (Helper.hasProperty(requestBody, 'Prefix')) {
             updateModel.Prefix = requestBody.Prefix;
         }
-        if (Helper.hasProperty(requestBody, ' FirstName')) {
-            updateModel. FirstName = requestBody. FirstName;
+        if (Helper.hasProperty(requestBody, 'FirstName')) {
+            updateModel. FirstName = requestBody.FirstName;
         }
         if (Helper.hasProperty(requestBody, 'LastName')) {
             updateModel.LastName = requestBody.LastName;

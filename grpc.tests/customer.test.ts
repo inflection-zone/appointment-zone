@@ -18,7 +18,7 @@ import { CustomersServiceClient } from '../appointment/customer/proto/customer_g
 import { describe, it } from 'mocha';
 import { faker } from '@faker-js/faker';
 import { getTestData, setTestData } from './init';
-import { GrpcApplication } from '../appointment/server/grpc.app';
+import { GrpcApplication } from '../appointment/server/index.grpc';
 
 const infra = GrpcApplication.instance()
 

@@ -9,7 +9,8 @@ import { PrismaClientInit } from "../../src/startup/prisma.client.init";
 import { Seeder } from "../../src/startup/seeder";
 import fileUpload from "express-fileupload";
 import * as grpc from '@grpc/grpc-js';
-import { CustomersService } from '../customer/proto/customer_grpc_pb';
+// import { CustomersService } from '../../appointment/customer/proto/customer_grpc_pb';
+import { CustomersService } from '../customer/proto/customer_grpc_pb.js'
 import { customerService } from '../customer/server/controller';
 import { businessService } from "../business/server/controller";
 import { BusinessesService } from '../business/proto/business_grpc_pb';

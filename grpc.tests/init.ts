@@ -1,4 +1,4 @@
-import { GrpcApplication } from '../appointment/server/grpc.app'
+import { GrpcApplication } from '../appointment/server/index.grpc'
 import  path  from 'path';
 import  fs  from 'fs';
 import { before, after } from 'mocha';

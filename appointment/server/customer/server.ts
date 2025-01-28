@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { GrpcApplication } from "../grpc.app";
+import { GrpcApplication } from "../index.grpc";
 
 (async () => {
     const app = GrpcApplication.instance();

@@ -118,6 +118,7 @@ message CustomerSearchResponse {
     string Address = 10;
     bool InAppUser = 11;
     bool IsActive = 12;
+    string RecordsList = 13;
 }
 
 message CustomerDeleteModel {
@@ -125,7 +126,8 @@ message CustomerDeleteModel {
 }
 
   message CustomerDeleteResponse {
-    string id = 1;
+    int32 number_of_delete_drecords = 1;
+    int32 status = 2;
 }
 
 
