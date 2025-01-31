@@ -18,7 +18,7 @@
 
 * Clone this repository
   
-  ` clone-https://github.com/inflection-zone/appointment-zone`
+  `clone-https://github.com/inflection-zone/appointment-zone`
 
 * Install all the prerequisites as listed in [technology stack](#technology-stack).
 * Open the root directory of the folder where you have cloned the repository in Visual Studio Code.
@@ -43,7 +43,3 @@ __Steps to run the default postman collection requests__
 2. Import the environment by importing environment JSON file, - 
 3. Select the imported environment in Postman.
 4. When you are starting, it is advisable to execute the requests in sequential order from top-to-bottom.
-
-Please refer our [Coding Style and Guidelines](coding-style-and-guidelines.md).
-
-Want to add a new feature/API/Model CRUD API? please refer [Checklist to add new API or model](checklist-to-add-api.md).
