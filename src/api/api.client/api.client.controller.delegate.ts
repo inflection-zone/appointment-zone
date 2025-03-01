@@ -99,25 +99,25 @@ export class ApiClientControllerDelegate {
         return apiKeyDto;
     }
 
-    // renewApiKey = async (request) => {
+    renewApiKey = async (request) => {
 
-    //     const verificationModel = await validator.getOrRenewApiKey(request);
+        const verificationModel = await validator.getOrRenewApiKey(request);
 
-    //     if (verificationModel.ValidFrom == null) {
-    //         verificationModel.ValidFrom = new Date();
-    //     }
-    //     if (verificationModel.ValidTill == null) {
-    //         const d = new Date();
-    //         d.setFullYear(d.getFullYear() + 1);
-    //         verificationModel.ValidTill = d;
-    //     }
+        if (verificationModel.ValidFrom == null) {
+            verificationModel.ValidFrom = new Date();
+        }
+        if (verificationModel.ValidTill == null) {
+            const d = new Date();
+            d.setFullYear(d.getFullYear() + 1);
+            verificationModel.ValidTill = d;
+        }
 
-    //     const apiKeyDto = await this._service.renewApiKey(verificationModel);
-    //     if (apiKeyDto == null) {
-    //         throw new ApiError('Unable to renew client api key.', 400);
-    //     }
-    //     return apiKeyDto;
-    // }
+        const apiKeyDto = await this._service.renewApiKey(verificationModel);
+        if (apiKeyDto == null) {
+            throw new ApiError('Unable to renew client api key.', 400);
+        }
+        return apiKeyDto;
+    }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -151,6 +151,10 @@ export class ApiClientControllerDelegate {
         if (email != null) {
             filters['Email'] = email;
         }
+        var createdAt = query.createdAt ? query.createdAt : null;
+        if (createdAt != null) {
+            filters['CreatedAt'] = createdAt;
+        }
         var validFrom = query.validFrom ? query.validFrom : null;
         if (validFrom != null) {
             filters['ValidFrom'] = validFrom;
@@ -170,8 +174,17 @@ export class ApiClientControllerDelegate {
         if (Helper.hasProperty(requestBody, 'ClientName')) {
             updateModel.ClientName = requestBody.ClientName;
         }
+        if (Helper.hasProperty(requestBody, 'FirstName')) {
+            updateModel.FirstName = requestBody.FirstName;
+        }
+        if (Helper.hasProperty(requestBody, 'LastName')) {
+            updateModel.LastName = requestBody.LastName;
+        }
         if (Helper.hasProperty(requestBody, 'IsPrivileged')) {
             updateModel.IsPrivileged = requestBody.IsPrivileged;
+        }
+        if (Helper.hasProperty(requestBody, 'CountryCode')) {
+            updateModel.CountryCode = requestBody.CountryCode;
         }
         if (Helper.hasProperty(requestBody, 'Phone')) {
             updateModel.Phone = requestBody.Phone;
@@ -199,15 +212,17 @@ export class ApiClientControllerDelegate {
 
         return {
             ClientName   : requestBody.ClientName ? requestBody.ClientName : null,
+            FirstName    : requestBody.FirstName ? requestBody.FirstName : null,
+            LastName     : requestBody.LastName ? requestBody.LastName : null,
             ClientCode   : requestBody.ClientCode ? requestBody.ClientCode : null,
             IsPrivileged : requestBody.IsPrivileged ? requestBody.IsPrivileged : false,
+            CountryCode  : requestBody.CountryCode ? requestBody.CountryCode : null,
             Phone        : requestBody.Phone ? requestBody.Phone : null,
             Email        : requestBody.Email ? requestBody.Email : null,
             Password     : requestBody.Password ? requestBody.Password : null,
             ApiKey       : requestBody.ApiKey ? requestBody.ApiKey : apikeyGenerator.default.create().apiKey,
             ValidFrom    : requestBody.ValidFrom ? requestBody.ValidFrom : new Date(),
-            ValidTill    : requestBody.ValidTill ?
-                requestBody.ValidTill : TimeHelper.addDuration(new Date(), 180, DurationType.Day)
+            ValidTill    : requestBody.ValidTill ? requestBody.ValidTill : TimeHelper.addDuration(new Date(), 180, DurationType.Day),
         };
     }
 
@@ -218,12 +233,16 @@ export class ApiClientControllerDelegate {
         return {
             id           : record.id,
             ClientName   : record.ClientName,
+            FirstName    : record.FirstName,
+            LastName     : record.LastName,
             ClientCode   : record.ClientCode,
             IsPrivileged : record.IsPrivileged,
+            CountryCode  : record.CountryCode,
             Phone        : record.Phone,
             Email        : record.Email,
+            ApiKey       : record.ApiKey,
             ValidFrom    : record.ValidFrom,
-            ValidTill    : record.ValidTill
+            ValidTill    : record.ValidTill,
         };
     }
 
@@ -234,13 +253,18 @@ export class ApiClientControllerDelegate {
         return {
             id                  : record.id,
             ClientName          : record.ClientName,
+            FirstName           : record.FirstName,
+            LastName            : record.LastName,
             ClientCode          : record.ClientCode,
             ClientInterfaceType : record.ClientInterfaceType,
             IsPrivileged        : record.IsPrivileged,
+            CountryCode         : record.CountryCode,
             Phone               : record.Phone,
             Email               : record.Email,
+            ApiKey              : record.ApiKey,
             ValidFrom           : record.ValidFrom,
             ValidTill           : record.ValidTill,
+            CreatedAt           : record.CreatedAt,
             
         };
     }

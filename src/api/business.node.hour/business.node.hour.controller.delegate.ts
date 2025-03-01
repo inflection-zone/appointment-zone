@@ -7,8 +7,7 @@ import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { Helper } from "../../common/helper";
 import { BusinessNodeService } from "../../database/repository.services/business.node.service";
 import { PrismaClientInit } from "../../startup/prisma.client.init";
-import dayjs from "dayjs";
-
+import { TimeHelper as th } from "../../common/time.helper";
 export class BusinessNodeHourControllerDelegate {
 
     prisma = PrismaClientInit.instance().prisma();
@@ -41,7 +40,7 @@ export class BusinessNodeHourControllerDelegate {
     };
 
     createMultiple = async (requestBody: any) => {
-        await validator.validateCreateManyRequest(requestBody);
+        await validator.validateCreateMultipleRequest(requestBody);
         const businessNodeId = requestBody.BusinessNodeId;
         const businessNode = await this._businessNodeService.getById(businessNodeId);
         var dayWiseWorkingHours = requestBody.DayWiseWorkingHours;
@@ -52,8 +51,12 @@ export class BusinessNodeHourControllerDelegate {
         { 
             var nodeHoursList = await this.prisma.business_node_hours.findMany({
                 where : {
-                    AND: { BusinessNodeId: businessNodeId,  Day: wh.Day, IsActive: true },
-                }
+                    AND : {
+                        BusinessNodeId  : businessNodeId,
+                        Day             : wh.Day,
+                        IsActive        : true,
+                    },
+                },
             });
             const updateIsOpen = Helper.hasProperty(wh ,'IsOpen') ? wh.IsOpen : true;
             var type = "WORK-DAY";
@@ -82,19 +85,20 @@ export class BusinessNodeHourControllerDelegate {
                     StartTime       : wh.StartTime != null ? wh.StartTime : '',
                     EndTime         : wh.EndTime != null ? wh.EndTime : '',
                     IsActive        : true
-                    }
-                    const record = await this._service.create(createModel);
-                    if (record === null) {
-                        throw new ApiError('Unable to create business node hour service!', 400);
-                    }
+                }
+                const record = await this._service.create(createModel);
+                if (record === null) {
+                    throw new ApiError('Unable to create business node hour service!', 400);
                 }
             }
-            var nodeHours = await this.prisma.business_node_hours.findMany({
-                where : {
-                    BusinessNodeId : businessNodeId,
-                    IsActive : true
-                }});
-            return nodeHours;
+        }
+        var nodeHours = await this.prisma.business_node_hours.findMany({
+            where : {
+                BusinessNodeId  : businessNodeId,
+                IsActive        : true,
+            },
+        });
+        return nodeHours;
     };
 
     getById = async (id: uuid) => {
@@ -140,8 +144,12 @@ export class BusinessNodeHourControllerDelegate {
         { 
             var nodeHoursList = await this.prisma.business_node_hours.findMany({
                 where : {
-                    AND: { BusinessNodeId: businessNodeId,  Day: wh.Day, IsActive: true },
-                }
+                    AND : {
+                        BusinessNodeId: businessNodeId,
+                        Day: wh.Day,
+                        IsActive: true,
+                    },
+                },
             });
             const updateIsOpen = Helper.hasProperty(wh ,'IsOpen') ? wh.IsOpen : true;
             var type = "WORK-DAY";
@@ -170,19 +178,20 @@ export class BusinessNodeHourControllerDelegate {
                     StartTime       : wh.StartTime != null ? wh.StartTime : '',
                     EndTime         : wh.EndTime != null ? wh.EndTime : '',
                     IsActive        : true
-                    }
-                    const record = await this._service.create(createModel);
-                    if (record === null) {
-                        throw new ApiError('Unable to create business node hour service!', 400);
-                    }
                 }
+                const record = await this._service.create(createModel);
+                if (record === null) {
+                    throw new ApiError('Unable to create business node hour service!', 400);
+                }
+            }
         }
-         var nodeHours = await this.prisma.business_node_hours.findMany({
-                where : {
-                    BusinessNodeId : businessNodeId,
-                    IsActive : true
-                }});
-            return nodeHours;
+        var nodeHours = await this.prisma.business_node_hours.findMany({
+            where : {
+                BusinessNodeId : businessNodeId,
+                IsActive : true,
+            },
+        });
+        return nodeHours;
     };
 
     delete = async (id: uuid) => {
@@ -199,15 +208,15 @@ export class BusinessNodeHourControllerDelegate {
 
     getCreateModel = (requestBody): BusinessNodeHourCreateModel => {
         return {
-            BusinessNodeId                 : requestBody.BusinessNodeId? requestBody.BusinessNodeId:null,
-            Type                           : requestBody.Type,
-            Day                            : requestBody.Day,
-            Date                           : requestBody.Date? dayjs(requestBody.Date).toDate(): null,
-            IsOpen                         : requestBody.IsOpen? requestBody.IsOpen: true,
-            Message                        : requestBody.Message ? requestBody.Message : null,
-            StartTime                      : requestBody.StartTime? requestBody.StartTime: '10:00:00',
-            EndTime                        : requestBody.EndTime ? requestBody.EndTime : '21:00:00',
-            IsActive                       : requestBody.IsActive ? requestBody.IsActive : true,
+            BusinessNodeId      : requestBody.BusinessNodeId? requestBody.BusinessNodeId:null,
+            Type                : requestBody.Type,
+            Day                 : requestBody.Day,
+            Date                : requestBody.Date? th.getDate(requestBody.Date): null,
+            IsOpen              : requestBody.IsOpen? requestBody.IsOpen: true,
+            Message             : requestBody.Message ? requestBody.Message : null,
+            StartTime           : requestBody.StartTime? requestBody.StartTime: '10:00:00',
+            EndTime             : requestBody.EndTime ? requestBody.EndTime : '21:00:00',
+            IsActive            : requestBody.IsActive ? requestBody.IsActive : true,
         };
     };
 
@@ -246,37 +255,37 @@ export class BusinessNodeHourControllerDelegate {
 
         let updateModel: BusinessNodeHourUpdateModel = {};
 
-    if (Helper.hasProperty(requestBody, 'BusinessNodeId')) {
-        updateModel.BusinessNodeId = requestBody.BusinessNodeId;
-    }
-    if (Helper.hasProperty(requestBody, 'Type')) {
-        updateModel.Type = requestBody.Type;
-    }
-    if (Helper.hasProperty(requestBody, 'Day')) {
-        updateModel.Day = requestBody.Day;
-    }
-    if (Helper.hasProperty(requestBody, 'Date')) {
-        updateModel.Date = requestBody.Date;
-    }
-    if (Helper.hasProperty(requestBody, 'IsOpen')) {
-        updateModel.IsOpen = requestBody.IsOpen;
-    }
-    if (Helper.hasProperty(requestBody, 'Message')) {
-        updateModel.Message = requestBody.Message;
-    }
-    if (Helper.hasProperty(requestBody, 'StartTime')) {
-        updateModel.StartTime = requestBody.StartTime;
-    }
-    if (Helper.hasProperty(requestBody, 'EndTime')) {
-        updateModel.EndTime = requestBody.EndTime;
-    }
-    if (Helper.hasProperty(requestBody, 'IsActive')) {
-        updateModel.IsActive = requestBody.IsActive;
-    }
-    if (Helper.hasProperty(requestBody, 'IsDeleted')) {
-        updateModel.IsDeleted = requestBody.IsDeleted;
-    }
-    return updateModel;
+        if (Helper.hasProperty(requestBody, 'BusinessNodeId')) {
+            updateModel.BusinessNodeId = requestBody.BusinessNodeId;
+        }
+        if (Helper.hasProperty(requestBody, 'Type')) {
+            updateModel.Type = requestBody.Type;
+        }
+        if (Helper.hasProperty(requestBody, 'Day')) {
+            updateModel.Day = requestBody.Day;
+        }
+        if (Helper.hasProperty(requestBody, 'Date')) {
+            updateModel.Date = requestBody.Date;
+        }
+        if (Helper.hasProperty(requestBody, 'IsOpen')) {
+            updateModel.IsOpen = requestBody.IsOpen;
+        }
+        if (Helper.hasProperty(requestBody, 'Message')) {
+            updateModel.Message = requestBody.Message;
+        }
+        if (Helper.hasProperty(requestBody, 'StartTime')) {
+            updateModel.StartTime = requestBody.StartTime;
+        }
+        if (Helper.hasProperty(requestBody, 'EndTime')) {
+            updateModel.EndTime = requestBody.EndTime;
+        }
+        if (Helper.hasProperty(requestBody, 'IsActive')) {
+            updateModel.IsActive = requestBody.IsActive;
+        }
+        if (Helper.hasProperty(requestBody, 'IsDeleted')) {
+            updateModel.IsDeleted = requestBody.IsDeleted;
+        }
+        return updateModel;
     };
 
     getEnrichedDto = (record) => {
@@ -284,18 +293,20 @@ export class BusinessNodeHourControllerDelegate {
             return null;
         }
         return {
-            id                             : record.id,
-            BusinessNodeId                 : record.BusinessNodeId,
-            Type                           : record.Type,
-            Day                            : record.Day,
-            Date                           : record.Date,
-            IsOpen                         : record.IsOpen,
-            Message                        : record.Message,
-            StartTime                      : record.StartTime,
-            EndTime                        : record.EndTime,
-            IsActive                       : record.IsActive,
-            IsDeleted                      : record.IsDeleted
-           
+            id                  : record.id,
+            BusinessNodeId      : record.BusinessNodeId,
+            Type                : record.Type,
+            Day                 : record.Day,
+            Date                : record.Date,
+            IsOpen              : record.IsOpen,
+            Message             : record.Message,
+            StartTime           : record.StartTime,
+            EndTime             : record.EndTime,
+            IsActive            : record.IsActive,
+            IsDeleted           : record.IsDeleted,
+            CreatedAt           : record.CreatedAt,
+            UpdatedAt           : record.UpdatedAt,
+            DeletedAt           : record.DeletedAt 
         };
     };
 
@@ -314,7 +325,10 @@ export class BusinessNodeHourControllerDelegate {
             StartTime                      : record.StartTime,
             EndTime                        : record.EndTime,
             IsActive                       : record.IsActive,
-            IsDeleted                      : record.IsDeleted
+            IsDeleted                      : record.IsDeleted,
+            CreatedAt                      : record.CreatedAt,
+            UpdatedAt                      : record.UpdatedAt,
+            DeletedAt                      : record.DeletedAt 
         };
     };
 

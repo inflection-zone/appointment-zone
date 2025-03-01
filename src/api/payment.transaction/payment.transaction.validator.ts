@@ -8,11 +8,11 @@ export class PaymentTransactionValidator {
         try {
             const schema = joi.object({
     	        BusinessNodeId      : joi.string().guid({version : ['uuidv4'] }).required(),              
-            //    AppointmentId       : joi.string().guid({version : ['uuidv4'] }).optional(),
+                AppointmentId       : joi.string().guid({version : ['uuidv4'] }).optional(),
                 CustomerId          : joi.string().guid({version : ['uuidv4'] }).required(),
                 ExternalId          : joi.string().max(255).optional(),
-                CompletedOn         : joi.date().iso().optional(),
-                InitiatedOn         : joi.date().iso().optional(),
+                CompletedOn         : joi.date().optional(),
+                InitiatedOn         : joi.date().optional(),
                 Currency            : joi.string().max(255).optional(),
                 Status              : joi.string().max(255).optional(),
                 TotalAmount         : joi.number().required(),
@@ -30,7 +30,7 @@ export class PaymentTransactionValidator {
             const schema = joi.object({
     	        businessNodeId      : joi.string().guid({version : ['uuidv4'] }).optional(),              
   	            customerId          : joi.string().guid({version : ['uuidv4'] }).optional(),
-            //    appointmentId       : joi.string().guid({version : ['uuidv4'] }).optional(),
+                appointmentId       : joi.string().guid({version : ['uuidv4'] }).optional(),
                 isActive            : joi.boolean().optional() 
             });
             return await schema.validateAsync(requestBody);
@@ -43,11 +43,11 @@ export class PaymentTransactionValidator {
         try {
             const schema = joi.object({
                 BusinessNodeId      : joi.string().guid({version : ['uuidv4'] }).optional(),              
-            //    AppointmentId       : joi.string().guid({version : ['uuidv4'] }).optional(),
+                AppointmentId       : joi.string().guid({version : ['uuidv4'] }).optional(),
                 CustomerId          : joi.string().guid({version : ['uuidv4'] }).optional(),
                 ExternalId          : joi.string().max(255).optional(),
-                CompletedOn         : joi.date().iso().optional(),
-                InitiatedOn         : joi.date().iso().optional(),
+                CompletedOn         : joi.date().optional(),
+                InitiatedOn         : joi.date().optional(),
                 Currency            : joi.string().max(255).optional(),
                 Status              : joi.string().max(255).optional(),
                 TotalAmount         : joi.number().optional(),

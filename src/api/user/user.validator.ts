@@ -30,16 +30,16 @@ export class UserValidator {
     static validateSearchRequest = async (query) => {
         try {
             const schema = joi.object({
-                roleId        : joi.string().max(16).optional(),
-                prefix        : joi.string().max(16).optional(),
-                firstName     : joi.string().max(64).optional(),
-                lastName      : joi.string().max(64).optional(),
-                phone       : joi.string().max(16).min(6).required(),
-                email       : joi.string().max(256).required(),
-                gender        : joi.string().valid("Male", "Female", "Other").optional(),
-                itemsPerPage : joi.number().min(1).optional(),
-                orderBy      : joi.string().max(256).optional(),
-                order        : joi.string().valid('ascending', 'descending')
+                roleId      : joi.string().max(16).optional(),
+                prefix      : joi.string().max(16).optional(),
+                firstName   : joi.string().max(64).optional(),
+                lastName    : joi.string().max(64).optional(),
+                phone       : joi.string().max(16).min(6).optional(),
+                email       : joi.string().max(256).optional(),
+                gender      : joi.string().valid("Male", "Female", "Other").optional(),
+                itemsPerPage: joi.number().min(1).optional(),
+                orderBy     : joi.string().max(256).optional(),
+                order       : joi.string().valid('ascending', 'descending')
                     .optional()
                     .error(()=> new Error("order param: 'ascending' and 'descending' are the only valid values.")),
           
@@ -61,7 +61,8 @@ export class UserValidator {
     static validateUpdateRequest = async (requestBody) => {
         try {
             const schema = joi.object({
-                RoleId      : joi.string().max(16).required(),
+                // RoleId      : joi.string().max(16).required(),
+                UserName    : joi.string().max(16).optional(),
                 Prefix      : joi.string().max(16).optional(),
                 FirstName   : joi.string().max(64).optional(),
                 LastName    : joi.string().max(64).optional(),
@@ -69,10 +70,11 @@ export class UserValidator {
                 Phone       : joi.string().max(16).min(6).optional(),
                 Email       : joi.string().max(256).optional(),
                 Gender      : joi.string().valid("Male", "Female", "Other").optional(),
+                BirthDate   : joi.string().optional(),
                 Password    : joi.string().max(512).optional(),
-                State       : joi.string().max(64).optional(),
-                Country     : joi.string().max(64).optional(),
-                Address     : joi.string().max(256).optional()
+                // State       : joi.string().max(64).optional(),
+                // Country     : joi.string().max(64).optional(),
+                // Address     : joi.string().max(256).optional()
             });
             return await schema.validateAsync(requestBody);
         } catch (error) {

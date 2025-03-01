@@ -1,34 +1,32 @@
-
 import { BaseSearchFilters, BaseSearchResults } from "../miscellaneous/base.search.types";
-import { Gender, uuid } from "../miscellaneous/system.types";
 
 export interface CustomerCreateModel {
-    id ?             :string;
-    Prefix ?         : string;
-    FirstName?       : string;
-    LastName?        : string;
+    id?             :string;
+    Prefix?         : string;
+    FirstName?      : string;
+    LastName?       : string;
     Mobile          : string   
-    Email?           : string;
-    BirthDate?       : Date;
-    Gender?          : string; 
-    DisplayPicture?  : string;
-    Address ?        : string; 
+    Email?          : string;
+    BirthDate?      : Date;
+    Gender?         : string; 
+    DisplayPicture? : string;
+    Address?        : string; 
     InAppUser       : Boolean;  
     IsActive        : Boolean;       
 };
 
 export interface CustomerUpdateModel {
-    Prefix?          : string;
-    FirstName?       : string;
-    LastName ?       : string;
-    Mobile ?         : string   
-    Email ?          : string;
-    BirthDate ?      : Date;
-    Gender ?         : string; 
-    DisplayPicture?  : string;
-    Address?         : string;
-    InAppUser ?      : Boolean; 
-    IsActive ?       : Boolean;  
+    Prefix?         : string;
+    FirstName?      : string;
+    LastName?       : string;
+    Mobile?         : string   
+    Email?          : string;
+    BirthDate?      : Date;
+    Gender?         : string; 
+    DisplayPicture? : string;
+    Address?        : string;
+    InAppUser?      : Boolean; 
+    IsActive?       : Boolean;  
 }
 
 export interface CustomerDto {
@@ -46,7 +44,7 @@ export interface CustomerDto {
     IsActive        : Boolean; 
     CreatedAt       : Date;
     UpdatedAt       : Date;
-    IsDeleted  ?    : boolean; 
+    IsDeleted?      : boolean; 
     DeletedAt       : Date;
 }
 

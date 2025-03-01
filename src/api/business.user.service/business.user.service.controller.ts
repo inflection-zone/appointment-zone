@@ -24,29 +24,32 @@ export class BusinessUserServiceController extends BaseController {
             const record = await this._delegate.create(request.body);
             const message = 'Business user service added successfully!';
             ResponseHandler.success(request, response, message, 201, record);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
-    createMany = async (request: express.Request, response: express.Response): Promise <void> => {
+    createMultiple = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
-             await this.authorize('BusinessUserService.CreateMany', request, response, false);
-            const records = await this._delegate.createMany(request.body.records);
+             await this.authorize('BusinessUserService.CreateMultiple', request, response, false);
+            const records = await this._delegate.createMultiple(request.body.records);
             const message = 'Business user services added successfully!';
             ResponseHandler.success(request, response, message, 201, records);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
     getById = async (request:express.Request, response:express.Response): Promise <void>=>{
-        try{
+        try {
             await this.authorize('BusinessUserService.GetById', request, response, false);
             const record = await this._delegate.getById(request.params.id);
             const message ="Business user service retrieved successfully!";
             ResponseHandler.success(request, response, message, 200, record);
-        }catch(error){
+
+        } catch(error){
             ResponseHandler.handleError(request, response, error);
         }
     };
@@ -68,6 +71,7 @@ export class BusinessUserServiceController extends BaseController {
             const updatedRecord = await this._delegate.update(request.params.id, request.body);
             const message = 'Business user service updated successfully!';
             ResponseHandler.success(request, response, message, 200, updatedRecord);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

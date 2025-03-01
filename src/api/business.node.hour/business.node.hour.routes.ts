@@ -12,13 +12,11 @@ export const register = (app: express.Application): void => {
 
     router.post('', controller.create);
     router.post('/add-multiple', controller.createMultiple);
-
-     router.put('/:id', authenticator.authenticateClient,controller.update);
-     router.put('/update-multiple/:businessNodeid', authenticator.authenticateClient,controller.updateMultiple);
-     router.delete('/:id', authenticator.authenticateClient, controller.delete);
-
-     router.get('/search', authenticator.authenticateClient, controller.search);
-     router.get('/:id', authenticator.authenticateClient, controller.getById);
-     
+    router.get('/search', authenticator.authenticateClient, controller.search);
+    router.get('/:id', authenticator.authenticateClient, controller.getById);
+    router.put('/:id', authenticator.authenticateClient,controller.update);
+    router.put('/update-multiple/:businessNodeId', authenticator.authenticateClient,controller.updateMultiple);
+    router.delete('/:id', authenticator.authenticateClient, controller.delete);
+    
     app.use('/api/v1/business-node-hours', router);
 };

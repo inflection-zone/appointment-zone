@@ -3,6 +3,9 @@ import { BaseSearchFilters, BaseSearchResults } from "./miscellaneous/base.searc
 export interface ApiClientCreateModel {
     id?          : string;
     ClientName   : string;
+    FirstName?   : string;
+    LastName?    : string;
+    CountryCode? : string;
     ClientCode?  : string;
     Password?    : string;
     Phone?       : string;
@@ -10,22 +13,22 @@ export interface ApiClientCreateModel {
     ApiKey?      : string;
     IsPrivileged?: boolean;
     ValidFrom?   : Date;
-    ValidTill?   : Date;
-    //DeletedAt?   : Date;
-    
+    ValidTill?   : Date;    
 }
 
 export interface ApiClientUpdateModel {
-    ClientName ? : string;
-    ClientCode ? : string;
-    IsPrivileged ? : boolean;
-    CountryCode ? : string;
-    Phone ? : string;
-    Email ? : string;
-    Password ? : string;
-    ApiKey ? : string;
-    ValidFrom ? : Date;
-    ValidTill ? : Date;
+    ClientName?     : string;
+    FirstName?      : string;
+    LastName?       : string;
+    ClientCode?     : string;
+    IsPrivileged?   : boolean;
+    CountryCode?    : string;
+    Phone?          : string;
+    Email?          : string;
+    Password?       : string;
+    ApiKey?         : string;
+    ValidFrom?      : Date;
+    ValidTill?      : Date;
 }
 
 export interface ApiClientVerificationDomainModel {
@@ -37,14 +40,21 @@ export interface ApiClientVerificationDomainModel {
 
 export interface ApiClientDto {
     id           : string;
+    FirstName?   : string;
+    LastName?    : string;
+    CountryCode? : string;
     ClientName   : string;
     ClientCode   : string;
     Phone        : string;
     Email        : string;
-    ApiKey?       : string;
+    ApiKey?      : string;
     IsPrivileged : boolean;
-    ValidFrom?   : Date,
-    ValidTill?    : Date,
+    ValidFrom?   : Date;
+    ValidTill?   : Date;
+    CreatedAt?   : Date;
+    UpdatedAt?   : Date;
+    IsDeleted?   : boolean; 
+    DeletedAt?   : Date;
 }
 
 export interface ClientApiKeyDto {
@@ -57,14 +67,15 @@ export interface ClientApiKeyDto {
 }
 
 export interface ApiClientSearchFilters extends BaseSearchFilters {
-    ClientName ? : string;
-    ClientCode ? : string;
-    IsPrivileged ? : boolean;
-    Phone ? : string;
-    Email ? : string;
-    CreatedAt ? : string;
-    ValidFrom ? : Date;
-    ValidTill ? : Date;
+    ClientName?     : string;
+    ClientCode?     : string;
+    CountryCode?    : string;
+    IsPrivileged?   : boolean;
+    Phone?          : string;
+    Email?          : string;
+    CreatedAt?      : string;
+    ValidFrom?      : Date;
+    ValidTill?      : Date;
 }
 
 export interface ApiClientSearchResults extends BaseSearchResults {

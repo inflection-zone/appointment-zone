@@ -87,19 +87,19 @@ export class ApiClientController extends BaseController {
         }
     };
 
-    // renewApiKey = async (request: express.Request, response: express.Response): Promise<void> => {
-    //     try {
+    renewApiKey = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
 
-    //         await this.authorize('ApiClient.RenewApiKey',request, response, false);
+            await this.authorize('ApiClient.RenewApiKey',request, response, false);
 
-    //         const apiKeyDto = await this._delegate.renewApiKey(request);
+            const apiKeyDto = await this._delegate.renewApiKey(request);
 
-    //         ResponseHandler.success(request, response, 'Client api keys renewed successfully!', 200, {
-    //             ApiKeyDetails : apiKeyDto,
-    //         });
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
+            ResponseHandler.success(request, response, 'Client api keys renewed successfully!', 200, {
+                ApiKeyDetails : apiKeyDto,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 
 }

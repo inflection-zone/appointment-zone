@@ -1,7 +1,6 @@
 import { ApiError } from "../../common/api.error";
 import { BusinessUserHourService } from '../../database/repository.services/business.user.hour.service';
 import { BusinessUserHourCreateModel, 
-         BusinessUserHourDto,
          BusinessUserHourSearchFilters,
          BusinessUserHourUpdateModel,
          BusinessUserHourSearchResults, }
@@ -12,8 +11,8 @@ import { BusinessNodeHourService } from "../../database/repository.services/busi
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { ErrorHandler } from "../../common/error.handler";
 import { Helper } from "../../common/helper";
-import dayjs from "dayjs";
 import { PrismaClientInit } from "../../startup/prisma.client.init";
+import { TimeHelper as th } from "../../common/time.helper";
 
 export class BusinessUserHourControllerDelegate {
 
@@ -23,7 +22,9 @@ export class BusinessUserHourControllerDelegate {
     public static instance:BusinessNodeHourService=null;
 
     _service: BusinessUserHourService = null;
+
     _businessUserService: BusinessUserService = null;
+
     _businessNodeHourService : BusinessNodeHourService = null;
 
     constructor() {
@@ -63,10 +64,10 @@ export class BusinessUserHourControllerDelegate {
                 var nodeStartTime = nodeHoursForDay.StartTime;
                 var nodeEndTime = nodeHoursForDay.EndTime;
 
-                if (this.IsBefore(requestBody.StartTime, nodeStartTime)) {
+                if (th.isBefore(requestBody.StartTime, nodeStartTime)) {
                     requestBody.StartTime = nodeStartTime;
                 }
-                if (this.IsAfter(requestBody.EndTime, nodeEndTime)) {
+                if (th.isAfter(requestBody.EndTime, nodeEndTime)) {
                     requestBody.EndTime = nodeEndTime;
                 }   
             }
@@ -90,34 +91,34 @@ export class BusinessUserHourControllerDelegate {
         for await (var wh of dayWiseWorkingHours) 
         {
             var userHoursList = await this.prisma.business_user_hours.findMany({
-                    where : {
-                        AND: { 
-                            BusinessUserId : businessUserId,
-                            Day : wh.Day,
-                            IsActive : true,
-                        },
+                where : {
+                    AND: { 
+                        BusinessUserId  : businessUserId,
+                        Day             : wh.Day,
+                        IsActive        : true,
                     },
-                });
-                var nodeHoursList = await this.prisma.business_node_hours.findMany({
-                    where : {
-                        AND: { 
-                            BusinessNodeId : businessUser.BusinessNodeId,
-                            Day : wh.Day,
-                            Date : null,
-                            IsActive : true,
-                        },
+                },
+            });
+            var nodeHoursList = await this.prisma.business_node_hours.findMany({
+                where : {
+                    AND: { 
+                        BusinessNodeId  : businessUser.BusinessNodeId,
+                        Day             : wh.Day,
+                        Date            : null,
+                        IsActive        : true,
                     },
-                });
+                },
+            });
 
             var nodeHoursForDay = nodeHoursList.length > 0 ? nodeHoursList[0] : null;
             if (nodeHoursForDay !=null && wh.StartTime != null && wh.EndTime != null) {
                 var nodeStartTime = nodeHoursForDay.StartTime;
                 var nodeEndTime = nodeHoursForDay.EndTime;
 
-                if (this.IsBefore(wh.StartTime, nodeStartTime)) {
+                if (th.isBefore(wh.StartTime, nodeStartTime)) {
                         wh.StartTime = nodeStartTime;
                 }
-                if (this.IsAfter(wh.EndTime, nodeEndTime)) {
+                if (th.isAfter(wh.EndTime, nodeEndTime)) {
                         wh.EndTime = nodeEndTime;
                 }
             }
@@ -149,24 +150,26 @@ export class BusinessUserHourControllerDelegate {
                     StartTime       : wh.StartTime != null ? wh.StartTime : '',
                     EndTime         : wh.EndTime != null ? wh.EndTime : '',
                     IsActive        : true
-                    }
-                    const record = await this._service.create(createModel);
-                    if (record === null) {
-                    throw new ApiError('Unable to create business user hours!', 400);
-                    }
                 }
-            }
-            var userHours = await this.prisma.business_user_hours.findMany({
+                const record = await this._service.create(createModel);
+                if (record === null) {
+                    throw new ApiError('Unable to create business user hours!', 400);
+                }
+                }
+        }
+        var userHours = await this.prisma.business_user_hours.findMany({
             where : {
                 BusinessUserId : businessUserId,
-                IsActive : true
-            }});
-            userHours.sort((a, b) => {
-            if(a.Day != null && b.Day != null)
-            return a.Day - b.Day;
+                IsActive : true,
+            },
+        });
+        userHours.sort((a, b) => {
+            if(a.Day != null && b.Day != null){
+                return a.Day - b.Day;
+            }
             return 0;
-            }) 
-            return userHours;
+        }) 
+        return userHours;
     };
 
     getById = async (id: uuid) => {
@@ -192,11 +195,13 @@ export class BusinessUserHourControllerDelegate {
         if (userHours === null) {
             ErrorHandler.throwNotFoundError("Business user hours with id " + id.toString() + "cannot be found!");
         }
+
         var businessUserId = userHours.BusinessUserId;
         var businessUser = await this._businessUserService.getById(businessUserId);
         if(!businessUser) {
             ErrorHandler.throwNotFoundError("Business user with id " + businessUserId.toString() + "cannot be found!");
         }
+
         if (requestBody.Day != null && requestBody.Date == null) {
             var nodeHoursList = await this.prisma.business_node_hours.findMany({
                 where : {
@@ -208,15 +213,17 @@ export class BusinessUserHourControllerDelegate {
                     },
                 },
             });
+
             var nodeHoursForDay = nodeHoursList.length > 0 ? nodeHoursList[0] : null;
             if (nodeHoursForDay !=null && requestBody.StartTime != null && requestBody.EndTime != null) {
                 var nodeStartTime = nodeHoursForDay.StartTime;
                 var nodeEndTime = nodeHoursForDay.EndTime;
 
-                if (this.IsBefore(requestBody.StartTime, nodeStartTime)) {
+                if (th.isBefore(requestBody.StartTime, nodeStartTime)) {
                     requestBody.StartTime = nodeStartTime;
                 }
-                if (this.IsAfter(requestBody.EndTime, nodeEndTime)) {
+
+                if (th.isAfter(requestBody.EndTime, nodeEndTime)) {
                     requestBody.EndTime = nodeEndTime;
                 }
             }
@@ -237,17 +244,16 @@ export class BusinessUserHourControllerDelegate {
         if(!businessUser) {
             ErrorHandler.throwNotFoundError("Business user with id " + businessUserId.toString() + "cannot be found!");
         } 
-        for await (var wh of dayWiseWorkingHours)
-        {
+        for await (var wh of dayWiseWorkingHours){
             var userHoursList = await this.prisma.business_user_hours.findMany({
                 where : {
                     AND: { 
                         BusinessUserId : businessUserId,
                         Day : wh.Day,
                         IsActive : true,
-                        },
                     },
-                });  
+                },
+            });  
             var nodeHoursList = await this.prisma.business_node_hours.findMany({
                 where : {
                     AND: { 
@@ -255,18 +261,18 @@ export class BusinessUserHourControllerDelegate {
                         Day : wh.Day,
                         Date : null,
                         IsActive : true,
-                        },
                     },
-                });
+                },
+            });
             var nodeHoursForDay = nodeHoursList.length > 0 ? nodeHoursList[0] : null;
             if (nodeHoursForDay !=null && wh.StartTime != null && wh.EndTime != null) {
                 var nodeStartTime = nodeHoursForDay.StartTime;
                 var nodeEndTime = nodeHoursForDay.EndTime;
 
-                if (this.IsBefore(wh.StartTime, nodeStartTime)) {
+                if (th.isBefore(wh.StartTime, nodeStartTime)) {
                         wh.StartTime = nodeStartTime;
                 }
-                if (this.IsAfter(wh.EndTime, nodeEndTime)) {
+                if (th.isAfter(wh.EndTime, nodeEndTime)) {
                         wh.EndTime = nodeEndTime;
                 }
             }
@@ -297,24 +303,25 @@ export class BusinessUserHourControllerDelegate {
                     StartTime       : wh.StartTime != null ? wh.StartTime : '',
                     EndTime         : wh.EndTime != null ? wh.EndTime : '',
                     IsActive        : true
-                    }
-                    const record = await this._service.create(createModel);
-                    if (record === null) {
-                    throw new ApiError('Unable to create business user hours!', 400);
-                    }
                 }
+                const record = await this._service.create(createModel);
+                if (record === null) {
+                    throw new ApiError('Unable to create business user hours!', 400);
+                }
+            }
         }
         var userHoursList = await this.prisma.business_user_hours.findMany({
             where : {
                 BusinessUserId : businessUserId,
                 IsActive : true
-            }});
-            userHoursList.sort((a, b) => {
-            if(a.Day != null && b.Day != null)
+            },
+        });
+        userHoursList.sort((a, b) => {
+        if(a.Day != null && b.Day != null)
             return a.Day - b.Day;
             return 0;
-            }) 
-            return userHoursList;
+        }) 
+        return userHoursList;
     };
 
     delete = async (id: uuid) => {
@@ -322,15 +329,10 @@ export class BusinessUserHourControllerDelegate {
         if (record == null) {
             ErrorHandler.throwNotFoundError('Business user hours with id ' + id.toString() + ' cannot be found!');
         }
-        // const businessUserHourDeleted = await this._service.delete(id);
-        // return {
-        //     Deleted : businessUserHourDeleted
-        // };
-        const deleted = await this.prisma.business_user_hours.updateMany({
-            where : { id : id, IsActive : true },
-            data : { IsActive : false },
-        })
-        return deleted;
+        const deleted = await this._service.delete(id);
+        return {
+            Deleted: deleted
+        };
     };
 
     getCreateModel = (requestBody): BusinessUserHourCreateModel => {
@@ -338,7 +340,7 @@ export class BusinessUserHourControllerDelegate {
             BusinessUserId     : requestBody.BusinessUserId,
             Type               : requestBody.Type,
             Day                : requestBody.Day,
-            Date               : requestBody.Date ? dayjs(requestBody.Date).toDate() : null,
+            Date               : requestBody.Date ? th.getDate(requestBody.Date) : null,
             IsOpen             : requestBody.IsOpen ? requestBody.IsOpen : true,
             Message            : requestBody.Message ? requestBody.Message : null,
             StartTime          : requestBody.StartTime ? requestBody.StartTime : '10:00:00',
@@ -348,51 +350,25 @@ export class BusinessUserHourControllerDelegate {
     };
 
     exists = async (requestBody) => {
-        var date = requestBody.Date ? dayjs(requestBody.Date).toDate() : null;
+        var dt = requestBody.Date ? th.getDate(requestBody.Date) : null;
         var businessUserId = requestBody.BusinessUserId
         var type = requestBody.Type;
         var day = requestBody.Day;
-        var date = date
+        var date = dt
 
         var userHours = await this.prisma.business_user_hours.findMany({
             where : {
                 AND : {
-                    BusinessUserId : businessUserId,
-                    Type : type,
-                    Day : day,
-                    Date : date
+                    BusinessUserId  : businessUserId,
+                    Type            : type,
+                    Day             : day,
+                    Date            : date
                 }
             }});
             if (userHours.length > 0) {
                 return userHours[0]
             }
             return null;
-    };
-
-    IsBefore = (a, b) => {
-        var tokens = a.split(":")
-        var a_dayjs = dayjs().add(tokens[0], 'hours').add(tokens[1], 'minutes');
-
-        tokens = b.split(":")
-        var b_dayjs = dayjs().add(tokens[0], 'hours').add(tokens[1], 'minutes');
-
-        if (a_dayjs.isBefore(b_dayjs)) {
-            return true;
-        }
-        return false;
-    };
-
-    IsAfter = (a, b) => {
-        var tokens = a.split(":")
-        var a_dayjs = dayjs().add(tokens[0], 'hours').add(tokens[1], 'minutes');
-
-        tokens = b.split(":")
-        var b_dayjs = dayjs().add(tokens[0], 'hours').add(tokens[1], 'minutes');
-
-        if (a_dayjs.isAfter(b_dayjs)) {
-            return true;
-        }
-        return false;
     };
 
     getSearchFilters = (query) => {
@@ -464,32 +440,12 @@ export class BusinessUserHourControllerDelegate {
             Message             : record.Message,
             StartTime           : record.StartTime,       
             EndTime             : record.EndTime,
-            IsActive            : record.IsActive    
+            IsActive            : record.IsActive,
+            CreatedAt           : record.CreatedAt,
+            UpdatedAt           : record.UpdatedAt,
+            DeletedAt           : record.DeletedAt
         };
     };
-
-    getEnrichedDtos = (DayWiseWorkingHours) => {
-        if (DayWiseWorkingHours == null) {
-            return null;
-        }
-        for (const r of DayWiseWorkingHours){
-            const record = {
-            id                  : r.id,
-            BusinessUserId      : DayWiseWorkingHours.BusinessUserId,
-            Type                : r.Type,
-            Day                 : r.Day,
-            Date                : r.Date,
-            IsOpen              : r.IsOpen,
-            Message             : r.Message,
-            StartTime           : r.StartTime,       
-            EndTime             : r.EndTime,
-            IsActive            : r.IsActive   
-            }
-            DayWiseWorkingHours.push(record);
-        }
-        return DayWiseWorkingHours;
- };
-
 
     getSearchDto = (record) => {
         if (record == null) {
@@ -504,7 +460,10 @@ export class BusinessUserHourControllerDelegate {
             Message             : record.Message,
             StartTime           : record.StartTime,       
             EndTime             : record.EndTime,
-            IsActive            : record.IsActive    
+            IsActive            : record.IsActive,
+            CreatedAt           : record.CreatedAt,
+            UpdatedAt           : record.UpdatedAt,
+            DeletedAt           : record.DeletedAt    
         };
     };
 

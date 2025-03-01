@@ -376,9 +376,12 @@ CREATE TABLE `api_clients` (
     `id` VARCHAR(191) NOT NULL,
     `ClientName` VARCHAR(255) NOT NULL,
     `ClientCode` CHAR(36) NOT NULL,
+    `FirstName` VARCHAR(255) NULL,
+    `LastName` VARCHAR(255) NULL,
+    `CountryCode` VARCHAR(36) NOT NULL DEFAULT '+91',
     `Phone` VARCHAR(255) NULL,
     `Email` VARCHAR(255) NULL,
-    `Password` VARCHAR(255) NULL,
+    `Password` VARCHAR(512) NULL,
     `IsPrivileged` BOOLEAN NOT NULL DEFAULT false,
     `ApiKey` VARCHAR(255) NOT NULL,
     `ValidFrom` DATETIME(0) NULL,
@@ -388,7 +391,6 @@ CREATE TABLE `api_clients` (
     `IsDeleted` BOOLEAN NOT NULL DEFAULT false,
     `DeletedAt` DATETIME(0) NULL,
 
-    UNIQUE INDEX `api_clients_ClientName_key`(`ClientName`),
     UNIQUE INDEX `api_clients_ClientCode_key`(`ClientCode`),
     UNIQUE INDEX `api_clients_ApiKey_key`(`ApiKey`),
     PRIMARY KEY (`id`)
