@@ -14,8 +14,9 @@ export class BusinessUserService{
 
     create = async (createModel) => {
         try {
-            var record=await this.prisma.business_users.create({data:createModel});
-            console.log(record);
+            var record = await this.prisma.business_users.create({
+                data: createModel
+            })
             return record;
         }catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create business user!',error)
@@ -24,8 +25,11 @@ export class BusinessUserService{
 
     getById = async (id) => {
         try {
-            var record = await this.prisma.business_users.findUnique({where : {id : id}
-            });
+            var record = await this.prisma.business_users.findUnique({
+                where : {
+                    id : id,
+                },
+            })
             return record;
         } catch (error) {
         ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve business user!', error);
@@ -41,7 +45,7 @@ export class BusinessUserService{
                         IsActive : true,
                         BusinessId : filters.BusinessId,
                     },
-                });
+                })
                 for await (const node of nodes) {
                     var nodeUsers = await this.prisma.business_users.findMany({
                     where : {
@@ -55,7 +59,11 @@ export class BusinessUserService{
                 }
             }
             else if (filters.BusinessNodeId != null) {
-                var node = await this.prisma.business_nodes.findUnique({where : { id : filters.BusinessNodeId}});
+                var node = await this.prisma.business_nodes.findUnique({
+                    where : {
+                        id : filters.BusinessNodeId,
+                    },
+                })
                 var nodeUsers = await this.prisma.business_users.findMany({
                     where : {
                         IsActive : true,
@@ -121,9 +129,9 @@ export class BusinessUserService{
             if (Object.keys(updateModel).length > 0) {
                 var res = await this.prisma.business_users.updateMany({data:updateModel,
                     where : {
-                        id : id
-                    }
-                });
+                        id : id,
+                    },
+                })
             }
             return await this.getById(id);
         } catch (error) {
@@ -137,8 +145,13 @@ export class BusinessUserService{
         //     { id: id } 
         // });
         const deleted = await this.prisma.business_users.updateMany({
-            where : { id : id, IsActive : true },
-            data : { IsActive : false },
+            where : {
+                id : id,
+                IsActive : true,
+            },
+            data : {
+                IsActive : false,
+            },
         })
         return deleted;
         } catch (error) {
@@ -148,8 +161,11 @@ export class BusinessUserService{
 
     getBusinessUserWithEmail = async (email) => {
         try {
-            const record = await this.prisma.business_users.findUnique({ where : {Email : email}
-            });
+            const record = await this.prisma.business_users.findUnique({
+                where : {
+                    Email : email,
+                },
+            })
             return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('Unable to check if business user exists with email!', error);
@@ -158,8 +174,11 @@ export class BusinessUserService{
 
     getBusinessUserWithMobile = async (mobile) => {
         try {
-            const record = await this.prisma.business_users.findUnique({ where : { Mobile: mobile }
-            });
+            const record = await this.prisma.business_users.findUnique({
+                where : {
+                    Mobile: mobile,
+                },
+            })
             return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('Unable to check if business user exists with mobile!', error);

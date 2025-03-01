@@ -9,13 +9,16 @@ import { UserMessageValidator as validator } from './user.message.validator';
 import { ErrorHandler } from '../../common/error.handler';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { Helper } from "../../common/helper";
+import { TimeHelper as th } from "../../common/time.helper";
 
 export class UserMessageControllerDelegate {
 
     //#region member variables and constructors
 
     _service : UserMessageService = null;
+
     _businessNodeService : BusinessNodeService = null;
+
     _customerService : CustomerService =null;
 
     constructor() {
@@ -29,13 +32,6 @@ export class UserMessageControllerDelegate {
     create = async (requestBody: any) => {
 
         await validator.validateCreateRequest(requestBody);
-        if (!requestBody.BusinessNodeId ||
-            !requestBody.CustomerId || 
-            !requestBody.Body || 
-            !requestBody.Type ||
-            !requestBody.TypeId) {
-                ErrorHandler.throwNotFoundError('Missing required parameters!');
-            }
         var businessNodeId = requestBody.BusinessNodeId;
         const businessNode = await this._businessNodeService.getById(businessNodeId);
         if (!businessNode) {
@@ -100,20 +96,22 @@ export class UserMessageControllerDelegate {
 
     getCreateModel = (requestBody): UserMessageCreateModel => {
         return {
-            Body            : requestBody.Body ? requestBody.Body : null,
-            BusinessNodeId  : requestBody.BusinessNodeId ? requestBody.BusinessNodeId : null,
-            CustomerId      : requestBody.CustomerId ? requestBody.CustomerId : null,
+            Body            : requestBody.Body,
+            BusinessNodeId  : requestBody.BusinessNodeId,
+            CustomerId      : requestBody.CustomerId,
+            Type            : requestBody.Type,
+            TypeId          : requestBody.TypeId,
             Error           : requestBody.Error ? requestBody.Error : null,
             IsSent          : requestBody.IsSent ? requestBody.IsSent : true,
             MessageId       : requestBody.MessageId ? requestBody.MessageId : null,
-            SentOn          : requestBody.SentOn ? requestBody.SentOn : new Date(),
-            Type            : requestBody.Type ? requestBody.Type : null,
-            TypeId          : requestBody.TypeId ? requestBody.TypeId : null,
-            IsActive        : requestBody.IsActive ? requestBody.IsActive : true
+            SentOn          : requestBody.SentOn ? th.getDate(requestBody.SentOn) : null,
+            IsActive        : requestBody.IsActive ? requestBody.IsActive : true,
+            IsDeleted       : requestBody.IsDeleted ? requestBody.IsDeleted : false,
+            DeletedAt       : requestBody.DeletedAt ? th.getDate(requestBody.DeletedAt) : null
         }
     };
 
-    getSearchFilters = (query) => {
+    getSearchFilters = (query): UserMessageSearchFilters => {
         var filters = {};
 
             var businessNodeId= query.businessNodeId ? query.businessNodeId : null;
@@ -168,10 +166,13 @@ export class UserMessageControllerDelegate {
             updateModel.IsSent = requestBody.IsSent;
         }
         if (Helper.hasProperty(requestBody, 'SentOn')) {
-            updateModel.SentOn = requestBody.SentOn;
+            updateModel.SentOn = th.getDate(requestBody.SentOn);
         }
         if (Helper.hasProperty(requestBody, 'Error')) {
             updateModel.Error = requestBody.Error;
+        }
+        if (Helper.hasProperty(requestBody, 'DeletedAt')) {
+            updateModel.DeletedAt = th.getDate(requestBody.DeletedAt);
         }
         return updateModel;
     };

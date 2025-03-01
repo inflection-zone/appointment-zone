@@ -6,15 +6,14 @@ import { Prisma } from '@prisma/client';
 export class UserMessageService{
     prisma = PrismaClientInit.instance().prisma();
 
-    public static instance:UserMessageService=null;
+    public static instance:UserMessageService =null;
     public static getInstance():UserMessageService{
         return this.instance || (this.instance=new this());
     }
 
     create = async (createModel) => {
         try {
-            var record=await this.prisma.user_messages.create({data:createModel});
-            console.log(record);
+            var record = await this.prisma.user_messages.create({data:createModel});
             return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create user messages!',error)
@@ -84,8 +83,9 @@ export class UserMessageService{
     update = async (id, updateModel) => {
         try {
             if (Object.keys(updateModel).length > 0) {
-            var res = await this.prisma.user_messages.updateMany({data:updateModel,
-                    where :{
+            var res = await this.prisma.user_messages.updateMany({
+                data : updateModel,
+                where : {
                     id : id
                 }
             }); 
@@ -98,9 +98,21 @@ export class UserMessageService{
 
     delete = async (id) => {
         try {
-        const result = await this.prisma.user_messages.delete({ where: 
-            { id: id } 
-        });
+        // const result = await this.prisma.user_messages.delete({
+            //   where : {
+            //        id: id,
+            //    } 
+            // });
+            const deleted = await this.prisma.user_messages.updateMany({
+                where : {
+                    id : id,
+                    IsActive : true,
+                },
+                data : {
+                    IsActive : false,
+                },
+            })
+            return deleted;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to delete user messages!', error);
         }

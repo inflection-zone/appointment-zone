@@ -13,8 +13,7 @@ export class BusinessUserSkillService{
 
     create = async (createModel) => {
         try {
-            var record=await this.prisma.business_user_skills.create({data:createModel});
-            console.log(record);
+            var record = await this.prisma.business_user_skills.create({data:createModel});
             return record;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to create business user skills!',error)
@@ -108,9 +107,9 @@ export class BusinessUserSkillService{
         try {
             if (Object.keys(updateModel).length > 0) {
             var res = await this.prisma.business_user_skills.updateMany({data:updateModel,
-                    where :{
-                    id : id
-                }
+                where : {
+                    id : id,
+                },
             }); 
         }
         return await this.getById(id);
@@ -121,9 +120,21 @@ export class BusinessUserSkillService{
 
     delete = async (id) => {
         try {
-        const result = await this.prisma.business_user_skills.delete({ where: 
-            { id: id } 
-        });
+            // const result = await this.prisma.business_user_skills.delete({
+            //     where : {
+            //         id: id,
+            //     },
+            // });
+            const deleted = await this.prisma.business_user_skills.updateMany({
+                where : {
+                    id : id,
+                    IsActive : true,
+                },
+                data : {
+                    IsActive : false,
+                },
+            })
+            return deleted;
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to delete business user skills!', error);
         }

@@ -20,7 +20,9 @@ export class BusinessServiceControllerDelegate {
     //#region member variables and constructors
 
     _service: BusinessServiceService = null;
+
     _businessNodeService: BusinessNodeService = null;
+
     _businessService: BusinessService =null;
 
     constructor() {
@@ -36,16 +38,19 @@ export class BusinessServiceControllerDelegate {
         if (!businessNode) {
             ErrorHandler.throwNotFoundError(`Business node id not found!`);
         }
+
         if (Helper.hasProperty(requestBody, 'AllowCancelltion') && requestBody.AllowCancellation == true) {
             if(!requestBody.CancellationWindow || !requestBody.CancellationCharges) {
                 ErrorHandler.throwNotFoundError(`Cancellation is allowed please specify cancellation window and cancellation charges!`);
             }
         }
+
         if (Helper.hasProperty(requestBody, 'SendReminder') && requestBody.SendReminder == true) {
             if(!requestBody.ReminderWindow || !requestBody.ReminderType) {
                 ErrorHandler.throwNotFoundError(`Sending reminders on appointment status change is opted. Please specify reminder window and reminder type!`);
             }
         }        
+
         var createModel: BusinessServiceCreateModel = this.getCreateModel(requestBody);
         const record: BusinessServiceDto = await this._service.create(createModel);
         if (record === null) {
@@ -62,13 +67,13 @@ export class BusinessServiceControllerDelegate {
         return this.getEnrichedDto(record);
     };
 
-    getByBusiness = async (businessId: uuid, query) => {       
+    getByBusiness = async (businessId: uuid, query: any) => {       
         var filters = this.getSearchFilters(query);
         var searchResults = await this._service.getByBusiness(filters);
         return searchResults;
     };
 
-    search = async (query) => {
+    search = async (query: any) => {
         await validator.validateSearchRequest(query);
         var filters: BusinessServiceSearchFilters = this.getSearchFilters(query);
         var searchResults: BusinessServiceSearchResults = await this._service.search(filters);
@@ -81,8 +86,9 @@ export class BusinessServiceControllerDelegate {
         await validator.validateUpdateRequest(requestBody);
         const record: BusinessServiceDto = await this._service.getById(id);
         if (record === null) {
-            ErrorHandler.throwNotFoundError(" Business service with id " + id.toString() + "cannot be found!");
+            ErrorHandler.throwNotFoundError('Business service with id ' + id.toString() + 'cannot be found!');
         }
+
         const updateModel: BusinessServiceUpdateModel = this.getUpdateModel(requestBody);
         const updated: BusinessServiceDto = await this._service.update(id , updateModel);
         if (updated == null) {
@@ -96,6 +102,7 @@ export class BusinessServiceControllerDelegate {
         if (record == null) {
             ErrorHandler.throwNotFoundError('Customer with id ' + id.toString() + ' cannot be found!');
         }
+
         const businessServiceDeleted = await this._service.delete(id);
         return {
             Deleted : businessServiceDeleted
@@ -235,6 +242,7 @@ export class BusinessServiceControllerDelegate {
             PaymentPercent          : record.PaymentPercent,
             SendReminder            : record.SendReminder,
             ReminderType            : record.ReminderType,
+            ReminderWindow          : record.ReminderWindow,
             AllowCancellation       : record.AllowCancellation,
             CancellationWindow      : record.CancellationWindow,
             CancellationCharges     : record.CancellationCharges,
@@ -266,6 +274,7 @@ export class BusinessServiceControllerDelegate {
             PaymentPercent          : record.PaymentPercent,
             SendReminder            : record.SendReminder,
             ReminderType            : record.ReminderType,
+            ReminderWindow          : record.ReminderWindow,
             AllowCancellation       : record.AllowCancellation,
             CancellationWindow      : record.CancellationWindow,
             CancellationCharges     : record.CancellationCharges,
@@ -277,4 +286,5 @@ export class BusinessServiceControllerDelegate {
             IsDeleted               : record.IsDeleted,
             DeletedAt               : record.DeletedAt
         }
-    };}
+    };
+}

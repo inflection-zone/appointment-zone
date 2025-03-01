@@ -9,14 +9,15 @@ import { BusinessUserService } from '../../database/repository.services/business
 import { ErrorHandler } from '../../common/error.handler';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { Helper } from "../../common/helper";
-import { exist } from "joi";
 
 export class BusinessUserSkillControllerDelegate {
 
     //#region member variables and constructors
 
     _service: BusinessUserSkillService = null;
+
     _businessUserService: BusinessUserService = null;
+
     _businessSkillService: BusinessSkillService = null;
     constructor() {
         this._service = new BusinessUserSkillService();
@@ -37,7 +38,7 @@ export class BusinessUserSkillControllerDelegate {
         return this.getEnrichedDto(record);
     };
 
-    createMany = async (requestBody: any) => {
+    createMultiple = async (requestBody: any) => {
         await validator.validateCreateManyRequest(requestBody);
         var createModels = await this.getValidCreateManyModel(requestBody);
         {
@@ -122,8 +123,8 @@ export class BusinessUserSkillControllerDelegate {
 
     getCreateModel = (requestBody): BusinessUserSkillCreateModel => {
         return {
-            BusinessUserId	    : requestBody.BusinessUserId ? requestBody.BusinessUserId : null,
-            BusinessSkillId     : requestBody.BusinessSkillId ? requestBody.BusinessSkillId : null,
+            BusinessUserId	    : requestBody.BusinessUserId,
+            BusinessSkillId     : requestBody.BusinessSkillId,
             IsActive            : requestBody.IsActive ? requestBody.IsActive : true
         };
     };
@@ -142,8 +143,8 @@ export class BusinessUserSkillControllerDelegate {
         const records : BusinessUserSkillCreateModel[] = [];
         for (const s of requestBody) {
             const record = {
-                BusinessUserId     	: s.BusinessUserId ? s.BusinessUserId : null,
-                BusinessSkillId 	: s.BusinessSkillId ? s.BusinessSkillId : null,
+                BusinessUserId     	: s.BusinessUserId,
+                BusinessSkillId 	: s.BusinessSkillId,
                 IsActive          	: s.IsActive ? s.IsActive : true
             };  
             records.push(record);
@@ -153,11 +154,11 @@ export class BusinessUserSkillControllerDelegate {
 
     getValidCreateManyModel = async (requestBody) => {
         for (const s of requestBody) {
-        const existing = await this._service.exists(s.BusinessSkillId, s.BusinessUserId);
-        if(existing){
-            ErrorHandler.throwNotFoundError(`Business user skill with BusinessSkillId = ${s.BusinessSkillId} and BusinessUserId = ${s.BusinessUserId} already exists!`);
-        }
-        var createModels = await this.getCreateManyModel(requestBody);
+            const existing = await this._service.exists(s.BusinessSkillId, s.BusinessUserId);
+            if(existing){
+                ErrorHandler.throwNotFoundError(`Business user skill with BusinessSkillId = ${s.BusinessSkillId} and BusinessUserId = ${s.BusinessUserId} already exists!`);
+            }
+            var createModels = await this.getCreateManyModel(requestBody);
         }
         return createModels;
     };
@@ -165,27 +166,27 @@ export class BusinessUserSkillControllerDelegate {
     getSearchFilters = (query) => {
         var filters = {};
 
-            var businessUserId= query.businessUserId ? query.businessUserId : null;
-            if (businessUserId != null) {
-                filters['BusinessUserId'] = businessUserId;
-            }
-            var businessSkillId= query.businessSkillId ? query.businessSkillId : null;
-            if (businessSkillId != null) {
-                filters['BusinessSkillId'] = businessSkillId;
-            }
-            var isActive= query.isActive ? query.isActive : null;
-            if (isActive != null) {
-                filters['IsActive'] = isActive;
-            }
-            var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : null;
-            if (itemsPerPage != null) {
-                filters['ItemsPerPage'] = itemsPerPage;
-            }
-            var order = query.order ? query.order : null;
-            if (order != null) {
-              filters['Order'] = order;
-            }
-            return filters;
+        var businessUserId= query.businessUserId ? query.businessUserId : null;
+        if (businessUserId != null) {
+            filters['BusinessUserId'] = businessUserId;
+        }
+        var businessSkillId= query.businessSkillId ? query.businessSkillId : null;
+        if (businessSkillId != null) {
+            filters['BusinessSkillId'] = businessSkillId;
+        }
+        var isActive= query.isActive ? query.isActive : null;
+        if (isActive != null) {
+            filters['IsActive'] = isActive;
+        }
+        var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : null;
+        if (itemsPerPage != null) {
+            filters['ItemsPerPage'] = itemsPerPage;
+        }
+        var order = query.order ? query.order : null;
+        if (order != null) {
+        filters['Order'] = order;
+        }
+        return filters;
     };
 
     getUpdateModel = (requestBody): BusinessUserSkillUpdateModel => {
@@ -241,6 +242,6 @@ export class BusinessUserSkillControllerDelegate {
 		    BusinessUserId	: record.BusinessUserId,
 		    BusinessSkillId	: record.BusinessSkillId,
             IsActive        : record.IsActive
-    }
-};
+        }
+    };
 }

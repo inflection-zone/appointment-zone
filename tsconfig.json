@@ -27,7 +27,10 @@
       "typeRoots": ["@types", "node_modules/@types"]
   },
   "include": [
-      "src/**/*"
+      "src/**/*", 
+      "appointment/**/*",
+      "grpc.tests/*",
+      "tests/*"
   ],
   "exclude":[ 
       "node_modules"

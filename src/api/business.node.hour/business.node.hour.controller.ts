@@ -18,11 +18,11 @@ export class BusinessNodeHourController extends BaseController {
 
      create = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
-             await this.authorize('BusinessNodeHour.Create', request, response, false);
-             
+            await this.authorize('BusinessNodeHour.Create', request, response, false);
             const record = await this._delegate.create(request.body);
             const message = 'Business node hours added successfully!';
             ResponseHandler.success(request, response, message, 201, record);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -30,24 +30,24 @@ export class BusinessNodeHourController extends BaseController {
 
     createMultiple = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
-             await this.authorize('BusinessNodeHour.CreateMultiple', request, response, false);
+            await this.authorize('BusinessNodeHour.CreateMultiple', request, response, false);
             const records = await this._delegate.createMultiple(request.body);
             const message = 'Business node hours added successfully!';
             ResponseHandler.success(request, response, message, 201, records);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
     getById = async (request:express.Request, response:express.Response): Promise <void>=>{
-        try{
+        try {
             await this.authorize('BusinessNodeHour.GetById', request, response, false);
             const record = await this._delegate.getById(request.params.id);
             const message ="Business node hours retrieved successfully!";
             ResponseHandler.success(request, response, message, 200, record);
             
-
-        }catch(error){
+        } catch(error){
             ResponseHandler.handleError(request, response, error);
         }
     };
@@ -58,6 +58,7 @@ export class BusinessNodeHourController extends BaseController {
             const searchResults = await this._delegate.search(request.query);
             const message = 'Business node hour records retrieved successfully!';
             ResponseHandler.success(request, response, message, 200, searchResults);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -69,6 +70,7 @@ export class BusinessNodeHourController extends BaseController {
             const updatedRecord = await this._delegate.update(request.params.id, request.body);
             const message = 'Business node hour updated successfully!';
             ResponseHandler.success(request, response, message, 200, updatedRecord);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -77,9 +79,10 @@ export class BusinessNodeHourController extends BaseController {
     updateMultiple = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
             await this.authorize('BusinessNodeHour.UpdateMultiple', request, response, false);
-            const updatedRecord = await this._delegate.updateMultiple(request.params.businessNodeid, request.body);
+            const updatedRecord = await this._delegate.updateMultiple(request.params.businessNodeId, request.body);
             const message = 'Business node hours updated successfully!';
             ResponseHandler.success(request, response, message, 200, updatedRecord);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

@@ -4,7 +4,7 @@ export interface BusinessSkillCreateModel {
     id?		            : string;
     BusinessNodeId 	    : string;
     Name             	: string;
-    Description ?       : string;
+    Description?        : string;
     DisplayPicture?     : string;
     IsActive            : Boolean;
 };
@@ -12,15 +12,15 @@ export interface BusinessSkillCreateModel {
 export interface BusinessSkillUpdateModel {
     BusinessNodeId? 	: string;
     Name?             	: string;
-    Description ?       : string;
+    Description?        : string;
     DisplayPicture?     : string;
-    IsActive ?        	: Boolean;
+    IsActive?         	: Boolean;
 };
 
 export interface BusinessSkillDto {
     BusinessNodeId? 	: string;
     Name?             	: string;
-    Description ?       : string;
+    Description?        : string;
     DisplayPicture?     : string;
     IsActive ?        	: Boolean;
 };
@@ -30,7 +30,7 @@ export interface BusinessSkillSearchFilters extends BaseSearchFilters {
     Name?             	: string;
     Description?        : string;
     DisplayPicture? 	: string;
-    IsActive ?          : Boolean;
+    IsActive?           : Boolean;
 };
  export interface BusinessSkillSearchResults extends BaseSearchResults {
     Items: BusinessSkillDto[];

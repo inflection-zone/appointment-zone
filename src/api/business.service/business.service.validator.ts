@@ -12,7 +12,7 @@ export class BusinessServiceValidator {
                 AllowCancellation            : joi.boolean().required(),
                 CancellationCharges          : joi.number().max(255).required(),
                 CancellationWindow           : joi.string().max(255).required(),
-                Description                  : joi.string().max(255).required(),
+                Description                  : joi.string().optional(),
                 DisplayServicePicture        : joi.string().optional(),
                 EnableLoyalty                : joi.boolean().optional(),
                 Fees                         : joi.number().max(255).optional(),
@@ -27,7 +27,6 @@ export class BusinessServiceValidator {
                 SendReminder                 : joi.boolean().optional(),
                 ServiceDuration              : joi.string().max(255).optional(),
                 TaxRate                      : joi.number().max(255).optional(),
-           
             });
             return await schema.validateAsync(requestBody);
         } catch (error) {
@@ -35,14 +34,14 @@ export class BusinessServiceValidator {
         }
     };
 
-    static validateSearchRequest = async (requestBody) => {
+    static validateSearchRequest = async (query) => {
         try {
             const schema = joi.object({
                 businessNodeId               : joi.string().guid({version : ['uuidv4'] }).optional(),
                 isActive                     : joi.boolean().optional(),
                 name                         : joi.string().max(255).optional()
             });
-            return await schema.validateAsync(requestBody);
+            return await schema.validateAsync(query);
         } catch (error) {
             ErrorHandler.handleValidationError(error);
         }
@@ -55,8 +54,8 @@ export class BusinessServiceValidator {
                 AllowCancellation            : joi.boolean().optional(),
                 CancellationCharges          : joi.number().max(255).optional(),
                 CancellationWindow           : joi.string().max(255).optional(),
-                Description                  : joi.string().max(255).optional(),
-                DisplayServicePicture        : joi.string().optional().allow(null, ''),
+                Description                  : joi.string().optional(),
+                DisplayServicePicture        : joi.string().optional(),
                 EnableLoyalty                : joi.boolean().optional(),
                 Fees                         : joi.number().max(255).optional(),
                 IsActive                     : joi.boolean().optional(),
@@ -70,9 +69,8 @@ export class BusinessServiceValidator {
                 SendReminder                 : joi.boolean().optional(),
                 ServiceDuration              : joi.string().max(255).optional(),
                 TaxRate                      : joi.number().max(255).optional(),
-           
-
-            })
+            });
+            return await schema.validateAsync(requestBody);
         } catch (error) {
             ErrorHandler.handleValidationError(error);
         }

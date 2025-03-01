@@ -31,7 +31,7 @@ export class NotificationController extends BaseController {
 
     getById = async (request:express.Request, response:express.Response): Promise <void>=>{
         try{
-            await this.authorize('Notification.GetById', request, response,false);
+            await this.authorize('Notification.GetById', request, response, false);
             const record = await this._delegate.getById(request.params.id);
             const message ="Notifications retrieved successfully!";
             ResponseHandler.success(request, response, message, 200, record);

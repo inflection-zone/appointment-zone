@@ -29,11 +29,8 @@ export class BusinessNodeCustomerControllerDelegate {
     //#endregion
 
     create = async (requestBody: any) => {
-
         await validator.validateCreateRequest(requestBody);
-        if (!requestBody.BusinessNodeId || !requestBody.CustomerId) {
-                ErrorHandler.throwNotFoundError('Missing required parameters!');
-            }
+        
         var businessNodeId = requestBody.BusinessNodeId;
         const businessNode = await this._businessNodeService.getById(businessNodeId);
         if (!businessNode) {
@@ -60,7 +57,7 @@ export class BusinessNodeCustomerControllerDelegate {
         return this.getEnrichedDto(record);
     };
 
-    search = async (query) => {
+    search = async (query: any) => {
         await validator.validateSearchRequest(query);
         var filters: BusinessNodeCustomerSearchFilters = this.getSearchFilters(query);
         var searchResults : BusinessNodeCustomerSearchResults = await this._service.search(filters);

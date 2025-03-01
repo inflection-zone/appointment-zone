@@ -78,7 +78,7 @@ export class BusinessSkillControllerDelegate {
             throw new ApiError('Unable to update business skill!', 400);
         }
         return this.getEnrichedDto(updated);
-    }
+    };
 
     delete = async (id: uuid) => {
         const record = await this._service.getById(id);
@@ -95,9 +95,9 @@ export class BusinessSkillControllerDelegate {
 
     getCreateModel = (requestBody): BusinessSkillCreateModel => {
         return {
-            BusinessNodeId      :requestBody.BusinessNodeId ?  requestBody.BusinessNodeId:null,
-            Name                : requestBody.Name? requestBody.Name: null,
-            Description         : requestBody.Description ? requestBody.Description : null,
+            BusinessNodeId      : requestBody.BusinessNodeId,
+            Name                : requestBody.Name,
+            Description         : requestBody.Description,
             DisplayPicture      : requestBody.DisplayPicture? requestBody.DisplayPicture: null,
             IsActive            : requestBody.IsActive ? requestBody.IsActive : true
         };
@@ -106,27 +106,27 @@ export class BusinessSkillControllerDelegate {
     getSearchFilters = (query) => {
         var filters = {};
 
-            var name = query.name ? query.name : null;
-            if (name != null) {
-                filters['Name'] = name;
-            }
-            var isActive= query.isActive ? query.isActive : null;
-            if (isActive != null) {
-                filters['IsActive'] = isActive;
-            }
-            var businessNodeId= query.businessNodeId ? query.businessNodeId : null;
-            if (businessNodeId != null) {
-                filters['BusinessNodeId'] = businessNodeId;
-            }
-            var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : null;
-            if (itemsPerPage != null) {
-                filters['ItemsPerPage'] = itemsPerPage;
-            }
-            var order = query.order ? query.order : null;
-            if (order != null) {
-              filters['Order'] = order;
-            }
-            return filters;
+        var name = query.name ? query.name : null;
+        if (name != null) {
+            filters['Name'] = name;
+        }
+        var isActive= query.isActive ? query.isActive : null;
+        if (isActive != null) {
+            filters['IsActive'] = isActive;
+        }
+        var businessNodeId= query.businessNodeId ? query.businessNodeId : null;
+        if (businessNodeId != null) {
+            filters['BusinessNodeId'] = businessNodeId;
+        }
+        var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : null;
+        if (itemsPerPage != null) {
+            filters['ItemsPerPage'] = itemsPerPage;
+        }
+        var order = query.order ? query.order : null;
+        if (order != null) {
+            filters['Order'] = order;
+        }
+        return filters;
     };
 
     getUpdateModel = (requestBody): BusinessSkillUpdateModel => {

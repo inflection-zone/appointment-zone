@@ -2,7 +2,7 @@ import { float } from "aws-sdk/clients/cloudfront";
 import { BaseSearchFilters, BaseSearchResults } from "../miscellaneous/base.search.types";
 
 export interface BusinessNodeCustomerCreateModel {
-    id      ?           : string;
+    id?                 : string;
     BusinessNodeId      : string;
     CustomerId	        : string;
     SmsConsent          : string;
@@ -10,10 +10,10 @@ export interface BusinessNodeCustomerCreateModel {
 }
 
 export interface BusinessNodeCustomerUpdateModel {
-    BusinessNodeId  ?    : string;
-    CustomerId	    ?    : string;
-    SmsConsent      ?    : string;
-    IsActive		?    : boolean;
+    BusinessNodeId?     : string;
+    CustomerId?         : string;
+    SmsConsent?         : string;
+    IsActive?           : boolean;
 }
 
 export interface BusinessNodeCustomerDto {
@@ -28,11 +28,11 @@ export interface BusinessNodeCustomerDto {
     DeletedAt           : Date;
 }
 
-export interface BusinessNodeCustomerSearchFilters {
-    BusinessNodeId    ?  : string;
-    CustomerId	      ?  : string;
-    SmsConsent        ?  : string;
-    IsActive		  ?  : boolean;
+export interface BusinessNodeCustomerSearchFilters extends BaseSearchFilters {
+    BusinessNodeId? : string;
+    CustomerId?     : string;
+    SmsConsent?     : string;
+    IsActive?       : boolean;
 }
 
 export interface BusinessNodeCustomerSearchResults extends BaseSearchResults {

@@ -353,11 +353,14 @@ model user_messages {
 
 model api_clients {
   id           String    @id @default(uuid())
-  ClientName   String    @unique @db.VarChar(255)
+  ClientName   String    @db.VarChar(255)
   ClientCode   String    @unique @db.Char(36)
+  FirstName    String?   @db.VarChar(255)
+  LastName     String?   @db.VarChar(255)
+  CountryCode  String    @default("+91") @db.VarChar(36)
   Phone        String?   @db.VarChar(255)
   Email        String?   @db.VarChar(255)
-  Password     String?   @db.VarChar(255)
+  Password     String?   @db.VarChar(512)
   IsPrivileged Boolean   @default(false)
   ApiKey       String    @unique @db.VarChar(255)
   ValidFrom    DateTime? @db.DateTime(0)

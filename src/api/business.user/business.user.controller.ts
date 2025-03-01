@@ -18,28 +18,27 @@ export class BusinessUserController extends BaseController {
 
      create = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
-             await this.authorize('BusinessUser.Create', request, response, false);
-             
+            await this.authorize('BusinessUser.Create', request, response, false);
             const record = await this._delegate.create(request.body);
             const message = 'Business user added successfully!';
             ResponseHandler.success(request, response, message, 201, record);
+            
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
     getById = async (request:express.Request, response:express.Response): Promise <void>=>{
-        try{
+        try {
             await this.authorize('BusinessUser.GetById', request, response, false);
             const record = await this._delegate.getById(request.params.id);
             const message ="Business user retrieved successfully!";
             ResponseHandler.success(request, response, message, 200, record);
-            
 
-        }catch(error){
+        } catch(error){
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     search = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
@@ -47,10 +46,11 @@ export class BusinessUserController extends BaseController {
             const searchResults = await this._delegate.search(request.query);
             const message = 'Business user records retrieved successfully!';
             ResponseHandler.success(request, response, message, 200, searchResults);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     update = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
@@ -58,10 +58,11 @@ export class BusinessUserController extends BaseController {
             const updatedRecord = await this._delegate.update(request.params.id, request.body);
             const message = 'Business user updated successfully!';
             ResponseHandler.success(request, response, message, 200, updatedRecord);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     delete = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
@@ -70,11 +71,8 @@ export class BusinessUserController extends BaseController {
             const message = 'Business user deleted successfully!';
             ResponseHandler.success(request, response, message, 200, result);
 
-        }catch (error) {
+        } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
-
-
-
+    };
 };
